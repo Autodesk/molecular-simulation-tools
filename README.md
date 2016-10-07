@@ -2,8 +2,17 @@
 
 	./bin/run-local
 
-Test with:
+Go to http://localhost:4000
 
-	curl localhost:8765/api/rpc/gallery
+## Modify the gallery
 
-The workflow execution is more complex, todo.
+Edit server/test/examples/workflow1/example_workflow.yml and reload the web page to see the new gallery nodes.
+
+
+## Developers
+
+	./bin/run-local-dev
+
+This mounts local source code so that modifications or re-compilations will cause servers to restart.
+
+
