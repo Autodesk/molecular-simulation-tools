@@ -1,0 +1,14 @@
+*.map
+*.sublime-project
+*.sublime-workspace
+.aws
+.bundle
+.env*
+.haxelib
+.idea
+.vagrant
+client/dist
+/server/build.hxml
+/server/build
+**/node_modules
+npm-debug.log

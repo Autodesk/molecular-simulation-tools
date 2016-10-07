@@ -1,0 +1,42 @@
+$blue: #72d0eb;
+$pink: #ffb3b3;
+$primary: #46D595;
+$family-serif: "Georgia", serif;
+
+html {
+  background-color: #E9E9E9 !important;
+}
+
+html, body, .app {
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  background-color: #ffffff;
+}
+
+.pane-container {
+  height: 100%;
+  margin-top: -48px;
+  position: relative;
+  padding: 60px 12px 12px 12px !important;
+}
+
+.placeholder {
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #bfbfbf;
+
+  img {
+    margin-bottom: 12px;
+  }
+}
+
+@import "~bulma/bulma"
