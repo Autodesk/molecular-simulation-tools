@@ -1,8 +1,14 @@
 # Cloud Workflow Prototype
 
+After cloning the repo:
+
+	git submodule update --init --recursive
+
+Then run:
+
 	./bin/run-local
 
-Go to http://localhost:4000
+Then open your browser to  [http://localhost:4000](http://localhost:4000)
 
 ## Modify the gallery
 
