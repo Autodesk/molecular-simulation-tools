@@ -4,7 +4,7 @@ services:
 
   client:
     image: "cloud-workflow-client:latest"
-    command: ["npm", "run", "build"]
+    command: ["npm", "run", "dev"]
     environment:
       WORKFLOW_SERVER: "workflows:8765"
     ports:
