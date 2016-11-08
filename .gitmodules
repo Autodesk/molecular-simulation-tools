@@ -8,3 +8,6 @@
 [submodule "server/lib/cloud-compute-cannon"]
 	path = server/lib/cloud-compute-cannon
 	url = https://github.com/Autodesk/cloud-compute-cannon.git
+[submodule "workflow"]
+	path = workflow
+	url = https://git.autodesk.com/mccandj/workflow.git
