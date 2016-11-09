@@ -4,6 +4,11 @@ After cloning the repo:
 
 	git submodule update --init --recursive
 
+Add the following to client/.env:
+
+    NODE_ENV=production
+    API_URL=http://localhost:8765
+
 Then run:
 
 	./bin/run-local
