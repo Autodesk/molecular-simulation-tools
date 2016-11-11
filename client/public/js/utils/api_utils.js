@@ -2,8 +2,10 @@ import { Map as IMap } from 'immutable';
 import request from 'superagent';
 import NodeRecord from '../records/node_record';
 
-const WORKFLOW_SERVER = process.env.WORKFLOW_SERVER || 'localhost:8765';
-const WORKFLOW_SERVER_URL_RPC = `http://${WORKFLOW_SERVER}/api/rpc`;
+const WORKFLOW_SERVER = process.env.WORKFLOW_SERVER || 'localhost:8965';
+// const WORKFLOW_SERVER_URL_RPC = `http://${WORKFLOW_SERVER}/api/rpc`;
+const WORKFLOW_RUN_URL = `http://${WORKFLOW_SERVER}/workflow/run`;
+
 
 
 let nodesGlobal;

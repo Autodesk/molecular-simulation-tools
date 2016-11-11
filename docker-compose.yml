@@ -2,57 +2,20 @@ version: '2'
 
 services:
 
-  client:
-    image: "cloud-workflow-client:latest"
-    command: ["npm", "run", "build"]
-    environment:
-      WORKFLOW_SERVER: "workflows:8765"
+  server:
+    build:
+      context: .
+    command: ["nodemon", "/app/server/lib/workflow-execution-server/build/server/server-workflow.js"]
     ports:
       - "4000:4000"
-    links:
-      - workflows
-
-  workflows:
-    image: "cloud-workflow-server:latest"
-    # command: ["forever", "build/server/server-workflow.js"]
-    volumes:
-      - ./server/test/examples:/app/test/examples
-    ports:
-      - "8765:8765"
     environment:
-      PORT: "8765"
-    links:
-      - ccc
-
-  ccc:
-    extends:
-      file: server/lib/cloud-compute-cannon/docker-compose.core.yml
-      service: compute
-    image: "quay.io/bionano/cloud-compute-cannon:1374c0f6"
-    command: ["forever", "server/cloud-compute-cannon-server.js"]
-    ports:
-      - "9000:9000"
-    environment:
-      LOG_LEVEL: "40"
-    links:
-      - redis
-      - fluentd
-
-  redis:
-    extends:
-      file: server/lib/cloud-compute-cannon/docker-compose.core.yml
-      service: redis
-    command: redis-server /usr/local/etc/redis/redis.conf
-    ports:
-      - "6379:6379"
+      HOST_PWD: "${PWD}"
     volumes:
-      - ./server/lib/cloud-compute-cannon/etc/redis/redis-prod.conf:/usr/local/etc/redis/redis.conf
-
-  fluentd:
-    image: fluent/fluentd:v0.14.2
-    volumes:
-      - ./server/lib/cloud-compute-cannon/etc/log/fluent.prod.conf:/fluentd/etc/fluent.conf
-    command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-p", "/fluentd/plugins"]
-    ports:
-      - "24225:24225"
-      - "9881:9881"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./tmp:/app/server/tmp
+      #Uncomment this if you are doing workflow development
+      #- ./client/workflow_convert_pdb:/app/client/workflow_convert_pdb
+      #Uncomment this if you are doing client development
+      #- ./client/dist:/app/client/dist
+      #Uncomment this if you are doing server development
+      #- ./server/lib/workflow-execution-server/build/server:/app/server/lib/workflow-execution-server/build/server

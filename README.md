@@ -4,21 +4,15 @@ After cloning the repo:
 
 	git submodule update --init --recursive
 
+Then create the mdt image
+
+	cd client/workflow_convert_pdb
+	docker build -t mdtscripts .
+
 Then run:
 
-	./bin/run-local
+	docker-compose up
 
 Then open your browser to  [http://localhost:4000](http://localhost:4000)
 
-## Modify the gallery
-
-Edit server/test/examples/workflow1/example_workflow.yml and reload the web page to see the new gallery nodes.
-
-
-## Developers
-
-	./bin/run-local-dev
-
-This mounts local source code so that modifications or re-compilations will cause servers to restart.
-
-
+Local server and client and workflow development can be sped up by mounting local directories, see docker-compose.yml for what volume mounts to uncomment and then restatt the docker-compose command.
