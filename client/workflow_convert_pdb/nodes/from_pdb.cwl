@@ -1,13 +1,13 @@
-baseCommand: [mdtscripts.py, guess_histidine_states]
+baseCommand: [mdtscripts.py, from_pdb]
 class: CommandLineTool
 cwlVersion: cwl:draft-3
 hints:
 - {class: DockerRequirement, dockerImageId: mdtscripts}
 inputs:
-- id: mdtfile
+- id: pdbcode
   inputBinding: {position: 1}
-  type: File
-label: Assign histidine states
+  type: string
+label: Download molecule from the PDB
 outputs:
 - id: out.pkl
   outputBinding: {glob: out.pkl}

@@ -1,4 +1,4 @@
-baseCommand: [mdtscripts.py, guess_histidine_states]
+baseCommand: [mdtscripts.py, isolate_protein]
 class: CommandLineTool
 cwlVersion: cwl:draft-3
 hints:
@@ -7,7 +7,7 @@ inputs:
 - id: mdtfile
   inputBinding: {position: 1}
   type: File
-label: Assign histidine states
+label: strip nonprotein residues
 outputs:
 - id: out.pkl
   outputBinding: {glob: out.pkl}

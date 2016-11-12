@@ -1,4 +1,4 @@
-baseCommand: [mdtscripts.py, guess_histidine_states]
+baseCommand: [mdtscripts.py, to_pdb]
 class: CommandLineTool
 cwlVersion: cwl:draft-3
 hints:
@@ -7,8 +7,8 @@ inputs:
 - id: mdtfile
   inputBinding: {position: 1}
   type: File
-label: Assign histidine states
+label: Create PDB-format output file
 outputs:
-- id: out.pkl
-  outputBinding: {glob: out.pkl}
+- id: out.pdb
+  outputBinding: {glob: out.pdb}
   type: File
