@@ -9,6 +9,6 @@ inputs:
   type: File
 label: Assign histidine states
 outputs:
-- id: out.pkl
+- id: mol
   outputBinding: {glob: out.pkl}
   type: File

@@ -9,6 +9,6 @@ inputs:
   type: File
 label: Assign amber14 forcefield
 outputs:
-- id: out.pkl
+- id: mol
   outputBinding: {glob: out.pkl}
   type: File

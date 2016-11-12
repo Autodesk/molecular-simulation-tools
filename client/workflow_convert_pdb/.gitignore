@@ -1,0 +1,3 @@
+cache/
+out.*  # reserved for workflow outputs
+

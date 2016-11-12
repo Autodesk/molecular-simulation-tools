@@ -9,6 +9,6 @@ inputs:
   type: File
 label: Create PDB-format output file
 outputs:
-- id: out.pdb
+- id: pdbfile
   outputBinding: {glob: out.pdb}
   type: File

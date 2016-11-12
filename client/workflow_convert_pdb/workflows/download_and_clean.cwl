@@ -11,27 +11,27 @@ outputs:
 
 steps:
   - id: download
-    run: download_pdb.cwl
+    run: ../nodes/from_pdb.cwl
     inputs:
       - id: pdbcode
         source: "#pdbcode"
     outputs:
-       - id: mdtfile
+       - id: mol
 
 
   - id: clean
-    run: guess_histidine_states.cwl
+    run: ../nodes/guess_histidine_states.cwl
     inputs:
-      - id: mdt_in
-        source: "#download/mdtfile"
-    outputs:
       - id: mdtfile
+        source: "#download/mol"
+    outputs:
+      - id: mol
 
 
   - id: convert
-    run: convert_to_pdb.cwl
+    run: ../nodes/to_pdb.cwl
     inputs:
-      - id: mdt_in
-        source: "#clean/mdtfile"
+      - id: mdtfile
+        source: "#clean/mol"
     outputs:
       - id: pdbfile

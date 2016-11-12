@@ -12,6 +12,6 @@ inputs:
   type: File
 label: Return ligand from specified chain
 outputs:
-- id: out.pkl
+- id: mol
   outputBinding: {glob: out.pkl}
   type: File

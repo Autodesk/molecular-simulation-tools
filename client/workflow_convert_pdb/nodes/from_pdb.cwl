@@ -9,6 +9,6 @@ inputs:
   type: string
 label: Download molecule from the PDB
 outputs:
-- id: out.pkl
+- id: mol
   outputBinding: {glob: out.pkl}
   type: File

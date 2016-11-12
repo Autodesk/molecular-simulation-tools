@@ -32,8 +32,8 @@ def task(inputs, outputs, name=None,
             {'id':fid, 'type':typ, 'inputBinding':{'position':i+1}}
             for i,(fid,typ) in enumerate(inputs.iteritems())]
         taskyml['outputs'] = [
-                {'id': outfile, 'type': typ, 'outputBinding': {'glob': outfile}}
-                for outfile, typ in outputs.iteritems()]
+                {'id': outfile, 'type': 'File', 'outputBinding': {'glob': filename}}
+                for outfile, filename in outputs.iteritems()]
 
         tasklist[name] = taskyml
         return f
@@ -41,7 +41,7 @@ def task(inputs, outputs, name=None,
 
 
 @task(inputs={'pdbcode':'string'},
-      outputs={'out.pkl':'File'},
+      outputs={'mol':'out.pkl'},
       label='Download molecule from the PDB')
 def from_pdb(pdbcode):
     import moldesign as mdt
@@ -50,7 +50,7 @@ def from_pdb(pdbcode):
 
 
 @task(inputs={'mdtfile':'File', 'chainid':'string'},
-      outputs={'out.pkl':'File'},
+      outputs={'mol':'out.pkl'},
       label='Return ligand from specified chain')
 def isolate_ligand_from_chain(mdtfile, chainid):
     import moldesign as mdt
@@ -61,7 +61,7 @@ def isolate_ligand_from_chain(mdtfile, chainid):
 
 
 @task(inputs={'mdtfile': 'File'},
-      outputs={'out.pdb': 'File'},
+      outputs={'pdbfile': 'out.pdb'},
       label='Create PDB-format output file')
 def to_pdb(mdtfile):
     import moldesign as mdt
@@ -70,7 +70,7 @@ def to_pdb(mdtfile):
 
 
 @task(inputs={'mdtfile': 'File'},
-      outputs={'out.pkl': 'File'},
+      outputs={'mol': 'out.pkl'},
       label='strip nonprotein residues')
 def isolate_protein(mdtfile):
     import moldesign as mdt
@@ -81,7 +81,7 @@ def isolate_protein(mdtfile):
 
 
 @task(inputs={'mdtfile':'File'},
-      outputs={'out.pkl': 'File'},
+      outputs={'mol': 'out.pkl'},
       label='Assign histidine states')
 def guess_histidine_states(mdtfile):
     import moldesign as mdt
@@ -92,7 +92,7 @@ def guess_histidine_states(mdtfile):
 
 
 @task(inputs={'mdtfile':'File'},
-      outputs={'out.pkl': 'File'},
+      outputs={'mol': 'out.pkl'},
       label='Assign amber14 forcefield')
 def assign_amber16_forcefield(mdtfile):
     import moldesign as mdt
@@ -103,7 +103,7 @@ def assign_amber16_forcefield(mdtfile):
 
 
 @task(inputs={'mdtfile1':'File', 'mdtfile2':'File'},
-      outputs={'out.pkl': 'File'},
+      outputs={'mol': 'out.pkl'},
       label='Assign histidine states')
 def combine_molecules(mdtfile1, mdtfile2):
     import moldesign as mdt
