@@ -50,23 +50,12 @@ ENV HAXE_STD_PATH $HAXE_STD_PATH:.:/
 # Node/npm
 #######################################
 
-# RUN apt-get update && \
-#   apt-get install -y g++ g++-multilib libgc-dev git python build-essential && \
-#   curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
-#   apt-get -y install nodejs && \
-#   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-
 RUN apt-get update && \
     apt-get install -y g++ g++-multilib libgc-dev git python build-essential && \
     curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     apt-get -y install nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     npm install -g forever nodemon grunt grunt-cli webpack
-# RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-
-# RUN 
-
 
 # #######################################
 # # Client build/install packages
@@ -74,11 +63,10 @@ RUN apt-get update && \
 
 ENV APP /app
 RUN mkdir -p $APP
-WORKDIR $APP
 
-ADD client $APP/client
+ADD ./client $APP/client
 WORKDIR $APP/client
-RUN touch $APP/client/.env
+RUN touch .env
 RUN npm install
 RUN npm run build
 
