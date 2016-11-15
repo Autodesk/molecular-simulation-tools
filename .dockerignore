@@ -4,18 +4,16 @@
 .jenkins-config
 .env*
 .haxelib
-lib/cloud-compute-cannon/lib/janicek-core-haxe/doc
-lib/cloud-compute-cannon/lib/janicek-core-haxe/test
-lib/cloud-compute-cannon/lib/janicek-core-haxe/lib
-lib/cloud-compute-cannon/lib/haxe-json-rpc/lib
-lib/cloud-compute-cannon/lib/haxe-json-rpc/node_modules
-lib/cloud-compute-cannon/lib/haxe-json-rpc/test
-lib/cloud-compute-cannon/lib/haxe-json-rpc/build
-lib/cloud-compute-cannon/lib/promhx/bin
-lib/cloud-compute-cannon/lib/promhx/demo
-lib/cloud-compute-cannon/lib/promhx/lib
-lib/cloud-compute-cannon/lib/promhx/tools
+server/etc
+server/src
+server/test
+server/lib/cloud-compute-cannon
+server/lib/workflow-execution-server/.haxelib
+server/lib/workflow-execution-server/node_modules
+server/lib/workflow-execution-server/build
 
+client/node_modules
+client/dist
 /build.hxml
 build
 **/node_modules/

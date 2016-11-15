@@ -1,0 +1,3 @@
+mdt_in:
+  class: File
+  path: out.pkl

@@ -12,3 +12,4 @@ client/dist
 /server/build
 **/node_modules
 npm-debug.log
+tmp
