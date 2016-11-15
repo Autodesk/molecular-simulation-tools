@@ -36,7 +36,7 @@ A PDB or mmCIF file (let's call it `3AID.pdb`);
 a YAML input (call it `pdbfile.yml`) file of the form
 
 ```
-pdbfile:
+infile:
   class: File
   path: /path/to/3AID.pdb
 ```
