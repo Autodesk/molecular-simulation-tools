@@ -18,4 +18,4 @@ services:
       #Uncomment this if you are doing client development
       # - ./client/dist:/app/client/dist
       # Uncomment this if you are doing server development
-      #- ./server/lib/workflow-execution-server/build/server:/app/server/build/server
+      - ./server/lib/workflow-execution-server/build/server:/app/server/build/server
