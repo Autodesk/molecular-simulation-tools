@@ -13,3 +13,18 @@ client/dist
 **/node_modules
 npm-debug.log
 tmp
+
+# for python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+sdist/
+*.egg-info/
+.installed.cfg
+*.egg
