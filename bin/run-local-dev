@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+DOCKERBLOB="docker-compose -f docker-compose.yml -f docker-compose.dev.yml"
+$DOCKERBLOB rm -f
+$DOCKERBLOB build "$@"
+$DOCKERBLOB up "$@"
+
+open http://localhost:4000

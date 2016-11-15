@@ -1,0 +1,8 @@
+#Builds components
+
+-cmd echo "Building server"
+
+--next
+
+etc/hxml/server-build.hxml
+

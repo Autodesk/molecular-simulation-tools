@@ -1,0 +1,11 @@
+etc/hxml/base-nodejs.hxml
+
+-debug
+
+-D excludeccc
+
+-cp server/workflow/src
+
+-main workflows.server.Server
+
+-js build/server/server-workflow.js

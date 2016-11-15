@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+
+  client:
+    image: "cloud-workflow-client:latest"
+    command: ["npm", "run", "dev"]
+    volumes:
+      - ./client/public:/app/public
+      - ./client/test:/app/test
+
+  workflows:
+    image: "cloud-workflow-server:latest"
+    command: ["nodemon", "build/server/server-workflow.js"]
+    volumes:
+      - ./server/test/examples:/app/test/examples
+      - ./server/build:/app/build

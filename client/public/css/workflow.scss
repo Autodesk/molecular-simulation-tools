@@ -1,0 +1,56 @@
+.workflow {
+  height: 100%;
+
+  .workflow-title {
+    background-color: #55526B !important;
+    border: 1px transparent solid !important;
+    text-align: center;
+    font-weight: 600 !important;
+    font-size: 1.4em !important;
+    color: #ffffff !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+
+    &:hover {
+      border: 1px solid rgb(90, 130, 255) !important;
+
+      .icon-finished {
+        display: none !important;
+      }
+
+      .icon-view {
+        display: inline-block !important;
+      }
+    }
+
+    &.selected {
+      background-color: #5981FF !important;
+    }
+
+    .icon-view {
+      display: none !important;
+    }
+
+    &.dragged-over {
+      margin-bottom: 32px !important;
+      box-shadow: 0 10px 4px 0 #cfcfcf;
+    }
+  }
+
+  .run {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
+    width: 80%;
+    margin: 16px auto;
+    color: #333333 !important;
+    font-weight: 600;
+    border-radius: 20px;
+  }
+
+  .node.dragged-over {
+    margin-bottom: 32px !important;
+    box-shadow: 0 10px 4px 0 #cfcfcf;
+  }
+}

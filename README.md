@@ -1,10 +1,30 @@
 # Molecular Design Applications
 
-Predictive molecular modeling applications based on the [Molecular Design Toolkit](https://github.com/Autodesk/molecular-design-toolkit) framework.
+Predictive molecular modeling applications based on the [Molecular Design Toolkit](https://github.com/Autodesk/molecular-design-toolkit) framework. (Early development, all features are subject to change)
 
 ## Installation
 
-Coming soon
+After cloning the repo:
+
+	git submodule update --init --recursive
+
+Then run:
+
+	./bin/run-local
+
+Then open your browser to  [http://localhost:4000](http://localhost:4000)
+
+## Modify the gallery
+
+Edit server/test/examples/workflow1/example_workflow.yml and reload the web page to see the new gallery nodes.
+
+
+## Developers
+
+	./bin/run-local-dev
+
+This mounts local source code so that modifications or re-compilations will cause servers to restart.
+
 
 
 ## Contributing

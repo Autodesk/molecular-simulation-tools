@@ -1,0 +1,5 @@
+etc/hxml/server-build.hxml
+
+--next
+
+-cmd TRAVIS=true node build/server/server-workflow.js
