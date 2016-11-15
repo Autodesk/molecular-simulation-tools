@@ -37,6 +37,20 @@
     }
   }
 
+  .upload-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    input[type=file] {
+      display: none;
+    }
+
+    .error {
+      color: #ff0000;
+    }
+  }
+
   .run {
     position: absolute;
     bottom: 0;

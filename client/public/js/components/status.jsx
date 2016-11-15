@@ -19,11 +19,24 @@ function Status(props) {
       </div>
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW) {
+    const lastWorkflowNode = props.workflow.workflowNodes.last();
+    let output;
+    if (lastWorkflowNode && lastWorkflowNode.outputs.size) {
+      output = (
+        <p>
+          Output:
+          <a href={lastWorkflowNode.outputs.get(0).get('value')}>
+            {lastWorkflowNode.outputs.get(0).get('value')}
+          </a>
+        </p>
+      );
+    }
     selection = (
       <div className="status-info">
         <p>Workflow</p>
         <p>{props.workflow.title}</p>
         <p>Status: {props.workflowStatus}</p>
+        {output}
       </div>
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
@@ -31,11 +44,25 @@ function Status(props) {
       workflowNodeI.id === props.selection.id
     );
     const node = props.nodes.get(workflowNode.nodeId);
+
+    let output;
+    if (workflowNode.outputs && workflowNode.outputs.size) {
+      output = (
+        <p>
+          Output:
+          <a href={workflowNode.outputs.get(0).get('value')}>
+            {workflowNode.outputs.get(0).get('value')}
+          </a>
+        </p>
+      );
+    }
+
     selection = (
       <div className="status-info">
         <p>Node in Workflow "{props.workflow.title}"</p>
         <p>{node.title}</p>
         <p>Status: {workflowNode.status}</p>
+        {output}
       </div>
     );
   } else {
