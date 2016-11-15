@@ -36,13 +36,16 @@ A PDB or mmCIF file (let's call it `3AID.pdb`);
 a YAML input (call it `pdbfile.yml`) file of the form
 
 ```
-pdbfile: /path/to/3AID.pdb
+pdbfile:
+  class: File
+  path: /path/to/3AID.pdb
 ```
 
 and can then run it with
 
 ```
-$ cwltool workflows/import_and_clean.cwl pdbfile.yml
+$ cwltool workflows/read_and_clean.cwl pdbfile.yml
 ```
 
-
+See example run script at `read_and_clean_pdbfile.sh` with input
+files `inputs/pdbfile.yml` and `inputs/3AID.pdb`.

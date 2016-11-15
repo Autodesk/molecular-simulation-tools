@@ -49,6 +49,15 @@ def from_pdb(pdbcode):
     mol.write('out.pkl')
 
 
+@task(inputs={'infile': 'File'},
+      outputs={'mol': 'out.pkl'},
+      label='Read a molecule from a file (format determined by extension)')
+def from_file(infile):
+    import moldesign as mdt
+    mol = mdt.read(infile)
+    mol.write('out.pkl')
+
+
 @task(inputs={'mdtfile':'File', 'chainid':'string'},
       outputs={'mol':'out.pkl'},
       label='Return ligand from specified chain')

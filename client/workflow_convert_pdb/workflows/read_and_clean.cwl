@@ -1,8 +1,8 @@
 cwlVersion: cwl:draft-3
 class: Workflow
 inputs:
-  - id: pdbcode
-    type: string
+  - id: infile
+    type: File
 
 hints:
   - class: SubworkflowFeatureRequirement
@@ -13,11 +13,11 @@ outputs:
     source: "#finalize/pdbfile"
 
 steps:
-  - id: download
-    run: ../nodes/from_pdb.cwl
+  - id: read_file
+    run: ../nodes/from_file.cwl
     inputs:
-      - id: pdbcode
-        source: "#pdbcode"
+      - id: infile
+        source: "#infile"
     outputs:
        - id: mol
 
@@ -26,6 +26,6 @@ steps:
     run: clean_and_convert.cwl
     inputs:
       - id: mdtfile
-        source: "#download/mol"
+        source: "#read_file/mol"
     outputs:
       - id: pdbfile
