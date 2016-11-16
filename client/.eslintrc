@@ -4,5 +4,6 @@
     "window": true,
     "document": true,
     "fetch": true,
+    "FileReader": true,
   },
 }

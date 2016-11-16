@@ -137,10 +137,10 @@ export function upload(file) {
       type: actionConstants.UPLOAD,
       file,
     });
-    apiUtils.upload(file).then(res =>
+    apiUtils.upload(file).then(url =>
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
-        url: res.url,
+        url,
       })
     ).catch(err =>
       dispatch({

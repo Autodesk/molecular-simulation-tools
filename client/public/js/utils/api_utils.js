@@ -150,21 +150,17 @@ const apiUtils = {
       const reader = new FileReader();
 
       reader.onload = () => {
-        const data = new FormData();
-        data.append('file', file);
-
-        fetch(`${API_URL}/api/upload`, {
+        fetch(`${API_URL}/pdb_convert`, {
           method: 'post',
-          body: data,
+          body: file,
         }).then((res) => {
           if (res.status !== 200) {
             return reject(`Received status code ${res.status}`);
           }
-          return res.json();
-        }).then(jsonRes =>
-          resolve(jsonRes)
-        )
-        .catch(reject);
+          return res.text();
+        }).then(path =>
+          resolve(`${window.location.origin}/${path}`)
+        ).catch(reject);
       };
       reader.onerror = reject;
 
