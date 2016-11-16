@@ -9,7 +9,7 @@ let nodesGlobal;
 
 const apiUtils = {
   run(nodeIds) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'offline') {
       return apiUtils.runDev(nodeIds);
     }
 
@@ -67,7 +67,7 @@ const apiUtils = {
   },
 
   getGallery() {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'offline') {
       return apiUtils.getGalleryDev();
     }
 
@@ -143,7 +143,7 @@ const apiUtils = {
         return reject('File must have the .pdb extension.');
       }
 
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV === 'offline') {
         return apiUtils.uploadDev(resolve, reject);
       }
 
