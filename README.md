@@ -2,19 +2,13 @@
 
 Predictive molecular modeling applications based on the [Molecular Design Toolkit](https://github.com/Autodesk/molecular-design-toolkit) framework. (Early development, all features are subject to change)
 
-## Installation
+## Steps to run:
 
-After cloning the repo:
-
+	git clone https://github.com/Autodesk/molecular-design-applications
+	cd molecular-design-applications
 	git submodule update --init --recursive
-
-Then create the mdt image
-
-	cd client/workflow_convert_pdb
-	docker build -t mdtscripts .
-
-Then run:
-
+	docker build -t mdtscripts client/workflow_convert_pdb/mdtscripts
+	docker-compose build
 	docker-compose up
 
 Then open your browser to  [http://localhost:4000](http://localhost:4000)
@@ -22,6 +16,12 @@ Then open your browser to  [http://localhost:4000](http://localhost:4000)
 ## Development
 
 Local server and client and workflow development can be sped up by mounting local directories, see docker-compose.yml for what volume mounts to uncomment and then restatt the docker-compose command.
+
+Testing the convert API method can be done with:
+
+	curl --data-binary "@5e8b.pdb" http://localhost:4000/pdb_convert
+
+(Assuming you have downloaded 5e8b.pdb from the PDB website)
 
 ## Contributing
 This project is developed and maintained by the [Molecular Design Toolkit](https://github.com/autodesk/molecular-design-toolkit) project. Please see that project's [CONTRIBUTING document](https://github.com/autodesk/molecular-design-toolkit/CONTRIBUTING.md) for details.

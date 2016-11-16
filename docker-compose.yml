@@ -14,8 +14,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./tmp:/app/server/tmp
       #Uncomment this if you are doing workflow development
-      #- ./client/workflow_convert_pdb:/app/client/workflow_convert_pdb
+      # - ./client/workflow_convert_pdb:/app/client/workflow_convert_pdb
       #Uncomment this if you are doing client development
       # - ./client/dist:/app/client/dist
       # Uncomment this if you are doing server development
-      #- ./server/lib/workflow-execution-server/build/server:/app/server/build/server
+      # - ./server/lib/workflow-execution-server/build/server:/app/server/build/server
