@@ -1,7 +1,7 @@
 import React from 'react';
 import CircularProgress from 'material-ui/CircularProgress';
 // import MDTSelector from 'mdt-selector';
-import { Nbmolviz3dReact } from 'nbmolviz3d';
+import { Molecule3d } from 'molecule-3d-for-react';
 import WorkflowNodeRecord from '../records/workflow_node_record';
 import viewEmptyImage from '../../img/view_empty.png';
 
@@ -25,7 +25,7 @@ function View(props) {
     );
     */
     view = (
-      <Nbmolviz3dReact modelData={props.workflowNode.modelData} />
+      <Molecule3d modelData={props.workflowNode.modelData} />
     );
   } else {
     view = (

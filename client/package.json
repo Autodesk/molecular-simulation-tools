@@ -9,7 +9,7 @@
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
     "material-ui": "^0.15.4",
-    "nbmolviz3d": "git://github.com/Autodesk/nbmolviz3d.git#75272e8c7edd3489656ffd44fad8e053174f7810",
+    "molecule-3d-for-react": "git://github.com/Autodesk/molecule-3d-for-react.git#75272e8c7edd3489656ffd44fad8e053174f7810",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.5",
