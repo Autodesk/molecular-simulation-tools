@@ -10,7 +10,7 @@ After cloning the repo:
 
 Then create the mdt image
 
-	cd client/workflow_convert_pdb
+	cd client/workflow_convert_pdb/mdtscripts
 	docker build -t mdtscripts .
 
 Then run:
