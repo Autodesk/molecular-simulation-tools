@@ -6,4 +6,7 @@
     "fetch": true,
     "FileReader": true,
   },
+  "rules": {
+    "import/no-unresolved": 1,
+  },
 }
