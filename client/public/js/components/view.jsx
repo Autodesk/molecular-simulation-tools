@@ -1,7 +1,7 @@
 import React from 'react';
 import CircularProgress from 'material-ui/CircularProgress';
 // import MDTSelector from 'mdt-selector';
-import { Nbmolviz3dReact } from 'molecule-3d-for-react';
+import { Nbmolviz3dReact } from 'nbmolviz3d';
 import WorkflowNodeRecord from '../records/workflow_node_record';
 import viewEmptyImage from '../../img/view_empty.png';
 
