@@ -48,7 +48,7 @@
   "scripts": {
     "test": "karma start",
     "build": "webpack -p",
-    "watch": "webpack -p --watch",
+    "watch": "webpack --watch",
     "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors"
   },
   "author": "Autodesk Bio/Nano",
