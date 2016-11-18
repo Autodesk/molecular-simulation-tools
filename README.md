@@ -23,6 +23,9 @@ Testing the convert API method can be done with:
 
 (Assuming you have downloaded 5e8b.pdb from the PDB website)
 
+### Developing frontend assets
+In addition to mounting local directories as mentioned above, you can recompile the frontend assets on change by running `npm run watch` in the client directory.
+
 ## Contributing
 This project is developed and maintained by the [Molecular Design Toolkit](https://github.com/autodesk/molecular-design-toolkit) project. Please see that project's [CONTRIBUTING document](https://github.com/autodesk/molecular-design-toolkit/CONTRIBUTING.md) for details.
 

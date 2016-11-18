@@ -8,6 +8,7 @@ import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import HomeRoot from './containers/home_root.jsx';
 import index from './reducers/index';
+import loggingMiddleware from './middlewares/logging_middleware';
 
 require('file?name=[name].[ext]!../index.html');
 require('../css/normalize.css');
@@ -35,7 +36,7 @@ const muiTheme = getMuiTheme({
   },
 });
 
-const store = createStore(index, applyMiddleware(thunkMiddleware));
+const store = createStore(index, applyMiddleware(thunkMiddleware, loggingMiddleware));
 
 ReactDOM.render(
   <Provider store={store}>

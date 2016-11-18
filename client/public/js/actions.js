@@ -39,6 +39,7 @@ function runEnded(workflowNodes, nodes, status, err) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.RUN_ENDED,
+      workflowNodes,
       workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
       status,
       err,
@@ -78,11 +79,9 @@ export function clickRun(workflowNodes, nodes) {
         const workflowNodeData = workflowNodesData.find(workflowNodeDataI =>
           workflowNodeDataI.id === workflowNode.nodeId
         );
-        const pdbUrl = workflowNodeData.outputs ?
-          workflowNodeData.outputs[0].value : 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb';
         return workflowNode.set('outputs', [{
           name: 'pdb',
-          value: pdbUrl,
+          value: workflowNodeData.outputs[0].value,
         }]);
       });
 
@@ -129,5 +128,25 @@ export function dropWorkflowNodeOnNode(workflowNodeId) {
   return {
     type: actionConstants.DROP_WORKFLOW_NODE_ON_NODE,
     workflowNodeId,
+  };
+}
+
+export function upload(file) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.UPLOAD,
+      file,
+    });
+    apiUtils.upload(file).then(url =>
+      dispatch({
+        type: actionConstants.UPLOAD_COMPLETE,
+        url,
+      })
+    ).catch(err =>
+      dispatch({
+        type: actionConstants.UPLOAD_COMPLETE,
+        err: err ? (err.message || err) : null,
+      })
+    );
   };
 }

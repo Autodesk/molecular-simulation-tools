@@ -8,11 +8,7 @@ const WorkflowNodeRecord = new Record({
   modelData: null,
   fetchingPDB: false,
   fetchingPDBError: null,
-  // TODO this is placeholder data
-  outputs: [{
-    name: 'pdb',
-    value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-  }],
+  outputs: [],
 });
 
 export default WorkflowNodeRecord;

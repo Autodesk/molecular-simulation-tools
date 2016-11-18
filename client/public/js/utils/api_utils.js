@@ -2,17 +2,16 @@ import { Map as IMap } from 'immutable';
 import request from 'superagent';
 import NodeRecord from '../records/node_record';
 
-const WORKFLOW_SERVER = process.env.WORKFLOW_SERVER || 'localhost:8765';
-const WORKFLOW_SERVER_URL_RPC = `http://${WORKFLOW_SERVER}/api/rpc`;
-
+const API_URL = process.env.API_URL || '';
+const JSON_RPC_TYPE = 'application/json-rpc';
 
 let nodesGlobal;
 
 const apiUtils = {
   run(nodeIds) {
-    // if (process.env.NODE_ENV !== 'production') {
-    //   return apiUtils.runDev(nodeIds);
-    // }
+    if (process.env.NODE_ENV === 'offline') {
+      return apiUtils.runDev(nodeIds);
+    }
 
     return new Promise((resolve, reject) => {
       const nodesData = nodesGlobal.valueSeq().filter(node =>
@@ -32,8 +31,8 @@ const apiUtils = {
       });
 
       request
-        .post(WORKFLOW_SERVER_URL_RPC)
-        .type('application/json-rpc')
+        .post(`${API_URL}/api/rpc/`)
+        .type(JSON_RPC_TYPE)
         .send(jsonrpc)
         .end((err, res) => {
           if (err) {
@@ -51,7 +50,12 @@ const apiUtils = {
       setTimeout(() => {
         // 50% chance of failing (for test)
         const err = !!Math.round(Math.random());
-        const res = nodeIds.map(nodeId => ({ id: nodeId }));
+        const res = nodeIds.map(nodeId => ({
+          id: nodeId,
+          outputs: [{
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          }],
+        }));
 
         if (err) {
           return reject(err);
@@ -63,9 +67,9 @@ const apiUtils = {
   },
 
   getGallery() {
-    // if (process.env.NODE_ENV !== 'production') {
-    //   return apiUtils.getGalleryDev();
-    // }
+    if (process.env.NODE_ENV === 'offline') {
+      return apiUtils.getGalleryDev();
+    }
 
     return new Promise((resolve, reject) => {
       const jsonrpc = JSON.stringify({
@@ -74,10 +78,9 @@ const apiUtils = {
         jsonrpc: '2.0',
       });
 
-
       request
-        .post(WORKFLOW_SERVER_URL_RPC)
-        .type('application/json-rpc')
+        .post(`${API_URL}/api/rpc/`)
+        .type(JSON_RPC_TYPE)
         .send(jsonrpc)
         .end((err, res) => {
           if (err) {
@@ -131,6 +134,52 @@ const apiUtils = {
     return fetch(url).then(res =>
       res.json()
     );
+  },
+
+  upload(file) {
+    return new Promise((resolve, reject) => {
+      const extension = file.name.split('.').pop();
+      if (extension !== 'pdb') {
+        return reject('File must have the .pdb extension.');
+      }
+
+      if (process.env.NODE_ENV === 'offline') {
+        return apiUtils.uploadDev(resolve, reject);
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        fetch(`${API_URL}/pdb_convert`, {
+          method: 'post',
+          body: file,
+        }).then((res) => {
+          if (res.status !== 200) {
+            return reject(`Received status code ${res.status}`);
+          }
+          return res.text();
+        }).then(path =>
+          resolve(`${window.location.origin}/${path}`)
+        ).catch(reject);
+      };
+      reader.onerror = reject;
+
+      return reader.readAsBinaryString(file);
+    });
+  },
+
+  uploadDev(resolve, reject) {
+    setTimeout(() => {
+      const err = !!Math.round(Math.random());
+
+      if (err) {
+        return reject('Failed due to swamp gas interference');
+      }
+
+      return resolve({
+        url: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+      });
+    }, 2000);
   },
 };
 

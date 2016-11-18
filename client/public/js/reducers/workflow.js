@@ -14,18 +14,31 @@ function workflow(state = initialState, action) {
           return workflowNode;
         }
 
-        return workflowNode.set('status', statusConstants.RUNNING);
+        return workflowNode.merge({
+          status: statusConstants.RUNNING,
+          outputs: initialState.outputs,
+        });
       }));
 
     case actionConstants.RUN_ENDED:
       return state.set('workflowNodes', state.workflowNodes.map((workflowNode) => {
-        if (!action.workflowNodeIds.contains(workflowNode.id)) {
+        const workflowNodeFromAction = action.workflowNodes.find(
+          workflowNodeI => workflowNodeI.id === workflowNode.id
+        );
+        if (!workflowNodeFromAction) {
           return workflowNode;
+        }
+        if (action.err) {
+          return workflowNode.merge({
+            status: action.status,
+            fetchingPDB: false,
+          });
         }
 
         return workflowNode.merge({
           status: action.status,
-          fetchingPDB: !action.err,
+          fetchingPDB: true,
+          outputs: workflowNodeFromAction.outputs,
         });
       }));
 
@@ -87,6 +100,19 @@ function workflow(state = initialState, action) {
       );
       return state.set('workflowNodes', state.workflowNodes.delete(workflowNodeIndex));
     }
+
+    case actionConstants.UPLOAD:
+      return state.merge({
+        uploadError: '',
+        uploadPending: true,
+      });
+
+    case actionConstants.UPLOAD_COMPLETE:
+      return state.merge({
+        uploadPending: false,
+        uploadError: action.err,
+        uploadUrl: action.url,
+      });
 
     default:
       return state;

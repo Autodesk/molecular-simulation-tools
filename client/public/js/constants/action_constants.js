@@ -12,6 +12,8 @@ const actionConstants = keyMirror({
   GET_PDB: null,
   INITIALIZE: null,
   RUN_ENDED: null,
+  UPLOAD: null,
+  UPLOAD_COMPLETE: null,
 });
 
 export default actionConstants;

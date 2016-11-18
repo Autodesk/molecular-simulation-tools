@@ -13,7 +13,7 @@ module.exports = {
   },
   devServer: {
     port: '4000',
-    hot: true
+    hot: true,
   },
   module: {
     loaders: [
@@ -40,6 +40,7 @@ module.exports = {
   plugins: [
     new webpack.EnvironmentPlugin([
       'NODE_ENV',
+      'API_URL',
     ]),
   ],
 };

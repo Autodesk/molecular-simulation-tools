@@ -7,6 +7,7 @@ import {
   dragStart,
   dropNodeOnWorkflowNode,
   dropNodeOnWorkflowTitle,
+  upload,
 } from '../actions';
 import selectionConstants from '../constants/selection_constants';
 
@@ -15,6 +16,9 @@ function mapStateToProps(state) {
     draggedId: state.drag.draggedId,
     draggedNodeType: state.drag.draggedNodeType,
     nodes: state.nodes,
+    uploadPending: state.workflow.uploadPending,
+    uploadError: state.workflow.uploadError,
+    uploadUrl: state.workflow.uploadUrl,
   };
 }
 
@@ -46,6 +50,9 @@ function mapDispatchToProps(dispatch) {
     onDragStart(workflowNodeId) {
       dispatch(dragStart(workflowNodeId, selectionConstants.WORKFLOW_NODE));
     },
+    onUpload(file) {
+      dispatch(upload(file));
+    },
   };
 }
 
@@ -62,6 +69,9 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     onDropWorkflowTitle: dispatchProps.onDropWorkflowTitle(
       stateProps.draggedId, stateProps.draggedNodeType
     ),
+    uploadPending: stateProps.uploadPending,
+    uploadError: stateProps.uploadError,
+    uploadUrl: stateProps.uploadUrl,
   });
 }
 
