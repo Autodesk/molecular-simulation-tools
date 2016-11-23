@@ -27,12 +27,7 @@ describe('pdbToJson', () => {
       });
 
       it('throws an error', () => {
-        const parsedLine = pdbToJson.parseLine(line);
-
-        console.log('do it');
-        expect(() => {
-          pdbToJson.parseLine(line);
-        }).to.throw(Error);
+        expect(pdbToJson.parseLine.bind(null, line)).to.throw(Error);
       });
     });
   });

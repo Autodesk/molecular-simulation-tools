@@ -4,7 +4,7 @@ const pdbToJson = {
   },
 
   parseLine(line) {
-    //const firstWordRX = /[A-Z0-9]* /;
+    // const firstWordRX = /[A-Z0-9]* /;
     const atomRX = /ATOM /;
 
     if (atomRX.test(line)) {

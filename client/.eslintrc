@@ -7,6 +7,7 @@
     "FileReader": true,
     "it": true,
     "describe": true,
+    "beforeEach": true,
   },
   "rules": {
     "import/no-unresolved": 1,
