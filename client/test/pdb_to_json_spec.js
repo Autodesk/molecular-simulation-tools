@@ -14,10 +14,17 @@ describe('pdbToJson', () => {
         line = 'ATOM      1  N   PRO A   1      -2.555   9.253  34.411  1.00 30.60           N ';
       });
 
-      it('returns an atom object', () => {
+      it('returns an object with all needed info parsed out', () => {
         const parsedLine = pdbToJson.parseLine(line);
 
         expect(typeof parsedLine).to.equal('object');
+        expect(parsedLine.serial).to.equal(1);
+        expect(parsedLine.name).to.equal('N');
+        expect(parsedLine.elem).to.equal('N');
+        expect(parsedLine.positions[0]).to.equal(-2.555);
+        expect(parsedLine.positions[1]).to.equal(9.253);
+        expect(parsedLine.positions[2]).to.equal(34.411);
+        expect(parsedLine.residueIndex).to.equal(1);
       });
     });
 
