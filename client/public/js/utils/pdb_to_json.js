@@ -1,3 +1,4 @@
+import { Map as IMap } from 'immutable';
 import pdbTypeConstants from '../constants/pdb_type_constants';
 
 const pdbToJson = {
@@ -7,29 +8,46 @@ const pdbToJson = {
    * @returns {Object}
    */
   convert(pdb) {
-    const atoms = [];
+    const atoms = new Map();
+    let residueNamesInCurrentChain = new Set();
     let bonds = [];
+    const residues = new Map();
+    const chains = [];
     const pdbArray = pdb.split('\n');
 
     for (const line of pdbArray) {
       const type = pdbToJson.getType(line);
 
       if (type === pdbTypeConstants.ATOM) {
-        atoms.push(pdbToJson.parseAtom(line));
+        const atom = pdbToJson.parseAtom(line);
+        atoms.set(atom.serial, atom);
+        residueNamesInCurrentChain.add(atom.residue_name);
+
+        if (!residues.get(atom.residue_name)) {
+          residues.set(atom.residue_name, {
+            chain_index: null,
+            name: atom.residue_name,
+            sequence_number: atom.residue_index,
+          });
+        }
       } else if (type === pdbTypeConstants.BOND) {
         bonds = bonds.concat(pdbToJson.parseBond(line));
-      } else if (type === pdbTypeConstants.RESIDUE) {
       } else if (type === pdbTypeConstants.CHAIN) {
+        const chain = pdbToJson.parseChain(line);
+        chain.index = chains.length;
+        for (const residueName of residueNamesInCurrentChain) {
+          residues.get(residueName).chain_index = chain.index;
+        }
+        residueNamesInCurrentChain = new Set();
+        chains.push(chain);
       }
     }
 
     return {
-      atoms,
+      atoms: Array.from(atoms.values()),
       bonds,
-      /*
+      residues: Array.from(residues.values()),
       chains,
-      residues,
-      */
     };
   },
 
@@ -66,6 +84,7 @@ const pdbToJson = {
     const serial = parseInt(line.substr(7, 4), 10);
     const name = line.substr(13, 3).trim();
     const residueIndex = parseInt(line.substr(23, 3), 10);
+    const residueName = line.substr(18, 2).trim();
     const positions = [
       parseFloat(line.substr(31, 7)),
       parseFloat(line.substr(39, 7)),
@@ -78,7 +97,8 @@ const pdbToJson = {
       name,
       // momenta: [ 0, 0, 0 ],
       positions,
-      residueIndex,
+      residue_index: residueIndex,
+      residue_name: residueName,
       serial,
     };
   },
@@ -109,21 +129,19 @@ const pdbToJson = {
     }));
   },
 
-  /*
-  "chains": [
-      {
-          "description": "",
-          "name": " "
-      }
-  ],
-  "residues": [
-      {
-          "chain_index": 0,
-          "name": "LIG1",
-          "sequence_number": 1
-      }
-  ]
+  /**
+   * Given a line of a PDB file representing a chain, return parsed json
+   * @param line {String}
+   * @returns {String}
    */
+  parseChain(line) {
+    const name = line.substr(17, 3).trim();
+
+    return {
+      name,
+      description: '',
+    };
+  },
 };
 
 export default pdbToJson;
