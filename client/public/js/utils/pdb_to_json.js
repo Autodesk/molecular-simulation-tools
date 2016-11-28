@@ -8,7 +8,7 @@ const pdbToJson = {
    */
   convert(pdb) {
     const atoms = [];
-    const bonds = [];
+    let bonds = [];
     const pdbArray = pdb.split('\n');
 
     for (const line of pdbArray) {
@@ -17,11 +17,10 @@ const pdbToJson = {
       if (type === pdbTypeConstants.ATOM) {
         atoms.push(pdbToJson.parseAtom(line));
       } else if (type === pdbTypeConstants.BOND) {
-        bonds.push(pdbToJson.parseBond(line));
+        bonds = bonds.concat(pdbToJson.parseBond(line));
       } else if (type === pdbTypeConstants.RESIDUE) {
       } else if (type === pdbTypeConstants.CHAIN) {
       }
-      pdbToJson.parseLine(line);
     }
 
     return {
@@ -36,6 +35,7 @@ const pdbToJson = {
 
   /**
    * @param line {String}
+   * @returns {String}
    */
   getType(line) {
     // const firstWordRX = /[A-Z0-9]* /;
@@ -54,7 +54,7 @@ const pdbToJson = {
       return pdbTypeConstants.CHAIN;
     }
 
-    throw new Error(`Invalid line in PDB: ${line}`);
+    return pdbTypeConstants.IGNORED;
   },
 
   /**
@@ -85,18 +85,28 @@ const pdbToJson = {
 
   /**
    * Given a line of a PDB file representing a bond, return parsed json
+   * One CONECT line in a pdb can represent multiple bonds, so returns an array
    * @param line {String}
-   * @returns {Object}
+   * @returns {Array}
    */
   parseBond(line) {
     const atomOneSerial = parseInt(line.substr(7, 4), 10);
-    const atomTwoSerial = parseInt(line.substr(12, 4), 10);
+    const otherSerials = [];
 
-    return {
+    let serialString = line.substr(12, 4);
+    let i = 0;
+
+    do {
+      otherSerials.push(parseInt(serialString, 10));
+
+      i += 1;
+      serialString = line.substr(12 + (5 * i), 4);
+    } while (serialString !== '    ');
+
+    return otherSerials.map(atomTwoSerial => ({
       atom1_index: atomOneSerial,
       atom2_index: atomTwoSerial,
-      // "bond_order": 1
-    };
+    }));
   },
 
   /*

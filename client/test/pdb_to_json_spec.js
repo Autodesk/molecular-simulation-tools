@@ -5,10 +5,15 @@ import pdbTypeConstants from '../public/js/constants/pdb_type_constants';
 import pdb from './3AID';
 
 describe('pdbToJson', () => {
-  beforeEach(() => {
-    const parseAtomSpy = sinon.spy(pdbToJson, 'parseAtom');
-    const parseBondSpy = sinon.spy(pdbToJson, 'parseBond');
+  let parseAtomSpy;
+  let parseBondSpy;
 
+  beforeEach(() => {
+    parseAtomSpy = sinon.spy(pdbToJson, 'parseAtom');
+    parseBondSpy = sinon.spy(pdbToJson, 'parseBond');
+  });
+
+  afterEach(() => {
     parseAtomSpy.restore();
     parseBondSpy.restore();
   });
@@ -16,9 +21,14 @@ describe('pdbToJson', () => {
   describe('convert', () => {
     it('calls the corresponding parse function for each type', () => {
       pdbToJson.convert(pdb);
-      expect(pdbToJson.parseAtom.calCount).to.equal(2000);
+      expect(parseAtomSpy.callCount).to.equal(1913);
+      expect(parseBondSpy.callCount).to.equal(42);
+    });
 
-      expect(pdbToJson.parseBond.callCount).to.equal(1000);
+    it('returns the correct number of atoms and bonds', () => {
+      const pdbJson = pdbToJson.convert(pdb);
+      expect(pdbJson.atoms.length).to.equal(1913);
+      expect(pdbJson.bonds.length).to.equal(88);
     });
   });
 
@@ -45,13 +55,13 @@ describe('pdbToJson', () => {
       });
     });
 
-    describe('when given an invalid line', () => {
+    describe('when given an unsupported line', () => {
       beforeEach(() => {
         line = 'IM A PDB LINE OR SOMETHING';
       });
 
-      it('throws an error', () => {
-        expect(pdbToJson.getType.bind(null, line)).to.throw(Error);
+      it('returns ignored type', () => {
+        expect(pdbToJson.getType(line)).to.equal(pdbTypeConstants.IGNORED);
       });
     });
   });
@@ -81,16 +91,37 @@ describe('pdbToJson', () => {
   describe('parseBond', () => {
     let line;
 
-    describe('when given a valid bond line', () => {
+    describe('when given a valid bond line with 2 atom serials', () => {
       beforeEach(() => {
         line = 'CONECT 1886 1856                                                                ';
       });
 
-      it('returns an object with all needed info parsed out', () => {
-        const parsedLine = pdbToJson.parseBond(line);
+      it('returns an array with a single corresponding bond object', () => {
+        const bonds = pdbToJson.parseBond(line);
 
-        expect(parsedLine.atom1_index).to.equal(1886);
-        expect(parsedLine.atom2_index).to.equal(1856);
+        expect(bonds.length).to.equal(1);
+        expect(bonds[0].atom1_index).to.equal(1886);
+        expect(bonds[0].atom2_index).to.equal(1856);
+      });
+    });
+
+    describe('when given a valid bond line with multiple atom serials', () => {
+      beforeEach(() => {
+        line = 'CONECT 1849 1850 1851 1852 1853                                                 ';
+      });
+
+      it('returns an array of bonds for each pairing with the first', () => {
+        const bonds = pdbToJson.parseBond(line);
+
+        expect(bonds.length).to.equal(4);
+        expect(bonds[0].atom1_index).to.equal(1849);
+        expect(bonds[0].atom2_index).to.equal(1850);
+        expect(bonds[1].atom1_index).to.equal(1849);
+        expect(bonds[1].atom2_index).to.equal(1851);
+        expect(bonds[2].atom1_index).to.equal(1849);
+        expect(bonds[2].atom2_index).to.equal(1852);
+        expect(bonds[3].atom1_index).to.equal(1849);
+        expect(bonds[3].atom2_index).to.equal(1853);
       });
     });
   });

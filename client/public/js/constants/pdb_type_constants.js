@@ -5,6 +5,7 @@ const pdbTypeConstants = keyMirror({
   BOND: null,
   RESIDUE: null,
   CHAIN: null,
+  IGNORED: null,
 });
 
 export default pdbTypeConstants;
