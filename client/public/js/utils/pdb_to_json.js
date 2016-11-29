@@ -1,4 +1,3 @@
-import { Map as IMap } from 'immutable';
 import pdbTypeConstants from '../constants/pdb_type_constants';
 
 const pdbToJson = {
@@ -57,7 +56,7 @@ const pdbToJson = {
    */
   getType(line) {
     // const firstWordRX = /[A-Z0-9]* /;
-    const atomRX = /^(ATOM)|(HETATM)/;
+    const atomRX = /^(ATOM)/; // |(HETATM)/;
     const bondRX = /^CONECT/;
     const residueRX = /^RESIDUE/;
     const chainRX = /^TER/;
@@ -84,7 +83,7 @@ const pdbToJson = {
     const serial = parseInt(line.substr(7, 4), 10);
     const name = line.substr(13, 3).trim();
     const residueIndex = parseInt(line.substr(23, 3), 10);
-    const residueName = line.substr(18, 2).trim();
+    const residueName = line.substr(17, 5).trim();
     const positions = [
       parseFloat(line.substr(31, 7)),
       parseFloat(line.substr(39, 7)),

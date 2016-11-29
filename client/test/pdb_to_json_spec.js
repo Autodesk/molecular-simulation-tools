@@ -21,15 +21,15 @@ describe('pdbToJson', () => {
   describe('convert', () => {
     it('calls the corresponding parse function for each type', () => {
       pdbToJson.convert(pdb);
-      expect(parseAtomSpy.callCount).to.equal(1913);
+      expect(parseAtomSpy.callCount).to.equal(1846);
       expect(parseBondSpy.callCount).to.equal(42);
     });
 
     it('returns the correct number of atoms and bonds and residues', () => {
       const pdbJson = pdbToJson.convert(pdb);
-      expect(pdbJson.atoms.length).to.equal(1912);
+      expect(pdbJson.atoms.length).to.equal(1846);
       expect(pdbJson.bonds.length).to.equal(88);
-      expect(pdbJson.residues.length).to.equal(21);
+      expect(pdbJson.residues.length).to.equal(38);
       expect(pdbJson.chains.length).to.equal(2);
     });
 
@@ -37,7 +37,6 @@ describe('pdbToJson', () => {
       const pdbJson = pdbToJson.convert(pdb);
       const firstResidue = pdbJson.residues[0];
       const lastResidue = pdbJson.residues[pdbJson.residues.length - 1];
-      console.log('omg res', lastResidue);
 
       expect(firstResidue.chain_index).to.equal(0);
       expect(lastResidue.chain_index).to.equal(1);
@@ -89,6 +88,7 @@ describe('pdbToJson', () => {
       it('returns an object with all needed info parsed out', () => {
         const parsedLine = pdbToJson.parseAtom(line);
 
+        expect(Object.keys(parsedLine).length).to.equal(6);
         expect(parsedLine.serial).to.equal(1);
         expect(parsedLine.name).to.equal('N');
         expect(parsedLine.elem).to.equal('N');
@@ -96,6 +96,7 @@ describe('pdbToJson', () => {
         expect(parsedLine.positions[1]).to.equal(9.253);
         expect(parsedLine.positions[2]).to.equal(34.411);
         expect(parsedLine.residue_index).to.equal(1);
+        expect(parsedLine.residue_name).to.equal('PRO A');
       });
     });
   });
