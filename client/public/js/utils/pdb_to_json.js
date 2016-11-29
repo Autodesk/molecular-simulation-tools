@@ -56,7 +56,7 @@ const pdbToJson = {
    */
   getType(line) {
     // const firstWordRX = /[A-Z0-9]* /;
-    const atomRX = /^(ATOM)/; // |(HETATM)/;
+    const atomRX = /^(ATOM)|(HETATM)/;
     const bondRX = /^CONECT/;
     const residueRX = /^RESIDUE/;
     const chainRX = /^TER/;
@@ -81,7 +81,7 @@ const pdbToJson = {
    */
   parseAtom(line) {
     const serial = parseInt(line.substr(7, 4), 10);
-    const name = line.substr(13, 3).trim();
+    const name = line.substr(13, 3).trim().toLowerCase();
     const residueIndex = parseInt(line.substr(23, 3), 10);
     const residueName = line.substr(17, 5).trim();
     const positions = [
@@ -125,6 +125,7 @@ const pdbToJson = {
     return otherSerials.map(atomTwoSerial => ({
       atom1_index: atomOneSerial,
       atom2_index: atomTwoSerial,
+      // bond_order: 1,
     }));
   },
 
