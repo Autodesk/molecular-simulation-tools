@@ -42,8 +42,11 @@ const pdbToJson = {
       }
     }
 
+    const atomsArray = Array.from(atoms.values());
+    bonds = bonds.concat(pdbToJson.calculateBonds(atomsArray));
+
     return {
-      atoms: Array.from(atoms.values()),
+      atoms: atomsArray,
       bonds,
       residues: Array.from(residues.values()),
       chains,
@@ -80,7 +83,7 @@ const pdbToJson = {
    * @returns {Object}
    */
   parseAtom(line) {
-    const serial = parseInt(line.substr(7, 4), 10);
+    const serial = parseInt(line.substr(7, 4), 10) - 1;
     const name = line.substr(13, 3).trim().toLowerCase();
     const residueIndex = parseInt(line.substr(23, 3), 10);
     const residueName = line.substr(17, 5).trim();
@@ -123,8 +126,8 @@ const pdbToJson = {
     } while (serialString !== '    ');
 
     return otherSerials.map(atomTwoSerial => ({
-      atom1_index: atomOneSerial,
-      atom2_index: atomTwoSerial,
+      atom1_index: atomOneSerial - 1,
+      atom2_index: atomTwoSerial - 1,
       // bond_order: 1,
     }));
   },
@@ -141,6 +144,63 @@ const pdbToJson = {
       name,
       description: '',
     };
+  },
+
+  /**
+   * PDB files don't have full bond information, so we calculate the bonds as
+   * being between nearest neighbors
+   * O(n^2)
+   * @param atoms {Array}
+   * @return {Array}
+   */
+  calculateBonds(atoms) {
+    const bonds = new Map();
+
+    for (let i = 0; i < atoms.length; i += 1) {
+      const atomOne = atoms[i];
+
+      if (!bonds.has(atomOne.serial)) {
+        let nearest = null;
+        for (let j = i + 1; j < atoms.length; j += 1) {
+          const atomTwo = atoms[j];
+
+          if (!nearest || pdbToJson.getDistance(atomOne, atomTwo) < nearest) {
+            nearest = atomTwo;
+          }
+        }
+
+        bonds.set(nearest.serial, {
+          atom1_index: atomOne.serial,
+          atom2_index: nearest.serial,
+          // bond_order: 1,
+        });
+      }
+    }
+
+    return Array.from(bonds.values());
+  },
+
+  /**
+   * Returns the distance between the two atoms
+   * @param atomOne {Object}
+   * @param atomTwo {Object}
+   * @returns {Number}
+   */
+  getDistance(atomOne, atomTwo) {
+    if (typeof atomOne.positions[0] !== 'number' ||
+        typeof atomOne.positions[1] !== 'number' ||
+        typeof atomOne.positions[2] !== 'number' ||
+        typeof atomTwo.positions[0] !== 'number' ||
+        typeof atomTwo.positions[1] !== 'number' ||
+        typeof atomTwo.positions[2] !== 'number') {
+      throw new Error('Invalid atom position');
+    }
+
+    return Math.sqrt(
+      Math.pow(atomOne.positions[0] - atomTwo.positions[0], 2) +
+      Math.pow(atomOne.positions[1] - atomTwo.positions[1], 2) +
+      Math.pow(atomOne.positions[2] - atomTwo.positions[2], 2)
+    );
   },
 };
 

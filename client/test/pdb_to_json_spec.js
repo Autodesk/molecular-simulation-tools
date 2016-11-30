@@ -150,4 +150,40 @@ describe('pdbToJson', () => {
       });
     });
   });
+
+  describe('getDistance', () => {
+    describe('when given two atoms with valid positions', () => {
+      const atomOne = { positions: [0, 0, 0] };
+      const atomTwo = { positions: [1, 1, 1] };
+
+      it('returns the correct distance', () => {
+        expect(pdbToJson.getDistance(atomOne, atomTwo)).to.equal(Math.sqrt(3));
+      });
+    });
+
+    describe('when given an atom with an invalid position', () => {
+      const atomOne = { positions: [0, 0, null] };
+      const atomTwo = { positions: [1, 1, 1] };
+
+      it('throws an error', () => {
+        expect(pdbToJson.getDistance.bind(null, atomOne, atomTwo))
+          .to.throw(Error);
+      });
+    });
+  });
+
+  describe('calculateBonds', () => {
+    describe('when given valid atoms', () => {
+      let atoms;
+
+      beforeEach(() => {
+        atoms = pdbToJson.convert(pdb).atoms;
+      });
+
+      it('returns bonds for each nearest neighbor pair', () => {
+        const bonds = pdbToJson.calculateBonds(atoms);
+        expect(bonds.length).to.equal(Math.ceil(atoms.length / 2));
+      });
+    });
+  });
 });
