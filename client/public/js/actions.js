@@ -3,6 +3,7 @@ import apiUtils from './utils/api_utils';
 import selectionConstants from './constants/selection_constants';
 import statusConstants from './constants/status_constants';
 
+// TODO now unnecessary?
 export function initialize() {
   return (dispatch) => {
     apiUtils.getGallery().then(nodes =>
@@ -11,6 +12,26 @@ export function initialize() {
         nodes,
       })
     ).catch(console.error.bind(console));
+  };
+}
+
+export function initializeWorkflow(workflowId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.INITIALIZE_WORKFLOW,
+    });
+
+    apiUtils.getWorkflow(workflowId).then(workflow =>
+      dispatch({
+        type: actionConstants.FETCHED_WORKFLOW,
+        workflow,
+      })
+    ).catch(error =>
+      dispatch({
+        type: actionConstants.FETCHED_WORKFLOW,
+        error,
+      })
+    );
   };
 }
 
@@ -35,7 +56,7 @@ export function clickWorkflow(workflowId) {
   };
 }
 
-function runEnded(workflowNodes, nodes, status, err) {
+function runEnded(workflowNodes, status, err) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.RUN_ENDED,
@@ -65,7 +86,7 @@ function runEnded(workflowNodes, nodes, status, err) {
   };
 }
 
-export function clickRun(workflowNodes, nodes) {
+export function clickRun(workflowNodes) {
   return (dispatch) => {
     const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
 
@@ -85,10 +106,10 @@ export function clickRun(workflowNodes, nodes) {
         }]);
       });
 
-      runEnded(workflowNodesRan, nodes, statusConstants.COMPLETED)(dispatch);
+      runEnded(workflowNodesRan, statusConstants.COMPLETED)(dispatch);
     }).catch((err) => {
       console.error(err);
-      runEnded(workflowNodes, nodes, statusConstants.ERROR, err)(dispatch);
+      runEnded(workflowNodes, statusConstants.ERROR, err)(dispatch);
     });
   };
 }

@@ -18,6 +18,10 @@ class Workflow extends React.Component {
     this.onUpload = this.onUpload.bind(this);
   }
 
+  componentDidMount() {
+    this.props.initializeWorkflow(this.props.workflowId);
+  }
+
   onUpload(e) {
     this.props.onUpload(e.target.files[0]);
   }
@@ -27,12 +31,12 @@ class Workflow extends React.Component {
     const hasWorkflowNodes = this.props.workflow.workflowNodes.size;
 
     let uploadElement;
-    if (this.props.uploadUrl) {
+    if (this.props.workflow.uploadUrl) {
       uploadElement = (
         <div>
           <p>
             Uploaded:
-            <a href={this.props.uploadUrl}>{this.props.uploadUrl}</a>
+            <a href={this.props.workflow.uploadUrl}>{this.props.workflow.uploadUrl}</a>
           </p>
         </div>
       );
@@ -43,16 +47,16 @@ class Workflow extends React.Component {
             style={{ margin: '0 auto' }}
             containerElement="label"
             label="Upload PDB"
-            disabled={this.props.uploadPending}
+            disabled={this.props.workflow.uploadPending}
           >
             <input
               type="file"
               onChange={this.onUpload}
-              disabled={this.props.uploadPending}
+              disabled={this.props.workflow.uploadPending}
             />
           </FlatButton>
           <div className="error">
-            {this.props.uploadError}
+            {this.props.workflow.uploadError}
           </div>
         </div>
       );
@@ -78,7 +82,7 @@ class Workflow extends React.Component {
                 (workflowNode, index) => {
                   const workflowNodeSelected =
                     this.props.selection.type === selectionConstants.WORKFLOW_NODE;
-                  const node = this.props.nodes.find(nodeI => nodeI.id === workflowNode.nodeId);
+                  const node = workflowNode.node;
                   return (
                     <Node
                       key={index}
@@ -112,17 +116,15 @@ Workflow.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflow: React.PropTypes.func.isRequired,
+  initializeWorkflow: React.PropTypes.func.isRequired,
   onDropNode: React.PropTypes.func.isRequired,
   onDropWorkflowTitle: React.PropTypes.func.isRequired,
   onDragStart: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  workflowId: React.PropTypes.string.isRequired,
   workflowStatus: React.PropTypes.string,
-  nodes: React.PropTypes.instanceOf(IList),
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  uploadPending: React.PropTypes.bool.isRequired,
-  uploadError: React.PropTypes.string,
-  uploadUrl: React.PropTypes.string,
 };
 
 export default Workflow;

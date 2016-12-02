@@ -1,12 +1,14 @@
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Provider } from 'react-redux';
+import { Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import HomeRoot from './containers/home_root.jsx';
+import HomeRoot from './containers/home_root';
+import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
@@ -38,11 +40,16 @@ const muiTheme = getMuiTheme({
 
 const store = createStore(index, applyMiddleware(thunkMiddleware, loggingMiddleware));
 
-ReactDOM.render(
+render((
   <Provider store={store}>
     <MuiThemeProvider muiTheme={muiTheme}>
-      <HomeRoot />
+      <Router history={browserHistory}>
+        <Route path="/" component={HomeRoot}>
+          <Route path="workflow/:workflowId" component={WorkflowRoot} />
+        </Route>
+      </Router>
     </MuiThemeProvider>
-  </Provider>,
+  </Provider>
+),
   document.querySelector('.app')
 );

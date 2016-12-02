@@ -1,6 +1,8 @@
-import { Map as IMap } from 'immutable';
+import { Map as IMap, List as IList } from 'immutable';
 import request from 'superagent';
 import NodeRecord from '../records/node_record';
+import WorkflowNodeRecord from '../records/workflow_node_record';
+import WorkflowRecord from '../records/workflow_record';
 
 const API_URL = process.env.API_URL || '';
 const JSON_RPC_TYPE = 'application/json-rpc';
@@ -173,13 +175,49 @@ const apiUtils = {
       const err = !!Math.round(Math.random());
 
       if (err) {
-        return reject('Failed due to swamp gas interference');
+        return reject('Failed due to swamp gas interference.');
       }
 
       return resolve({
         url: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
       });
     }, 2000);
+  },
+
+  getWorkflow(workflowId) {
+    // TODO fake api endpoint for now
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const err = !!Math.round(Math.random());
+
+        if (err) {
+          return reject('Fail');
+        }
+
+        const workflowNodes = new IList([
+          new WorkflowNodeRecord({
+            id: 0,
+            node: new NodeRecord({
+              id: 0,
+              title: 'Load PDB',
+            }),
+          }),
+          new WorkflowNodeRecord({
+            id: 1,
+            node: new NodeRecord({
+              id: 1,
+              title: 'Add Hydrogens',
+            }),
+          }),
+        ]);
+
+        return resolve(new WorkflowRecord({
+          id: workflowId,
+          title: 'Refine ligand and active site in molecules',
+          workflowNodes,
+        }));
+      });
+    });
   },
 };
 

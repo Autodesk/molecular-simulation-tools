@@ -3,7 +3,7 @@ import statusConstants from '../constants/status_constants';
 
 const WorkflowNodeRecord = new Record({
   id: null,
-  nodeId: null,
+  node: null,
   status: statusConstants.IDLE,
   modelData: null,
   fetchingPDB: false,

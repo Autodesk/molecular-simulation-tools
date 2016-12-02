@@ -1,14 +1,5 @@
 import React from 'react';
-import { Tabs, Tab } from 'material-ui/Tabs';
-import { Map as IMap } from 'immutable';
-import ActiveWorkflow from '../containers/active_workflow.js';
-import Gallery from './gallery.jsx';
-import SelectionRecord from '../records/selection_record';
-import Status from './status.jsx';
-import View from './view.jsx';
-import WorkflowRecord from '../records/workflow_record';
-import componentUtils from '../utils/component_utils.jsx';
-import selectionConstants from '../constants/selection_constants';
+import AppBar from 'material-ui/AppBar';
 import logoImage from '../../img/logo.png';
 
 require('../../css/home.scss');
@@ -19,6 +10,19 @@ class Home extends React.Component {
   }
 
   render() {
+    return (
+      <div className="home">
+        <AppBar
+          title="Refine ligand and active site in molecules"
+          iconElementLeft={<img src={logoImage} alt="logo" className="logo" />}
+        />
+        <div>
+          {this.props.children}
+        </div>
+      </div>
+    );
+
+      /*
     const workflowNodes = this.props.workflow.workflowNodes.map(workflowNode =>
       this.props.nodes.get(workflowNode.nodeId)
     );
@@ -39,7 +43,7 @@ class Home extends React.Component {
     }
 
     return (
-      <div className="home columns is-gapless">
+      <div className="home">
         <div className="column">
           <div className="columns is-gapless">
             <div className="column pane">
@@ -81,18 +85,13 @@ class Home extends React.Component {
           </Tabs>
         </div>
       </div>
-    );
+      */
   }
 }
 
 Home.propTypes = {
-  clickNode: React.PropTypes.func.isRequired,
+  children: React.PropTypes.element.isRequired,
   initialize: React.PropTypes.func.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap).isRequired,
-  onDragNodeStart: React.PropTypes.func.isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
-  selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  onDropGalleryNode: React.PropTypes.func.isRequired,
 };
 
 export default Home;

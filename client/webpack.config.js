@@ -14,6 +14,10 @@ module.exports = {
   devServer: {
     port: '4000',
     hot: true,
+    historyApiFallback: true,
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
   },
   module: {
     loaders: [

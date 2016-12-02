@@ -80,7 +80,7 @@ Node.propTypes = {
   onDrop: React.PropTypes.func,
   onDragStart: React.PropTypes.func,
   selected: React.PropTypes.bool,
-  workflowNodeId: React.PropTypes.string,
+  workflowNodeId: React.PropTypes.number,
 };
 
 export default Node;

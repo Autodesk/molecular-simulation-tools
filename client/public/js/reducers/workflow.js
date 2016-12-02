@@ -8,6 +8,21 @@ const initialState = new WorkflowRecord();
 
 function workflow(state = initialState, action) {
   switch (action.type) {
+    case actionConstants.INITIALIZE_WORKFLOW:
+      return state.merge({
+        fetching: true,
+        fetchingError: false,
+      });
+
+    case actionConstants.FETCHED_WORKFLOW:
+      if (action.error) {
+        return state.merge({
+          fetching: false,
+          fetchingError: action.error,
+        });
+      }
+      return action.workflow;
+
     case actionConstants.CLICK_RUN:
       return state.set('workflowNodes', state.workflowNodes.map((workflowNode) => {
         if (!action.workflowNodeIds.contains(workflowNode.id)) {
