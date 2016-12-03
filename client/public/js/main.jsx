@@ -8,6 +8,7 @@ import { Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import HomeRoot from './containers/home_root';
+import NotFound from './components/not_found';
 import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
@@ -46,7 +47,9 @@ render((
       <Router history={browserHistory}>
         <Route path="/" component={HomeRoot}>
           <Route path="workflow/:workflowId" component={WorkflowRoot} />
+          <Route path="*" component={NotFound} />
         </Route>
+        <Route path="*" component={NotFound} />
       </Router>
     </MuiThemeProvider>
   </Provider>
