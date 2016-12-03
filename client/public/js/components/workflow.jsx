@@ -63,11 +63,8 @@ class Workflow extends React.Component {
     }
 
     return (
-      <div className="workflow">
-        <div className="header">
-          Workflow
-        </div>
-        <div className="pane-container">
+      <div className="workflow pane-container">
+        <div className="workflow-steps">
           <WorkflowTitle
             workflow={this.props.workflow}
             selection={this.props.selection}
@@ -99,6 +96,12 @@ class Workflow extends React.Component {
               )
             }
           </List>
+        </div>
+        <div className="actions">
+          <FlatButton
+            style={{ margin: '0 auto', display: 'block' }}
+            label="About"
+          />
           <button
             className="button is-primary is-medium run"
             onClick={this.props.clickRun}

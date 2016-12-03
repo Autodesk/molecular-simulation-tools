@@ -16,9 +16,7 @@ class Home extends React.Component {
           title="Refine ligand and active site in molecules"
           iconElementLeft={<img src={logoImage} alt="logo" className="logo" />}
         />
-        <div>
-          {this.props.children}
-        </div>
+        {this.props.children}
       </div>
     );
 
