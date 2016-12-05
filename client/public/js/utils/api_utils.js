@@ -216,7 +216,7 @@ const apiUtils = {
           title: 'Refine ligand and active site in molecules',
           workflowNodes,
         }));
-      });
+      }, 1000);
     });
   },
 };
