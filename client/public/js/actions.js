@@ -1,6 +1,5 @@
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
-import selectionConstants from './constants/selection_constants';
 import statusConstants from './constants/status_constants';
 
 // TODO now unnecessary?
@@ -111,44 +110,6 @@ export function clickRun(workflowNodes) {
       console.error(err);
       runEnded(workflowNodes, statusConstants.ERROR, err)(dispatch);
     });
-  };
-}
-
-export function dragStart(id, nodeType) {
-  return {
-    type: actionConstants.DRAG_START,
-    nodeType,
-    id,
-  };
-}
-
-export function dropNodeOnWorkflowTitle(draggedId, draggedNodeType) {
-  return {
-    type: actionConstants.DROP_NODE,
-    draggedId,
-    workflowNodeIndex: -1,
-    move: draggedNodeType === selectionConstants.WORKFLOW_NODE,
-  };
-}
-
-export function dropNodeOnWorkflowNode(
-  draggedId, draggedNodeType, droppedWorkflowNodeId, workflowNodes
-) {
-  const workflowNodeIndex = workflowNodes.findIndex(workflowNode =>
-    workflowNode.id === droppedWorkflowNodeId
-  );
-  return {
-    type: actionConstants.DROP_NODE,
-    draggedId,
-    workflowNodeIndex,
-    move: draggedNodeType === selectionConstants.WORKFLOW_NODE,
-  };
-}
-
-export function dropWorkflowNodeOnNode(workflowNodeId) {
-  return {
-    type: actionConstants.DROP_WORKFLOW_NODE_ON_NODE,
-    workflowNodeId,
   };
 }
 

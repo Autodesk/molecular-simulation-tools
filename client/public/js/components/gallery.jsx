@@ -31,8 +31,6 @@ function Gallery(props) {
                 key={node.id}
                 node={node}
                 onClick={props.onClickNode}
-                onDragStart={props.onDragNodeStart}
-                onDrop={props.onDropNode}
                 selected={nodeSelected && node.id === props.selection.id}
               />
             ))
@@ -45,8 +43,6 @@ function Gallery(props) {
 
 Gallery.propTypes = {
   onClickNode: React.PropTypes.func.isRequired,
-  onDragNodeStart: React.PropTypes.func.isRequired,
-  onDropNode: React.PropTypes.func.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };

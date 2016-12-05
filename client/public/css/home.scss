@@ -1,4 +1,6 @@
 .home {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 
   &>.column>.columns {

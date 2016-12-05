@@ -48,8 +48,6 @@ class Home extends React.Component {
               <img src={logoImage} alt="logo" className="logo" />
               <Gallery
                 onClickNode={this.props.clickNode}
-                onDropNode={this.props.onDropGalleryNode}
-                onDragNodeStart={this.props.onDragNodeStart}
                 nodes={this.props.nodes}
                 selection={this.props.selection}
               />

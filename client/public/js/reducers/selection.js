@@ -24,13 +24,6 @@ function selection(state = initialState, action) {
         type: selectionConstants.WORKFLOW_NODE,
       });
 
-    case actionConstants.DROP_WORKFLOW_NODE_ON_NODE:
-      if (action.workflowNodeId === state.id) {
-        return initialState;
-      }
-
-      return state;
-
     default:
       return state;
   }

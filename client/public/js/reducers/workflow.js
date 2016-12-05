@@ -1,6 +1,4 @@
-import shortid from 'shortid';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowNodeRecord from '../records/workflow_node_record';
 import actionConstants from '../constants/action_constants';
 import statusConstants from '../constants/status_constants';
 
@@ -84,36 +82,6 @@ function workflow(state = initialState, action) {
           })
         )
       );
-    }
-
-    case actionConstants.DROP_NODE: {
-      let workflowNode;
-      let newIndex = action.workflowNodeIndex + 1;
-      let newWorkflowNodes = state.workflowNodes;
-
-      if (action.move) {
-        const oldIndex = state.workflowNodes.findIndex(workflowNodeI =>
-          workflowNodeI.id === action.draggedId
-        );
-        workflowNode = newWorkflowNodes.get(oldIndex);
-
-        if (newIndex > oldIndex) {
-          newIndex -= 1;
-        }
-
-        newWorkflowNodes = newWorkflowNodes.delete(oldIndex);
-      } else {
-        workflowNode = new WorkflowNodeRecord({ id: shortid.generate(), nodeId: action.draggedId });
-      }
-
-      return state.set('workflowNodes', newWorkflowNodes.insert(newIndex, workflowNode));
-    }
-
-    case actionConstants.DROP_WORKFLOW_NODE_ON_NODE: {
-      const workflowNodeIndex = state.workflowNodes.findIndex(workflowNode =>
-        workflowNode.id === action.workflowNodeId
-      );
-      return state.set('workflowNodes', state.workflowNodes.delete(workflowNodeIndex));
     }
 
     case actionConstants.UPLOAD:

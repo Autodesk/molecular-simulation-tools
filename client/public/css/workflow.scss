@@ -1,57 +1,59 @@
 .workflow {
+  flex: 1;
   height: 100%;
   display: flex;
-  flex-direction: column;
 
-  .workflow-steps {
-    flex: 1;
-    .workflow-title {
-      background-color: #55526B !important;
-      border: 1px transparent solid !important;
-      text-align: center;
-      font-weight: 600 !important;
-      font-size: 1.4em !important;
-      color: #ffffff !important;
-      padding-top: 10px !important;
-      padding-bottom: 10px !important;
+  .workflow-steps-pane {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
 
-      &:hover {
-        border: 1px solid rgb(90, 130, 255) !important;
+    .workflow-steps {
+      flex: 1;
 
-        .icon-finished {
-          display: none !important;
+      .workflow-title {
+        background-color: #55526B !important;
+        border: 1px transparent solid !important;
+        text-align: center;
+        font-weight: 600 !important;
+        font-size: 1.4em !important;
+        color: #ffffff !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+
+        &:hover {
+          border: 1px solid rgb(90, 130, 255) !important;
+
+          .icon-finished {
+            display: none !important;
+          }
+
+          .icon-view {
+            display: inline-block !important;
+          }
+        }
+
+        &.selected {
+          background-color: #5981FF !important;
         }
 
         .icon-view {
-          display: inline-block !important;
+          display: none !important;
         }
       }
 
-      &.selected {
-        background-color: #5981FF !important;
-      }
+      .upload-container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
 
-      .icon-view {
-        display: none !important;
-      }
+        input[type=file] {
+          display: none;
+        }
 
-      &.dragged-over {
-        margin-bottom: 32px !important;
-        box-shadow: 0 10px 4px 0 #cfcfcf;
-      }
-    }
-
-    .upload-container {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-
-      input[type=file] {
-        display: none;
-      }
-
-      .error {
-        color: #ff0000;
+        .error {
+          color: #ff0000;
+        }
       }
     }
   }
@@ -66,10 +68,5 @@
       font-weight: 600;
       border-radius: 20px;
     }
-  }
-
-  .node.dragged-over {
-    margin-bottom: 32px !important;
-    box-shadow: 0 10px 4px 0 #cfcfcf;
   }
 }
