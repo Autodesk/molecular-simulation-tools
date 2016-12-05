@@ -1,6 +1,5 @@
 import React from 'react';
-import AppBar from 'material-ui/AppBar';
-import logoImage from '../../img/logo.png';
+import AppBar from './app_bar';
 
 require('../../css/home.scss');
 
@@ -14,7 +13,6 @@ class Home extends React.Component {
       <div className="home">
         <AppBar
           title="Refine ligand and active site in molecules"
-          iconElementLeft={<img src={logoImage} alt="logo" className="logo" />}
         />
         {this.props.children}
       </div>

@@ -1,0 +1,33 @@
+.app-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 82px;
+  background-color: #303f6c;
+
+  .logo {
+    width: 35px;
+    height: 35px;
+    margin-left: 26px;
+    margin-right: 16px;
+  }
+
+  .title {
+    flex: 1;
+    display: flex;
+    margin: 0 !important;
+    align-items: center;
+    color: #f0ff66;
+  }
+
+  button {
+    height: 100%;
+    color: #ffffff;
+    background-color: transparent;
+    border: none;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+}
