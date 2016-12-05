@@ -2,8 +2,10 @@ import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
+import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowSteps from '../components/workflow_steps';
+import selectionConstants from '../constants/selection_constants';
 
 require('../../css/workflow.scss');
 
@@ -13,6 +15,13 @@ class Workflow extends React.Component {
   }
 
   render() {
+    let selectedWorkflowNode;
+    if (this.props.selection.type === selectionConstants.WORKFLOW_NODE) {
+      selectedWorkflowNode = this.props.workflow.workflowNodes.find(workflowNode =>
+        workflowNode.id === this.props.selection.id
+      );
+    }
+
     return (
       <div className="workflow">
         <WorkflowSteps
@@ -29,6 +38,9 @@ class Workflow extends React.Component {
           selection={this.props.selection}
           workflow={this.props.workflow}
           workflowStatus={this.props.workflowStatus}
+        />
+        <View
+          workflowNode={selectedWorkflowNode}
         />
       </div>
     );
