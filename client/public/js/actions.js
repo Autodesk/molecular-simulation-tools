@@ -15,53 +15,61 @@ export function initialize() {
 }
 
 export function initializeWorkflow(workflowId, runId) {
-  return (dispatch) => {
+  return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_WORKFLOW,
     });
 
     if (!runId) {
-      apiUtils.getWorkflow(workflowId).then(workflow =>
-        dispatch({
-          type: actionConstants.FETCHED_WORKFLOW,
-          workflow,
-        })
-      ).catch(error =>
-        dispatch({
+      let workflow;
+      try {
+        workflow = await apiUtils.getWorkflow(workflowId);
+      } catch (error) {
+        return dispatch({
           type: actionConstants.FETCHED_WORKFLOW,
           error,
-        })
-      );
-    } else {
-      apiUtils.getRun(workflowId, runId).then((workflow) => {
-        dispatch({
-          type: actionConstants.FETCHED_RUN,
-          workflow,
         });
-        workflow.workflowNodes.forEach((workflowNode) => {
-          if (!workflowNode.modelData && workflowNode.outputs.length) {
-            apiUtils.getPDB(workflowNode.outputs[0].value).then((modelData) => {
-              dispatch({
-                type: actionConstants.FETCHED_PDB,
-                workflowNodeId: workflowNode.id,
-                modelData,
-              });
-            }).catch((getPDBErr) => {
-              dispatch({
-                type: actionConstants.FETCHED_PDB,
-                workflowNodeId: workflowNode.id,
-                err: getPDBErr,
-              });
-            });
-          }
-        });
-      }).catch(error =>
-        dispatch({
-          type: actionConstants.FETCHED_RUN,
-          error,
-        })
-      );
+      }
+
+      return dispatch({
+        type: actionConstants.FETCHED_WORKFLOW,
+        workflow,
+      });
     }
+
+    let workflow;
+    try {
+      workflow = await apiUtils.getRun(workflowId, runId);
+    } catch (error) {
+      return dispatch({
+        type: actionConstants.FETCHED_RUN,
+        error,
+      });
+    }
+
+    dispatch({
+      type: actionConstants.FETCHED_RUN,
+      workflow,
+    });
+    return workflow.workflowNodes.forEach((workflowNode) => {
+      if (!workflowNode.modelData && workflowNode.outputs.length) {
+        let modelData;
+        try {
+          modelData = apiUtils.getPDB(workflowNode.outputs[0].value);
+        } catch (error) {
+          dispatch({
+            type: actionConstants.FETCHED_PDB,
+            workflowNodeId: workflowNode.id,
+            err: error,
+          });
+        }
+        dispatch({
+          type: actionConstants.FETCHED_PDB,
+          workflowNodeId: workflowNode.id,
+          modelData,
+        });
+      }
+    });
   };
 }
 
