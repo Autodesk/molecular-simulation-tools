@@ -2,6 +2,7 @@ import { Record, List as IList } from 'immutable';
 
 const WorkflowRecord = new Record({
   id: null,
+  runId: null,
   fetching: false,
   fetchingError: null,
   title: 'My Workflow',

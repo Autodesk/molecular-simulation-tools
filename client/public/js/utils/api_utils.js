@@ -3,6 +3,7 @@ import request from 'superagent';
 import NodeRecord from '../records/node_record';
 import WorkflowNodeRecord from '../records/workflow_node_record';
 import WorkflowRecord from '../records/workflow_record';
+import statusConstants from '../constants/status_constants';
 
 const API_URL = process.env.API_URL || '';
 const JSON_RPC_TYPE = 'application/json-rpc';
@@ -208,6 +209,65 @@ const apiUtils = {
               id: 1,
               title: 'Add Hydrogens',
             }),
+          }),
+        ]);
+
+        return resolve(new WorkflowRecord({
+          id: workflowId,
+          title: 'Refine ligand and active site in molecules',
+          workflowNodes,
+        }));
+      }, 1000);
+    });
+  },
+
+  getRun(workflowId, runId) {
+    // TODO fake api endpoint for now
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const err = !!Math.round(Math.random());
+
+        if (err) {
+          return reject('Fail');
+        }
+
+        const randomStatus = Math.random();
+        let workflowNodeStatus;
+        let workflowNodeOutputs = [];
+        if (randomStatus <= 0.25) {
+          workflowNodeStatus = statusConstants.IDLE;
+        } else if (randomStatus <= 0.5) {
+          workflowNodeStatus = statusConstants.RUNNING;
+        } else if (randomStatus <= 0.75) {
+          workflowNodeStatus = statusConstants.COMPLETED;
+          workflowNodeOutputs = [{
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          }];
+        } else {
+          workflowNodeStatus = statusConstants.ERROR;
+        }
+
+        const workflowNodes = new IList([
+          new WorkflowNodeRecord({
+            id: 0,
+            runId,
+            node: new NodeRecord({
+              id: 0,
+              title: 'Load PDB',
+            }),
+            status: statusConstants.COMPLETED,
+            outputs: [{
+              value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+            }],
+          }),
+          new WorkflowNodeRecord({
+            id: 1,
+            node: new NodeRecord({
+              id: 1,
+              title: 'Add Hydrogens',
+            }),
+            workflowNodeStatus,
+            workflowNodeOutputs,
           }),
         ]);
 

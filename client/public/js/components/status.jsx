@@ -43,7 +43,7 @@ function Status(props) {
     const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
       workflowNodeI.id === props.selection.id
     );
-    const node = props.nodes.get(workflowNode.nodeId);
+    const node = workflowNode.node;
 
     let output;
     if (workflowNode.outputs && workflowNode.outputs.size) {

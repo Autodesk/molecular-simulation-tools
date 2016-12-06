@@ -7,6 +7,7 @@ const actionConstants = keyMirror({
   CLICK_WORKFLOW_NODE: null,
   FETCHED_PDB: null,
   FETCHED_WORKFLOW: null,
+  FETCHED_RUN: null,
   GET_PDB: null,
   INITIALIZE: null,
   INITIALIZE_WORKFLOW: null,

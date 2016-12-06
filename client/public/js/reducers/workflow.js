@@ -21,6 +21,15 @@ function workflow(state = initialState, action) {
       }
       return action.workflow;
 
+    case actionConstants.FETCHED_RUN:
+      if (action.error) {
+        return state.merge({
+          fetching: false,
+          fetchingError: action.error,
+        });
+      }
+      return action.workflow;
+
     case actionConstants.CLICK_RUN:
       return state.set('workflowNodes', state.workflowNodes.map((workflowNode) => {
         if (!action.workflowNodeIds.contains(workflowNode.id)) {

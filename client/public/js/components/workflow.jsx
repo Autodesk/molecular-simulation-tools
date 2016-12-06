@@ -11,7 +11,7 @@ require('../../css/workflow.scss');
 
 class Workflow extends React.Component {
   componentDidMount() {
-    this.props.initializeWorkflow(this.props.workflowId);
+    this.props.initializeWorkflow(this.props.workflowId, this.props.runId);
   }
 
   render() {
@@ -27,28 +27,29 @@ class Workflow extends React.Component {
         {
           this.props.workflow.fetching ? (
             <h2>Loading!</h2>
-          ) : (
-            <div>
-              <WorkflowSteps
-                clickRun={this.props.clickRun}
-                clickWorkflowNode={this.props.clickWorkflowNode}
-                clickWorkflow={this.props.clickWorkflow}
-                onUpload={this.props.onUpload}
-                selection={this.props.selection}
-                workflow={this.props.workflow}
-                workflowStatus={this.props.workflowStatus}
-              />
-              <Status
-                nodes={this.props.nodes}
-                selection={this.props.selection}
-                workflow={this.props.workflow}
-                workflowStatus={this.props.workflowStatus}
-              />
-              <View
-                workflowNode={selectedWorkflowNode}
-              />
-            </div>
-          )
+          ) : [
+            <WorkflowSteps
+              key={0}
+              clickRun={this.props.clickRun}
+              clickWorkflowNode={this.props.clickWorkflowNode}
+              clickWorkflow={this.props.clickWorkflow}
+              onUpload={this.props.onUpload}
+              selection={this.props.selection}
+              workflow={this.props.workflow}
+              workflowStatus={this.props.workflowStatus}
+            />,
+            <Status
+              key={1}
+              nodes={this.props.nodes}
+              selection={this.props.selection}
+              workflow={this.props.workflow}
+              workflowStatus={this.props.workflowStatus}
+            />,
+            <View
+              key={2}
+              workflowNode={selectedWorkflowNode}
+            />,
+          ]
         }
       </div>
     );
@@ -64,6 +65,7 @@ Workflow.propTypes = {
   onUpload: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
+  runId: React.PropTypes.string,
   workflowStatus: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };

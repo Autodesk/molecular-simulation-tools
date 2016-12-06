@@ -13,6 +13,7 @@ function mapStateToProps(state, ownProps) {
     nodes: state.nodes,
     selection: state.selection,
     workflowId: ownProps.params.workflowId,
+    runId: ownProps.params.runId,
     workflow: state.workflow,
   };
 }
@@ -30,8 +31,8 @@ function mapDispatchToProps(dispatch) {
     clickWorkflow(workflowId) {
       dispatch(clickWorkflow(workflowId));
     },
-    initializeWorkflow(workflowId) {
-      dispatch(initializeWorkflow(workflowId));
+    initializeWorkflow(workflowId, runId) {
+      dispatch(initializeWorkflow(workflowId, runId));
     },
     onUpload(file) {
       dispatch(upload(file));
