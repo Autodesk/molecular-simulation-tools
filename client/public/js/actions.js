@@ -79,13 +79,6 @@ export function clickWorkflowNode(workflowNodeId) {
   };
 }
 
-export function clickWorkflow(workflowId) {
-  return {
-    type: actionConstants.CLICK_WORKFLOW,
-    workflowId,
-  };
-}
-
 function runEnded(workflowNodes, status, err) {
   return (dispatch) => {
     dispatch({

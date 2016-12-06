@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import Workflow from '../components/workflow';
 import {
   clickRun,
-  clickWorkflow,
   clickWorkflowNode,
   initializeWorkflow,
   upload,
@@ -27,9 +26,6 @@ function mapDispatchToProps(dispatch) {
     },
     clickWorkflowNode(workflowNodeId) {
       dispatch(clickWorkflowNode(workflowNodeId));
-    },
-    clickWorkflow(workflowId) {
-      dispatch(clickWorkflow(workflowId));
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));

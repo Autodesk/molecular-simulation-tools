@@ -12,12 +12,6 @@ function selection(state = initialState, action) {
         type: selectionConstants.NODE,
       });
 
-    case actionConstants.CLICK_WORKFLOW:
-      return state.merge({
-        id: action.workflowId,
-        type: selectionConstants.WORKFLOW,
-      });
-
     case actionConstants.CLICK_WORKFLOW_NODE:
       return state.merge({
         id: action.workflowNodeId,

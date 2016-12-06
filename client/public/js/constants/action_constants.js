@@ -3,7 +3,6 @@ import keyMirror from 'keymirror';
 const actionConstants = keyMirror({
   CLICK_NODE: null,
   CLICK_RUN: null,
-  CLICK_WORKFLOW: null,
   CLICK_WORKFLOW_NODE: null,
   FETCHED_PDB: null,
   FETCHED_WORKFLOW: null,

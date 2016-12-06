@@ -32,7 +32,6 @@ class Workflow extends React.Component {
               key={0}
               clickRun={this.props.clickRun}
               clickWorkflowNode={this.props.clickWorkflowNode}
-              clickWorkflow={this.props.clickWorkflow}
               onUpload={this.props.onUpload}
               selection={this.props.selection}
               workflow={this.props.workflow}
@@ -59,7 +58,6 @@ class Workflow extends React.Component {
 Workflow.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
-  clickWorkflow: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
   onUpload: React.PropTypes.func.isRequired,

@@ -4,7 +4,6 @@ import { List } from 'material-ui/List';
 import Node from './node';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowTitle from '../components/workflow_title';
 import selectionConstants from '../constants/selection_constants';
 import statusConstants from '../constants/status_constants';
 
@@ -60,12 +59,6 @@ class WorkflowSteps extends React.Component {
     return (
       <div className="workflow-steps-pane">
         <div className="workflow-steps">
-          <WorkflowTitle
-            workflow={this.props.workflow}
-            selection={this.props.selection}
-            onClick={this.props.clickWorkflow}
-            workflowStatus={this.props.workflowStatus}
-          />
           {uploadElement}
           <List>
             {
@@ -110,7 +103,6 @@ class WorkflowSteps extends React.Component {
 WorkflowSteps.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
-  clickWorkflow: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,
