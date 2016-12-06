@@ -24,24 +24,32 @@ class Workflow extends React.Component {
 
     return (
       <div className="workflow">
-        <WorkflowSteps
-          clickRun={this.props.clickRun}
-          clickWorkflowNode={this.props.clickWorkflowNode}
-          clickWorkflow={this.props.clickWorkflow}
-          onUpload={this.props.onUpload}
-          selection={this.props.selection}
-          workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
-        />
-        <Status
-          nodes={this.props.nodes}
-          selection={this.props.selection}
-          workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
-        />
-        <View
-          workflowNode={selectedWorkflowNode}
-        />
+        {
+          this.props.workflow.fetching ? (
+            <h2>Loading!</h2>
+          ) : (
+            <div>
+              <WorkflowSteps
+                clickRun={this.props.clickRun}
+                clickWorkflowNode={this.props.clickWorkflowNode}
+                clickWorkflow={this.props.clickWorkflow}
+                onUpload={this.props.onUpload}
+                selection={this.props.selection}
+                workflow={this.props.workflow}
+                workflowStatus={this.props.workflowStatus}
+              />
+              <Status
+                nodes={this.props.nodes}
+                selection={this.props.selection}
+                workflow={this.props.workflow}
+                workflowStatus={this.props.workflowStatus}
+              />
+              <View
+                workflowNode={selectedWorkflowNode}
+              />
+            </div>
+          )
+        }
       </div>
     );
   }
