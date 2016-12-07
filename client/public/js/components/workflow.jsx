@@ -12,6 +12,12 @@ require('../../css/workflow.scss');
 class Workflow extends React.Component {
   componentDidMount() {
     this.props.initializeWorkflow(this.props.workflowId, this.props.runId);
+
+    if (this.props.runId) {
+      document.title = `Workflow - Run of "${this.props.workflow.title}"`;
+    } else {
+      document.title = `Workflow - "${this.props.workflow.title}"`;
+    }
   }
 
   render() {
