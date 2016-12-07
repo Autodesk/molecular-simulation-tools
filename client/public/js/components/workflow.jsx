@@ -22,34 +22,46 @@ class Workflow extends React.Component {
       );
     }
 
+    let workflowEl;
+    if (this.props.workflow.fetching) {
+      workflowEl = <h2>Loading!</h2>;
+    } else if (this.props.workflow.fetchingError) {
+      workflowEl = (
+        <div>
+          <h2>Something went wrong!</h2>
+          <p>
+            Try refreshing your browser, and if the problem persists, please contact us.
+          </p>
+        </div>
+      );
+    } else {
+      workflowEl = [
+        <WorkflowSteps
+          key={0}
+          clickRun={this.props.clickRun}
+          clickWorkflowNode={this.props.clickWorkflowNode}
+          onUpload={this.props.onUpload}
+          selection={this.props.selection}
+          workflow={this.props.workflow}
+          workflowStatus={this.props.workflowStatus}
+        />,
+        <Status
+          key={1}
+          nodes={this.props.nodes}
+          selection={this.props.selection}
+          workflow={this.props.workflow}
+          workflowStatus={this.props.workflowStatus}
+        />,
+        <View
+          key={2}
+          workflowNode={selectedWorkflowNode}
+        />,
+      ];
+    }
+
     return (
       <div className="workflow">
-        {
-          this.props.workflow.fetching ? (
-            <h2>Loading!</h2>
-          ) : [
-            <WorkflowSteps
-              key={0}
-              clickRun={this.props.clickRun}
-              clickWorkflowNode={this.props.clickWorkflowNode}
-              onUpload={this.props.onUpload}
-              selection={this.props.selection}
-              workflow={this.props.workflow}
-              workflowStatus={this.props.workflowStatus}
-            />,
-            <Status
-              key={1}
-              nodes={this.props.nodes}
-              selection={this.props.selection}
-              workflow={this.props.workflow}
-              workflowStatus={this.props.workflowStatus}
-            />,
-            <View
-              key={2}
-              workflowNode={selectedWorkflowNode}
-            />,
-          ]
-        }
+        {workflowEl}
       </div>
     );
   }

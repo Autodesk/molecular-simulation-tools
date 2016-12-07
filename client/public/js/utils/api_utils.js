@@ -52,7 +52,7 @@ const apiUtils = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         // 50% chance of failing (for test)
-        const err = !!Math.round(Math.random());
+        const err = Math.random() > 0.8;
         const res = nodeIds.map(nodeId => ({
           id: nodeId,
           outputs: [{
