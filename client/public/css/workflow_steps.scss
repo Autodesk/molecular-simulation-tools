@@ -57,9 +57,11 @@
     text-align: center;
 
     .run {
-      width: 100%;
+      width: 125px;
       margin: 16px auto;
-      color: #333333 !important;
+      color: #f1ff66 !important;
+      border: 2px #f1ff66 solid !important;
+      background-color: transparent !important;
       font-weight: 600;
       border-radius: 20px;
     }

@@ -95,7 +95,7 @@ class WorkflowSteps extends React.Component {
             onClick={this.props.clickRun}
             disabled={running || !hasWorkflowNodes}
           >
-            Run Workflow
+            Run
           </button>
         </div>
       </div>
