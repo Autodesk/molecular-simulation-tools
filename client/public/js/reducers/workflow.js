@@ -97,6 +97,7 @@ function workflow(state = initialState, action) {
       return state.merge({
         uploadError: '',
         uploadPending: true,
+        uploadUrl: null,
       });
 
     case actionConstants.UPLOAD_COMPLETE:

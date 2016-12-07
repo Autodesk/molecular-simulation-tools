@@ -1,6 +1,7 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
+import StatusLoad from './status_load';
 import WorkflowRecord from '../records/workflow_record';
 import selectionConstants from '../constants/selection_constants';
 import viewEmptyImage from '../../img/view_empty.png';
@@ -67,9 +68,12 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
     selection = (
-      <div className="status-info">
-        <p>Upload or something</p>
-      </div>
+      <StatusLoad
+        onUpload={props.onUpload}
+        uploadError={props.workflow.uploadError}
+        uploadPending={props.workflow.uploadPending}
+        uploadUrl={props.workflow.uploadUrl}
+      />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
     selection = (
@@ -95,6 +99,7 @@ function Status(props) {
 
 Status.propTypes = {
   nodes: React.PropTypes.instanceOf(IMap),
+  onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,

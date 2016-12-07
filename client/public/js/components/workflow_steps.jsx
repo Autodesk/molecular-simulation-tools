@@ -11,65 +11,25 @@ import statusConstants from '../constants/status_constants';
 require('../../css/workflow_steps.scss');
 
 class WorkflowSteps extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.onUpload = this.onUpload.bind(this);
-  }
-
-  onUpload(e) {
-    this.props.onUpload(e.target.files[0]);
-  }
-
   render() {
     const running = this.props.workflowStatus === statusConstants.RUNNING;
     const hasWorkflowNodes = this.props.workflow.workflowNodes.size;
 
-    let uploadElement;
-    if (this.props.workflow.uploadUrl) {
-      uploadElement = (
-        <div>
-          <p>
-            Uploaded:
-            <a href={this.props.workflow.uploadUrl}>{this.props.workflow.uploadUrl}</a>
-          </p>
-        </div>
-      );
-    } else if (!this.props.workflow.workflowNodes.size) {
-      uploadElement = (
-        <div className="upload-container">
-          <FlatButton
-            style={{ margin: '0 auto' }}
-            containerElement="label"
-            label="Upload PDB"
-            disabled={this.props.workflow.uploadPending}
-          >
-            <input
-              type="file"
-              onChange={this.onUpload}
-              disabled={this.props.workflow.uploadPending}
-            />
-          </FlatButton>
-          <div className="error">
-            {this.props.workflow.uploadError}
-          </div>
-        </div>
-      );
-    }
-
     const loadSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_LOAD;
+    const loadStatus = this.props.workflow.uploadUrl ?
+      statusConstants.COMPLETED : statusConstants.IDLE;
     const emailSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_EMAIL;
 
     return (
       <div className="workflow-steps-pane">
         <div className="workflow-steps">
-          {uploadElement}
           <List>
             <WorkflowStep
               primaryText={'Load molecule'}
               selected={loadSelected}
+              status={loadStatus}
               onClick={this.props.clickWorkflowNodeLoad}
             />
             {
@@ -122,7 +82,6 @@ WorkflowSteps.propTypes = {
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
-  onUpload: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,

@@ -1,9 +1,9 @@
 .status {
   display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   width: 260px;
+  overflow: hidden;
+  padding: 20px;
   background-color: rgba(85, 104, 161, 0.1);
 
   .status-info {

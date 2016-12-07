@@ -173,15 +173,14 @@ const apiUtils = {
 
   uploadDev(resolve, reject) {
     setTimeout(() => {
-      const err = !!Math.round(Math.random());
+      // 20% chance of failing
+      const err = Math.random() > 0.8;
 
       if (err) {
-        return reject('Failed due to swamp gas interference.');
+        return reject('Upload failed due to swamp gas interference.');
       }
 
-      return resolve({
-        url: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-      });
+      return resolve('https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb');
     }, 2000);
   },
 
