@@ -11,7 +11,7 @@ Predictive molecular modeling applications based on the [Molecular Design Toolki
 	docker-compose build
 	docker-compose up
 
-Then open your browser to  [http://localhost:4000](http://localhost:4000)
+Then open your browser to  [http://localhost:8000](http://localhost:8000)
 
 ## Development
 

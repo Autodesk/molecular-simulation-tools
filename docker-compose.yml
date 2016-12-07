@@ -3,11 +3,12 @@ version: '2'
 services:
 
   server:
+    restart: always
     build:
       context: .
     command: ["nodemon", "/app/server/build/server/server-workflow.js"]
     ports:
-      - "4000:4000"
+      - "8000:4000"
     environment:
       HOST_PWD: "${PWD}"
     volumes:
