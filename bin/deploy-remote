@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+APP="molecular-design-applications"
+REMOTE="mdt"
+rsync -av --exclude=.git --exclude=tmp --exclude=gitcache ./ $REMOTE:$APP/
+ssh $REMOTE "cd $APP && sudo docker-compose rm -fv && sudo docker-compose build && sudo ./bin/run-local -d"
