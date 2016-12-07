@@ -1,6 +1,10 @@
 import actionConstants from './constants/action_constants';
-import apiUtils from './utils/api_utils';
+import realApiUtils from './utils/api_utils';
+import mockApiUtils from './utils/mock_api_utils';
 import statusConstants from './constants/status_constants';
+
+const apiUtils = process.env.NODE_ENV === 'offline' ?
+  mockApiUtils : realApiUtils;
 
 // TODO now unnecessary?
 export function initialize() {
