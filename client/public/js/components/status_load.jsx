@@ -20,8 +20,8 @@ class StatusLoad extends React.Component {
         <div>
           <p>
             Uploaded:
-            <a href={this.props.uploadUrl}>{this.props.uploadUrl}</a>
           </p>
+          <a href={this.props.uploadUrl}>{this.props.uploadUrl}</a>
         </div>
       );
     }
