@@ -24,7 +24,7 @@ const componentUtils = {
       );
     } else if (status === statusConstants.RUNNING) {
       icon = (
-        <CircularProgress size={0.5} style={{ top: -12, right: 12 }} />
+        <CircularProgress size={20} />
       );
     }
 

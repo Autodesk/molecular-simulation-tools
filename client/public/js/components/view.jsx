@@ -25,7 +25,9 @@ function View(props) {
     );
     */
     view = (
-      <Nbmolviz3dReact modelData={props.workflowNode.modelData} />
+      <Nbmolviz3dReact
+        modelData={props.workflowNode.modelData}
+      />
     );
   } else {
     view = (

@@ -234,9 +234,7 @@ const apiUtils = {
         const randomStatus = Math.random();
         let workflowNodeStatus;
         let workflowNodeOutputs = [];
-        if (randomStatus <= 0.25) {
-          workflowNodeStatus = statusConstants.IDLE;
-        } else if (randomStatus <= 0.5) {
+        if (randomStatus <= 0.5) {
           workflowNodeStatus = statusConstants.RUNNING;
         } else if (randomStatus <= 0.75) {
           workflowNodeStatus = statusConstants.COMPLETED;
@@ -266,8 +264,8 @@ const apiUtils = {
               id: 1,
               title: 'Add Hydrogens',
             }),
-            workflowNodeStatus,
-            workflowNodeOutputs,
+            status: workflowNodeStatus,
+            outputs: workflowNodeOutputs,
           }),
         ]);
 
