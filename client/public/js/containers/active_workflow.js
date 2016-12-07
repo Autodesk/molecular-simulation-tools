@@ -12,7 +12,7 @@ function mapStateToProps(state) {
     nodes: state.nodes,
     uploadPending: state.workflow.uploadPending,
     uploadError: state.workflow.uploadError,
-    uploadUrl: state.workflow.uploadUrl,
+    pdbUrl: state.workflow.pdbUrl,
   };
 }
 
@@ -43,7 +43,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     ),
     uploadPending: stateProps.uploadPending,
     uploadError: stateProps.uploadError,
-    uploadUrl: stateProps.uploadUrl,
+    pdbUrl: stateProps.pdbUrl,
   });
 }
 

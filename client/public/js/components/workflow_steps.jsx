@@ -17,7 +17,7 @@ class WorkflowSteps extends React.Component {
 
     const loadSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_LOAD;
-    const loadStatus = this.props.workflow.uploadUrl ?
+    const loadStatus = this.props.workflow.pdbUrl ?
       statusConstants.COMPLETED : statusConstants.IDLE;
     const emailSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_EMAIL;

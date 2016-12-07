@@ -178,3 +178,23 @@ export function upload(file) {
     );
   };
 }
+
+export function submitPdbId(pdbId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.SUBMIT_PDB_ID,
+    });
+
+    apiUtils.getPdbById(pdbId).then(pdbUrl =>
+      dispatch({
+        type: actionConstants.FETCHED_PDB_BY_ID,
+        pdbUrl,
+      })
+    ).catch(err =>
+      dispatch({
+        type: actionConstants.FETCHED_PDB_BY_ID,
+        error: err.message,
+      })
+    );
+  };
+}

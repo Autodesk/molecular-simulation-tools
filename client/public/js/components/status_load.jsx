@@ -7,6 +7,31 @@ class StatusLoad extends React.Component {
     super(props);
 
     this.onUpload = this.onUpload.bind(this);
+    this.onSubmitPdbId = this.onSubmitPdbId.bind(this);
+    this.onChangePdbId = this.onChangePdbId.bind(this);
+
+    this.state = {
+      pdbId: '',
+      pdbIdError: '',
+    };
+  }
+
+  onChangePdbId(e) {
+    this.setState({
+      pdbId: e.target.value,
+    });
+  }
+
+  onSubmitPdbId(e) {
+    e.preventDefault();
+
+    if (this.state.pdbId.length !== 4) {
+      return this.setState({
+        pdbIdError: 'Invalid PDB ID',
+      });
+    }
+
+    return this.props.submitPdbId(this.state.pdbId);
   }
 
   onUpload(e) {
@@ -15,13 +40,10 @@ class StatusLoad extends React.Component {
 
   render() {
     let uploadedElement;
-    if (this.props.uploadUrl) {
+    if (this.props.pdbUrl) {
       uploadedElement = (
         <div>
-          <p>
-            Uploaded:
-          </p>
-          <a href={this.props.uploadUrl}>{this.props.uploadUrl}</a>
+          <a href={this.props.pdbUrl}>{this.props.pdbUrl}</a>
         </div>
       );
     }
@@ -30,17 +52,28 @@ class StatusLoad extends React.Component {
       <div className="status-info">
         {uploadedElement}
         <div className="upload-container">
-          <TextField
-            style={{ width: '100%' }}
-            hintText="Enter PDB ID here"
-          />
+          <form
+            onSubmit={this.onSubmitPdbId}
+          >
+            <TextField
+              style={{ width: '100%' }}
+              disabled={this.props.fetchingPdb}
+              hintText="Enter PDB ID here"
+              value={this.state.pdbId}
+              onChange={this.onChangePdbId}
+            />
+          </form>
+          <p className="error">
+            {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
+            {this.state.pdbIdError ? this.state.pdbIdError : ''}
+          </p>
           <p>
             Or, browse custom file.
           </p>
           <FlatButton
             style={{ margin: '0 auto', width: '227px' }}
             containerElement="label"
-            label="Upload PDB"
+            label="Browse"
             disabled={this.props.uploadPending}
           >
             <input
@@ -60,8 +93,11 @@ class StatusLoad extends React.Component {
 }
 
 StatusLoad.propTypes = {
+  fetchingPdb: React.PropTypes.bool,
+  fetchingPdbError: React.PropTypes.string,
   onUpload: React.PropTypes.func.isRequired,
-  uploadUrl: React.PropTypes.string,
+  pdbUrl: React.PropTypes.string,
+  submitPdbId: React.PropTypes.func.isRequired,
   uploadPending: React.PropTypes.bool,
   uploadError: React.PropTypes.string,
 };

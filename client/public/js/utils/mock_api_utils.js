@@ -172,6 +172,21 @@ const mockApiUtils = {
       }, 1000);
     });
   },
+
+  getPdbById() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 20% chance of failing
+        const err = Math.random() > 0.8;
+
+        if (err) {
+          return reject(new Error('Fail'));
+        }
+
+        return resolve('https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb');
+      }, 1000);
+    });
+  },
 };
 
 export default mockApiUtils;

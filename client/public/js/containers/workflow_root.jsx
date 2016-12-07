@@ -6,11 +6,14 @@ import {
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   initializeWorkflow,
+  submitPdbId,
   upload,
 } from '../actions';
 
 function mapStateToProps(state, ownProps) {
   return {
+    fetchingPdb: state.workflow.fetchingPdb,
+    fetchingPdbError: state.workflow.fetchingPdbError,
     nodes: state.nodes,
     selection: state.selection,
     workflowId: ownProps.params.workflowId,
@@ -40,6 +43,9 @@ function mapDispatchToProps(dispatch) {
     },
     onUpload(file) {
       dispatch(upload(file));
+    },
+    submitPdbId(pdbId) {
+      dispatch(submitPdbId(pdbId));
     },
   };
 }

@@ -5,11 +5,13 @@ const WorkflowRecord = new Record({
   runId: null,
   fetching: false,
   fetchingError: null,
+  fetchingPdb: false,
+  fetchingPdbError: null,
   title: 'My Workflow',
-  workflowNodes: new IList(),
-  uploadUrl: '',
+  pdbUrl: '',
   uploadError: null,
   uploadPending: false,
+  workflowNodes: new IList(),
 });
 
 export default WorkflowRecord;

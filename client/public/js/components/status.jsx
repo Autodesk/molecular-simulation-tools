@@ -69,10 +69,13 @@ function Status(props) {
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
     selection = (
       <StatusLoad
+        fetchingPdb={props.fetchingPdb}
+        fetchingPdbError={props.fetchingPdbError}
         onUpload={props.onUpload}
+        submitPdbId={props.submitPdbId}
         uploadError={props.workflow.uploadError}
         uploadPending={props.workflow.uploadPending}
-        uploadUrl={props.workflow.uploadUrl}
+        pdbUrl={props.workflow.pdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
@@ -98,9 +101,12 @@ function Status(props) {
 }
 
 Status.propTypes = {
+  fetchingPdb: React.PropTypes.bool,
+  fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),
   onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
+  submitPdbId: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,
 };

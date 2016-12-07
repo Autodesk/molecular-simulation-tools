@@ -115,6 +115,11 @@ const apiUtils = {
     });
   },
 
+  getPdbById() {
+    // TODO
+    return Promise.reject();
+  },
+
   getWorkflow() {
     // TODO
     return Promise.reject();

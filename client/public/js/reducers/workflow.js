@@ -97,14 +97,28 @@ function workflow(state = initialState, action) {
       return state.merge({
         uploadError: '',
         uploadPending: true,
-        uploadUrl: null,
+        pdbUrl: null,
       });
 
     case actionConstants.UPLOAD_COMPLETE:
       return state.merge({
         uploadPending: false,
         uploadError: action.err,
-        uploadUrl: action.url,
+        pdbUrl: action.url,
+      });
+
+    case actionConstants.SUBMIT_PDB_ID:
+      return state.merge({
+        fetchingPdb: true,
+        fetchingPdbError: null,
+        pdbUrl: '',
+      });
+
+    case actionConstants.FETCHED_PDB_BY_ID:
+      return state.merge({
+        fetchingPdb: false,
+        fetchingPdbError: action.error,
+        pdbUrl: action.pdbUrl,
       });
 
     default:

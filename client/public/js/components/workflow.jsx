@@ -54,9 +54,12 @@ class Workflow extends React.Component {
         />,
         <Status
           key={1}
+          fetchingPdb={this.props.fetchingPdb}
+          fetchingPdbError={this.props.fetchingPdbError}
           nodes={this.props.nodes}
           onUpload={this.props.onUpload}
           selection={this.props.selection}
+          submitPdbId={this.props.submitPdbId}
           workflow={this.props.workflow}
           workflowStatus={this.props.workflowStatus}
         />,
@@ -78,14 +81,19 @@ class Workflow extends React.Component {
 Workflow.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
+  clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
+  clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  fetchingPdb: React.PropTypes.bool,
+  fetchingPdbError: React.PropTypes.string,
   initializeWorkflow: React.PropTypes.func.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
   onUpload: React.PropTypes.func.isRequired,
+  runId: React.PropTypes.string,
+  selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
+  submitPdbId: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
-  runId: React.PropTypes.string,
   workflowStatus: React.PropTypes.string,
-  selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 
 export default Workflow;
