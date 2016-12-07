@@ -85,6 +85,18 @@ export function clickWorkflowNode(workflowNodeId) {
   };
 }
 
+export function clickWorkflowNodeLoad() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_LOAD,
+  };
+}
+
+export function clickWorkflowNodeEmail() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_EMAIL,
+  };
+}
+
 function runEnded(workflowNodes, status, err) {
   return (dispatch) => {
     dispatch({

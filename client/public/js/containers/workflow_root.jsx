@@ -3,6 +3,8 @@ import Workflow from '../components/workflow';
 import {
   clickRun,
   clickWorkflowNode,
+  clickWorkflowNodeLoad,
+  clickWorkflowNodeEmail,
   initializeWorkflow,
   upload,
 } from '../actions';
@@ -26,6 +28,12 @@ function mapDispatchToProps(dispatch) {
     },
     clickWorkflowNode(workflowNodeId) {
       dispatch(clickWorkflowNode(workflowNodeId));
+    },
+    clickWorkflowNodeLoad() {
+      dispatch(clickWorkflowNodeLoad());
+    },
+    clickWorkflowNodeEmail() {
+      dispatch(clickWorkflowNodeEmail());
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));

@@ -4,6 +4,7 @@ import { List } from 'material-ui/List';
 import Node from './node';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
+import WorkflowStep from './workflow_step';
 import selectionConstants from '../constants/selection_constants';
 import statusConstants from '../constants/status_constants';
 
@@ -56,33 +57,46 @@ class WorkflowSteps extends React.Component {
       );
     }
 
+    const loadSelected = this.props.selection.type ===
+      selectionConstants.WORKFLOW_NODE_LOAD;
+    const emailSelected = this.props.selection.type ===
+      selectionConstants.WORKFLOW_NODE_EMAIL;
+
     return (
       <div className="workflow-steps-pane">
         <div className="workflow-steps">
           {uploadElement}
           <List>
+            <WorkflowStep
+              primaryText={'Load molecule'}
+              selected={loadSelected}
+              onClick={this.props.clickWorkflowNodeLoad}
+            />
             {
               this.props.workflow.workflowNodes.map(
                 (workflowNode, index) => {
                   const workflowNodeSelected =
                     this.props.selection.type === selectionConstants.WORKFLOW_NODE;
                   const node = workflowNode.node;
-                  const last = index ===
-                    this.props.workflow.workflowNodes.size - 1;
                   return (
                     <Node
                       key={index}
                       node={node}
-                      status={workflowNode.status}
-                      selected={workflowNodeSelected && workflowNode.id === this.props.selection.id}
                       onClick={this.props.clickWorkflowNode}
+                      selected={workflowNodeSelected && workflowNode.id === this.props.selection.id}
+                      status={workflowNode.status}
                       workflowNodeId={workflowNode.id}
-                      last={last}
                     />
                   );
                 }
               )
             }
+            <WorkflowStep
+              primaryText={'Enter email'}
+              onClick={this.props.clickWorkflowNodeEmail}
+              selected={emailSelected}
+              last
+            />
           </List>
         </div>
         <div className="actions">
@@ -106,6 +120,8 @@ class WorkflowSteps extends React.Component {
 WorkflowSteps.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
+  clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
+  clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,

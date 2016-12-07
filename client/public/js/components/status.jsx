@@ -65,6 +65,18 @@ function Status(props) {
         {output}
       </div>
     );
+  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
+    selection = (
+      <div className="status-info">
+        <p>Upload or something</p>
+      </div>
+    );
+  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
+    selection = (
+      <div className="status-info">
+        <p>Enter email somewhere</p>
+      </div>
+    );
   } else {
     selection = (
       <div className="placeholder">

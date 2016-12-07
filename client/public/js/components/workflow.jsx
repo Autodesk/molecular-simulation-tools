@@ -46,6 +46,8 @@ class Workflow extends React.Component {
           key={0}
           clickRun={this.props.clickRun}
           clickWorkflowNode={this.props.clickWorkflowNode}
+          clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
+          clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
           onUpload={this.props.onUpload}
           selection={this.props.selection}
           workflow={this.props.workflow}

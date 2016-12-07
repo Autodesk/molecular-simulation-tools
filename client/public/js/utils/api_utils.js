@@ -51,7 +51,7 @@ const apiUtils = {
   runDev(nodeIds) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        // 50% chance of failing (for test)
+        // 20% chance of failing
         const err = Math.random() > 0.8;
         const res = nodeIds.map(nodeId => ({
           id: nodeId,
@@ -189,7 +189,8 @@ const apiUtils = {
     // TODO fake api endpoint for now
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const err = !!Math.round(Math.random());
+        // 20% chance of failing
+        const err = Math.random() > 0.8;
 
         if (err) {
           return reject('Fail');
@@ -225,7 +226,8 @@ const apiUtils = {
     // TODO fake api endpoint for now
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const err = !!Math.round(Math.random());
+        // 20% chance of failing
+        const err = Math.random() > 0.8;
 
         if (err) {
           return reject('Fail');
