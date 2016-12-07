@@ -3,6 +3,7 @@ import request from 'superagent';
 import NodeRecord from '../records/node_record';
 
 const API_URL = process.env.API_URL || '';
+// http://metapage.bionano.autodesk.com:4040/metapage?git=https://github.com/dionjwa/convert_pdb_workflow_example&cwl=workflows/read_and_clean.cwl&cwlyml=pdbfile.yml
 const JSON_RPC_TYPE = 'application/json-rpc';
 
 let nodesGlobal;

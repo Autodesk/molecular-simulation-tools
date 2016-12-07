@@ -6,12 +6,9 @@ Predictive molecular modeling applications based on the [Molecular Design Toolki
 
 	git clone https://github.com/Autodesk/molecular-design-applications
 	cd molecular-design-applications
-	git submodule update --init --recursive
-	docker build -t mdtscripts client/workflow_convert_pdb/mdtscripts
-	docker-compose build
-	docker-compose up
+	./bin/run-local
 
-Then open your browser to  [http://localhost:8000](http://localhost:8000)
+Then open your browser to  [http://localhost:9000](http://localhost:9000)
 
 ## Development
 
@@ -19,7 +16,7 @@ Local server and client and workflow development can be sped up by mounting loca
 
 Testing the convert API method can be done with:
 
-	curl --data-binary "@5e8b.pdb" http://localhost:4000/pdb_convert
+	curl --data-binary "@5e8b.pdb" http://localhost:9000/pdb_convert
 
 (Assuming you have downloaded 5e8b.pdb from the PDB website)
 
