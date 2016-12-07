@@ -53,21 +53,19 @@ export function initializeWorkflow(workflowId, runId) {
     });
     return workflow.workflowNodes.forEach((workflowNode) => {
       if (!workflowNode.modelData && workflowNode.outputs.length) {
-        let modelData;
-        try {
-          modelData = apiUtils.getPDB(workflowNode.outputs[0].value);
-        } catch (error) {
+        apiUtils.getPDB(workflowNode.outputs[0].value).then(modelData =>
+          dispatch({
+            type: actionConstants.FETCHED_PDB,
+            workflowNodeId: workflowNode.id,
+            modelData,
+          })
+        ).catch(error =>
           dispatch({
             type: actionConstants.FETCHED_PDB,
             workflowNodeId: workflowNode.id,
             err: error,
-          });
-        }
-        dispatch({
-          type: actionConstants.FETCHED_PDB,
-          workflowNodeId: workflowNode.id,
-          modelData,
-        });
+          })
+        );
       }
     });
   };

@@ -1,16 +1,15 @@
 .node {
   text-align: center;
-  border: 1px transparent solid !important;
-  background-color: #dfdfdf !important;
-  margin-top: 4px !important;
-  margin-bottom: 4px !important;
+  border-bottom: 1px #6f7999 solid !important;
+  color: #6f7999 !important;
+
+  &.last {
+    border-bottom: none !important;
+  }
 
   &.selected {
-    background-color: #5981FF !important;
-
-    &:hover {
-      background-color: #5981FF !important;
-    }
+    background-color: #ffffff !important;
+    opacity: 0.2;
   }
 
   .icon-finished {
@@ -22,9 +21,6 @@
   }
 
   &:hover {
-    border: 1px solid rgb(90, 130, 255) !important;
-    background-color: #dfdfdf !important;
-
     .icon-finished {
       display: none !important;
     }

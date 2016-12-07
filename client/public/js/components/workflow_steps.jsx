@@ -67,6 +67,8 @@ class WorkflowSteps extends React.Component {
                   const workflowNodeSelected =
                     this.props.selection.type === selectionConstants.WORKFLOW_NODE;
                   const node = workflowNode.node;
+                  const last = index ===
+                    this.props.workflow.workflowNodes.size - 1;
                   return (
                     <Node
                       key={index}
@@ -75,6 +77,7 @@ class WorkflowSteps extends React.Component {
                       selected={workflowNodeSelected && workflowNode.id === this.props.selection.id}
                       onClick={this.props.clickWorkflowNode}
                       workflowNodeId={workflowNode.id}
+                      last={last}
                     />
                   );
                 }
