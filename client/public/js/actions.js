@@ -198,3 +198,10 @@ export function submitPdbId(pdbId) {
     );
   };
 }
+
+export function submitEmail(email) {
+  return {
+    type: actionConstants.SUBMIT_EMAIL,
+    email,
+  };
+}

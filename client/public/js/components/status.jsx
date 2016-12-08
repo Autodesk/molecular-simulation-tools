@@ -2,6 +2,7 @@ import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import StatusLoad from './status_load';
+import StatusEmail from './status_email';
 import WorkflowRecord from '../records/workflow_record';
 import selectionConstants from '../constants/selection_constants';
 import viewEmptyImage from '../../img/view_empty.png';
@@ -80,9 +81,10 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
     selection = (
-      <div className="status-info">
-        <p>Enter email somewhere</p>
-      </div>
+      <StatusEmail
+        submitEmail={props.submitEmail}
+        email={props.workflow.email}
+      />
     );
   } else {
     selection = (
@@ -107,6 +109,7 @@ Status.propTypes = {
   onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
+  submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string,
 };

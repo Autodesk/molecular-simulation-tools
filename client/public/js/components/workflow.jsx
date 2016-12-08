@@ -60,6 +60,7 @@ class Workflow extends React.Component {
           onUpload={this.props.onUpload}
           selection={this.props.selection}
           submitPdbId={this.props.submitPdbId}
+          submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
           workflowStatus={this.props.workflowStatus}
         />,
@@ -91,6 +92,7 @@ Workflow.propTypes = {
   runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
+  submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
   workflowStatus: React.PropTypes.string,

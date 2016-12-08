@@ -6,6 +6,7 @@ import {
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   initializeWorkflow,
+  submitEmail,
   submitPdbId,
   upload,
 } from '../actions';
@@ -46,6 +47,9 @@ function mapDispatchToProps(dispatch) {
     },
     submitPdbId(pdbId) {
       dispatch(submitPdbId(pdbId));
+    },
+    submitEmail(email) {
+      dispatch(submitEmail(email));
     },
   };
 }

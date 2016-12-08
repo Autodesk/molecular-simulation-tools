@@ -15,6 +15,7 @@ const actionConstants = keyMirror({
   INITIALIZE_WORKFLOW: null,
   RUN_ENDED: null,
   SUBMIT_PDB_ID: null,
+  SUBMIT_EMAIL: null,
   UPLOAD: null,
   UPLOAD_COMPLETE: null,
 });

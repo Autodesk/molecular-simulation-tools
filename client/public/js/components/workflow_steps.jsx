@@ -21,6 +21,8 @@ class WorkflowSteps extends React.Component {
       statusConstants.COMPLETED : statusConstants.IDLE;
     const emailSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_EMAIL;
+    const emailStatus = this.props.workflow.email ?
+      statusConstants.COMPLETED : statusConstants.IDLE;
 
     return (
       <div className="workflow-steps-pane">
@@ -55,6 +57,7 @@ class WorkflowSteps extends React.Component {
               primaryText={'Enter email'}
               onClick={this.props.clickWorkflowNodeEmail}
               selected={emailSelected}
+              status={emailStatus}
               last
             />
           </List>

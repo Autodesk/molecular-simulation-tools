@@ -121,6 +121,9 @@ function workflow(state = initialState, action) {
         pdbUrl: action.pdbUrl,
       });
 
+    case actionConstants.SUBMIT_EMAIL:
+      return state.set('email', action.email);
+
     default:
       return state;
   }
