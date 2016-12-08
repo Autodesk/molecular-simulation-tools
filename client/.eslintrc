@@ -8,6 +8,11 @@
     "document": true,
     "fetch": true,
     "FileReader": true,
+    "describe": true,
+    "it": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "expect": true,
   },
   "rules": {
     "import/no-unresolved": 1,

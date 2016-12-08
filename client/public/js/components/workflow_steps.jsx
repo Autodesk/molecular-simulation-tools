@@ -7,13 +7,15 @@ import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
 import selectionConstants from '../constants/selection_constants';
 import statusConstants from '../constants/status_constants';
+import workflowUtils from '../utils/workflow_utils';
 
 require('../../css/workflow_steps.scss');
 
 class WorkflowSteps extends React.Component {
   render() {
     const running = this.props.workflowStatus === statusConstants.RUNNING;
-    const hasWorkflowNodes = this.props.workflow.workflowNodes.size;
+    const runDisabled = running ||
+      !workflowUtils.isRunnable(this.props.workflow);
 
     const loadSelected = this.props.selection.type ===
       selectionConstants.WORKFLOW_NODE_LOAD;
@@ -70,7 +72,7 @@ class WorkflowSteps extends React.Component {
           <button
             className="button is-primary is-medium run"
             onClick={this.props.clickRun}
-            disabled={running || !hasWorkflowNodes}
+            disabled={runDisabled}
           >
             Run
           </button>
