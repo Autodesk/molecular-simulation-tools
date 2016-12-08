@@ -26,6 +26,15 @@ class WorkflowSteps extends React.Component {
     const emailStatus = this.props.workflow.email ?
       statusConstants.COMPLETED : statusConstants.IDLE;
 
+    let runErrorEl;
+    if (this.props.workflowStatus === statusConstants.ERROR) {
+      runErrorEl = (
+        <div className="error">
+          Something went wrong when running this workflow.  Try again, and if the problem persists, please contact us.
+        </div>
+      );
+    }
+
     return (
       <div className="workflow-steps-pane">
         <div className="workflow-steps">
@@ -76,6 +85,7 @@ class WorkflowSteps extends React.Component {
           >
             Run
           </button>
+          {runErrorEl}
         </div>
       </div>
     );
@@ -88,7 +98,7 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string,
+  workflowStatus: React.PropTypes.string.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

@@ -1,3 +1,4 @@
+import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import realApiUtils from './utils/api_utils';
 import mockApiUtils from './utils/mock_api_utils';
@@ -131,7 +132,7 @@ function runEnded(workflowNodes, status, err) {
   };
 }
 
-export function clickRun(workflowNodes) {
+export function clickRun(workflowId, workflowNodes) {
   return (dispatch) => {
     const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
 
@@ -140,9 +141,9 @@ export function clickRun(workflowNodes) {
       workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
     });
 
-    apiUtils.run(nodeIds).then((workflowNodesData) => {
+    apiUtils.run(nodeIds).then((res) => {
       const workflowNodesRan = workflowNodes.map((workflowNode) => {
-        const workflowNodeData = workflowNodesData.find(workflowNodeDataI =>
+        const workflowNodeData = res.workflowNodesData.find(workflowNodeDataI =>
           workflowNodeDataI.id === workflowNode.nodeId
         );
         return workflowNode.set('outputs', [{
@@ -150,6 +151,8 @@ export function clickRun(workflowNodes) {
           value: workflowNodeData.outputs[0].value,
         }]);
       });
+
+      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
 
       runEnded(workflowNodesRan, statusConstants.COMPLETED)(dispatch);
     }).catch((err) => {

@@ -10,6 +10,7 @@ import {
   submitPdbId,
   upload,
 } from '../actions';
+import workflowUtils from '../utils/workflow_utils';
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -20,14 +21,17 @@ function mapStateToProps(state, ownProps) {
     workflowId: ownProps.params.workflowId,
     runId: ownProps.params.runId,
     workflow: state.workflow,
+    workflowStatus: workflowUtils.getWorkflowStatus(
+      state.workflow.workflowNodes
+    ),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    clickRun(workflowNodes) {
+    clickRun(workflowNodes, workflowId) {
       return () => {
-        dispatch(clickRun(workflowNodes));
+        dispatch(clickRun(workflowNodes, workflowId));
       };
     },
     clickWorkflowNode(workflowNodeId) {
@@ -57,7 +61,7 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.workflowNodes
+      stateProps.workflow.id, stateProps.workflow.workflowNodes
     ),
   });
 }

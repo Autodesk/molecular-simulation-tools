@@ -95,7 +95,7 @@ Workflow.propTypes = {
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
-  workflowStatus: React.PropTypes.string,
+  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default Workflow;

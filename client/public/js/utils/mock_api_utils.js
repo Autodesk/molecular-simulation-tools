@@ -10,18 +10,22 @@ const mockApiUtils = {
       setTimeout(() => {
         // 20% chance of failing
         const err = Math.random() > 0.8;
-        const res = nodeIds.map(nodeId => ({
+        if (err) {
+          return reject(err);
+        }
+
+        const runId = Math.round(Math.random() * 1000);
+        const workflowNodesData = nodeIds.map(nodeId => ({
           id: nodeId,
           outputs: [{
             value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
           }],
         }));
 
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(res);
+        return resolve({
+          workflowNodesData,
+          runId,
+        });
       }, 1000);
     });
   },

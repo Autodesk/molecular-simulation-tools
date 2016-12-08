@@ -47,7 +47,7 @@ render((
       <Router history={browserHistory}>
         <Route path="/" component={HomeRoot}>
           <Route path="workflow/:workflowId" component={WorkflowRoot} />
-          <Route path="workflow/:workflowId/run/:runId" component={WorkflowRoot} />
+          <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
           <Route path="*" component={NotFound} />
         </Route>
         <Route path="*" component={NotFound} />
