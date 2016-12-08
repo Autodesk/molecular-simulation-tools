@@ -8,24 +8,41 @@ const workflowUtils = {
    * @returns {String}
   */
   getWorkflowStatus(workflowNodes) {
-    let workflowStatus;
+    if (!workflowNodes.size) {
+      return statusConstants.IDLE;
+    }
+
+    let atLeastOneError = false;
+    let allCompleted = true;
+    let allIdle = true;
 
     for (let i = 0; i < workflowNodes.size; i += 1) {
       const workflowNode = workflowNodes.get(i);
 
       if (workflowNode.status === statusConstants.ERROR) {
-        workflowStatus = statusConstants.ERROR;
+        atLeastOneError = true;
         break;
       } else if (workflowNode.status === statusConstants.RUNNING) {
-        workflowStatus = statusConstants.RUNNING;
-      } else if (!workflowStatus && workflowNode.status === statusConstants.COMPLETED) {
-        workflowStatus = statusConstants.COMPLETED;
-      } else if (!workflowStatus && workflowNode.status === statusConstants.IDLE) {
-        workflowStatus = statusConstants.IDLE;
+        allCompleted = false;
+        allIdle = false;
+      } else if (workflowNode.status === statusConstants.COMPLETED) {
+        allIdle = false;
+      } else if (workflowNode.status === statusConstants.IDLE) {
+        allCompleted = false;
       }
     }
 
-    return workflowStatus;
+    if (atLeastOneError) {
+      return statusConstants.ERROR;
+    }
+    if (allCompleted) {
+      return statusConstants.COMPLETED;
+    }
+    if (allIdle) {
+      return statusConstants.IDLE;
+    }
+
+    return statusConstants.RUNNING;
   },
 
   isRunnable(workflow) {
@@ -33,6 +50,9 @@ const workflowUtils = {
       return false;
     }
     if (!isEmail(workflow.email)) {
+      return false;
+    }
+    if (workflow.status === statusConstants.RUNNING) {
       return false;
     }
 
