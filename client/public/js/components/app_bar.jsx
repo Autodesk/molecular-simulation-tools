@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import Popover from 'material-ui/Popover';
 import MenuItem from 'material-ui/MenuItem';
 import logoImage from '../../img/logo.png';
@@ -36,9 +37,9 @@ class AppBar extends React.Component {
         <div className="title">
           <h2>{this.props.title}</h2>
         </div>
-        <button>
+        <Link to="/">
           Browse all tools
-        </button>
+        </Link>
         <Popover
           open={this.state.shareMenuOpen}
           anchorEl={this.shareButton}
@@ -54,7 +55,7 @@ class AppBar extends React.Component {
         >
           Share
         </button>
-        <button>Join</button>
+        <Link to="/#join">Join</Link>
         <button>Help</button>
       </div>
     );
