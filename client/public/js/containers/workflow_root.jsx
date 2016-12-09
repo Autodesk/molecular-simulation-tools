@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import Workflow from '../components/workflow';
 import {
+  clickAbout,
   clickRun,
   clickWorkflowNode,
   clickWorkflowNodeLoad,
@@ -29,6 +30,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    clickAbout() {
+      dispatch(clickAbout());
+    },
     clickRun(workflowNodes, workflowId) {
       return () => {
         dispatch(clickRun(workflowNodes, workflowId));

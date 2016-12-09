@@ -44,6 +44,7 @@ class Workflow extends React.Component {
       workflowEl = [
         <WorkflowSteps
           key={0}
+          clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
           clickWorkflowNode={this.props.clickWorkflowNode}
           clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
@@ -80,6 +81,7 @@ class Workflow extends React.Component {
 }
 
 Workflow.propTypes = {
+  clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,

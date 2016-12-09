@@ -30,6 +30,12 @@ function selection(state = initialState, action) {
         type: selectionConstants.WORKFLOW_NODE_EMAIL,
       });
 
+    case actionConstants.CLICK_ABOUT:
+      return state.merge({
+        id: null,
+        type: selectionConstants.ABOUT,
+      });
+
     default:
       return state;
   }

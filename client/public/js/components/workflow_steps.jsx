@@ -77,6 +77,7 @@ class WorkflowSteps extends React.Component {
           <FlatButton
             style={{ margin: '0 auto', display: 'block' }}
             label="About"
+            onClick={this.props.clickAbout}
           />
           <button
             className="button is-primary is-medium run"
@@ -93,6 +94,7 @@ class WorkflowSteps extends React.Component {
 }
 
 WorkflowSteps.propTypes = {
+  clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,

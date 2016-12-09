@@ -208,3 +208,9 @@ export function submitEmail(email) {
     email,
   };
 }
+
+export function clickAbout() {
+  return {
+    type: actionConstants.CLICK_ABOUT,
+  };
+}

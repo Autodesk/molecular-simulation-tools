@@ -1,6 +1,7 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
+import StatusAbout from './status_about';
 import StatusLoad from './status_load';
 import StatusEmail from './status_email';
 import WorkflowRecord from '../records/workflow_record';
@@ -85,6 +86,10 @@ function Status(props) {
         submitEmail={props.submitEmail}
         email={props.workflow.email}
       />
+    );
+  } else if (props.selection.type === selectionConstants.ABOUT) {
+    selection = (
+      <StatusAbout />
     );
   } else {
     selection = (
