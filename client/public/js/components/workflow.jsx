@@ -69,11 +69,12 @@ class Workflow extends React.Component {
   }
 
   render() {
-    let selectedWorkflowNode;
+    let selectedModelData;
     if (this.props.selection.type === selectionConstants.WORKFLOW_NODE) {
-      selectedWorkflowNode = this.props.workflow.workflowNodes.find(workflowNode =>
-        workflowNode.id === this.props.selection.id
+      const selectedWorkflowNode = this.props.workflow.workflowNodes.find(
+        workflowNode => workflowNode.id === this.props.selection.id
       );
+      selectedModelData = selectedWorkflowNode.modelData;
     }
 
     return (
@@ -100,7 +101,8 @@ class Workflow extends React.Component {
           workflowStatus={this.props.workflowStatus}
         />
         <View
-          workflowNode={selectedWorkflowNode}
+          modelData={selectedModelData}
+          loading={this.props.workflow.fetching}
         />
         <Snackbar
           autoClose={false}

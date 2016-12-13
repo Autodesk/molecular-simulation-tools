@@ -67,7 +67,8 @@ function Status(props) {
         {output}
       </div>
     );
-  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
+  } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
+    props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
     selection = (
       <StatusLoad
         fetchingPdb={props.fetchingPdb}
