@@ -4,6 +4,7 @@ import SelectionRecord from '../records/selection_record';
 import Snackbar from './snackbar';
 import Status from '../components/status';
 import View from '../components/view';
+import UserMessageRecord from '../records/user_message_record';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowSteps from '../components/workflow_steps';
 import selectionConstants from '../constants/selection_constants';
@@ -105,10 +106,7 @@ class Workflow extends React.Component {
           loading={this.props.workflow.fetching}
         />
         <Snackbar
-          autoClose={false}
-          open={this.props.workflow.fetchingError && !this.state.snackbarClosed}
-          message="Generic Error!"
-          onRequestClose={this.onRequestCloseSnackbar}
+          userMessage={this.props.userMessage}
         />
       </div>
     );
@@ -130,6 +128,7 @@ Workflow.propTypes = {
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
+  userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
   workflowStatus: React.PropTypes.string.isRequired,

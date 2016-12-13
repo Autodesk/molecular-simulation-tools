@@ -19,9 +19,10 @@ function mapStateToProps(state, ownProps) {
     fetchingPdbError: state.workflow.fetchingPdbError,
     nodes: state.nodes,
     selection: state.selection,
-    workflowId: ownProps.params.workflowId,
     runId: ownProps.params.runId,
+    userMessage: state.userMessage,
     workflow: state.workflow,
+    workflowId: ownProps.params.workflowId,
     workflowStatus: workflowUtils.getWorkflowStatus(
       state.workflow.workflowNodes
     ),
