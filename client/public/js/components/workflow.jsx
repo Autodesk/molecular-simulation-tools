@@ -11,12 +11,40 @@ require('../../css/workflow.scss');
 
 class Workflow extends React.Component {
   componentDidMount() {
-    this.props.initializeWorkflow(this.props.workflowId, this.props.runId);
+    this.initialize(
+      this.props.workflowId, this.props.runId, this.props.workflow.title
+    );
+  }
 
-    if (this.props.runId) {
-      document.title = `Workflow - Run of "${this.props.workflow.title}"`;
+  componentWillReceiveProps(nextProps) {
+    const changingWorkflowId = nextProps.workflowId &&
+      this.props.workflowId !== nextProps.workflowId;
+    const changingRunId = nextProps.runId &&
+      nextProps.runId !== this.props.runId;
+    const missingWorkflow = nextProps.workflowId &&
+      nextProps.workflow.id !== nextProps.workflowId;
+    const missingRun = nextProps.runId &&
+      nextProps.workflow.runId !== nextProps.runId;
+    const fetching = nextProps.workflow.fetching;
+    const needWorkflow = changingWorkflowId && missingWorkflow;
+    const needRun = changingRunId && missingRun;
+
+    // Reinitialize when need workflow/run (like on back button)
+    if (!fetching && (needWorkflow || needRun)) {
+      this.initialize(
+        nextProps.workflowId, nextProps.runId, nextProps.workflow.title
+      );
+    }
+  }
+
+  // Set up page for workflow/run distinction
+  initialize(workflowId, runId, workflowTitle) {
+    this.props.initializeWorkflow(workflowId, runId);
+
+    if (runId) {
+      document.title = `Workflow - Run of "${workflowTitle}"`;
     } else {
-      document.title = `Workflow - "${this.props.workflow.title}"`;
+      document.title = `Workflow - "${workflowTitle}"`;
     }
   }
 

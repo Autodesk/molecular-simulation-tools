@@ -102,11 +102,12 @@ export function clickWorkflowNodeEmail() {
   };
 }
 
-function runEnded(workflowNodes, status, err) {
+function runEnded(workflowNodes, runId, status, err) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.RUN_ENDED,
       workflowNodes,
+      runId,
       workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
       status,
       err,
@@ -152,12 +153,12 @@ export function clickRun(workflowId, workflowNodes) {
         }]);
       });
 
-      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
+      runEnded(workflowNodesRan, res.runId, statusConstants.COMPLETED)(dispatch);
 
-      runEnded(workflowNodesRan, statusConstants.COMPLETED)(dispatch);
+      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
     }).catch((err) => {
       console.error(err);
-      runEnded(workflowNodes, statusConstants.ERROR, err)(dispatch);
+      runEnded(workflowNodes, null, statusConstants.ERROR, err)(dispatch);
     });
   };
 }

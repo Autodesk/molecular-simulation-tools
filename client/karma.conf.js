@@ -15,7 +15,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*_spec.js'
+      'test/**/*_spec.js',
+      'test/**/*_spec.jsx',
     ],
 
 
@@ -28,12 +29,30 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'test/*_spec.js': ['webpack'],
-      'test/**/*_spec.js': ['webpack']
+      'test/**/*_spec.js': ['webpack'],
+      'test/*_spec.jsx': ['webpack'],
+      'test/**/*_spec.jsx': ['webpack'],
     },
 
 
     webpack: {
+      resolve: {
+        extensions: ['', '.js', '.jsx'],
+        alias: {
+          sinon: 'sinon/pkg/sinon',
+        },
+      },
+      externals: {
+        jsdom: 'window',
+        cheerio: 'window',
+        'react/lib/ExecutionEnvironment': true,
+        'react/lib/ReactContext': 'window',
+        'react/addons': 'window',
+      },
       module: {
+        noParse: [
+          /node_modules\/sinon\//,
+        ],
         loaders: [{
           test: /\.(js|jsx)$/, exclude: /(bower_components|node_modules)/,
           loader: 'babel-loader'
@@ -41,6 +60,10 @@ module.exports = function(config) {
           test: /\.scss$/,
           include: /public\/css/,
           loaders: ['style', 'css', 'sass'],
+        }, {
+          test: /\.png$/,
+          include: /public\/img/,
+          loaders: ['file-loader'],
         }]
       }
     },

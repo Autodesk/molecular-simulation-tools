@@ -14,7 +14,7 @@ const mockApiUtils = {
           return reject(err);
         }
 
-        const runId = Math.round(Math.random() * 1000);
+        const runId = Math.round(Math.random() * 1000).toString();
         const workflowNodesData = nodeIds.map(nodeId => ({
           id: nodeId,
           outputs: [{
@@ -170,6 +170,7 @@ const mockApiUtils = {
 
         return resolve(new WorkflowRecord({
           id: workflowId,
+          runId,
           title: 'Refine ligand and active site in molecules',
           workflowNodes,
         }));

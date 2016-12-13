@@ -43,26 +43,29 @@ function workflow(state = initialState, action) {
       }));
 
     case actionConstants.RUN_ENDED:
-      return state.set('workflowNodes', state.workflowNodes.map((workflowNode) => {
-        const workflowNodeFromAction = action.workflowNodes.find(
-          workflowNodeI => workflowNodeI.id === workflowNode.id
-        );
-        if (!workflowNodeFromAction) {
-          return workflowNode;
-        }
-        if (action.err) {
+      return state.merge({
+        runId: action.runId,
+        workflowNodes: state.workflowNodes.map((workflowNode) => {
+          const workflowNodeFromAction = action.workflowNodes.find(
+            workflowNodeI => workflowNodeI.id === workflowNode.id
+          );
+          if (!workflowNodeFromAction) {
+            return workflowNode;
+          }
+          if (action.err) {
+            return workflowNode.merge({
+              status: action.status,
+              fetchingPDB: false,
+            });
+          }
+
           return workflowNode.merge({
             status: action.status,
-            fetchingPDB: false,
+            fetchingPDB: true,
+            outputs: workflowNodeFromAction.outputs,
           });
-        }
-
-        return workflowNode.merge({
-          status: action.status,
-          fetchingPDB: true,
-          outputs: workflowNodeFromAction.outputs,
-        });
-      }));
+        }),
+      });
 
     case actionConstants.FETCHED_PDB: {
       let workflowNodeIndex;

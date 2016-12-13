@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Provider } from 'react-redux';
-import { Route, Router, browserHistory } from 'react-router';
+import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import HomeRoot from './containers/home_root';
@@ -46,6 +46,7 @@ render((
     <MuiThemeProvider muiTheme={muiTheme}>
       <Router history={browserHistory}>
         <Route path="/" component={HomeRoot}>
+          <IndexRoute component={NotFound} />
           <Route path="workflow/:workflowId" component={WorkflowRoot} />
           <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
           <Route path="*" component={NotFound} />
