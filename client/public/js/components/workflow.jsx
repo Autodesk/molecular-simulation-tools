@@ -1,6 +1,7 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
+import Snackbar from './snackbar';
 import Status from '../components/status';
 import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
@@ -14,6 +15,12 @@ class Workflow extends React.Component {
     this.initialize(
       this.props.workflowId, this.props.runId, this.props.workflow.title
     );
+
+    this.state = {
+      snackbarClosed: true,
+    };
+
+    this.onRequestCloseSnackbar = this.onRequestCloseSnackbar.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,6 +42,19 @@ class Workflow extends React.Component {
         nextProps.workflowId, nextProps.runId, nextProps.workflow.title
       );
     }
+
+    if (!this.props.workflow.fetchingError &&
+      nextProps.workflow.fetchingError) {
+      this.setState({
+        snackbarClosed: false,
+      });
+    }
+  }
+
+  onRequestCloseSnackbar() {
+    this.setState({
+      snackbarClosed: true,
+    });
   }
 
   // Set up page for workflow/run distinction
@@ -56,20 +76,9 @@ class Workflow extends React.Component {
       );
     }
 
-    let workflowEl;
-    if (this.props.workflow.fetchingError) {
-      workflowEl = (
-        <div>
-          <h2>Something went wrong!</h2>
-          <p>
-            Try refreshing your browser, and if the problem persists, please contact us.
-          </p>
-        </div>
-      );
-    } else {
-      workflowEl = [
+    return (
+      <div className="workflow">
         <WorkflowSteps
-          key={0}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
           clickWorkflowNode={this.props.clickWorkflowNode}
@@ -78,9 +87,8 @@ class Workflow extends React.Component {
           selection={this.props.selection}
           workflow={this.props.workflow}
           workflowStatus={this.props.workflowStatus}
-        />,
+        />
         <Status
-          key={1}
           fetchingPdb={this.props.fetchingPdb}
           fetchingPdbError={this.props.fetchingPdbError}
           nodes={this.props.nodes}
@@ -90,17 +98,16 @@ class Workflow extends React.Component {
           submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
           workflowStatus={this.props.workflowStatus}
-        />,
+        />
         <View
-          key={2}
           workflowNode={selectedWorkflowNode}
-        />,
-      ];
-    }
-
-    return (
-      <div className="workflow">
-        {workflowEl}
+        />
+        <Snackbar
+          autoClose={false}
+          open={this.props.workflow.fetchingError && !this.state.snackbarClosed}
+          message="Generic Error!"
+          onRequestClose={this.onRequestCloseSnackbar}
+        />
       </div>
     );
   }
