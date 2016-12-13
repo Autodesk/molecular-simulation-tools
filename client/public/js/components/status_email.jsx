@@ -1,5 +1,4 @@
 import React from 'react';
-import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import isEmail from 'validator/lib/isEmail';
 
@@ -41,7 +40,6 @@ class StatusEmail extends React.Component {
   }
 
   render() {
-    const submitLabel = this.props.email ? 'Change' : 'Done';
     const sendText = this.props.email ?
       `We will send an email to you at ${this.props.email} once your workflow is completed.` :
       'We will send you an email once your workflow is completed';
@@ -65,12 +63,6 @@ class StatusEmail extends React.Component {
           <p className="error">
             {this.state.emailError ? this.state.emailError : ''}
           </p>
-          <div className="done-container">
-            <FlatButton
-              label={submitLabel}
-              type="submit"
-            />
-          </div>
         </form>
       </div>
     );
