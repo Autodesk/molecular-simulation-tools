@@ -11,86 +11,85 @@ import workflowUtils from '../utils/workflow_utils';
 
 require('../../css/workflow_steps.scss');
 
-class WorkflowSteps extends React.Component {
-  render() {
-    const running = this.props.workflowStatus === statusConstants.RUNNING;
-    const runDisabled = running ||
-      !workflowUtils.isRunnable(this.props.workflow);
+function WorkflowSteps(props) {
+  const running = props.workflowStatus === statusConstants.RUNNING;
+  const runDisabled = running ||
+    !workflowUtils.isRunnable(props.workflow);
 
-    const loadSelected = this.props.selection.type ===
-      selectionConstants.WORKFLOW_NODE_LOAD;
-    const loadStatus = this.props.workflow.pdbUrl ?
-      statusConstants.COMPLETED : statusConstants.IDLE;
-    const emailSelected = this.props.selection.type ===
-      selectionConstants.WORKFLOW_NODE_EMAIL;
-    const emailStatus = this.props.workflow.email ?
-      statusConstants.COMPLETED : statusConstants.IDLE;
+  const loadSelected = props.selection.type ===
+    selectionConstants.WORKFLOW_NODE_LOAD;
+  const loadStatus = props.workflow.pdbUrl ?
+    statusConstants.COMPLETED : statusConstants.IDLE;
+  const emailSelected = props.selection.type ===
+    selectionConstants.WORKFLOW_NODE_EMAIL;
+  const emailStatus = props.workflow.email ?
+    statusConstants.COMPLETED : statusConstants.IDLE;
 
-    let runErrorEl;
-    if (this.props.workflowStatus === statusConstants.ERROR) {
-      runErrorEl = (
-        <div className="error">
-          Something went wrong when running this workflow.  Try again, and if the problem persists, please contact us.
-        </div>
-      );
-    }
-
-    return (
-      <div className="workflow-steps-pane">
-        <div className="workflow-steps">
-          <List>
-            <WorkflowStep
-              primaryText={'Load molecule'}
-              selected={loadSelected}
-              status={loadStatus}
-              onClick={this.props.clickWorkflowNodeLoad}
-            />
-            {
-              this.props.workflow.workflowNodes.map(
-                (workflowNode, index) => {
-                  const workflowNodeSelected =
-                    this.props.selection.type === selectionConstants.WORKFLOW_NODE;
-                  const node = workflowNode.node;
-                  return (
-                    <Node
-                      key={index}
-                      node={node}
-                      onClick={this.props.clickWorkflowNode}
-                      selected={workflowNodeSelected && workflowNode.id === this.props.selection.id}
-                      status={workflowNode.status}
-                      workflowNodeId={workflowNode.id}
-                    />
-                  );
-                }
-              )
-            }
-            <WorkflowStep
-              primaryText={'Enter email'}
-              onClick={this.props.clickWorkflowNodeEmail}
-              selected={emailSelected}
-              status={emailStatus}
-              last
-            />
-          </List>
-        </div>
-        <div className="actions">
-          <FlatButton
-            style={{ margin: '0 auto', display: 'block' }}
-            label="About"
-            onClick={this.props.clickAbout}
-          />
-          <button
-            className="button is-primary is-medium run"
-            onClick={this.props.clickRun}
-            disabled={runDisabled}
-          >
-            Run
-          </button>
-          {runErrorEl}
-        </div>
+  let runErrorEl;
+  if (props.workflowStatus === statusConstants.ERROR) {
+    runErrorEl = (
+      <div className="error">
+        Something went wrong when running this workflow.  Try again, and if the
+        problem persists, please contact us.
       </div>
     );
   }
+
+  return (
+    <div className="workflow-steps-pane">
+      <div className="workflow-steps">
+        <List>
+          <WorkflowStep
+            primaryText={'Load molecule'}
+            selected={loadSelected}
+            status={loadStatus}
+            onClick={props.clickWorkflowNodeLoad}
+          />
+          {
+            props.workflow.workflowNodes.map(
+              (workflowNode, index) => {
+                const workflowNodeSelected =
+                  props.selection.type === selectionConstants.WORKFLOW_NODE;
+                const node = workflowNode.node;
+                return (
+                  <Node
+                    key={index}
+                    node={node}
+                    onClick={props.clickWorkflowNode}
+                    selected={workflowNodeSelected && workflowNode.id === props.selection.id}
+                    status={workflowNode.status}
+                    workflowNodeId={workflowNode.id}
+                  />
+                );
+              }
+            )
+          }
+          <WorkflowStep
+            primaryText={'Enter email'}
+            onClick={props.clickWorkflowNodeEmail}
+            selected={emailSelected}
+            status={emailStatus}
+            last
+          />
+        </List>
+      </div>
+      <div className="actions">
+        <FlatButton
+          style={{ margin: '0 auto', display: 'block' }}
+          label="About"
+          onClick={props.clickAbout}
+        />
+        <button
+          className="button is-primary is-medium run"
+          onClick={props.clickRun}
+          disabled={runDisabled}
+        >
+          Run
+        </button>
+        {runErrorEl}
+      </div>
+    </div>
+  );
 }
 
 WorkflowSteps.propTypes = {
