@@ -57,9 +57,7 @@ class Workflow extends React.Component {
     }
 
     let workflowEl;
-    if (this.props.workflow.fetching) {
-      workflowEl = <h2>Loading!</h2>;
-    } else if (this.props.workflow.fetchingError) {
+    if (this.props.workflow.fetchingError) {
       workflowEl = (
         <div>
           <h2>Something went wrong!</h2>

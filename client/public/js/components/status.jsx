@@ -6,7 +6,6 @@ import StatusLoad from './status_load';
 import StatusEmail from './status_email';
 import WorkflowRecord from '../records/workflow_record';
 import selectionConstants from '../constants/selection_constants';
-import viewEmptyImage from '../../img/view_empty.png';
 
 require('../../css/status.scss');
 
@@ -90,13 +89,6 @@ function Status(props) {
   } else if (props.selection.type === selectionConstants.ABOUT) {
     selection = (
       <StatusAbout />
-    );
-  } else {
-    selection = (
-      <div className="placeholder">
-        <img src={viewEmptyImage} alt="Status Placeholder" />
-        Select a node or workflow to see its status.
-      </div>
     );
   }
 

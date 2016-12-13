@@ -10,7 +10,13 @@ require('../../css/view.scss');
 function View(props) {
   let view;
 
-  if (props.workflowNode && props.workflowNode.fetchingPDB) {
+  if (!props.workflowNode) {
+    view = (
+      <div className="loading">
+        LOADING TODO
+      </div>
+    );
+  } else if (props.workflowNode.fetchingPDB) {
     view = (
       <div className="placeholder">
         <CircularProgress />

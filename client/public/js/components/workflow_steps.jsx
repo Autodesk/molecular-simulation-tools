@@ -35,9 +35,10 @@ function WorkflowSteps(props) {
     );
   }
 
-  return (
-    <div className="workflow-steps-pane">
-      <div className="workflow-steps">
+  let workflowStepsEl;
+  if (props.workflow.workflowNodes.size) {
+    workflowStepsEl = [
+      <div key={0} className="workflow-steps">
         <List>
           <WorkflowStep
             primaryText={'Load molecule'}
@@ -72,8 +73,8 @@ function WorkflowSteps(props) {
             last
           />
         </List>
-      </div>
-      <div className="actions">
+      </div>,
+      <div key={1} className="actions">
         <FlatButton
           style={{ margin: '0 auto', display: 'block' }}
           label="About"
@@ -87,7 +88,13 @@ function WorkflowSteps(props) {
           Run
         </button>
         {runErrorEl}
-      </div>
+      </div>,
+    ];
+  }
+
+  return (
+    <div className="workflow-steps-pane">
+      {workflowStepsEl}
     </div>
   );
 }
