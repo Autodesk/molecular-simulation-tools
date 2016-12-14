@@ -3,11 +3,13 @@ import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import Snackbar from './snackbar';
 import Status from '../components/status';
-import View from '../components/view';
+import ThankYou from './thank_you';
 import UserMessageRecord from '../records/user_message_record';
+import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowSteps from '../components/workflow_steps';
 import selectionConstants from '../constants/selection_constants';
+import statusConstants from '../constants/status_constants';
 
 require('../../css/workflow.scss');
 
@@ -70,6 +72,14 @@ class Workflow extends React.Component {
   }
 
   render() {
+    if (this.props.workflowStatus === statusConstants.RUNNING) {
+      return (
+        <ThankYou
+          email={this.props.workflow.email}
+        />
+      );
+    }
+
     let selectedModelData;
     if (this.props.selection.type === selectionConstants.WORKFLOW_NODE) {
       const selectedWorkflowNode = this.props.workflow.workflowNodes.find(
