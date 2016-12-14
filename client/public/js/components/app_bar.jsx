@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import Popover from 'material-ui/Popover';
 import MenuItem from 'material-ui/MenuItem';
+import Popover from './popover';
 import logoImage from '../../img/logo.png';
 
 require('../../css/app_bar.scss');
@@ -31,6 +31,9 @@ class AppBar extends React.Component {
   }
 
   render() {
+    const anchorClientRect = this.shareButton ?
+      this.shareButton.getBoundingClientRect() : {};
+
     return (
       <div className="app-bar">
         <img src={logoImage} alt="logo" className="logo" />
@@ -42,12 +45,11 @@ class AppBar extends React.Component {
         </Link>
         <Popover
           open={this.state.shareMenuOpen}
-          anchorEl={this.shareButton}
+          top={anchorClientRect.bottom}
+          left={anchorClientRect.left}
           onRequestClose={this.handleRequestClose}
         >
-          <MenuItem>Email</MenuItem>
-          <MenuItem>Twitter</MenuItem>
-          <MenuItem>Facebook</MenuItem>
+          <div>TODO sharing stuff</div>
         </Popover>
         <button
           ref={(c) => { this.shareButton = c; }}

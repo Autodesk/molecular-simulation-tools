@@ -1,0 +1,17 @@
+.popover {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1000;
+
+  &.open {
+    height: 100%;
+  }
+
+  .container {
+    background-color: #ffffff;
+    padding: 12px;
+    position: absolute;
+  }
+}
