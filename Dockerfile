@@ -96,15 +96,22 @@ RUN npm install -g forever nodemon grunt grunt-cli webpack
 # #######################################
 
 ENV APP /app
-RUN mkdir -p $APP
+RUN mkdir -p $APP/client
+WORKDIR $APP/client
 
 ADD client/package.json $APP/client/package.json
-WORKDIR $APP/client
 
 RUN npm install
 
 RUN touch .env
-ADD ./client $APP/client
+ADD ./client/.babelrc $APP/client/.babelrc
+ADD ./client/.eslintignore $APP/client/.eslintignore
+ADD ./client/.eslintrc $APP/client/.eslintrc
+ADD ./client/karma.conf.js $APP/client/karma.conf.js
+ADD ./client/README.md $APP/client/README.md
+ADD ./client/webpack.config.js $APP/client/webpack.config.js
+ADD ./client/public $APP/client/public
+ADD ./client/test $APP/client/test
 
 # WORKDIR $APP/client
 
@@ -116,6 +123,10 @@ RUN npm run build
 # Server build/install packages
 #######################################
 
+ADD ./server/package.json $APP/server/package.json
+RUN cd $APP/server && npm install
+ADD ./server/**.js $APP/server/
+WORKDIR $APP
 # ADD ./server/lib/workflow-execution-server $APP/server
 # WORKDIR $APP/server
 # RUN haxelib newrepo
@@ -124,7 +135,7 @@ RUN npm run build
 # RUN npm install
 
 
-# ENV PORT 4000
-# EXPOSE $PORT
+ENV PORT 4000
+EXPOSE $PORT
 
-# CMD ["forever", "build/server/server-workflow.js"]
+CMD ["forever", "server/server.js"]
