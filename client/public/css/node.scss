@@ -1,35 +1,37 @@
+@import 'variables';
+
 .node {
   text-align: center;
-  border-bottom: 1px #6f7999 solid !important;
-  color: #6f7999 !important;
+  border-bottom: 1px $fg-secondary solid;
+  color: $fg-secondary;
   list-style-type: none;
   padding: 12px;
   cursor: pointer;
 
   &.last {
-    border-bottom: none !important;
+    border-bottom: none;
   }
 
   &.selected {
-    background-color: #ffffff !important;
+    background-color: #ffffff;
     opacity: 0.2;
   }
 
   .icon-finished {
-    display: inline-block !important;
+    display: inline-block;
   }
 
   .icon-view {
-    display: none !important;
+    display: none;
   }
 
   &:hover {
     .icon-finished {
-      display: none !important;
+      display: none;
     }
 
     .icon-view {
-      display: inline-block !important;
+      display: inline-block;
     }
   }
 }

@@ -4,7 +4,6 @@
   "description": "Workflow project",
   "main": "public/js/main.jsx",
   "dependencies": {
-    "bulma": "^0.2.1",
     "dotenv": "^2.0.0",
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",

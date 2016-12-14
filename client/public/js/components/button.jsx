@@ -1,13 +1,14 @@
 import React from 'react';
 
-require('../../css/raised_button.scss');
+require('../../css/button.scss');
 
-function RaisedButton(props) {
+function Button(props) {
   const disabledClass = props.disabled ? 'disabled' : '';
+  const raisedClass = props.raised ? 'raised' : '';
 
   return (
     <button
-      className={`raised-button ${disabledClass}`}
+      className={`button ${disabledClass} ${raisedClass}`}
       onClick={props.onClick}
       disabled={props.disabled}
     >
@@ -16,13 +17,14 @@ function RaisedButton(props) {
   );
 }
 
-RaisedButton.propTypes = {
+Button.propTypes = {
   children: React.PropTypes.oneOfType([
     React.PropTypes.element,
     React.PropTypes.string,
   ]),
-  onClick: React.PropTypes.func,
   disabled: React.PropTypes.bool,
+  onClick: React.PropTypes.func,
+  raised: React.PropTypes.bool,
 };
 
-export default RaisedButton;
+export default Button;

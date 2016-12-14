@@ -1,3 +1,5 @@
+@import 'variables';
+
 html, body, .app {
   height: 100%;
 }
@@ -15,7 +17,7 @@ html, body, .app {
   height: 100%;
   margin-top: -48px;
   position: relative;
-  padding: 60px 12px 12px 12px !important;
+  padding: 60px 12px 12px 12px;
 }
 
 .placeholder {
@@ -34,4 +36,10 @@ html, body, .app {
   color: #ff0000;
 }
 
-@import "~bulma/bulma"
+ol {
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
