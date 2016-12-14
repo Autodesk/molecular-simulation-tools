@@ -2,18 +2,18 @@ version: '2'
 
 services:
 
-  # client:
-  #   restart: always
-  #   build:
-  #     context: .
-  #   command: ["npm", "run", "dev"]
-  #   ports:
-  #     - "9000:4000"
-  #   environment:
-  #     PORT: "4000"
-  #     # HOST_PWD: "${PWD}"
-  #   links:
-  #     - workflow-server
+  client:
+    # restart: always
+    build:
+      context: .
+    # command: ["npm", "run", "dev"]
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+      # HOST_PWD: "${PWD}"
+    # links:
+    #   - workflow-server
 
 
   # server:
@@ -39,18 +39,18 @@ services:
   #     # - ./server/lib/workflow-execution-server/build/server:/app/server/build/server
 
 
-  workflow-server:
-    restart: always
-    image: quay.io/bionano/workflow-execution-server:b5e22842
-    command: ["nodemon", "--watch", "/app/", "/app/server/server-workflow.js"]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - "${PWD}/tmp:/app/tmp"
-      - "${PWD}/gitcache:/app/gitcache"
-      - "./build/client/dist:/app/client/dist"
-      - "./client/workflow_convert_pdb:/app/client/workflow_convert_pdb"
-    ports:
-      - "9000:4040"
-    environment:
-      HOST_PWD: "${PWD}"
-      PORT: "4040"
+  # workflow-server:
+  #   restart: always
+  #   image: quay.io/bionano/workflow-execution-server:b5e22842
+  #   command: ["nodemon", "--watch", "/app/", "/app/server/server-workflow.js"]
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - "${PWD}/tmp:/app/tmp"
+  #     - "${PWD}/gitcache:/app/gitcache"
+  #     - "./build/client/dist:/app/client/dist"
+  #     - "./client/workflow_convert_pdb:/app/client/workflow_convert_pdb"
+  #   ports:
+  #     - "9000:4040"
+  #   environment:
+  #     HOST_PWD: "${PWD}"
+  #     PORT: "4040"
