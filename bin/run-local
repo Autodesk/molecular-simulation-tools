@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# git submodule update --init --recursive
-docker build -t mdtscripts client/workflow_convert_pdb/mdtscripts
-./bin/build-client
-docker-compose up $@

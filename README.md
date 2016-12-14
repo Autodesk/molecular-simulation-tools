@@ -6,19 +6,28 @@ Predictive molecular modeling applications based on the [Molecular Design Toolki
 
 	git clone https://github.com/Autodesk/molecular-design-applications
 	cd molecular-design-applications
-	./bin/run-local
+	git submodule update --init --recursive
+	docker-compose up
 
-Then open your browser to  [http://localhost:9000](http://localhost:9000)
+Then open your browser to  [http://localhost:4000](http://localhost:4000)
 
 ## Development
 
-Local server and client and workflow development can be sped up by mounting local directories, see docker-compose.yml for what volume mounts to uncomment and then restatt the docker-compose command.
+### Client
 
-Testing the convert API method can be done with:
+See client/README.md
 
-	curl --data-binary "@5e8b.pdb" http://localhost:9000/pdb_convert
+### Server
 
-(Assuming you have downloaded 5e8b.pdb from the PDB website)
+	node server/server.js
+
+APIs:
+
+	GET workflow/status/:workflowId
+		Will be one of [none|running|finished]
+
+	POST workflow/run
+		This will be added later (with instructions for the post data)
 
 ### Developing frontend assets
 In addition to mounting local directories as mentioned above, you can recompile the frontend assets on change by running `npm run watch` in the client directory.
