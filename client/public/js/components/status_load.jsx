@@ -1,5 +1,3 @@
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 
 class StatusLoad extends React.Component {
@@ -9,6 +7,7 @@ class StatusLoad extends React.Component {
     this.onUpload = this.onUpload.bind(this);
     this.onSubmitPdbId = this.onSubmitPdbId.bind(this);
     this.onChangePdbId = this.onChangePdbId.bind(this);
+    this.onClickFileUpload = this.onClickFileUpload.bind(this);
 
     this.state = {
       pdbId: '',
@@ -20,6 +19,10 @@ class StatusLoad extends React.Component {
     this.setState({
       pdbId: e.target.value,
     });
+  }
+
+  onClickFileUpload() {
+    this.fileInput.click();
   }
 
   onSubmitPdbId(e) {
@@ -55,10 +58,11 @@ class StatusLoad extends React.Component {
           <form
             onSubmit={this.onSubmitPdbId}
           >
-            <TextField
+            <input
               style={{ width: '100%' }}
+              type="text"
+              placeholder="Enter PDB ID here"
               disabled={this.props.fetchingPdb}
-              hintText="Enter PDB ID here"
               value={this.state.pdbId}
               onChange={this.onChangePdbId}
             />
@@ -70,19 +74,20 @@ class StatusLoad extends React.Component {
           <p>
             Or, browse custom file.
           </p>
-          <FlatButton
+          <button
             style={{ margin: '0 auto', width: '227px' }}
-            containerElement="label"
-            label="Browse"
             disabled={this.props.uploadPending}
+            onClick={this.onClickFileUpload}
           >
+            Browse
             <input
+              ref={(c) => { this.fileInput = c; }}
               className="file-input"
               type="file"
               disabled={this.props.uploadPending}
               onChange={this.onUpload}
             />
-          </FlatButton>
+          </button>
           <div className="error">
             {this.props.uploadError}
           </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router';
-import MenuItem from 'material-ui/MenuItem';
 import Popover from './popover';
 import logoImage from '../../img/logo.png';
 

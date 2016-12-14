@@ -1,6 +1,4 @@
 import React from 'react';
-import FlatButton from 'material-ui/FlatButton';
-import { List } from 'material-ui/List';
 import Node from './node';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
@@ -39,7 +37,7 @@ function WorkflowSteps(props) {
   if (props.workflow.workflowNodes.size) {
     workflowStepsEl = [
       <div key={0} className="workflow-steps">
-        <List>
+        <ol>
           <WorkflowStep
             primaryText={'Load molecule'}
             selected={loadSelected}
@@ -72,14 +70,15 @@ function WorkflowSteps(props) {
             status={emailStatus}
             last
           />
-        </List>
+        </ol>
       </div>,
       <div key={1} className="actions">
-        <FlatButton
+        <button
           style={{ margin: '0 auto', display: 'block' }}
-          label="About"
           onClick={props.clickAbout}
-        />
+        >
+          About
+        </button>
         <button
           className="button is-primary is-medium run"
           onClick={props.clickRun}

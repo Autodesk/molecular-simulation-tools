@@ -1,5 +1,4 @@
 import React from 'react';
-import { ListItem } from 'material-ui/List';
 import componentUtils from '../utils/component_utils';
 
 require('../../css/node.scss');
@@ -21,12 +20,13 @@ class WorkflowStep extends React.Component {
     const lastClass = this.props.last ? 'last' : '';
 
     return (
-      <ListItem
+      <li
         className={`node ${selectedClass} ${lastClass}`}
-        primaryText={this.props.primaryText}
-        rightIcon={rightIcon}
         onClick={this.onClick}
-      />
+      >
+        <span>{this.props.primaryText}</span>
+        <span>{rightIcon}</span>
+      </li>
     );
   }
 }

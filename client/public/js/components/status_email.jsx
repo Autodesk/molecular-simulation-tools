@@ -1,5 +1,4 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
 import isEmail from 'validator/lib/isEmail';
 
 require('../../css/status_email.scss');
@@ -53,11 +52,12 @@ class StatusEmail extends React.Component {
         <form
           onSubmit={this.onSubmit}
         >
-          <TextField
+          <input
             style={{ width: '100%' }}
-            hintText="Enter email"
-            value={this.state.email}
+            type="email"
             autoComplete="email"
+            placeholder="Enter email"
+            value={this.state.email}
             onChange={this.onChange}
           />
           <p className="error">

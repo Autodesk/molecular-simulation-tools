@@ -2,6 +2,9 @@
   text-align: center;
   border-bottom: 1px #6f7999 solid !important;
   color: #6f7999 !important;
+  list-style-type: none;
+  padding: 12px;
+  cursor: pointer;
 
   &.last {
     border-bottom: none !important;
