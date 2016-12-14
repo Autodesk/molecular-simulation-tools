@@ -1,5 +1,6 @@
 import React from 'react';
 import Node from './node';
+import RaisedButton from './raised_button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
@@ -79,13 +80,12 @@ function WorkflowSteps(props) {
         >
           About
         </button>
-        <button
-          className="button is-primary is-medium run"
+        <RaisedButton
           onClick={props.clickRun}
           disabled={runDisabled}
         >
           Run
-        </button>
+        </RaisedButton>
         {runErrorEl}
       </div>,
     ];
