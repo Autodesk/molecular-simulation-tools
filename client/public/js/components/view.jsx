@@ -1,38 +1,22 @@
 import React from 'react';
-import CircularProgress from 'material-ui/CircularProgress';
-// import MDTSelector from 'mdt-selector';
 import { Nbmolviz3dReact } from 'nbmolviz3d';
-import WorkflowNodeRecord from '../records/workflow_node_record';
-import viewEmptyImage from '../../img/view_empty.png';
 
 require('../../css/view.scss');
 
 function View(props) {
   let view;
 
-  if (props.workflowNode && props.workflowNode.fetchingPDB) {
+  if (props.loading) {
     view = (
-      <div className="placeholder">
-        <CircularProgress />
+      <div className="loading">
+        LOADING TODO
       </div>
     );
-  } else if (props.workflowNode && props.workflowNode.modelData) {
-    /*
+  } else if (props.modelData) {
     view = (
-      <MDTSelector
-        modelData={props.workflowNode.modelData.toJS()}
+      <Nbmolviz3dReact
+        modelData={props.modelData}
       />
-    );
-    */
-    view = (
-      <Nbmolviz3dReact modelData={props.workflowNode.modelData} />
-    );
-  } else {
-    view = (
-      <div className="placeholder">
-        <img src={viewEmptyImage} alt="View Placeholder" />
-        You need to run a workflow first.
-      </div>
     );
   }
 
@@ -44,7 +28,8 @@ function View(props) {
 }
 
 View.propTypes = {
-  workflowNode: React.PropTypes.instanceOf(WorkflowNodeRecord),
+  modelData: React.PropTypes.string,
+  loading: React.PropTypes.bool,
 };
 
 export default View;

@@ -1,17 +1,22 @@
 import keyMirror from 'keymirror';
 
 const actionConstants = keyMirror({
+  CLICK_ABOUT: null,
   CLICK_NODE: null,
   CLICK_RUN: null,
-  CLICK_WORKFLOW: null,
   CLICK_WORKFLOW_NODE: null,
-  DRAG_START: null,
-  DROP_NODE: null,
-  DROP_WORKFLOW_NODE_ON_NODE: null,
+  CLICK_WORKFLOW_NODE_LOAD: null,
+  CLICK_WORKFLOW_NODE_EMAIL: null,
   FETCHED_PDB: null,
+  FETCHED_PDB_BY_ID: null,
+  FETCHED_WORKFLOW: null,
+  FETCHED_RUN: null,
   GET_PDB: null,
   INITIALIZE: null,
+  INITIALIZE_WORKFLOW: null,
   RUN_ENDED: null,
+  SUBMIT_PDB_ID: null,
+  SUBMIT_EMAIL: null,
   UPLOAD: null,
   UPLOAD_COMPLETE: null,
 });

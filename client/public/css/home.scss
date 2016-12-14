@@ -1,4 +1,6 @@
 .home {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 
   &>.column>.columns {
@@ -21,11 +23,5 @@
         height: 100%;
       }
     }
-  }
-
-  .logo {
-    position: absolute;
-    height: 40px;
-    margin: 4px;
   }
 }

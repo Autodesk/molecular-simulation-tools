@@ -1,12 +1,18 @@
 .status {
   display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
+  width: 260px;
+  overflow: hidden;
+  padding: 20px;
+  background-color: rgba(85, 104, 161, 0.1);
 
   .status-info {
     text-align: center;
     font-size: 1.5rem;
     color: #000000;
+  }
+
+  .file-input {
+    display: none;
   }
 }

@@ -1,128 +1,137 @@
+import { Map as IMap } from 'immutable';
 import React from 'react';
-import { List as IList } from 'immutable';
-import FlatButton from 'material-ui/FlatButton';
-import { List } from 'material-ui/List';
-import Node from './node.jsx';
 import SelectionRecord from '../records/selection_record';
+import Snackbar from './snackbar';
+import Status from '../components/status';
+import View from '../components/view';
+import UserMessageRecord from '../records/user_message_record';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowTitle from '../components/workflow_title.jsx';
+import WorkflowSteps from '../components/workflow_steps';
 import selectionConstants from '../constants/selection_constants';
-import statusConstants from '../constants/status_constants';
 
 require('../../css/workflow.scss');
 
 class Workflow extends React.Component {
-  constructor(props) {
-    super(props);
+  componentDidMount() {
+    this.initialize(
+      this.props.workflowId, this.props.runId, this.props.workflow.title
+    );
 
-    this.onUpload = this.onUpload.bind(this);
+    this.state = {
+      snackbarClosed: true,
+    };
+
+    this.onRequestCloseSnackbar = this.onRequestCloseSnackbar.bind(this);
   }
 
-  onUpload(e) {
-    this.props.onUpload(e.target.files[0]);
+  componentWillReceiveProps(nextProps) {
+    const changingWorkflowId = nextProps.workflowId &&
+      this.props.workflowId !== nextProps.workflowId;
+    const changingRunId = nextProps.runId &&
+      nextProps.runId !== this.props.runId;
+    const missingWorkflow = nextProps.workflowId &&
+      nextProps.workflow.id !== nextProps.workflowId;
+    const missingRun = nextProps.runId &&
+      nextProps.workflow.runId !== nextProps.runId;
+    const fetching = nextProps.workflow.fetching;
+    const needWorkflow = changingWorkflowId && missingWorkflow;
+    const needRun = changingRunId && missingRun;
+
+    // Reinitialize when need workflow/run (like on back button)
+    if (!fetching && (needWorkflow || needRun)) {
+      this.initialize(
+        nextProps.workflowId, nextProps.runId, nextProps.workflow.title
+      );
+    }
+
+    if (!this.props.workflow.fetchingError &&
+      nextProps.workflow.fetchingError) {
+      this.setState({
+        snackbarClosed: false,
+      });
+    }
+  }
+
+  onRequestCloseSnackbar() {
+    this.setState({
+      snackbarClosed: true,
+    });
+  }
+
+  // Set up page for workflow/run distinction
+  initialize(workflowId, runId, workflowTitle) {
+    this.props.initializeWorkflow(workflowId, runId);
+
+    if (runId) {
+      document.title = `Workflow - Run of "${workflowTitle}"`;
+    } else {
+      document.title = `Workflow - "${workflowTitle}"`;
+    }
   }
 
   render() {
-    const running = this.props.workflowStatus === statusConstants.RUNNING;
-    const hasWorkflowNodes = this.props.workflow.workflowNodes.size;
-
-    let uploadElement;
-    if (this.props.uploadUrl) {
-      uploadElement = (
-        <div>
-          <p>
-            Uploaded:
-            <a href={this.props.uploadUrl}>{this.props.uploadUrl}</a>
-          </p>
-        </div>
+    let selectedModelData;
+    if (this.props.selection.type === selectionConstants.WORKFLOW_NODE) {
+      const selectedWorkflowNode = this.props.workflow.workflowNodes.find(
+        workflowNode => workflowNode.id === this.props.selection.id
       );
-    } else if (!this.props.workflow.workflowNodes.size) {
-      uploadElement = (
-        <div className="upload-container">
-          <FlatButton
-            style={{ margin: '0 auto' }}
-            containerElement="label"
-            label="Upload PDB"
-            disabled={this.props.uploadPending}
-          >
-            <input
-              type="file"
-              onChange={this.onUpload}
-              disabled={this.props.uploadPending}
-            />
-          </FlatButton>
-          <div className="error">
-            {this.props.uploadError}
-          </div>
-        </div>
-      );
+      selectedModelData = selectedWorkflowNode.modelData;
     }
 
     return (
       <div className="workflow">
-        <div className="header">
-          Workflow
-        </div>
-        <div className="pane-container">
-          <WorkflowTitle
-            workflow={this.props.workflow}
-            selection={this.props.selection}
-            onClick={this.props.clickWorkflow}
-            onDrop={this.props.onDropWorkflowTitle}
-            workflowStatus={this.props.workflowStatus}
-          />
-          {uploadElement}
-          <List>
-            {
-              this.props.workflow.workflowNodes.map(
-                (workflowNode, index) => {
-                  const workflowNodeSelected =
-                    this.props.selection.type === selectionConstants.WORKFLOW_NODE;
-                  const node = this.props.nodes.find(nodeI => nodeI.id === workflowNode.nodeId);
-                  return (
-                    <Node
-                      key={index}
-                      node={node}
-                      status={workflowNode.status}
-                      selected={workflowNodeSelected && workflowNode.id === this.props.selection.id}
-                      onClick={this.props.clickWorkflowNode}
-                      onDrop={this.props.onDropNode}
-                      onDragStart={this.props.onDragStart}
-                      workflowNodeId={workflowNode.id}
-                    />
-                  );
-                }
-              )
-            }
-          </List>
-          <button
-            className="button is-primary is-medium run"
-            onClick={this.props.clickRun}
-            disabled={running || !hasWorkflowNodes}
-          >
-            Run Workflow
-          </button>
-        </div>
+        <WorkflowSteps
+          clickAbout={this.props.clickAbout}
+          clickRun={this.props.clickRun}
+          clickWorkflowNode={this.props.clickWorkflowNode}
+          clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
+          clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
+          selection={this.props.selection}
+          workflow={this.props.workflow}
+          workflowStatus={this.props.workflowStatus}
+        />
+        <Status
+          fetchingPdb={this.props.fetchingPdb}
+          fetchingPdbError={this.props.fetchingPdbError}
+          nodes={this.props.nodes}
+          onUpload={this.props.onUpload}
+          selection={this.props.selection}
+          submitPdbId={this.props.submitPdbId}
+          submitEmail={this.props.submitEmail}
+          workflow={this.props.workflow}
+          workflowStatus={this.props.workflowStatus}
+        />
+        <View
+          modelData={selectedModelData}
+          loading={this.props.workflow.fetching}
+        />
+        <Snackbar
+          userMessage={this.props.userMessage}
+        />
       </div>
     );
   }
 }
 
 Workflow.propTypes = {
+  clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
-  clickWorkflow: React.PropTypes.func.isRequired,
-  onDropNode: React.PropTypes.func.isRequired,
-  onDropWorkflowTitle: React.PropTypes.func.isRequired,
-  onDragStart: React.PropTypes.func.isRequired,
+  clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
+  clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  fetchingPdb: React.PropTypes.bool,
+  fetchingPdbError: React.PropTypes.string,
+  initializeWorkflow: React.PropTypes.func.isRequired,
+  nodes: React.PropTypes.instanceOf(IMap),
   onUpload: React.PropTypes.func.isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string,
-  nodes: React.PropTypes.instanceOf(IList),
+  runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  uploadPending: React.PropTypes.bool.isRequired,
-  uploadError: React.PropTypes.string,
-  uploadUrl: React.PropTypes.string,
+  submitPdbId: React.PropTypes.func.isRequired,
+  submitEmail: React.PropTypes.func.isRequired,
+  userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
+  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  workflowId: React.PropTypes.string.isRequired,
+  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default Workflow;

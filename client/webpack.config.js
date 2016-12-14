@@ -4,7 +4,7 @@ require('dotenv').config();
 
 module.exports = {
   entry: {
-    app: ['./public/js/main.jsx'],
+    app: ['babel-polyfill', './public/js/main.jsx'],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -14,6 +14,10 @@ module.exports = {
   devServer: {
     port: '4000',
     hot: true,
+    historyApiFallback: true,
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
   },
   module: {
     loaders: [

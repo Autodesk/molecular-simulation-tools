@@ -1,8 +1,13 @@
+import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
-import apiUtils from './utils/api_utils';
-import selectionConstants from './constants/selection_constants';
+import realApiUtils from './utils/api_utils';
+import mockApiUtils from './utils/mock_api_utils';
 import statusConstants from './constants/status_constants';
 
+const apiUtils = process.env.NODE_ENV === 'offline' ?
+  mockApiUtils : realApiUtils;
+
+// TODO now unnecessary?
 export function initialize() {
   return (dispatch) => {
     apiUtils.getGallery().then(nodes =>
@@ -11,6 +16,63 @@ export function initialize() {
         nodes,
       })
     ).catch(console.error.bind(console));
+  };
+}
+
+export function initializeWorkflow(workflowId, runId) {
+  return async function initializeWorkflowDispatch(dispatch) {
+    dispatch({
+      type: actionConstants.INITIALIZE_WORKFLOW,
+    });
+
+    if (!runId) {
+      let workflow;
+      try {
+        workflow = await apiUtils.getWorkflow(workflowId);
+      } catch (error) {
+        return dispatch({
+          type: actionConstants.FETCHED_WORKFLOW,
+          error,
+        });
+      }
+
+      return dispatch({
+        type: actionConstants.FETCHED_WORKFLOW,
+        workflow,
+      });
+    }
+
+    let workflow;
+    try {
+      workflow = await apiUtils.getRun(workflowId, runId);
+    } catch (error) {
+      return dispatch({
+        type: actionConstants.FETCHED_RUN,
+        error,
+      });
+    }
+
+    dispatch({
+      type: actionConstants.FETCHED_RUN,
+      workflow,
+    });
+    return workflow.workflowNodes.forEach((workflowNode) => {
+      if (!workflowNode.modelData && workflowNode.outputs.length) {
+        apiUtils.getPDB(workflowNode.outputs[0].value).then(modelData =>
+          dispatch({
+            type: actionConstants.FETCHED_PDB,
+            workflowNodeId: workflowNode.id,
+            modelData,
+          })
+        ).catch(error =>
+          dispatch({
+            type: actionConstants.FETCHED_PDB,
+            workflowNodeId: workflowNode.id,
+            err: error,
+          })
+        );
+      }
+    });
   };
 }
 
@@ -28,18 +90,24 @@ export function clickWorkflowNode(workflowNodeId) {
   };
 }
 
-export function clickWorkflow(workflowId) {
+export function clickWorkflowNodeLoad() {
   return {
-    type: actionConstants.CLICK_WORKFLOW,
-    workflowId,
+    type: actionConstants.CLICK_WORKFLOW_NODE_LOAD,
   };
 }
 
-function runEnded(workflowNodes, nodes, status, err) {
+export function clickWorkflowNodeEmail() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_EMAIL,
+  };
+}
+
+function runEnded(workflowNodes, runId, status, err) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.RUN_ENDED,
       workflowNodes,
+      runId,
       workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
       status,
       err,
@@ -65,7 +133,7 @@ function runEnded(workflowNodes, nodes, status, err) {
   };
 }
 
-export function clickRun(workflowNodes, nodes) {
+export function clickRun(workflowId, workflowNodes) {
   return (dispatch) => {
     const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
 
@@ -74,9 +142,9 @@ export function clickRun(workflowNodes, nodes) {
       workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
     });
 
-    apiUtils.run(nodeIds).then((workflowNodesData) => {
+    apiUtils.run(nodeIds).then((res) => {
       const workflowNodesRan = workflowNodes.map((workflowNode) => {
-        const workflowNodeData = workflowNodesData.find(workflowNodeDataI =>
+        const workflowNodeData = res.workflowNodesData.find(workflowNodeDataI =>
           workflowNodeDataI.id === workflowNode.nodeId
         );
         return workflowNode.set('outputs', [{
@@ -85,49 +153,13 @@ export function clickRun(workflowNodes, nodes) {
         }]);
       });
 
-      runEnded(workflowNodesRan, nodes, statusConstants.COMPLETED)(dispatch);
+      runEnded(workflowNodesRan, res.runId, statusConstants.COMPLETED)(dispatch);
+
+      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
     }).catch((err) => {
       console.error(err);
-      runEnded(workflowNodes, nodes, statusConstants.ERROR, err)(dispatch);
+      runEnded(workflowNodes, null, statusConstants.ERROR, err)(dispatch);
     });
-  };
-}
-
-export function dragStart(id, nodeType) {
-  return {
-    type: actionConstants.DRAG_START,
-    nodeType,
-    id,
-  };
-}
-
-export function dropNodeOnWorkflowTitle(draggedId, draggedNodeType) {
-  return {
-    type: actionConstants.DROP_NODE,
-    draggedId,
-    workflowNodeIndex: -1,
-    move: draggedNodeType === selectionConstants.WORKFLOW_NODE,
-  };
-}
-
-export function dropNodeOnWorkflowNode(
-  draggedId, draggedNodeType, droppedWorkflowNodeId, workflowNodes
-) {
-  const workflowNodeIndex = workflowNodes.findIndex(workflowNode =>
-    workflowNode.id === droppedWorkflowNodeId
-  );
-  return {
-    type: actionConstants.DROP_NODE,
-    draggedId,
-    workflowNodeIndex,
-    move: draggedNodeType === selectionConstants.WORKFLOW_NODE,
-  };
-}
-
-export function dropWorkflowNodeOnNode(workflowNodeId) {
-  return {
-    type: actionConstants.DROP_WORKFLOW_NODE_ON_NODE,
-    workflowNodeId,
   };
 }
 
@@ -148,5 +180,38 @@ export function upload(file) {
         err: err ? (err.message || err) : null,
       })
     );
+  };
+}
+
+export function submitPdbId(pdbId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.SUBMIT_PDB_ID,
+    });
+
+    apiUtils.getPdbById(pdbId).then(pdbUrl =>
+      dispatch({
+        type: actionConstants.FETCHED_PDB_BY_ID,
+        pdbUrl,
+      })
+    ).catch(err =>
+      dispatch({
+        type: actionConstants.FETCHED_PDB_BY_ID,
+        error: err.message,
+      })
+    );
+  };
+}
+
+export function submitEmail(email) {
+  return {
+    type: actionConstants.SUBMIT_EMAIL,
+    email,
+  };
+}
+
+export function clickAbout() {
+  return {
+    type: actionConstants.CLICK_ABOUT,
   };
 }

@@ -1,12 +1,13 @@
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { render } from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Provider } from 'react-redux';
+import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import HomeRoot from './containers/home_root.jsx';
+import HomeRoot from './containers/home_root';
+import NotFound from './components/not_found';
+import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
@@ -27,22 +28,20 @@ require('file?name=[name].[ext]!../tile-wide.png');
 
 injectTapEventPlugin();
 
-const muiTheme = getMuiTheme({
-  palette: {
-    primary1Color: '#ffffff',
-    accent1Color: '#dfdfdf',
-    textColor: '#000000',
-    alternateTextColor: '#000000',
-  },
-});
-
 const store = createStore(index, applyMiddleware(thunkMiddleware, loggingMiddleware));
 
-ReactDOM.render(
+render((
   <Provider store={store}>
-    <MuiThemeProvider muiTheme={muiTheme}>
-      <HomeRoot />
-    </MuiThemeProvider>
-  </Provider>,
+    <Router history={browserHistory}>
+      <Route path="/" component={HomeRoot}>
+        <IndexRoute component={NotFound} />
+        <Route path="workflow/:workflowId" component={WorkflowRoot} />
+        <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
+        <Route path="*" component={NotFound} />
+      </Route>
+      <Route path="*" component={NotFound} />
+    </Router>
+  </Provider>
+),
   document.querySelector('.app')
 );

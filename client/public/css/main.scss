@@ -1,11 +1,4 @@
-$blue: #72d0eb;
-$pink: #ffb3b3;
-$primary: #46D595;
-$family-serif: "Georgia", serif;
-
-html {
-  background-color: #E9E9E9 !important;
-}
+@import 'variables';
 
 html, body, .app {
   height: 100%;
@@ -24,7 +17,7 @@ html, body, .app {
   height: 100%;
   margin-top: -48px;
   position: relative;
-  padding: 60px 12px 12px 12px !important;
+  padding: 60px 12px 12px 12px;
 }
 
 .placeholder {
@@ -39,4 +32,14 @@ html, body, .app {
   }
 }
 
-@import "~bulma/bulma"
+.error {
+  color: #ff0000;
+}
+
+ol {
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}

@@ -2,7 +2,9 @@ import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
 
-const initialState = new SelectionRecord();
+const initialState = new SelectionRecord({
+  type: selectionConstants.WORKFLOW_NODE_LOAD,
+});
 
 function selection(state = initialState, action) {
   switch (action.type) {
@@ -12,24 +14,29 @@ function selection(state = initialState, action) {
         type: selectionConstants.NODE,
       });
 
-    case actionConstants.CLICK_WORKFLOW:
-      return state.merge({
-        id: action.workflowId,
-        type: selectionConstants.WORKFLOW,
-      });
-
     case actionConstants.CLICK_WORKFLOW_NODE:
       return state.merge({
         id: action.workflowNodeId,
         type: selectionConstants.WORKFLOW_NODE,
       });
 
-    case actionConstants.DROP_WORKFLOW_NODE_ON_NODE:
-      if (action.workflowNodeId === state.id) {
-        return initialState;
-      }
+    case actionConstants.CLICK_WORKFLOW_NODE_LOAD:
+      return state.merge({
+        id: null,
+        type: selectionConstants.WORKFLOW_NODE_LOAD,
+      });
 
-      return state;
+    case actionConstants.CLICK_WORKFLOW_NODE_EMAIL:
+      return state.merge({
+        id: null,
+        type: selectionConstants.WORKFLOW_NODE_EMAIL,
+      });
+
+    case actionConstants.CLICK_ABOUT:
+      return state.merge({
+        id: null,
+        type: selectionConstants.ABOUT,
+      });
 
     default:
       return state;

@@ -10,10 +10,6 @@ let nodesGlobal;
 
 const apiUtils = {
   run(nodeIds) {
-    if (process.env.NODE_ENV === 'offline') {
-      return apiUtils.runDev(nodeIds);
-    }
-
     return new Promise((resolve, reject) => {
       const nodesData = nodesGlobal.valueSeq().filter(node =>
         nodeIds.contains(node.id)
@@ -46,32 +42,7 @@ const apiUtils = {
     });
   },
 
-  runDev(nodeIds) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // 50% chance of failing (for test)
-        const err = !!Math.round(Math.random());
-        const res = nodeIds.map(nodeId => ({
-          id: nodeId,
-          outputs: [{
-            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-          }],
-        }));
-
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(res);
-      }, 1000);
-    });
-  },
-
   getGallery() {
-    if (process.env.NODE_ENV === 'offline') {
-      return apiUtils.getGalleryDev();
-    }
-
     return new Promise((resolve, reject) => {
       const jsonrpc = JSON.stringify({
         method: 'gallery',
@@ -105,26 +76,6 @@ const apiUtils = {
     });
   },
 
-  getGalleryDev() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const err = false; // TODO no error handling yet
-        let defaultNodes = new IMap();
-        defaultNodes = defaultNodes.set(0, new NodeRecord({ id: 0, title: 'Download PDB File' }));
-        defaultNodes = defaultNodes.set(1, new NodeRecord({ id: 1, title: 'Add Hydrogens' }));
-        defaultNodes = defaultNodes.set(2, new NodeRecord({ id: 2, title: 'Strip Water' }));
-        defaultNodes = defaultNodes.set(3, new NodeRecord({ id: 3, title: 'Assign Forcefield' }));
-        defaultNodes = defaultNodes.set(4, new NodeRecord({ id: 4, title: 'Minimize' }));
-
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(defaultNodes);
-      }, 1000);
-    });
-  },
-
   getPDB(url) {
     return fetch(url).then(res =>
       res.text()
@@ -142,10 +93,6 @@ const apiUtils = {
       const extension = file.name.split('.').pop();
       if (extension !== 'pdb') {
         return reject('File must have the .pdb extension.');
-      }
-
-      if (process.env.NODE_ENV === 'offline') {
-        return apiUtils.uploadDev(resolve, reject);
       }
 
       const reader = new FileReader();
@@ -169,18 +116,19 @@ const apiUtils = {
     });
   },
 
-  uploadDev(resolve, reject) {
-    setTimeout(() => {
-      const err = !!Math.round(Math.random());
+  getPdbById() {
+    // TODO
+    return Promise.reject();
+  },
 
-      if (err) {
-        return reject('Failed due to swamp gas interference');
-      }
+  getWorkflow() {
+    // TODO
+    return Promise.reject();
+  },
 
-      return resolve({
-        url: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-      });
-    }, 2000);
+  getRun() {
+    // TODO
+    return Promise.reject();
   },
 };
 
