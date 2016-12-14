@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './button';
 
 class StatusLoad extends React.Component {
   constructor(props) {
@@ -74,20 +75,22 @@ class StatusLoad extends React.Component {
           <p>
             Or, browse custom file.
           </p>
-          <button
-            style={{ margin: '0 auto', width: '227px' }}
+          <Button
+            type="form"
             disabled={this.props.uploadPending}
             onClick={this.onClickFileUpload}
           >
-            Browse
-            <input
-              ref={(c) => { this.fileInput = c; }}
-              className="file-input"
-              type="file"
-              disabled={this.props.uploadPending}
-              onChange={this.onUpload}
-            />
-          </button>
+            <div>
+              Browse
+              <input
+                ref={(c) => { this.fileInput = c; }}
+                className="file-input"
+                type="file"
+                disabled={this.props.uploadPending}
+                onChange={this.onUpload}
+              />
+            </div>
+          </Button>
           <div className="error">
             {this.props.uploadError}
           </div>

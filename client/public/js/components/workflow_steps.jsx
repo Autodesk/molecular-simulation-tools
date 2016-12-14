@@ -80,7 +80,7 @@ function WorkflowSteps(props) {
           About
         </Button>
         <Button
-          raised
+          type="raised"
           onClick={props.clickRun}
           disabled={runDisabled}
         >

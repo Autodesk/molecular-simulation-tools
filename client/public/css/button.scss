@@ -17,4 +17,10 @@
     border-radius: 20px;
     color: #f1ff66;
   }
+
+  &.form {
+    border: 2px #bbbbbb solid;
+    border-radius: 20px;
+    color: $fg-primary;
+  }
 }

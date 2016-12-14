@@ -4,11 +4,10 @@ require('../../css/button.scss');
 
 function Button(props) {
   const disabledClass = props.disabled ? 'disabled' : '';
-  const raisedClass = props.raised ? 'raised' : '';
 
   return (
     <button
-      className={`button ${disabledClass} ${raisedClass}`}
+      className={`button ${disabledClass} ${props.type}`}
       onClick={props.onClick}
       disabled={props.disabled}
     >
@@ -24,7 +23,7 @@ Button.propTypes = {
   ]),
   disabled: React.PropTypes.bool,
   onClick: React.PropTypes.func,
-  raised: React.PropTypes.bool,
+  type: React.PropTypes.string,
 };
 
 export default Button;
