@@ -1,6 +1,7 @@
 import React from 'react';
 import { Map as IMap } from 'immutable';
 import Canceled from './canceled';
+import Errored from './errored';
 import Snackbar from './snackbar';
 import ThankYou from './thank_you';
 import SelectionRecord from '../records/selection_record';
@@ -81,6 +82,10 @@ class WorkflowRouter extends React.Component {
     } else if (this.props.workflowStatus === statusConstants.CANCELED) {
       routeEl = (
         <Canceled />
+      );
+    } else if (this.props.workflowStatus === statusConstants.ERROR) {
+      routeEl = (
+        <Errored />
       );
     } else {
       routeEl = (
