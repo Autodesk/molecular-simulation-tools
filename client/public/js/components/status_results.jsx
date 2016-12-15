@@ -8,10 +8,15 @@ class StatusResults extends React.Component {
     super(props);
 
     this.onChangeMorph = this.onChangeMorph.bind(this);
+    this.onClickDownload = this.onClickDownload.bind(this);
   }
 
   onChangeMorph(e) {
     this.props.onChangeMorph(parseInt(e.target.value, 10));
+  }
+
+  onClickDownload() {
+    window.location.href = this.props.pdbUrl;
   }
 
   render() {
@@ -28,11 +33,11 @@ class StatusResults extends React.Component {
             </div>
             <div className="stat-body">
               <div className="stat-body-item">
-                <div>78</div>
+                <div>??</div>
                 <div>BEFORE</div>
               </div>
               <div className="stat-body-item">
-                <div>45</div>
+                <div>??</div>
                 <div>AFTER</div>
               </div>
             </div>
@@ -43,7 +48,7 @@ class StatusResults extends React.Component {
             </div>
             <div className="stat-body stat-body--single">
               <div className="stat-body-item">
-                <div>78</div>
+                <div>??</div>
               </div>
             </div>
           </div>
@@ -68,6 +73,7 @@ class StatusResults extends React.Component {
         <div className="actions">
           <Button
             type="form"
+            onClick={this.onClickDownload}
           >
             Download Refined Structure
           </Button>
@@ -85,6 +91,7 @@ class StatusResults extends React.Component {
 StatusResults.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
+  pdbUrl: React.PropTypes.string,
   workflowNodesSize: React.PropTypes.number,
 };
 

@@ -94,6 +94,7 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
+        pdbUrl={props.workflow.workflowNodes.last().outputs[0].value}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {
