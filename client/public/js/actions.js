@@ -2,7 +2,6 @@ import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import realApiUtils from './utils/api_utils';
 import mockApiUtils from './utils/mock_api_utils';
-import statusConstants from './constants/status_constants';
 
 const apiUtils = process.env.NODE_ENV === 'offline' ?
   mockApiUtils : realApiUtils;

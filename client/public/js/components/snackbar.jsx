@@ -7,7 +7,7 @@ const CLOSE_DELAY = 2000;
 
 class Snackbar extends React.Component {
   componentDidMount() {
-    if (this.props.userMessage.autoClose) {
+    if (this.props.userMessage.message && this.props.userMessage.autoClose) {
       this.setCloseTimer();
     } else {
       clearTimeout(this.closeTimer);
@@ -15,7 +15,7 @@ class Snackbar extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.userMessage.autoClose) {
+    if (nextProps.userMessage.message && nextProps.userMessage.autoClose) {
       this.setCloseTimer();
     } else {
       clearTimeout(this.closeTimer);

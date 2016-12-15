@@ -15,6 +15,16 @@ function userMessage(state = initialState, action) {
           internet?`,
       });
 
+    case actionConstants.FETCHED_RUN:
+      if (!action.error) {
+        return state;
+      }
+      return state.merge({
+        autoClose: false,
+        message: `We're having trouble connecting. Are you connected to the
+          internet?`,
+      });
+
     case actionConstants.SUBMITTED_CANCEL:
       if (!action.err) {
         return state;
