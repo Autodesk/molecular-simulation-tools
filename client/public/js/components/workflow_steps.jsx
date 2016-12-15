@@ -1,5 +1,4 @@
 import React from 'react';
-import Node from './node';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
