@@ -2,7 +2,6 @@ import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import realApiUtils from './utils/api_utils';
 import mockApiUtils from './utils/mock_api_utils';
-import statusConstants from './constants/status_constants';
 
 const apiUtils = process.env.NODE_ENV === 'offline' ?
   mockApiUtils : realApiUtils;
@@ -102,37 +101,6 @@ export function clickWorkflowNodeEmail() {
   };
 }
 
-function runEnded(workflowNodes, runId, status, err) {
-  return (dispatch) => {
-    dispatch({
-      type: actionConstants.RUN_ENDED,
-      workflowNodes,
-      runId,
-      workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
-      status,
-      err,
-    });
-
-    if (!err) {
-      workflowNodes.forEach((workflowNode) => {
-        apiUtils.getPDB(workflowNode.outputs[0].value).then((modelData) => {
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            modelData,
-          });
-        }).catch((getPDBErr) => {
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            err: getPDBErr,
-          });
-        });
-      });
-    }
-  };
-}
-
 export function clickRun(workflowId, workflowNodes) {
   return (dispatch) => {
     const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
@@ -143,6 +111,7 @@ export function clickRun(workflowId, workflowNodes) {
     });
 
     apiUtils.run(nodeIds).then((res) => {
+      /*
       const workflowNodesRan = workflowNodes.map((workflowNode) => {
         const workflowNodeData = res.workflowNodesData.find(workflowNodeDataI =>
           workflowNodeDataI.id === workflowNode.nodeId
@@ -152,13 +121,21 @@ export function clickRun(workflowId, workflowNodes) {
           value: workflowNodeData.outputs[0].value,
         }]);
       });
+      */
 
-      runEnded(workflowNodesRan, res.runId, statusConstants.COMPLETED)(dispatch);
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        runId: res.runId,
+      });
 
       browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
     }).catch((err) => {
       console.error(err);
-      runEnded(workflowNodes, null, statusConstants.ERROR, err)(dispatch);
+
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        err,
+      });
     });
   };
 }
@@ -213,5 +190,30 @@ export function submitEmail(email) {
 export function clickAbout() {
   return {
     type: actionConstants.CLICK_ABOUT,
+  };
+}
+
+export function clickCancel(runId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.CLICK_CANCEL,
+    });
+
+    apiUtils.cancelRun(runId).then(() => {
+      dispatch({
+        type: actionConstants.SUBMITTED_CANCEL,
+      });
+    }).catch((err) => {
+      dispatch({
+        type: actionConstants.SUBMITTED_CANCEL,
+        err,
+      });
+    });
+  };
+}
+
+export function messageTimeout() {
+  return {
+    type: actionConstants.MESSAGE_TIMEOUT,
   };
 }

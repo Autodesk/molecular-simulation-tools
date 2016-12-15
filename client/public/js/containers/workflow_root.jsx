@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
-import Workflow from '../components/workflow';
+import WorkflowRouter from '../components/workflow_router';
 import {
   clickAbout,
+  clickCancel,
   clickRun,
   clickWorkflowNode,
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   initializeWorkflow,
+  messageTimeout,
   submitEmail,
   submitPdbId,
   upload,
@@ -51,6 +53,9 @@ function mapDispatchToProps(dispatch) {
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));
     },
+    onMessageTimeout() {
+      dispatch(messageTimeout());
+    },
     onUpload(file) {
       dispatch(upload(file));
     },
@@ -60,6 +65,11 @@ function mapDispatchToProps(dispatch) {
     submitEmail(email) {
       dispatch(submitEmail(email));
     },
+    clickCancel(runId) {
+      return () => {
+        dispatch(clickCancel(runId));
+      };
+    },
   };
 }
 
@@ -68,6 +78,7 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.workflow.id, stateProps.workflow.workflowNodes
     ),
+    clickCancel: dispatchProps.clickCancel(stateProps.workflow.runId),
   });
 }
 
@@ -75,6 +86,6 @@ const WorkflowRoot = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(Workflow);
+)(WorkflowRouter);
 
 export default WorkflowRoot;
