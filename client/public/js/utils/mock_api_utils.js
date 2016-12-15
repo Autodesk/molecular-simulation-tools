@@ -1,4 +1,4 @@
-import { Map as IMap, List as IList } from 'immutable';
+import { List as IList } from 'immutable';
 import NodeRecord from '../records/node_record';
 import WorkflowNodeRecord from '../records/workflow_node_record';
 import WorkflowRecord from '../records/workflow_record';
@@ -26,26 +26,6 @@ const mockApiUtils = {
           workflowNodesData,
           runId,
         });
-      }, 1000);
-    });
-  },
-
-  getGallery() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const err = false; // TODO no error handling yet
-        let defaultNodes = new IMap();
-        defaultNodes = defaultNodes.set(0, new NodeRecord({ id: 0, title: 'Download PDB File' }));
-        defaultNodes = defaultNodes.set(1, new NodeRecord({ id: 1, title: 'Add Hydrogens' }));
-        defaultNodes = defaultNodes.set(2, new NodeRecord({ id: 2, title: 'Strip Water' }));
-        defaultNodes = defaultNodes.set(3, new NodeRecord({ id: 3, title: 'Assign Forcefield' }));
-        defaultNodes = defaultNodes.set(4, new NodeRecord({ id: 4, title: 'Minimize' }));
-
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(defaultNodes);
       }, 1000);
     });
   },

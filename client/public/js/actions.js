@@ -6,18 +6,6 @@ import mockApiUtils from './utils/mock_api_utils';
 const apiUtils = process.env.NODE_ENV === 'offline' ?
   mockApiUtils : realApiUtils;
 
-// TODO now unnecessary?
-export function initialize() {
-  return (dispatch) => {
-    apiUtils.getGallery().then(nodes =>
-      dispatch({
-        type: actionConstants.INITIALIZE,
-        nodes,
-      })
-    ).catch(console.error.bind(console));
-  };
-}
-
 export function initializeWorkflow(workflowId, runId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
@@ -178,12 +166,13 @@ export function submitPdbId(pdbId) {
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
       })
-    ).catch(err =>
+    ).catch(err => {
+      console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         error: err.message,
       })
-    );
+    });
   };
 }
 

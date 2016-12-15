@@ -1,6 +1,7 @@
-import { Map as IMap } from 'immutable';
+import { List as IList } from 'immutable';
 import request from 'superagent';
-import NodeRecord from '../records/node_record';
+import WorkflowRecord from '../records/workflow_record';
+import WorkflowNodeRecord from '../records/workflow_node_record';
 
 const API_URL = process.env.API_URL || '';
 // http://metapage.bionano.autodesk.com:4040/metapage?git=https://github.com/dionjwa/convert_pdb_workflow_example&cwl=workflows/read_and_clean.cwl&cwlyml=pdbfile.yml
@@ -38,40 +39,6 @@ const apiUtils = {
           }
 
           return resolve(res.body.result.nodes);
-        });
-    });
-  },
-
-  getGallery() {
-    return new Promise((resolve, reject) => {
-      const jsonrpc = JSON.stringify({
-        method: 'gallery',
-        params: {},
-        jsonrpc: '2.0',
-      });
-
-      request
-        .post(`${API_URL}/api/rpc/`)
-        .type(JSON_RPC_TYPE)
-        .send(jsonrpc)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            return reject(err);
-          }
-
-          let defaultNodes = new IMap();
-          res.body.result.forEach((nodeData) => {
-            defaultNodes = defaultNodes.set(nodeData.id, new NodeRecord({
-              id: nodeData.id,
-              title: nodeData.meta.name,
-              data: nodeData,
-            }));
-          });
-
-          nodesGlobal = defaultNodes;
-
-          return resolve(defaultNodes);
         });
     });
   },
@@ -121,9 +88,16 @@ const apiUtils = {
     return Promise.reject();
   },
 
-  getWorkflow() {
-    // TODO
-    return Promise.reject();
+  getWorkflow(workflowId) {
+    return fetch(`${process.env.API_URL}/v1/workflow/${workflowId}`).then(res =>
+      res.json()
+    ).then(body =>
+      new WorkflowRecord(Object.assign({}, body, {
+        workflowNodes: new IList(body.workflowNodes.map(workflowNodeData =>
+          new WorkflowNodeRecord(workflowNodeData)
+        )),
+      }))
+    );
   },
 
   getRun() {

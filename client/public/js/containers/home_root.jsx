@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Home from '../components/home';
-import { initialize, clickNode } from '../actions';
+import { clickNode } from '../actions';
 
 function mapStateToProps(state) {
   return {
@@ -12,9 +12,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    initialize() {
-      dispatch(initialize());
-    },
     clickNode(node) {
       dispatch(clickNode(node));
     },
