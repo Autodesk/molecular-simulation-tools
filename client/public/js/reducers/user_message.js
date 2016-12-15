@@ -27,7 +27,7 @@ function userMessage(state = initialState, action) {
 
     case actionConstants.SUBMITTED_CANCEL:
       if (!action.err) {
-        return state;
+        return initialState;
       }
       return state.merge({
         autoClose: true,
