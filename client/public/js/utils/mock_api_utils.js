@@ -172,6 +172,7 @@ const mockApiUtils = {
           id: workflowId,
           runId,
           title: 'Refine ligand and active site in molecules',
+          email: 'justin.mccandless@autodesk.com',
           workflowNodes,
         }));
       }, 1000);

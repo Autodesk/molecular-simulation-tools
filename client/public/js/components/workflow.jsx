@@ -72,7 +72,7 @@ class Workflow extends React.Component {
   }
 
   render() {
-    if (this.props.workflowStatus === statusConstants.RUNNING) {
+    if (true || this.props.workflowStatus === statusConstants.RUNNING) {
       return (
         <ThankYou
           email={this.props.workflow.email}
