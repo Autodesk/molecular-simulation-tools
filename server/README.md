@@ -17,3 +17,6 @@ Routes are behind a version prefix, which is currently "/v1".
 
 ### GET /workflow/:workflowId
 Returns the indicated workflow.
+
+### GET /structure/pdb_by_id/:pdbId
+Returns a url to the indicated pdb file.

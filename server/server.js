@@ -4,7 +4,8 @@ const express = require('express');
 const logger = require('morgan');
 const path = require('path');
 const appConstants = require('./constants/app_constants');
-const workflowRouter = require('./workflow');
+const workflowRoutes = require('./routes/workflow');
+const structureRoutes = require('./routes/structure');
 const cors = require('cors');
 
 // Create the server
@@ -20,8 +21,11 @@ app.use(cors());
 // Serve client files
 app.use(express.static(path.join(__dirname, 'client/dist')));
 
-// Add server routes
-app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRouter);
+/**
+ * Add server routes
+ */
+app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

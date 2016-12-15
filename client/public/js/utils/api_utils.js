@@ -83,9 +83,10 @@ const apiUtils = {
     });
   },
 
-  getPdbById() {
-    // TODO
-    return Promise.reject();
+  getPdbById(pdbId) {
+    return fetch(`${process.env.API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+      res.text()
+    );
   },
 
   getWorkflow(workflowId) {
