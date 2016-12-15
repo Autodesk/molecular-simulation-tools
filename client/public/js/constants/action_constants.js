@@ -8,6 +8,7 @@ const actionConstants = keyMirror({
   CLICK_WORKFLOW_NODE: null,
   CLICK_WORKFLOW_NODE_LOAD: null,
   CLICK_WORKFLOW_NODE_EMAIL: null,
+  CLICK_WORKFLOW_NODE_RESULTS: null,
   FETCHED_PDB: null,
   FETCHED_PDB_BY_ID: null,
   FETCHED_WORKFLOW: null,

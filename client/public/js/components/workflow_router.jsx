@@ -92,9 +92,9 @@ class WorkflowRouter extends React.Component {
         <Workflow
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
-          clickWorkflowNode={this.props.clickWorkflowNode}
           clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
           clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
+          clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
           fetchingPdb={this.props.fetchingPdb}
           fetchingPdbError={this.props.fetchingPdbError}
           nodes={this.props.nodes}
@@ -125,9 +125,9 @@ WorkflowRouter.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   initializeWorkflow: React.PropTypes.func.isRequired,

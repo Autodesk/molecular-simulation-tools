@@ -14,6 +14,7 @@ function selection(state = initialState, action) {
         type: selectionConstants.NODE,
       });
 
+    // TODO unused since wed dont show workflow nodes anymore
     case actionConstants.CLICK_WORKFLOW_NODE:
       return state.merge({
         id: action.workflowNodeId,
@@ -30,6 +31,12 @@ function selection(state = initialState, action) {
       return state.merge({
         id: null,
         type: selectionConstants.WORKFLOW_NODE_EMAIL,
+      });
+
+    case actionConstants.CLICK_WORKFLOW_NODE_RESULTS:
+      return state.merge({
+        id: null,
+        type: selectionConstants.WORKFLOW_NODE_RESULTS,
       });
 
     case actionConstants.CLICK_ABOUT:

@@ -4,6 +4,7 @@ import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLoad from './status_load';
 import StatusEmail from './status_email';
+import StatusResults from './status_results';
 import WorkflowRecord from '../records/workflow_record';
 import selectionConstants from '../constants/selection_constants';
 
@@ -85,6 +86,11 @@ function Status(props) {
       <StatusEmail
         submitEmail={props.submitEmail}
         email={props.workflow.email}
+      />
+    );
+  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
+    selection = (
+      <StatusResults
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {

@@ -23,9 +23,9 @@ function Workflow(props) {
       <WorkflowSteps
         clickAbout={props.clickAbout}
         clickRun={props.clickRun}
-        clickWorkflowNode={props.clickWorkflowNode}
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
+        clickWorkflowNodeResults={props.clickWorkflowNodeResults}
         selection={props.selection}
         workflow={props.workflow}
         workflowStatus={props.workflowStatus}
@@ -52,9 +52,9 @@ function Workflow(props) {
 Workflow.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),

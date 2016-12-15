@@ -4,9 +4,9 @@ import {
   clickAbout,
   clickCancel,
   clickRun,
-  clickWorkflowNode,
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
+  clickWorkflowNodeResults,
   initializeWorkflow,
   messageTimeout,
   submitEmail,
@@ -41,14 +41,14 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickRun(workflowNodes, workflowId));
       };
     },
-    clickWorkflowNode(workflowNodeId) {
-      dispatch(clickWorkflowNode(workflowNodeId));
-    },
     clickWorkflowNodeLoad() {
       dispatch(clickWorkflowNodeLoad());
     },
     clickWorkflowNodeEmail() {
       dispatch(clickWorkflowNodeEmail());
+    },
+    clickWorkflowNodeResults() {
+      dispatch(clickWorkflowNodeResults());
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));

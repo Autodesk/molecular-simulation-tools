@@ -82,6 +82,7 @@ export function clickNode(nodeId) {
   };
 }
 
+// TODO this is unused now that we don't show workflow nodes, but in future?
 export function clickWorkflowNode(workflowNodeId) {
   return {
     type: actionConstants.CLICK_WORKFLOW_NODE,
@@ -98,6 +99,12 @@ export function clickWorkflowNodeLoad() {
 export function clickWorkflowNodeEmail() {
   return {
     type: actionConstants.CLICK_WORKFLOW_NODE_EMAIL,
+  };
+}
+
+export function clickWorkflowNodeResults() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_RESULTS,
   };
 }
 

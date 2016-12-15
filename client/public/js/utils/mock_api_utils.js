@@ -130,6 +130,7 @@ const mockApiUtils = {
           return reject('Fail');
         }
 
+        // random outcome
         const randomStatus = Math.random();
         let workflowNodeStatus;
         let workflowNodeOutputs = [];
