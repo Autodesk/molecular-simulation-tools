@@ -212,3 +212,9 @@ export function clickCancel(runId) {
     });
   };
 }
+
+export function messageTimeout() {
+  return {
+    type: actionConstants.MESSAGE_TIMEOUT,
+  };
+}

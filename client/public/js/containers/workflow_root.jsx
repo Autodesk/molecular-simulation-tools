@@ -8,6 +8,7 @@ import {
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   initializeWorkflow,
+  messageTimeout,
   submitEmail,
   submitPdbId,
   upload,
@@ -51,6 +52,9 @@ function mapDispatchToProps(dispatch) {
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));
+    },
+    onMessageTimeout() {
+      dispatch(messageTimeout());
     },
     onUpload(file) {
       dispatch(upload(file));

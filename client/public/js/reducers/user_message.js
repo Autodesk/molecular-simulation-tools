@@ -15,6 +15,18 @@ function userMessage(state = initialState, action) {
           internet?`,
       });
 
+    case actionConstants.SUBMITTED_CANCEL:
+      if (!action.err) {
+        return state;
+      }
+      return state.merge({
+        autoClose: true,
+        message: 'Failed to cancel, check your connection and try again.',
+      });
+
+    case actionConstants.MESSAGE_TIMEOUT:
+      return initialState;
+
     default:
       return state;
   }

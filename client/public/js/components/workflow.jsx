@@ -72,14 +72,20 @@ class Workflow extends React.Component {
   }
 
   render() {
-    if (true || this.props.workflowStatus === statusConstants.RUNNING) {
+    if (this.props.workflowStatus === statusConstants.RUNNING) {
       return (
-        <Incomplete
-          canceling={this.props.workflow.canceling}
-          email={this.props.workflow.email}
-          onClickCancel={this.props.clickCancel}
-          workflowStatus={this.props.workflowStatus}
-        />
+        <div>
+          <Incomplete
+            canceling={this.props.workflow.canceling}
+            email={this.props.workflow.email}
+            onClickCancel={this.props.clickCancel}
+            workflowStatus={this.props.workflowStatus}
+          />,
+          <Snackbar
+            onMessageTimeout={this.props.onMessageTimeout}
+            userMessage={this.props.userMessage}
+          />
+        </div>
       );
     }
 
@@ -119,6 +125,7 @@ class Workflow extends React.Component {
           loading={this.props.workflow.fetching}
         />
         <Snackbar
+          onMessageTimeout={this.props.onMessageTimeout}
           userMessage={this.props.userMessage}
         />
       </div>
@@ -138,6 +145,7 @@ Workflow.propTypes = {
   fetchingPdbError: React.PropTypes.string,
   initializeWorkflow: React.PropTypes.func.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
+  onMessageTimeout: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
