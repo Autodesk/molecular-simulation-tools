@@ -23,14 +23,21 @@ function WorkflowSteps(props) {
     selectionConstants.WORKFLOW_NODE_EMAIL;
   const emailStatus = props.workflow.email ?
     statusConstants.COMPLETED : statusConstants.IDLE;
+  let emailLast = true;
 
-  let runErrorEl;
-  if (props.workflowStatus === statusConstants.ERROR) {
-    runErrorEl = (
-      <div className="error">
-        Something went wrong when running this workflow.  Try again, and if the
-        problem persists, please contact us.
-      </div>
+  let resultsNode;
+  if (props.workflowStatus === statusConstants.COMPLETED) {
+    emailLast = false;
+    const resultsSelected = props.selection.type ===
+      selectionConstants.WORKFLOW_NODE_RESULTS;
+    resultsNode = (
+      <WorkflowStep
+        primaryText={'Results'}
+        onClick={props.clickWorkflowNodeResults}
+        selected={resultsSelected}
+        status={statusConstants.COMPLETED}
+        last
+      />
     );
   }
 
@@ -45,32 +52,14 @@ function WorkflowSteps(props) {
             status={loadStatus}
             onClick={props.clickWorkflowNodeLoad}
           />
-          {
-            props.workflow.workflowNodes.map(
-              (workflowNode, index) => {
-                const workflowNodeSelected =
-                  props.selection.type === selectionConstants.WORKFLOW_NODE;
-                const node = workflowNode.node;
-                return (
-                  <Node
-                    key={index}
-                    node={node}
-                    onClick={props.clickWorkflowNode}
-                    selected={workflowNodeSelected && workflowNode.id === props.selection.id}
-                    status={workflowNode.status}
-                    workflowNodeId={workflowNode.id}
-                  />
-                );
-              }
-            )
-          }
           <WorkflowStep
             primaryText={'Enter email'}
             onClick={props.clickWorkflowNodeEmail}
             selected={emailSelected}
             status={emailStatus}
-            last
+            last={emailLast}
           />
+          {resultsNode}
         </ol>
       </div>,
       <div key={1} className="actions">
@@ -86,7 +75,6 @@ function WorkflowSteps(props) {
         >
           Run
         </Button>
-        {runErrorEl}
       </div>,
     ];
   }
@@ -101,9 +89,9 @@ function WorkflowSteps(props) {
 WorkflowSteps.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,

@@ -92,12 +92,16 @@ class WorkflowRouter extends React.Component {
         <Workflow
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
-          clickWorkflowNode={this.props.clickWorkflowNode}
           clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
           clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
+          clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
+          colorized={this.props.colorized}
           fetchingPdb={this.props.fetchingPdb}
           fetchingPdbError={this.props.fetchingPdbError}
+          morph={this.props.morph}
           nodes={this.props.nodes}
+          onClickColorize={this.props.onClickColorize}
+          onChangeMorph={this.props.onChangeMorph}
           onUpload={this.props.onUpload}
           selection={this.props.selection}
           submitPdbId={this.props.submitPdbId}
@@ -125,13 +129,17 @@ WorkflowRouter.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
+  colorized: React.PropTypes.bool.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   initializeWorkflow: React.PropTypes.func.isRequired,
+  morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
+  onClickColorize: React.PropTypes.func.isRequired,
+  onChangeMorph: React.PropTypes.func.isRequired,
   onMessageTimeout: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   runId: React.PropTypes.string,

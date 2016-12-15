@@ -1,0 +1,33 @@
+.status-results {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .stat {
+    margin-bottom: 32px;
+    .stat-title {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px #000000 solid;
+    }
+
+    .stat-body {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+
+      &.stat-body--single {
+        justify-content: center;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .morph-label {
+    display: block;
+  }
+}

@@ -11,10 +11,15 @@ require('../../css/workflow.scss');
 
 function Workflow(props) {
   let selectedModelData;
+  // TODO this will never happen b/c not displaying nodes anymore
   if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const selectedWorkflowNode = props.workflow.workflowNodes.find(
       workflowNode => workflowNode.id === props.selection.id
     );
+    selectedModelData = selectedWorkflowNode.modelData;
+  } else if (props.selection.type ===
+    selectionConstants.WORKFLOW_NODE_RESULTS) {
+    const selectedWorkflowNode = props.workflow.workflowNodes.get(props.morph);
     selectedModelData = selectedWorkflowNode.modelData;
   }
 
@@ -23,9 +28,9 @@ function Workflow(props) {
       <WorkflowSteps
         clickAbout={props.clickAbout}
         clickRun={props.clickRun}
-        clickWorkflowNode={props.clickWorkflowNode}
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
+        clickWorkflowNodeResults={props.clickWorkflowNodeResults}
         selection={props.selection}
         workflow={props.workflow}
         workflowStatus={props.workflowStatus}
@@ -34,6 +39,8 @@ function Workflow(props) {
         fetchingPdb={props.fetchingPdb}
         fetchingPdbError={props.fetchingPdbError}
         nodes={props.nodes}
+        onClickColorize={props.onClickColorize}
+        onChangeMorph={props.onChangeMorph}
         onUpload={props.onUpload}
         selection={props.selection}
         submitPdbId={props.submitPdbId}
@@ -42,8 +49,9 @@ function Workflow(props) {
         workflowStatus={props.workflowStatus}
       />
       <View
-        modelData={selectedModelData}
+        colorized={props.colorized}
         loading={props.workflow.fetching}
+        modelData={selectedModelData}
       />
     </div>
   );
@@ -52,12 +60,16 @@ function Workflow(props) {
 Workflow.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
+  colorized: React.PropTypes.bool.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
+  morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
+  onClickColorize: React.PropTypes.func.isRequired,
+  onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,

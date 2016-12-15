@@ -14,9 +14,12 @@ function View(props) {
     );
   } else if (props.modelData) {
     view = (
-      <Nbmolviz3dReact
-        modelData={props.modelData}
-      />
+      <div>
+        <p>{props.colorized ? 'Colorized!' : ''}</p>
+        <Nbmolviz3dReact
+          modelData={props.modelData}
+        />
+      </div>
     );
   }
 
@@ -28,8 +31,9 @@ function View(props) {
 }
 
 View.propTypes = {
-  modelData: React.PropTypes.string,
+  colorized: React.PropTypes.bool,
   loading: React.PropTypes.bool,
+  modelData: React.PropTypes.string,
 };
 
 export default View;

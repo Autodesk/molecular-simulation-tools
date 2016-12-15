@@ -8,6 +8,10 @@
   border: none;
   color: $fg-secondary;
 
+  &:focus {
+    outline: 0;
+  }
+
   &.disabled {
     opacity: 0.6;
   }

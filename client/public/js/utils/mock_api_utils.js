@@ -130,12 +130,13 @@ const mockApiUtils = {
           return reject('Fail');
         }
 
+        // random outcome
         const randomStatus = Math.random();
         let workflowNodeStatus;
         let workflowNodeOutputs = [];
-        if (randomStatus <= 0.5) {
+        if (false && randomStatus <= 0.5) {
           workflowNodeStatus = statusConstants.RUNNING;
-        } else if (randomStatus <= 0.75) {
+        } else if (true || randomStatus <= 0.75) {
           workflowNodeStatus = statusConstants.COMPLETED;
           workflowNodeOutputs = [{
             value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
