@@ -193,3 +193,22 @@ export function clickAbout() {
     type: actionConstants.CLICK_ABOUT,
   };
 }
+
+export function clickCancel(runId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.CLICK_CANCEL,
+    });
+
+    apiUtils.cancelRun(runId).then(() => {
+      dispatch({
+        type: actionConstants.SUBMITTED_CANCEL,
+      });
+    }).catch((err) => {
+      dispatch({
+        type: actionConstants.SUBMITTED_CANCEL,
+        err,
+      });
+    });
+  };
+}

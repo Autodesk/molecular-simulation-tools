@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import Workflow from '../components/workflow';
 import {
   clickAbout,
+  clickCancel,
   clickRun,
   clickWorkflowNode,
   clickWorkflowNodeLoad,
@@ -60,6 +61,11 @@ function mapDispatchToProps(dispatch) {
     submitEmail(email) {
       dispatch(submitEmail(email));
     },
+    clickCancel(runId) {
+      return () => {
+        dispatch(clickCancel(runId));
+      };
+    },
   };
 }
 
@@ -68,6 +74,7 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.workflow.id, stateProps.workflow.workflowNodes
     ),
+    clickCancel: dispatchProps.clickCancel(stateProps.workflow.runId),
   });
 }
 

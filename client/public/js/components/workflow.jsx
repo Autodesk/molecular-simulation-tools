@@ -1,9 +1,9 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
+import Incomplete from './incomplete';
 import SelectionRecord from '../records/selection_record';
 import Snackbar from './snackbar';
 import Status from '../components/status';
-import ThankYou from './thank_you';
 import UserMessageRecord from '../records/user_message_record';
 import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
@@ -74,8 +74,11 @@ class Workflow extends React.Component {
   render() {
     if (true || this.props.workflowStatus === statusConstants.RUNNING) {
       return (
-        <ThankYou
+        <Incomplete
+          canceling={this.props.workflow.canceling}
           email={this.props.workflow.email}
+          onClickCancel={this.props.clickCancel}
+          workflowStatus={this.props.workflowStatus}
         />
       );
     }
@@ -124,7 +127,9 @@ class Workflow extends React.Component {
 }
 
 Workflow.propTypes = {
+  canceling: React.PropTypes.bool,
   clickAbout: React.PropTypes.func.isRequired,
+  clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,

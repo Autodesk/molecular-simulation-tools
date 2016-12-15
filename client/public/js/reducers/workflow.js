@@ -111,6 +111,20 @@ function workflow(state = initialState, action) {
     case actionConstants.SUBMIT_EMAIL:
       return state.set('email', action.email);
 
+    case actionConstants.CLICK_CANCEL:
+      return state.set('canceling', true);
+
+    case actionConstants.SUBMITTED_CANCEL:
+      if (action.err) {
+        return state.set('canceling', false);
+      }
+      return state.merge({
+        canceling: false,
+        workflowNodes: state.workflowNodes.map(
+          workflowNode => workflowNode.set('status', statusConstants.CANCELED)
+        ),
+      });
+
     default:
       return state;
   }

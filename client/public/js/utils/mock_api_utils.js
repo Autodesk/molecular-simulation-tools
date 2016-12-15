@@ -193,6 +193,21 @@ const mockApiUtils = {
       }, 1000);
     });
   },
+
+  cancelRun() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 20% chance of failing
+        const err = Math.random() > 0.8;
+
+        if (err) {
+          return reject(new Error('Fail'));
+        }
+
+        return resolve();
+      }, 1000);
+    });
+  },
 };
 
 export default mockApiUtils;

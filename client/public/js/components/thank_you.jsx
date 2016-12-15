@@ -19,7 +19,8 @@ function ThankYou(props) {
         </p>
         <Button
           type="raised"
-          onClick={() => {}}
+          onClick={props.onClickCancel}
+          disabled={props.canceling}
         >
           Cancel Job
         </Button>
@@ -32,7 +33,9 @@ function ThankYou(props) {
 }
 
 ThankYou.propTypes = {
+  canceling: React.PropTypes.bool,
   email: React.PropTypes.string.isRequired,
-}
+  onClickCancel: React.PropTypes.func.isRequired,
+};
 
 export default ThankYou;

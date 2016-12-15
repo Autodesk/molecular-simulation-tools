@@ -100,6 +100,39 @@ describe('workflowUtils', () => {
       });
     });
 
+    describe('when there is a canceled anywhere in the nodes', () => {
+      let workflowNodesBeg;
+      let workflowNodesMid;
+      let workflowNodesEnd;
+      let workflowNodesAll;
+
+      beforeEach(() => {
+        workflowNodesBeg = workflowNodes.insert(0, new WorkflowNodeRecord({
+          status: statusConstants.CANCELED,
+        }));
+        workflowNodesMid = workflowNodes.insert(1, new WorkflowNodeRecord({
+          status: statusConstants.CANCELED,
+        }));
+        workflowNodesEnd = workflowNodes.push(new WorkflowNodeRecord({
+          status: statusConstants.CANCELED,
+        }));
+        workflowNodesAll = new IList([new WorkflowNodeRecord({
+          status: statusConstants.CANCELED,
+        })]);
+      });
+
+      it('returns canceled', () => {
+        const statusBeg = workflowUtils.getWorkflowStatus(workflowNodesBeg);
+        const statusMid = workflowUtils.getWorkflowStatus(workflowNodesMid);
+        const statusEnd = workflowUtils.getWorkflowStatus(workflowNodesEnd);
+        const statusAll = workflowUtils.getWorkflowStatus(workflowNodesAll);
+        expect(statusBeg).to.equal(statusConstants.CANCELED);
+        expect(statusMid).to.equal(statusConstants.CANCELED);
+        expect(statusEnd).to.equal(statusConstants.CANCELED);
+        expect(statusAll).to.equal(statusConstants.CANCELED);
+      });
+    });
+
     describe('when every node is completed', () => {
       beforeEach(() => {
         workflowNodes = workflowNodes.map(workflowNode =>
