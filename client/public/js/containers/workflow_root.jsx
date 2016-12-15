@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Workflow from '../components/workflow';
+import WorkflowRouter from '../components/workflow_router';
 import {
   clickAbout,
   clickCancel,
@@ -86,6 +86,6 @@ const WorkflowRoot = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(Workflow);
+)(WorkflowRouter);
 
 export default WorkflowRoot;

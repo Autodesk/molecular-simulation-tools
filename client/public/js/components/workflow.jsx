@@ -1,159 +1,68 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
-import Incomplete from './incomplete';
 import SelectionRecord from '../records/selection_record';
-import Snackbar from './snackbar';
 import Status from '../components/status';
-import UserMessageRecord from '../records/user_message_record';
 import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowSteps from '../components/workflow_steps';
 import selectionConstants from '../constants/selection_constants';
-import statusConstants from '../constants/status_constants';
 
 require('../../css/workflow.scss');
 
-class Workflow extends React.Component {
-  componentDidMount() {
-    this.initialize(
-      this.props.workflowId, this.props.runId, this.props.workflow.title
+function Workflow(props) {
+  let selectedModelData;
+  if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
+    const selectedWorkflowNode = props.workflow.workflowNodes.find(
+      workflowNode => workflowNode.id === props.selection.id
     );
-
-    this.state = {
-      snackbarClosed: true,
-    };
-
-    this.onRequestCloseSnackbar = this.onRequestCloseSnackbar.bind(this);
+    selectedModelData = selectedWorkflowNode.modelData;
   }
 
-  componentWillReceiveProps(nextProps) {
-    const changingWorkflowId = nextProps.workflowId &&
-      this.props.workflowId !== nextProps.workflowId;
-    const changingRunId = nextProps.runId &&
-      nextProps.runId !== this.props.runId;
-    const missingWorkflow = nextProps.workflowId &&
-      nextProps.workflow.id !== nextProps.workflowId;
-    const missingRun = nextProps.runId &&
-      nextProps.workflow.runId !== nextProps.runId;
-    const fetching = nextProps.workflow.fetching;
-    const needWorkflow = changingWorkflowId && missingWorkflow;
-    const needRun = changingRunId && missingRun;
-
-    // Reinitialize when need workflow/run (like on back button)
-    if (!fetching && (needWorkflow || needRun)) {
-      this.initialize(
-        nextProps.workflowId, nextProps.runId, nextProps.workflow.title
-      );
-    }
-
-    if (!this.props.workflow.fetchingError &&
-      nextProps.workflow.fetchingError) {
-      this.setState({
-        snackbarClosed: false,
-      });
-    }
-  }
-
-  onRequestCloseSnackbar() {
-    this.setState({
-      snackbarClosed: true,
-    });
-  }
-
-  // Set up page for workflow/run distinction
-  initialize(workflowId, runId, workflowTitle) {
-    this.props.initializeWorkflow(workflowId, runId);
-
-    if (runId) {
-      document.title = `Workflow - Run of "${workflowTitle}"`;
-    } else {
-      document.title = `Workflow - "${workflowTitle}"`;
-    }
-  }
-
-  render() {
-    if (this.props.workflowStatus === statusConstants.RUNNING) {
-      return (
-        <div>
-          <Incomplete
-            canceling={this.props.workflow.canceling}
-            email={this.props.workflow.email}
-            onClickCancel={this.props.clickCancel}
-            workflowStatus={this.props.workflowStatus}
-          />,
-          <Snackbar
-            onMessageTimeout={this.props.onMessageTimeout}
-            userMessage={this.props.userMessage}
-          />
-        </div>
-      );
-    }
-
-    let selectedModelData;
-    if (this.props.selection.type === selectionConstants.WORKFLOW_NODE) {
-      const selectedWorkflowNode = this.props.workflow.workflowNodes.find(
-        workflowNode => workflowNode.id === this.props.selection.id
-      );
-      selectedModelData = selectedWorkflowNode.modelData;
-    }
-
-    return (
-      <div className="workflow">
-        <WorkflowSteps
-          clickAbout={this.props.clickAbout}
-          clickRun={this.props.clickRun}
-          clickWorkflowNode={this.props.clickWorkflowNode}
-          clickWorkflowNodeLoad={this.props.clickWorkflowNodeLoad}
-          clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
-          selection={this.props.selection}
-          workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
-        />
-        <Status
-          fetchingPdb={this.props.fetchingPdb}
-          fetchingPdbError={this.props.fetchingPdbError}
-          nodes={this.props.nodes}
-          onUpload={this.props.onUpload}
-          selection={this.props.selection}
-          submitPdbId={this.props.submitPdbId}
-          submitEmail={this.props.submitEmail}
-          workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
-        />
-        <View
-          modelData={selectedModelData}
-          loading={this.props.workflow.fetching}
-        />
-        <Snackbar
-          onMessageTimeout={this.props.onMessageTimeout}
-          userMessage={this.props.userMessage}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="workflow">
+      <WorkflowSteps
+        clickAbout={props.clickAbout}
+        clickRun={props.clickRun}
+        clickWorkflowNode={props.clickWorkflowNode}
+        clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
+        clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
+        selection={props.selection}
+        workflow={props.workflow}
+        workflowStatus={props.workflowStatus}
+      />
+      <Status
+        fetchingPdb={props.fetchingPdb}
+        fetchingPdbError={props.fetchingPdbError}
+        nodes={props.nodes}
+        onUpload={props.onUpload}
+        selection={props.selection}
+        submitPdbId={props.submitPdbId}
+        submitEmail={props.submitEmail}
+        workflow={props.workflow}
+        workflowStatus={props.workflowStatus}
+      />
+      <View
+        modelData={selectedModelData}
+        loading={props.workflow.fetching}
+      />
+    </div>
+  );
 }
 
 Workflow.propTypes = {
-  canceling: React.PropTypes.bool,
   clickAbout: React.PropTypes.func.isRequired,
-  clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNode: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
-  initializeWorkflow: React.PropTypes.func.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
-  onMessageTimeout: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
-  runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowId: React.PropTypes.string.isRequired,
   workflowStatus: React.PropTypes.string.isRequired,
 };
 
