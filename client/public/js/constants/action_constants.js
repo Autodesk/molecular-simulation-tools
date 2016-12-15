@@ -1,8 +1,10 @@
 import keyMirror from 'keymirror';
 
 const actionConstants = keyMirror({
+  CHANGE_MORPH: null,
   CLICK_ABOUT: null,
   CLICK_CANCEL: null,
+  CLICK_COLORIZE: null,
   CLICK_NODE: null,
   CLICK_RUN: null,
   CLICK_WORKFLOW_NODE: null,

@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
 import WorkflowRouter from '../components/workflow_router';
 import {
+  changeMorph,
   clickAbout,
   clickCancel,
+  clickColorize,
   clickRun,
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
@@ -17,8 +19,10 @@ import workflowUtils from '../utils/workflow_utils';
 
 function mapStateToProps(state, ownProps) {
   return {
+    colorized: state.resultsSettings.colorized,
     fetchingPdb: state.workflow.fetchingPdb,
     fetchingPdbError: state.workflow.fetchingPdbError,
+    morph: state.resultsSettings.morph,
     nodes: state.nodes,
     selection: state.selection,
     runId: ownProps.params.runId,
@@ -52,6 +56,12 @@ function mapDispatchToProps(dispatch) {
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));
+    },
+    onClickColorize() {
+      dispatch(clickColorize());
+    },
+    onChangeMorph(morph) {
+      dispatch(changeMorph(morph));
     },
     onMessageTimeout() {
       dispatch(messageTimeout());

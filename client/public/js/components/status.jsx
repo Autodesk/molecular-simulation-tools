@@ -91,6 +91,9 @@ function Status(props) {
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
     selection = (
       <StatusResults
+        onClickColorize={props.onClickColorize}
+        onChangeMorph={props.onChangeMorph}
+        workflowNodesSize={props.workflow.workflowNodes.size}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {
@@ -110,6 +113,8 @@ Status.propTypes = {
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),
+  onClickColorize: React.PropTypes.func.isRequired,
+  onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,

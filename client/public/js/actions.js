@@ -224,3 +224,16 @@ export function messageTimeout() {
     type: actionConstants.MESSAGE_TIMEOUT,
   };
 }
+
+export function clickColorize() {
+  return {
+    type: actionConstants.CLICK_COLORIZE,
+  };
+}
+
+export function changeMorph(morph) {
+  return {
+    type: actionConstants.CHANGE_MORPH,
+    morph,
+  };
+}
