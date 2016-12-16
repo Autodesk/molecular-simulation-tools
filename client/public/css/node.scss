@@ -1,20 +1,22 @@
 @import 'variables';
 
 .node {
-  text-align: center;
-  border-bottom: 1px $fg-secondary solid;
+  text-align: left;
+  border-bottom: 1px rgba(255, 255, 255, 0.2) solid;
   color: $fg-secondary;
   list-style-type: none;
-  padding: 12px;
+  padding: 30px;
   cursor: pointer;
+    font-size: 0.8rem;
 
   &.last {
-    border-bottom: none;
+  border-bottom: 1px rgba(255, 255, 255, 0) solid;
   }
 
   &.selected {
-    background-color: #ffffff;
-    opacity: 0.2;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 1px rgba(255, 255, 255, 0) solid;
+      color: white;
   }
 
   .icon-finished {

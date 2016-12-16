@@ -1,5 +1,5 @@
-$menu-bg: #303f6c;
-$menu-primary: #f0ff66;
+$menu-bg: #292C61;
+$menu-primary: #2FE695;
 $menu-secondary: #ffffff;
 
 .app-bar {
@@ -10,13 +10,22 @@ $menu-secondary: #ffffff;
   background-color: $menu-bg;
 
   .logo {
+      z-index: 1;
     width: 35px;
     height: 35px;
     margin-left: 26px;
     margin-right: 16px;
   }
+    
+    .backImg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
 
   .title {
+    z-index: 1;
     flex: 1;
     display: flex;
     height: 100%;
@@ -37,6 +46,7 @@ $menu-secondary: #ffffff;
     color: $menu-secondary;
     background-color: transparent;
     border: none;
+      font-size: 0.8rem;
 
     &:focus {
       outline: 0;
@@ -47,3 +57,28 @@ $menu-secondary: #ffffff;
     }
   }
 }
+
+.popDown {
+    background-color: white;
+    padding: 16px 30px 16px 30px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+}
+
+.shareButton {
+    padding: 10px;
+    opacity: 1;
+    -webkit-transition: 0.1s; 
+    transition: 0.1s;
+    
+    &:hover {
+        opacity: 0.6;
+        -webkit-transition: 0.1s; 
+        transition: 0.1s;   
+    }
+}
+
+
+
+
+

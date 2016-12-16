@@ -7,11 +7,16 @@ function View(props) {
   let view;
 
   if (props.loading) {
+
     view = (
-      <div className="loading">
-        LOADING TODO
-      </div>
+        <div>
+            <div className="animBack">
+                <img src="../img/loadAnim.gif" />
+            </div>
+            <p className="anim">Loading! Great things ahead...</p>
+        </div>
     );
+    
   } else if (props.modelData) {
     view = (
       <Nbmolviz3dReact

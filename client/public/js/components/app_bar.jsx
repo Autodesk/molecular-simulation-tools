@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import Popover from './popover';
 import logoImage from '../../img/logo.png';
+import backImage from '../../img/backDetEnergy.png';
 
 require('../../css/app_bar.scss');
 
@@ -35,6 +36,7 @@ class AppBar extends React.Component {
 
     return (
       <div className="app-bar">
+        <img src={backImage} alt="backImg" className="backImg" />
         <img src={logoImage} alt="logo" className="logo" />
         <div className="title">
           <h2>{this.props.title}</h2>
@@ -48,7 +50,11 @@ class AppBar extends React.Component {
           left={anchorClientRect.left}
           onRequestClose={this.handleRequestClose}
         >
-          <div>TODO sharing stuff</div>
+            <div className='popDown'>
+                <img className="shareButton svg" src="../img/twitter.svg" />
+                 <img className="shareButton" src="../img/email.svg" />
+                 <img className="shareButton" src="../img/facebook.svg" />
+            </div>
         </Popover>
         <button
           ref={(c) => { this.shareButton = c; }}

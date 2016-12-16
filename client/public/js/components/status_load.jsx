@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from './button';
 
+require('../../css/status_load.scss');
+
 class StatusLoad extends React.Component {
   constructor(props) {
     super(props);
@@ -56,10 +58,10 @@ class StatusLoad extends React.Component {
       <div className="status-info">
         {uploadedElement}
         <div className="upload-container">
-          <form
+          <form className="defInput"
             onSubmit={this.onSubmitPdbId}
           >
-            <input
+            <input 
               style={{ width: '100%' }}
               type="text"
               placeholder="Enter PDB ID here"
@@ -72,10 +74,10 @@ class StatusLoad extends React.Component {
             {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
             {this.state.pdbIdError ? this.state.pdbIdError : ''}
           </p>
-          <p>
-            Or, browse custom file.
+          <p className="regFont">
+            Or, browse custom JSON file.
           </p>
-          <Button
+          <Button 
             type="form"
             disabled={this.props.uploadPending}
             onClick={this.onClickFileUpload}

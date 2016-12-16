@@ -3,13 +3,13 @@
   height: 100%;
   width: 260px;
   overflow: hidden;
-  padding: 20px;
+  padding: 60px 20px 60px 20px;
   background-color: rgba(85, 104, 161, 0.1);
 
   .status-info {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #000000;
+    text-align: left;
+    font-size: 0.8rem;
+    color: #3C3B46;
   }
 
   .file-input {

@@ -46,7 +46,7 @@ class StatusEmail extends React.Component {
     return (
       <div className="status=info status-email">
         <p>
-          This simulation might take about <span className="time">6 hours</span>.
+          This simulation might take about <span className="time">24 hours</span>.
         </p>
         <p>{sendText}</p>
         <form
@@ -54,7 +54,7 @@ class StatusEmail extends React.Component {
         >
           <input
             style={{ width: '100%' }}
-            type="email"
+              type="email"
             autoComplete="email"
             placeholder="Enter email"
             value={this.state.email}

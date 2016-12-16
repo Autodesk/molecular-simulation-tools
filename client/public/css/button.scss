@@ -1,26 +1,37 @@
 @import 'variables';
 
 .button {
-  width: 125px;
   margin: 16px auto;
-  background-color: transparent;
-  font-weight: 600;
   border: none;
   color: $fg-secondary;
+    font-size: 0.8rem;
+    padding: 10px;
+    background-color: transparent;
 
   &.disabled {
-    opacity: 0.6;
+    opacity: 0.4;
   }
 
   &.raised {
     border: 2px #f1ff66 solid;
     border-radius: 20px;
     color: #f1ff66;
+    margin: 20px;
+    width: 140px;
   }
 
   &.form {
-    border: 2px #bbbbbb solid;
+    border:1px solid #D2D3D6;
+    background-color: white;
     border-radius: 20px;
-    color: $fg-primary;
+    color: #3C3B46;
+    width: 100%;
   }
 }
+
+.button:focus {
+    outline: none;
+}
+
+
+
