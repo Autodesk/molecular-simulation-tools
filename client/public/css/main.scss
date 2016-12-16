@@ -1,4 +1,41 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
 @import 'variables';
+
+@font-face{
+   font-family: 'art-thin';
+   src: url('../fonts/Artifakt Element Thin.otf');
+}
+
+@font-face{
+   font-family: 'art-light';
+   src: url('../fonts/Artifakt Element Light.otf');
+}
+
+@font-face{
+   font-family: 'art-reg';
+   src: url('../fonts/Artifakt Element Regular.otf');
+}
+
+@font-face{
+   font-family: 'art-book';
+   src: url('../fonts/Artifakt Element Book.otf');
+}
+
+@font-face{
+   font-family: 'art-med';
+   src: url('../fonts/Artifakt Element Medium.otf');
+}
+
+@font-face{
+   font-family: 'art-bold';
+   src: url('../fonts/Artifakt Element Bold.otf');
+}
+
+@font-face{
+   font-family: 'art-black';
+   src: url('../fonts/Artifakt Element Black.otf');
+}
+
 
 html, body, .app {
   height: 100%;

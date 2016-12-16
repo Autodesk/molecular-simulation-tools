@@ -1,0 +1,67 @@
+.errored, .thank-you {
+  height: 100%;
+  background-color: #5981FF;
+  color: white;
+
+  .container {
+    width: auto;
+    max-width: 980px;
+    padding: 0 15px;
+  }
+
+  h1 {
+    font-size: 3em;
+    font-family: "art-light";
+    padding: 60px 0 60px 0;
+  }
+
+  p {
+    font-size: 1.5em;
+    font-family: "art-reg";
+  }
+
+
+  h5 {
+    font-size: 1.2em;
+    font-family: "art-med";
+  }
+
+  a, a:visited {
+    color: white;
+    font-size: 1em; 
+    font-family: "art-med";
+    opacity: 0.6;
+  }
+
+  a:hover {
+    color: white;
+    opacity: 0.8;
+  }
+
+  .line {
+    border-top: solid 1px white;
+    padding-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  .largeButton {
+    padding: 15px 60px 15px 60px;
+    margin-top: 20px;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    background-color: white;
+    font-family: 'art-bold';
+    color: #5981FF;
+    opacity: 0.95;
+    transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  .largeButton:hover {
+    opacity: 1;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+}

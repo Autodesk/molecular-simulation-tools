@@ -6,10 +6,28 @@ var router = express.Router();
 
 var WORKFLOW_SERVER_ADDRESS = "localhost:9000";
 
+router.get('/:workflowId', (req, res, next) => {
+  if (!req.params.workflowId) {
+    return next(new Error('Missing required workflow id'));
+  }
+
+  // TODO get the indicated workflow from db
+  const fakeWorkflowData = {
+    id: req.params.workflowId,
+    title: 'Refine ligand and active site in molecules',
+    workflowNodes: [
+      { id: 0 },
+      { id: 1 },
+    ],
+  };
+
+  res.send(fakeWorkflowData);
+});
+
 /**
  * This route can be polled
  */
-router.get('/workflow/status/:workflowId', function (req, res) {
+router.get('/status/:workflowId', function (req, res) {
 	// console.log("originalUrl=" + req.originalUrl); // '/admin/new'
 	// console.log("baseUrl=" + req.baseUrl); // '/admin'
 	// console.log("path=" + req.path); // '/new'
@@ -26,11 +44,11 @@ router.get('/workflow/status/:workflowId', function (req, res) {
 	res.send({workflowId:req.params.workflowId, status:"running(this is a test)"});
 });
 
-router.post('/workflow/run', function (req, res) {
+router.post('/run', function (req, res) {
 	res.send('MOCKED API: Attempting to run. This will be filled in later by Dion');
 });
 
-router.get('/workflow/run', function (req, res) {
+router.get('/run', function (req, res) {
 	res.send('MOCKED API: run some workflow. Actually, you will use the POST method');
 });
 
