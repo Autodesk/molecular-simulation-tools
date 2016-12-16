@@ -65,4 +65,4 @@ WORKDIR $APP
 ENV PORT 4000
 EXPOSE $PORT
 
-CMD ["forever", "server/server.js"]
+CMD ["forever", "server/bin/www"]
