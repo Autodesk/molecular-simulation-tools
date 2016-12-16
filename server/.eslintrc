@@ -1,0 +1,15 @@
+{
+  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaVersion": 8,
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "expect": true,
+  },
+  "rules": {
+  },
+}
