@@ -166,12 +166,12 @@ export function submitPdbId(pdbId) {
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
       })
-    ).catch(err => {
+    ).catch((err) => {
       console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         error: err.message,
-      })
+      });
     });
   };
 }
