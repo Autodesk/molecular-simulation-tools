@@ -4,7 +4,7 @@
 var express = require('express');
 var router = express.Router();
 
-var WORKFLOW_SERVER_ADDRESS = "localhost:9000";
+var WORKFLOW_SERVER_ADDRESS = process.env.WORKFLOW_SERVER_ADDRESS || 'localhost:9000';
 
 router.get('/:workflowId', (req, res, next) => {
   if (!req.params.workflowId) {
