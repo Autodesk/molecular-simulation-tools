@@ -48,7 +48,7 @@ function IncompleteFooter(props) {
 
 IncompleteFooter.propTypes = {
   canceling: React.PropTypes.bool,
-  onClickCancel: React.PropTypes.func.isRequired,
+  onClickCancel: React.PropTypes.func,
 };
 
 export default IncompleteFooter;
