@@ -115,7 +115,7 @@ const mockApiUtils = {
           title: 'Refine ligand and active site in molecules',
           workflowNodes,
         }));
-      }, 10000000);
+      }, 1000);
     });
   },
 

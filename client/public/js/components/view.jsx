@@ -10,7 +10,7 @@ function View(props) {
   if (props.loading) {
 
     view = (
-        <div>
+        <div className="loading">
             <div className="animBack">
                 <img src={loadImg} />
             </div>
