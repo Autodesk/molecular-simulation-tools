@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  client:
+    image: "quay.io/bionano/molecular-design-apps:${VERSION}"
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+      LOG_LEVEL: "${LOG_LEVEL}"
+      CONFIG_PATH: "/app/config/ccc.yml"
+      CLIENT_DEPLOYMENT: "true"
+    logging:
+      driver: json-file

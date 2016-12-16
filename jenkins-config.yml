@@ -1,0 +1,54 @@
+service-name: mdtapps
+# NOTE override this value in the Jenkins job as it varies by environment
+environment: local
+
+# parameters used when calling cloudformation update-stack
+# NOTE set this value in the Jenkins job as it varies by environment
+cfn-stack-name: ""
+cfn-param-compose-file: docker-compose.yml -f docker-compose.prod.yml
+cfn-param-compose-start-params: ""
+# NOTE set this value in the Jenkins job as it varies by environment
+cfn-param-compose-cmd-prefix: ""
+
+
+# Set to true if the 'verify-url-full' end point is to be checked after update stack. 
+# If true, the return payload from this url is compared against the value expected in
+# verify-deploy.sh (GIT-REPO/jenkins-docker/blob/master/bin/verify-deploy.sh)
+verify-enabled: true
+# NOTE set this value in the Jenkins job as it varies by environment
+verify-url-full: ""
+
+build-compose-file: docker-compose.yml
+jenkins-test-compose-file: ""
+jenkins-test-container: ""
+
+version-file: server/package.json
+
+# Temp variables and directory for scratch outputs
+tmp-cfn-status: CloudStackStatus.txt
+tmp-dir: node_modules/jenkins-docker/compose-tmp
+tmp-env: compose-env.txt
+tmp-images: images.txt
+
+build-ver-file: VERSION
+build-manifest-file: build-manifest.txt
+
+s3-artifacts: "*.yml *.conf"
+s3-zip-bucket: bionano-devops-build-artifacts
+zip-excludes: .archive_excludes
+zip-excludes-input-dirs: .
+
+# set false to only push a image tagged for the envrionment
+tag-latest: true
+lib-prefix: quay.io/bionano/
+lib-push-config: --config /var/jenkins_home/.docker
+# If this image is to be public, then we should move to 'autodesk-bionano' or 'autodesk' quay.io repo and use the auth config below
+# lib-push-config: --config /var/jenkins_home/.docker-config-autodesk-bionano-org
+
+
+# This project doesn't produce npm consumable outputs
+npm-package-push: false
+npm-package-name: ""
+npm-package-s3-folder: ""
+
+fake-jenkins: false # Don't change this; it's only here to be overridden by place holder Jenkins configuration
