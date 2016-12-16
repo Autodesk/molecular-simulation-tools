@@ -1,5 +1,6 @@
 import React from 'react';
 import { Nbmolviz3dReact } from 'nbmolviz3d';
+import loadImg from '../../img/loadAnim.gif';
 
 require('../../css/view.scss');
 
@@ -11,7 +12,7 @@ function View(props) {
     view = (
         <div>
             <div className="animBack">
-                <img src="../img/loadAnim.gif" />
+                <img src={loadImg} />
             </div>
             <p className="anim">Loading! Great things ahead...</p>
         </div>
