@@ -1,21 +1,30 @@
 import React from 'react';
 import Button from './button';
+import IncompleteFooter from './incomplete_footer';
 
-import '../../css/thank_you.scss';
+import '../../css/incomplete.scss';
 
 function ThankYou(props) {
   return (
     <div className="thank-you">
       <div className="container">
-        <h2>Thanks {props.email}!</h2>
+        <div>
+          <h1>Congratulations {props.email}!</h1>
+          <div className="line" />
+        </div>
         <p>
-          Your workflow is running on the backend.
+          Your simulation us up and running and will be completed within the
+          next 24 hours.
         </p>
         <p>
-          We will send you an email once results of your workflow are available.
+          Be patient. We will send you and email once results are available.
+        </p>
+        <br />
+        <p>
+          You can safely close your broser now.
         </p>
         <p>
-          Time remaining: Like a day or something, be patient.
+          See you soon!
         </p>
         <Button
           type="raised"
@@ -24,10 +33,8 @@ function ThankYou(props) {
         >
           Cancel Job
         </Button>
-        <p>
-          You can safely close your browser now.  See you soon!
-        </p>
       </div>
+      <IncompleteFooter />
     </div>
   );
 }
