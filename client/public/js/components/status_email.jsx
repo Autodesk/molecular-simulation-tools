@@ -54,7 +54,7 @@ class StatusEmail extends React.Component {
         >
           <input
             style={{ width: '100%' }}
-              type="email"
+            type="email"
             autoComplete="email"
             placeholder="Enter email"
             value={this.state.email}

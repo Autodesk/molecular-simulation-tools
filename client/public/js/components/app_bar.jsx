@@ -50,11 +50,11 @@ class AppBar extends React.Component {
           left={anchorClientRect.left}
           onRequestClose={this.handleRequestClose}
         >
-            <div className='popDown'>
-                <img className="shareButton svg" src="../img/twitter.svg" />
-                 <img className="shareButton" src="../img/email.svg" />
-                 <img className="shareButton" src="../img/facebook.svg" />
-            </div>
+          <div className="popDown">
+            <img className="shareButton svg" src="../img/twitter.svg" alt="twitter" />
+            <img className="shareButton" src="../img/email.svg" alt="email" />
+            <img className="shareButton" src="../img/facebook.svg" alt="facebook" />
+          </div>
         </Popover>
         <button
           ref={(c) => { this.shareButton = c; }}

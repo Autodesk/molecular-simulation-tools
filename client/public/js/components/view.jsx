@@ -6,18 +6,15 @@ require('../../css/view.scss');
 
 function View(props) {
   let view;
-
   if (props.loading) {
-
     view = (
-        <div className="loading">
-            <div className="animBack">
-                <img src={loadImg} />
-            </div>
-            <p className="anim">Loading! Great things ahead...</p>
+      <div className="loading">
+        <div className="animBack">
+          <img src={loadImg} alt="loading" />
         </div>
+        <p className="anim">Loading! Great things ahead...</p>
+      </div>
     );
-    
   } else if (props.modelData) {
     view = (
       <Nbmolviz3dReact
@@ -25,7 +22,6 @@ function View(props) {
       />
     );
   }
-
   return (
     <div className="view">
       {view}

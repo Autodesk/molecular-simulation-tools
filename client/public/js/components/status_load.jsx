@@ -67,7 +67,7 @@ class StatusLoad extends React.Component {
               placeholder="Enter PDB ID here"
               disabled={this.props.fetchingPdb}
               value={this.state.pdbId}
-              onChange={this.onChangePdbId}
+              onChange={this.onChangePdbId} 
             />
           </form>
           <p className="error">
