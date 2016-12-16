@@ -47,7 +47,7 @@ Fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
 const Redis = promiseRedis(resolver =>
   new Promise(resolver)
 );
-const redis = Redis.createClient({ host: 'redis', port: 6379 });
+const redis = Redis.createClient({ host: 'localhost', port: 6379 });
 
 /**
  * Hashes all files in a directory. If the files
@@ -319,22 +319,22 @@ function reattachExistingWorkflowContainers() {
 }
 reattachExistingWorkflowContainers();
 
-router.get('/stdout/: workflowId', (req, res) => {
+router.get('/stdout/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   res.sendFile(getWorkflowStdoutPath(workflowId));
 });
 
-router.get('/stderr/: workflowId', (req, res) => {
+router.get('/stderr/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   res.sendFile(getWorkflowStderrPath(workflowId));
 });
 
-router.get('/exitcode/: workflowId', (req, res) => {
+router.get('/exitcode/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   res.sendFile(getWorkflowExitCodePath(workflowId));
 });
 
-router.get('/: workflowId', (req, res) => {
+router.get('/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   if (workflowId === null) {
     res.status(400).send({ error: 'No workflow id provided' });
@@ -370,7 +370,7 @@ router.get('/: workflowId', (req, res) => {
 /**
  * This route can be polled
  */
-router.get('/state/: workflowId', (req, res) => {
+router.get('/state/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   if (workflowId === null) {
     res.status(400).send({ error: 'No workflow id provided' });
