@@ -6,7 +6,6 @@ volumes:
     driver: local
 
 services:
-
   server:
     build:
       context: .

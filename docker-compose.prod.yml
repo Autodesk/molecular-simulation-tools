@@ -7,8 +7,6 @@ services:
       - "4000:4000"
     environment:
       PORT: "4000"
-      LOG_LEVEL: "${LOG_LEVEL}"
-      CONFIG_PATH: "/app/config/ccc.yml"
-      CLIENT_DEPLOYMENT: "true"
+      WORKFLOW_SERVER_ADDRESS: "internal-lb.${BNR_ENVIRONMENT}.bionano.bio:9000"
     logging:
       driver: json-file
