@@ -10,7 +10,7 @@ This workflow serves the API for the web app frontend and also communicates with
 Sets the port that the server will run on.
 
 ## Linting
-    eslint
+    npm run lint
 
 ## API
 Routes are behind a version prefix, which is currently "/v1".

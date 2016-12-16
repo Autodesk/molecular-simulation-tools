@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./",
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
