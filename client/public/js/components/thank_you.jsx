@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from './button';
 import IncompleteFooter from './incomplete_footer';
 
 import '../../css/incomplete.scss';
@@ -26,15 +25,11 @@ function ThankYou(props) {
         <p>
           See you soon!
         </p>
-        <Button
-          type="raised"
-          onClick={props.onClickCancel}
-          disabled={props.canceling}
-        >
-          Cancel Job
-        </Button>
       </div>
-      <IncompleteFooter />
+      <IncompleteFooter
+        onClickCancel={props.onClickCancel}
+        canceling={props.canceling}
+      />
     </div>
   );
 }

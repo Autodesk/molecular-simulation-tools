@@ -74,7 +74,7 @@ class WorkflowRouter extends React.Component {
     if (this.props.workflowStatus === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
-          canceling={this.props.canceling}
+          canceling={this.props.workflow.canceling}
           email={this.props.workflow.email}
           onClickCancel={this.props.clickCancel}
         />
