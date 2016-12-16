@@ -23,11 +23,22 @@ See client/README.md
 
 APIs:
 
-	GET workflow/status/:workflowId
-		Will be one of [none|running|finished]
+	GET workflow/state/:workflowId
+		Will be one of [none|running|finished|failed]
 
 	POST workflow/run
-		This will be added later (with instructions for the post data)
+		Two fields/files required for this multipart request:
+		email
+		input.json
+
+	GET workflow/stdout/:workflowId
+		Returns the stdout logs of the finished workflow
+
+	GET workflow/stderr/:workflowId
+		Returns the stderr logs of the finished workflow
+
+	GET workflow/exitcode/:workflowId
+		Returns the exit code of the finished workflow
 
 ### Developing frontend assets
 In addition to mounting local directories as mentioned above, you can recompile the frontend assets on change by running `npm run watch` in the client directory.

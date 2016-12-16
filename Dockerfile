@@ -54,6 +54,12 @@ WORKDIR $APP/server
 ADD ./server/ $APP/server/ 
 RUN npm install
 
+ADD ./server/package.json $APP/server/package.json
+RUN cd $APP/server && npm install
+ADD ./server/bin $APP/server/bin
+ADD ./server/**.js $APP/server/
+ADD ./server/**.json $APP/server/
+
 WORKDIR $APP
 
 ENV PORT 4000
