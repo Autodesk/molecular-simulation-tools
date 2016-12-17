@@ -47,7 +47,7 @@ Fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
 const Redis = promiseRedis(resolver =>
   new Promise(resolver)
 );
-const redis = Redis.createClient({ host: 'localhost', port: 6379 });
+const redis = Redis.createClient({ host: 'redis', port: 6379 });
 
 /**
  * Hashes all files in a directory. If the files
