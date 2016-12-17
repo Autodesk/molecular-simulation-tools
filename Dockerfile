@@ -61,6 +61,7 @@ ADD ./server/**.js $APP/server/
 ADD ./server/**.json $APP/server/
 
 WORKDIR $APP
+RUN cp ./server/VERSION $APP/ || true
 
 ENV PORT 4000
 EXPOSE $PORT
