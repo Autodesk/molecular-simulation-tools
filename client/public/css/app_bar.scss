@@ -8,6 +8,7 @@ $menu-secondary: #ffffff;
   width: 100%;
   height: 82px;
   background-color: $menu-bg;
+}
 
   .logo {
     z-index: 1;
@@ -56,7 +57,7 @@ $menu-secondary: #ffffff;
       color: $menu-primary;
     }
   }
-}
+
 
 .popDown {
     background-color: white;

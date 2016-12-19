@@ -133,9 +133,9 @@ const mockApiUtils = {
         const randomStatus = Math.random();
         let workflowNodeStatus;
         let workflowNodeOutputs = [];
-        if (randomStatus <= 0.5) {
+        if (false) {
           workflowNodeStatus = statusConstants.RUNNING;
-        } else if (randomStatus <= 0.75) {
+        } else if (true) {
           workflowNodeStatus = statusConstants.COMPLETED;
           workflowNodeOutputs = [{
             value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
