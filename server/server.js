@@ -1,3 +1,4 @@
+"use strict";
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -5,6 +6,7 @@ const logger = require('morgan');
 const path = require('path');
 const appConstants = require('./constants/app_constants');
 const workflowRouter = require('./workflow');
+const versionRouter = require('./version');
 
 // Create the server
 const app = express();
@@ -20,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // Add server routes
 app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRouter);
+app.use('/version', versionRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

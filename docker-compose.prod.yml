@@ -1,14 +1,24 @@
 version: '2'
 
 services:
-  client:
-    image: "quay.io/bionano/molecular-design-apps:${VERSION}"
+  server:
+    image: "quay.io/bionano/mdtapps_server:${VERSION}"
     ports:
       - "4000:4000"
     environment:
       PORT: "4000"
-      LOG_LEVEL: "${LOG_LEVEL}"
-      CONFIG_PATH: "/app/config/ccc.yml"
-      CLIENT_DEPLOYMENT: "true"
+      WORKFLOW_SERVER_ADDRESS: "internal-lb.${BNR_ENVIRONMENT}.bionano.bio:9000"
     logging:
       driver: json-file
+    links:
+      - redis
+
+  redis:
+    restart: always
+    image: redis:3.2.0-alpine
+    ports:
+      #Don't expose this port to the host, only linked containers.
+      # - "6379"
+      - "6379:6379"
+    volumes:
+      - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf

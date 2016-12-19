@@ -13,6 +13,9 @@ const promiseRedis = require('promise-redis');
 
 const router = new express.Router();
 
+/* workflow server remote address */
+var WORKFLOW_SERVER_ADDRESS = process.env.WORKFLOW_SERVER_ADDRESS || 'localhost:9000';
+
 const WORKFLOW_TEMP_FOLDER = '/tmp/workflow_downloads/';
 const WORKFLOW_WORK_FOLDER = '/tmp/workflows/';
 const INPUTS = 'inputs';
@@ -324,7 +327,7 @@ router.get('/stdout/: workflowId', (req, res) => {
   res.sendFile(getWorkflowStdoutPath(workflowId));
 });
 
-router.get('/stderr/: workflowId', (req, res) => {
+router.get('/stderr/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   res.sendFile(getWorkflowStderrPath(workflowId));
 });
