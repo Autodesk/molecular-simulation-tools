@@ -5,11 +5,24 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0"
+    "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "busboy": "^0.2.13",
+    "cookie-parser": "^1.4.3",
+    "debug": "~2.2.0",
+    "dockerode": "^2.3.1",
+    "express": "^4.14.0",
+    "fs-extended": "^0.2.1",
+    "morgan": "^1.7.0",
+    "object-hash": "^1.1.5",
+    "promise-redis": "0.0.5",
+    "redis": "^2.6.3",
+    "shortid": "^2.2.6"
   }
 }

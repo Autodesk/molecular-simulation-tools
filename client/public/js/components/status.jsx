@@ -4,6 +4,7 @@ import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLoad from './status_load';
 import StatusEmail from './status_email';
+import StatusResults from './status_results';
 import WorkflowRecord from '../records/workflow_record';
 import selectionConstants from '../constants/selection_constants';
 
@@ -87,6 +88,15 @@ function Status(props) {
         email={props.workflow.email}
       />
     );
+  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
+    selection = (
+      <StatusResults
+        onClickColorize={props.onClickColorize}
+        onChangeMorph={props.onChangeMorph}
+        workflowNodesSize={props.workflow.workflowNodes.size}
+        pdbUrl={props.workflow.workflowNodes.last().outputs[0].value}
+      />
+    );
   } else if (props.selection.type === selectionConstants.ABOUT) {
     selection = (
       <StatusAbout />
@@ -104,6 +114,8 @@ Status.propTypes = {
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),
+  onClickColorize: React.PropTypes.func.isRequired,
+  onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,

@@ -37,6 +37,9 @@ module.exports = {
         test: /\.s?css$/,
         include: /public\/css/,
         loaders: ['style', 'css', 'sass'],
+      }, {
+        test: /\.(woff|woff2|eot|ttf|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url',
       },
     ],
   },

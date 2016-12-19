@@ -130,6 +130,11 @@ const apiUtils = {
     // TODO
     return Promise.reject();
   },
+
+  cancelRun() {
+    // TODO
+    return Promise.reject();
+  },
 };
 
 export default apiUtils;

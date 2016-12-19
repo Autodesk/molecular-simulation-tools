@@ -25,13 +25,11 @@ RUN npm install -g forever nodemon grunt grunt-cli webpack
 # #######################################
 # # Client build/install packages
 # #######################################
-
 ENV APP /app
 RUN mkdir -p $APP/client
 WORKDIR $APP/client
 
 ADD client/package.json $APP/client/package.json
-
 RUN npm install
 
 RUN touch .env
@@ -50,13 +48,22 @@ RUN npm run build
 #######################################
 # Server build/install packages
 #######################################
+RUN mkdir -p $APP/server
+WORKDIR $APP/server
+
+ADD ./server/ $APP/server/ 
+RUN npm install
 
 ADD ./server/package.json $APP/server/package.json
 RUN cd $APP/server && npm install
+ADD ./server/bin $APP/server/bin
 ADD ./server/**.js $APP/server/
+ADD ./server/**.json $APP/server/
+
 WORKDIR $APP
+RUN cp ./server/VERSION $APP/ || true
 
 ENV PORT 4000
 EXPOSE $PORT
 
-CMD ["forever", "server/server.js"]
+CMD ["forever", "server/bin/www"]

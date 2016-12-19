@@ -12,6 +12,7 @@ const workflowUtils = {
       return statusConstants.IDLE;
     }
 
+    let atLeastOneCanceled = false;
     let atLeastOneError = false;
     let allCompleted = true;
     let allIdle = true;
@@ -21,6 +22,9 @@ const workflowUtils = {
 
       if (workflowNode.status === statusConstants.ERROR) {
         atLeastOneError = true;
+        break;
+      } else if (workflowNode.status === statusConstants.CANCELED) {
+        atLeastOneCanceled = true;
         break;
       } else if (workflowNode.status === statusConstants.RUNNING) {
         allCompleted = false;
@@ -32,6 +36,9 @@ const workflowUtils = {
       }
     }
 
+    if (atLeastOneCanceled) {
+      return statusConstants.CANCELED;
+    }
     if (atLeastOneError) {
       return statusConstants.ERROR;
     }

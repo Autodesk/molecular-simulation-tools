@@ -42,30 +42,14 @@ function workflow(state = initialState, action) {
         });
       }));
 
-    case actionConstants.RUN_ENDED:
-      return state.merge({
-        runId: action.runId,
-        workflowNodes: state.workflowNodes.map((workflowNode) => {
-          const workflowNodeFromAction = action.workflowNodes.find(
-            workflowNodeI => workflowNodeI.id === workflowNode.id
-          );
-          if (!workflowNodeFromAction) {
-            return workflowNode;
-          }
-          if (action.err) {
-            return workflowNode.merge({
-              status: action.status,
-              fetchingPDB: false,
-            });
-          }
+    case actionConstants.RUN_SUBMITTED:
+      if (action.err) {
+        return state.set('workflowNodes', state.workflowNodes.map(
+          workflowNode => workflowNode.set('status', statusConstants.IDLE))
+        );
+      }
 
-          return workflowNode.merge({
-            status: action.status,
-            fetchingPDB: true,
-            outputs: workflowNodeFromAction.outputs,
-          });
-        }),
-      });
+      return state;
 
     case actionConstants.FETCHED_PDB: {
       let workflowNodeIndex;
@@ -126,6 +110,20 @@ function workflow(state = initialState, action) {
 
     case actionConstants.SUBMIT_EMAIL:
       return state.set('email', action.email);
+
+    case actionConstants.CLICK_CANCEL:
+      return state.set('canceling', true);
+
+    case actionConstants.SUBMITTED_CANCEL:
+      if (action.err) {
+        return state.set('canceling', false);
+      }
+      return state.merge({
+        canceling: false,
+        workflowNodes: state.workflowNodes.map(
+          workflowNode => workflowNode.set('status', statusConstants.CANCELED)
+        ),
+      });
 
     default:
       return state;

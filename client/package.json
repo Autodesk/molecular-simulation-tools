@@ -4,6 +4,7 @@
   "description": "Workflow project",
   "main": "public/js/main.jsx",
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "dotenv": "^2.0.0",
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
@@ -47,6 +48,7 @@
     "sass-loader": "^3.2.0",
     "sinon": "^1.17.6",
     "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
   },

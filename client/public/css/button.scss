@@ -8,6 +8,10 @@
     padding: 10px;
     background-color: transparent;
 
+  &:focus {
+    outline: 0;
+  }
+
   &.disabled {
     opacity: 0.4;
   }

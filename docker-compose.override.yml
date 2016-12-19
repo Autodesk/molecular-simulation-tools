@@ -7,21 +7,14 @@ volumes:
 
 services:
   server:
-    ports:
-      - "4000:4000"
-    environment:
-      PORT: "4000"
+    build:
+      context: .
     links:
       - redis
 
   redis:
     restart: always
-    image: redis:3.2.0-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
-    ports:
-      #Don't expose this port to the host, only linked containers.
-      # - "6379"
-      - "6379:6379"
     volumes:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
       # This is the where the db will be writting. It is defined in ./server/etc/redis/redis.conf
