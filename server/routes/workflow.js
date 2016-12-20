@@ -217,9 +217,9 @@ function processContainerEnd(workflowId) {
               }
             });
             sendEmailsWorkflowEnded(workflowId);
-          });
+          }).catch(console.error.bind(console));
       });
-    });
+    }).catch(console.error.bind(console));
 }
 
 /**
@@ -293,7 +293,7 @@ function getWorkflowState(workflowId) {
         normalizedState = WORKFLOW_STATE.none;
       }
       return normalizedState;
-    });
+    }).catch(console.error.bind(console));
 }
 
 // In case of crashes, check all running workflows and attach listeners to the
