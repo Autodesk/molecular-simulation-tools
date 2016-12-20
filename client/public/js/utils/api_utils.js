@@ -1,4 +1,5 @@
 import { List as IList } from 'immutable';
+import axios from 'axios';
 import request from 'superagent';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowNodeRecord from '../records/workflow_node_record';
@@ -90,11 +91,9 @@ const apiUtils = {
   },
 
   getWorkflow(workflowId) {
-    return fetch(`${process.env.API_URL}/v1/workflow/${workflowId}`).then(res =>
-      res.json()
-    ).then(body =>
-      new WorkflowRecord(Object.assign({}, body, {
-        workflowNodes: new IList(body.workflowNodes.map(workflowNodeData =>
+    return axios.get(`${process.env.API_URL}/v1/workflow/temp/${workflowId}`).then(res =>
+      new WorkflowRecord(Object.assign({}, res.data, {
+        workflowNodes: new IList(res.data.workflowNodes.map(workflowNodeData =>
           new WorkflowNodeRecord(workflowNodeData)
         )),
       }))

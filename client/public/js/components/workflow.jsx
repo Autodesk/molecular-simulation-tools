@@ -23,6 +23,13 @@ function Workflow(props) {
     selectedModelData = selectedWorkflowNode.modelData;
   }
 
+  let viewError;
+  const fetchingError = props.workflow.fetchingError;
+  if (fetchingError && fetchingError.response &&
+    fetchingError.response.status === 404) {
+    viewError = 'This workflow does not exist!';
+  }
+
   return (
     <div className="workflow">
       <WorkflowSteps
@@ -50,6 +57,7 @@ function Workflow(props) {
       />
       <View
         colorized={props.colorized}
+        error={viewError}
         loading={props.workflow.fetching}
         modelData={selectedModelData}
       />

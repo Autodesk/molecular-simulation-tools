@@ -19,6 +19,7 @@ const INPUTS = 'inputs';
 const OUTPUTS = 'outputs';
 
 /* Redis constants */
+const REDIS_WORKFLOWS = 'workflows';
 const REDIS_WORKFLOW_EMAIL_SET = 'workflow_emails';// redis<SET>
 const REDIS_WORKFLOW_STATUS = 'workflow_status';// redis<HASH>
 const REDIS_WORKFLOW_ERRORS = 'workflow_errors';// redis<HASH>
@@ -332,6 +333,22 @@ router.get('/stderr/:workflowId', (req, res) => {
 router.get('/exitcode/:workflowId', (req, res) => {
   const workflowId = req.params.workflowId;
   res.sendFile(getWorkflowExitCodePath(workflowId));
+});
+
+router.get('/temp/:workflowId', (req, res, next) => {
+  const workflowId = req.params.workflowId;
+
+  redis.hget(REDIS_WORKFLOWS, workflowId).then((workflow) => {
+    if (!workflow) {
+      const error = new Error(
+        `No workflow found for given workflow id ${workflowId}`
+      );
+      error.status = 404;
+      return next(error);
+    }
+
+    return res.send(workflow);
+  }).catch(next);
 });
 
 router.get('/:workflowId', (req, res) => {

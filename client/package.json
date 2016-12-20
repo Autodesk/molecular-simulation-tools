@@ -4,6 +4,7 @@
   "description": "Workflow project",
   "main": "public/js/main.jsx",
   "dependencies": {
+    "axios": "^0.15.3",
     "bootstrap": "^3.3.7",
     "dotenv": "^2.0.0",
     "immutable": "^3.8.1",
