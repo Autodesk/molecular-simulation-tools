@@ -38,32 +38,34 @@ class AppBar extends React.Component {
       <div className="app-bar">
         <img src={backImage} alt="backImg" className="backImg" />
         <img src={logoImage} alt="logo" className="logo" />
-        <div className="title">
-          <h2>{this.props.title}</h2>
+        <div>
+          <h2 className="title">{this.props.title}</h2>
         </div>
-        <Link to="/">
-          Browse all tools
-        </Link>
-        <Popover
-          open={this.state.shareMenuOpen}
-          top={anchorClientRect.bottom}
-          left={anchorClientRect.left}
-          onRequestClose={this.handleRequestClose}
-        >
-          <div className="popDown">
-            <img className="shareButton svg" src="../img/twitter.svg" alt="twitter" />
-            <img className="shareButton" src="../img/email.svg" alt="email" />
-            <img className="shareButton" src="../img/facebook.svg" alt="facebook" />
-          </div>
-        </Popover>
-        <button
-          ref={(c) => { this.shareButton = c; }}
-          onClick={this.onClickShare}
-        >
-          Share
-        </button>
-        <Link to="/#join">Join</Link>
-        <button>Help</button>
+        <div className='appLinks'>
+            <Link className='appLink appLinkStrong' to="/">
+              Browse all tools
+            </Link>
+            <Popover
+              open={this.state.shareMenuOpen}
+              top={anchorClientRect.bottom}
+              left={anchorClientRect.left}
+              onRequestClose={this.handleRequestClose}
+            >
+              <div className="popDown">
+                <img className="shareButton svg" src="../img/twitter.svg" alt="twitter" />
+                <img className="shareButton" src="../img/email.svg" alt="email" />
+                <img className="shareButton" src="../img/facebook.svg" alt="facebook" />
+              </div>
+            </Popover>
+            <button className='appLink' 
+              ref={(c) => { this.shareButton = c; }}
+              onClick={this.onClickShare}
+            >
+              Share
+            </button>
+            <Link className='appLink' to="/#join">Join</Link>
+            <button className='appLink' >Help</button>
+        </div>
       </div>
     );
   }

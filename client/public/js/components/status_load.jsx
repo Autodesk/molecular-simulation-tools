@@ -61,8 +61,8 @@ class StatusLoad extends React.Component {
           <form className="defInput"
             onSubmit={this.onSubmitPdbId}
           >
-            <input 
-              style={{ width: '100%' }}
+            <input className="enterMolecule" 
+              style={{ width: '215px'}}
               type="text"
               placeholder="Enter PDB ID here"
               disabled={this.props.fetchingPdb}

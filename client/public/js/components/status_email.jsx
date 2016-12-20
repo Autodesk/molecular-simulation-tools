@@ -52,7 +52,7 @@ class StatusEmail extends React.Component {
         <form
           onSubmit={this.onSubmit}
         >
-          <input
+          <input className='enterEmail'
             style={{ width: '100%' }}
             type="email"
             autoComplete="email"

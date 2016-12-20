@@ -4,21 +4,24 @@
   align-content: center;
   height: 100%;
   flex: 1;
+}
 
-  .loading {
-    text-align: center;
+.loading {
+  text-align: center;
+    padding-top: 100px;
+}
 
-    .anim {
-      color: rgba(0, 0, 0, 0.5);
-    }
+.anim {
+  color: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    font-size: 20px;
+}
 
-    .animBack {
-      background-color: #E5E5E5;
-      border-radius: 100px;
-      width: 50px;
-      height: 50px;
-      padding: 10px;
-      margin: 0 auto;
-    }
-  }
+.animBack {
+    background-color: #E5E5E5;
+    border-radius: 100px;
+    width: 75px;
+    height: 75px;
+    padding: 12px;
+    margin: 0 auto;
 }
