@@ -31,24 +31,12 @@ const apiUtils = {
         return reject('File must have the .pdb extension.');
       }
 
-      const reader = new FileReader();
+      const data = new window.FormData();
+      data.append('file', file);
 
-      reader.onload = () => {
-        fetch(`${API_URL}/pdb_convert`, {
-          method: 'post',
-          body: file,
-        }).then((res) => {
-          if (res.status !== 200) {
-            return reject(`Received status code ${res.status}`);
-          }
-          return res.text();
-        }).then(path =>
-          resolve(`${window.location.origin}/${path}`)
-        ).catch(reject);
-      };
-      reader.onerror = reject;
-
-      return reader.readAsBinaryString(file);
+      return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
+        resolve(`${process.env.API_URL}${res.data.path}`)
+      ).catch(reject);
     });
   },
 

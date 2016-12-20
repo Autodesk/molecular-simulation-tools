@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from './button';
 
+require('../../css/status_load.scss');
+
 class StatusLoad extends React.Component {
   constructor(props) {
     super(props);
@@ -53,7 +55,7 @@ class StatusLoad extends React.Component {
     }
 
     return (
-      <div className="status-info">
+      <div className="status-info status-load">
         {uploadedElement}
         <div className="upload-container">
           <form

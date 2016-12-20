@@ -1,14 +1,14 @@
 /**
  * workflow routes
  */
-const Path = require('path');
-const Fs = require('fs-extended');
-const express = require('express');
 const Busboy = require('busboy');
-const ShortId = require('shortid');
-const Promise = require('bluebird');
-const hash = require('object-hash');
 const Docker = require('dockerode');
+const fs = require('fs-extended');
+const path = require('path');
+const Promise = require('bluebird');
+const ShortId = require('shortid');
+const express = require('express');
+const hash = require('object-hash');
 const promiseRedis = require('promise-redis');
 
 const router = new express.Router();
@@ -42,8 +42,8 @@ const WORKFLOW_STATE = {
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
-Fs.ensureDirSync(WORKFLOW_TEMP_FOLDER);
-Fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
+fs.ensureDirSync(WORKFLOW_TEMP_FOLDER);
+fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
 
 const Redis = promiseRedis(resolver =>
   new Promise(resolver)
@@ -59,14 +59,14 @@ const redis = Redis.createClient({ host: 'redis', port: 6379 });
  * @param  {[type]} path [description]
  * @return {[String]}      [description]
  */
-function getWorkflowInputMd5(path) {
-  const files = Fs.listFilesSync(path, { recursive: true });
+function getWorkflowInputMd5(pathString) {
+  const files = fs.listFilesSync(pathString, { recursive: true });
   files.sort();
   const hashes = [];
   files.forEach((e) => {
-    const filePath = Path.join(path, e);
+    const filePath = path.join(pathString, e);
     if (e.endsWith('.json')) {
-      const data = Fs.readFileSync(filePath, { encoding: 'utf8' });
+      const data = fs.readFileSync(filePath, { encoding: 'utf8' });
       try {
         const jsobObj = JSON.parse(data);
         hashes.push(hash(jsobObj));
@@ -75,7 +75,7 @@ function getWorkflowInputMd5(path) {
         hashes.push(hash(data));
       }
     } else {
-      const data = Fs.readFileSync(filePath);
+      const data = fs.readFileSync(filePath);
       hashes.push(hash(data));
     }
   });
@@ -106,27 +106,27 @@ function getDockerImage(dockerImage) {
 }
 
 function getWorkflowPath(workflowId) {
-  return Path.join(WORKFLOW_WORK_FOLDER, workflowId);
+  return path.join(WORKFLOW_WORK_FOLDER, workflowId);
 }
 
 function getWorkflowStdoutPath(workflowId) {
-  return Path.join(getWorkflowPath(workflowId), 'stdout');
+  return path.join(getWorkflowPath(workflowId), 'stdout');
 }
 
 function getWorkflowStderrPath(workflowId) {
-  return Path.join(getWorkflowPath(workflowId), 'stderr');
+  return path.join(getWorkflowPath(workflowId), 'stderr');
 }
 
 function getWorkflowExitCodePath(workflowId) {
-  return Path.join(getWorkflowPath(workflowId), 'exitCode');
+  return path.join(getWorkflowPath(workflowId), 'exitCode');
 }
 
 function getWorkflowInputsPath(workflowId) {
-  return Path.join(getWorkflowPath(workflowId), INPUTS);
+  return path.join(getWorkflowPath(workflowId), INPUTS);
 }
 
 function getWorkflowOutputsPath(workflowId) {
-  return Path.join(getWorkflowPath(workflowId), OUTPUTS);
+  return path.join(getWorkflowPath(workflowId), OUTPUTS);
 }
 
 /**
@@ -165,14 +165,14 @@ function writeContainerLogs(workflowId, container, isStdOut) {
       } else if (logstream !== null) {
         let logs = '';
         logstream.on('end', () => {
-          Fs.writeFileSync(path, logs);
+          fs.writeFileSync(path, logs);
           resolve();
         });
         logstream.on('data', (data) => {
           logs += logs + data;
         });
       } else {
-        Fs.writeFileSync(path, '');
+        fs.writeFileSync(path, '');
         resolve();
       }
     });
@@ -199,7 +199,7 @@ function processContainerEnd(workflowId) {
       const container = docker.getContainer(containerData.Id);
       container.wait((err, result) => {
         console.log(`workflow=${workflowId} in container=${containerData.Id} finished with exitCode=${result.StatusCode}`);
-        Fs.writeFileSync(exitcodePath, result.StatusCode);
+        fs.writeFileSync(exitcodePath, result.StatusCode);
 
         writeContainerLogs(workflowId, container, true)
           .then(() =>
@@ -280,7 +280,7 @@ function executeWorkflow(workflowId) {
       console.error(err);
       setWorkflowState(workflowId, WORKFLOW_STATE.failed);
       redis.hset(REDIS_WORKFLOW_ERRORS, workflowId, JSON.stringify(err));
-      Fs.deleteDirSync(getWorkflowPath(workflowId));
+      fs.deleteDirSync(getWorkflowPath(workflowId));
     });
 }
 
@@ -357,15 +357,15 @@ router.get('/:workflowId', (req, res) => {
     res.status(400).send({ error: 'No workflow id provided' });
   } else {
     try {
-      Fs.access(getWorkflowExitCodePath(workflowId));
-      const outputPath = Path.join(getWorkflowOutputsPath(workflowId), OUTPUT_FILE_NAME);
+      fs.access(getWorkflowExitCodePath(workflowId));
+      const outputPath = path.join(getWorkflowOutputsPath(workflowId), OUTPUT_FILE_NAME);
       res.sendFile(outputPath);
     } catch (err) {
       getWorkflowState(workflowId)
         .then((state) => {
           if (state === WORKFLOW_STATE.finished) {
             // Return the final data
-            const outputPath = Path.join(getWorkflowOutputsPath(workflowId), OUTPUT_FILE_NAME);
+            const outputPath = path.join(getWorkflowOutputsPath(workflowId), OUTPUT_FILE_NAME);
             res.sendFile(outputPath);
           } else if (state === WORKFLOW_STATE.failed) {
             redis.hget(REDIS_WORKFLOW_ERRORS, workflowId)
@@ -393,7 +393,7 @@ router.get('/state/:workflowId', (req, res) => {
     res.status(400).send({ error: 'No workflow id provided' });
   } else {
     try {
-      Fs.access(getWorkflowExitCodePath(workflowId));
+      fs.access(getWorkflowExitCodePath(workflowId));
       res.send({ workflowId, state: WORKFLOW_STATE.finished });
     } catch (err) {
       console.error(err);
@@ -419,9 +419,9 @@ router.post('/run', (req, res) => {
   });
   const uuid = ShortId.generate();
   const dataDir = `/tmp/workflow_downloads/${uuid}/`;
-  Fs.ensureDirSync(dataDir);
+  fs.ensureDirSync(dataDir);
   const cleanup = () => {
-    Fs.deleteDirSync(dataDir);
+    fs.deleteDirSync(dataDir);
   };
 
   /*
@@ -448,7 +448,7 @@ router.post('/run', (req, res) => {
     } else {
       isInput = true;
       promises.push(new Promise((resolve, reject) => {
-        const writeStream = Fs.createWriteStream(Path.join(dataDir, INPUT_FILE_NAME));
+        const writeStream = fs.createWriteStream(path.join(dataDir, INPUT_FILE_NAME));
         writeStream.on('finish', () => {
           resolve();
         });
@@ -464,7 +464,7 @@ router.post('/run', (req, res) => {
       email = val;
     } else if (fieldname === INPUT_FILE_NAME) {
       isInput = true;
-      Fs.writeFileSync(Path.join(dataDir, INPUT_FILE_NAME), val);
+      fs.writeFileSync(path.join(dataDir, INPUT_FILE_NAME), val);
     } else {
       console.log(`Unrecognized form field ${fieldname}=${val}`);
     }
@@ -477,12 +477,12 @@ router.post('/run', (req, res) => {
           const md5 = getWorkflowInputMd5(dataDir);
           const workflowId = md5;
           console.log('FINISHED PIPING md5=', md5);
-          const workFolder = Path.join(WORKFLOW_WORK_FOLDER, workflowId);
-          Fs.deleteDirSync(workFolder);
+          const workFolder = path.join(WORKFLOW_WORK_FOLDER, workflowId);
+          fs.deleteDirSync(workFolder);
           const inputsPath = getWorkflowInputsPath(workflowId);
-          Fs.ensureDirSync(workFolder);
-          // Fs.copyDirSync(dataDir, inputsPath);
-          Fs.renameSync(dataDir, inputsPath);
+          fs.ensureDirSync(workFolder);
+          // fs.copyDirSync(dataDir, inputsPath);
+          fs.renameSync(dataDir, inputsPath);
           // Add the email to the set of emails to notify
           // when this workflow is complete
           redis.sadd(REDIS_WORKFLOW_EMAIL_SET, email)
