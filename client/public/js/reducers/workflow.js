@@ -31,16 +31,7 @@ function workflow(state = initialState, action) {
       return action.workflow;
 
     case actionConstants.CLICK_RUN:
-      return state.set('workflowNodes', state.workflowNodes.map((workflowNode) => {
-        if (!action.workflowNodeIds.contains(workflowNode.id)) {
-          return workflowNode;
-        }
-
-        return workflowNode.merge({
-          status: statusConstants.RUNNING,
-          outputs: initialState.outputs,
-        });
-      }));
+      return state.set('status', statusConstants.RUNNING);
 
     case actionConstants.RUN_SUBMITTED:
       if (action.err) {

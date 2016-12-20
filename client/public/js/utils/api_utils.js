@@ -5,42 +5,13 @@ import WorkflowRecord from '../records/workflow_record';
 import WorkflowNodeRecord from '../records/workflow_node_record';
 
 const API_URL = process.env.API_URL || '';
-// http://metapage.bionano.autodesk.com:4040/metapage?git=https://github.com/dionjwa/convert_pdb_workflow_example&cwl=workflows/read_and_clean.cwl&cwlyml=pdbfile.yml
-const JSON_RPC_TYPE = 'application/json-rpc';
-
-let nodesGlobal;
 
 const apiUtils = {
-  run(nodeIds) {
-    return new Promise((resolve, reject) => {
-      const nodesData = nodesGlobal.valueSeq().filter(node =>
-        nodeIds.contains(node.id)
-      ).map(node =>
-        node.data
-      );
-
-      const jsonrpc = JSON.stringify({
-        method: 'run',
-        params: {
-          workflow: {
-            nodes: nodesData,
-          },
-        },
-        jsonrpc: '2.0',
-      });
-
-      request
-        .post(`${API_URL}/api/rpc/`)
-        .type(JSON_RPC_TYPE)
-        .send(jsonrpc)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            return reject(err);
-          }
-
-          return resolve(res.body.result.nodes);
-        });
+  run(workflowId, email, pdbUrl) {
+    return axios.post(`${API_URL}/v1/workflow/run`, {
+      workflowId,
+      email,
+      pdbUrl,
     });
   },
 
@@ -92,11 +63,7 @@ const apiUtils = {
 
   getWorkflow(workflowId) {
     return axios.get(`${process.env.API_URL}/v1/workflow/temp/${workflowId}`).then(res =>
-      new WorkflowRecord(Object.assign({}, res.data, {
-        workflowNodes: new IList(res.data.workflowNodes.map(workflowNodeData =>
-          new WorkflowNodeRecord(workflowNodeData)
-        )),
-      }))
+      new WorkflowRecord(res.data)
     );
   },
 

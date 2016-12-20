@@ -40,47 +40,42 @@ function WorkflowSteps(props) {
     );
   }
 
-  let workflowStepsEl;
-  if (props.workflow.workflowNodes.size) {
-    workflowStepsEl = [
-      <div key={0} className="workflow-steps">
-        <ol>
-          <WorkflowStep
-            primaryText={'Load molecule'}
-            selected={loadSelected}
-            status={loadStatus}
-            onClick={props.clickWorkflowNodeLoad}
-          />
-          <WorkflowStep
-            primaryText={'Enter email'}
-            onClick={props.clickWorkflowNodeEmail}
-            selected={emailSelected}
-            status={emailStatus}
-            last={emailLast}
-          />
-          {resultsNode}
-        </ol>
-      </div>,
-      <div key={1} className="actions">
-        <Button
-          onClick={props.clickAbout}
-        >
-          About
-        </Button>
-        <Button
-          type="raised"
-          onClick={props.clickRun}
-          disabled={runDisabled}
-        >
-          Run
-        </Button>
-      </div>,
-    ];
-  }
-
   return (
     <div className="workflow-steps-pane">
-      {workflowStepsEl}
+      {[
+        <div key={0} className="workflow-steps">
+          <ol>
+            <WorkflowStep
+              primaryText={'Load molecule'}
+              selected={loadSelected}
+              status={loadStatus}
+              onClick={props.clickWorkflowNodeLoad}
+            />
+            <WorkflowStep
+              primaryText={'Enter email'}
+              onClick={props.clickWorkflowNodeEmail}
+              selected={emailSelected}
+              status={emailStatus}
+              last={emailLast}
+            />
+            {resultsNode}
+          </ol>
+        </div>,
+        <div key={1} className="actions">
+          <Button
+            onClick={props.clickAbout}
+          >
+            About
+          </Button>
+          <Button
+            type="raised"
+            onClick={props.clickRun}
+            disabled={runDisabled}
+          >
+            Run
+          </Button>
+        </div>,
+      ]}
     </div>
   );
 }

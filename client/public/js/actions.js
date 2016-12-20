@@ -96,28 +96,13 @@ export function clickWorkflowNodeResults() {
   };
 }
 
-export function clickRun(workflowId, workflowNodes) {
+export function clickRun(workflowId, email, pdbUrl) {
   return (dispatch) => {
-    const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
-
     dispatch({
       type: actionConstants.CLICK_RUN,
-      workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
     });
 
-    apiUtils.run(nodeIds).then((res) => {
-      /*
-      const workflowNodesRan = workflowNodes.map((workflowNode) => {
-        const workflowNodeData = res.workflowNodesData.find(workflowNodeDataI =>
-          workflowNodeDataI.id === workflowNode.nodeId
-        );
-        return workflowNode.set('outputs', [{
-          name: 'pdb',
-          value: workflowNodeData.outputs[0].value,
-        }]);
-      });
-      */
-
+    apiUtils.run(workflowId, email, pdbUrl).then((res) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId: res.runId,

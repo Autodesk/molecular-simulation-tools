@@ -1,4 +1,5 @@
 import { Record, List as IList } from 'immutable';
+import statusConstants from '../constants/status_constants';
 
 const WorkflowRecord = new Record({
   canceling: false,
@@ -8,9 +9,10 @@ const WorkflowRecord = new Record({
   fetchingError: null,
   fetchingPdb: false,
   fetchingPdbError: null,
-  title: 'My Workflow',
   pdbUrl: '',
   runId: null,
+  status: statusConstants.IDLE,
+  title: 'My Workflow',
   uploadError: null,
   uploadPending: false,
   workflowNodes: new IList(),
