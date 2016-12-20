@@ -23,7 +23,6 @@
     "express": "^4.14.0",
     "fs-extended": "^0.2.1",
     "morgan": "^1.7.0",
-    "object-hash": "^1.1.5",
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
     "shortid": "^2.2.6",
