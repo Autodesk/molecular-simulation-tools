@@ -105,10 +105,10 @@ export function clickRun(workflowId, email, pdbUrl) {
     apiUtils.run(workflowId, email, pdbUrl).then((res) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
-        runId: res.runId,
+        runId: res.data.runId,
       });
 
-      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
+      browserHistory.push(`/workflow/${workflowId}/${res.data.runId}`);
     }).catch((err) => {
       console.error(err);
 
