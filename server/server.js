@@ -1,12 +1,13 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const express = require('express');
 const logger = require('morgan');
 const path = require('path');
 const appConstants = require('./constants/app_constants');
-const workflowRoutes = require('./routes/workflow');
+const runRoutes = require('./routes/run');
 const structureRoutes = require('./routes/structure');
-const cors = require('cors');
+const workflowRoutes = require('./routes/workflow');
 
 // Create the server
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Add server routes
  */
 app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
 
 // Redirect any other routes to index.html (single page app)

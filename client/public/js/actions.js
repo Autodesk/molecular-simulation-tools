@@ -31,7 +31,8 @@ export function initializeWorkflow(workflowId, runId) {
 
     let workflow;
     try {
-      workflow = await apiUtils.getRun(workflowId, runId);
+      const runData = await apiUtils.getRun(runId);
+      workflow = runData.workflow;
     } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_RUN,
@@ -102,13 +103,13 @@ export function clickRun(workflowId, email, pdbUrl) {
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(workflowId, email, pdbUrl).then((res) => {
+    apiUtils.run(workflowId, email, pdbUrl).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
-        runId: res.data.runId,
+        runId,
       });
 
-      browserHistory.push(`/workflow/${workflowId}/${res.data.runId}`);
+      browserHistory.push(`/workflow/${workflowId}/${runId}`);
     }).catch((err) => {
       console.error(err);
 

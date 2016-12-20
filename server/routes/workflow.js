@@ -7,9 +7,10 @@ const path = require('path');
 const Promise = require('bluebird');
 const express = require('express');
 const hash = require('object-hash');
-const promiseRedis = require('promise-redis');
 const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
+const dbConstants = require('../constants/db_constants');
+const redis = require('../utils/redis');
 
 const router = new express.Router();
 
@@ -17,13 +18,6 @@ const WORKFLOW_TEMP_FOLDER = '/tmp/workflow_downloads/';
 const WORKFLOW_WORK_FOLDER = '/tmp/workflows/';
 const INPUTS = 'inputs';
 const OUTPUTS = 'outputs';
-
-/* Redis constants */
-const REDIS_WORKFLOWS = 'workflows';
-const REDIS_RUNS = 'runs';
-const REDIS_WORKFLOW_EMAIL_SET = 'workflow_emails';// redis<SET>
-const REDIS_WORKFLOW_STATUS = 'workflow_status';// redis<HASH>
-const REDIS_WORKFLOW_ERRORS = 'workflow_errors';// redis<HASH>
 
 /* Docker image vars*/
 const INPUT_FILE_NAME = 'input.json';
@@ -42,11 +36,6 @@ const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 fs.ensureDirSync(WORKFLOW_TEMP_FOLDER);
 fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
-
-const Redis = promiseRedis(resolver =>
-  new Promise(resolver)
-);
-const redis = Redis.createClient({ host: 'localhost', port: 6379 });
 
 /**
  * Hashes all files in a directory. If the files
@@ -183,7 +172,7 @@ function setWorkflowState(workflowId, state) {
     if (!WORKFLOW_STATE[state]) {
       reject(`Unknown workflow state=${state}`);
     } else {
-      resolve(redis.hset(REDIS_WORKFLOW_STATUS, workflowId, state));
+      resolve(redis.hset(dbConstants.REDIS_WORKFLOW_STATUS, workflowId, state));
     }
   });
 }
@@ -277,7 +266,7 @@ function executeWorkflow(workflowId) {
     }, (err) => {
       console.error(err);
       setWorkflowState(workflowId, WORKFLOW_STATE.failed);
-      redis.hset(REDIS_WORKFLOW_ERRORS, workflowId, JSON.stringify(err));
+      redis.hset(dbConstants.REDIS_WORKFLOW_ERRORS, workflowId, JSON.stringify(err));
       fs.deleteDirSync(getWorkflowPath(workflowId));
     });
 }
@@ -286,7 +275,7 @@ function executeWorkflow(workflowId) {
  * @returns {[Promise]}
  */
 function getWorkflowState(workflowId) {
-  return redis.hget(REDIS_WORKFLOW_STATUS, workflowId)
+  return redis.hget(dbConstants.REDIS_WORKFLOW_STATUS, workflowId)
     .then((state) => {
       let normalizedState = state;
       if (state === null) {
@@ -299,7 +288,7 @@ function getWorkflowState(workflowId) {
 // In case of crashes, check all running workflows and attach listeners to the
 // running containers
 function reattachExistingWorkflowContainers() {
-  redis.hkeys(REDIS_WORKFLOW_STATUS)
+  redis.hkeys(dbConstants.REDIS_WORKFLOW_STATUS)
     .then((keys) => {
       keys.forEach((workflowId) => {
         getWorkflowState(workflowId)
@@ -336,7 +325,7 @@ router.get('/exitcode/:workflowId', (req, res) => {
 router.get('/temp/:workflowId', (req, res, next) => {
   const workflowId = req.params.workflowId;
 
-  redis.hget(REDIS_WORKFLOWS, workflowId).then((workflowString) => {
+  redis.hget(dbConstants.REDIS_WORKFLOWS, workflowId).then((workflowString) => {
     if (!workflowString) {
       const error = new Error(
         `No workflow found for given workflow id ${workflowId}`
@@ -366,7 +355,7 @@ router.get('/:workflowId', (req, res) => {
             const outputPath = path.join(getWorkflowOutputsPath(workflowId), OUTPUT_FILE_NAME);
             res.sendFile(outputPath);
           } else if (state === WORKFLOW_STATE.failed) {
-            redis.hget(REDIS_WORKFLOW_ERRORS, workflowId)
+            redis.hget(dbConstants.REDIS_WORKFLOW_ERRORS, workflowId)
               .then((storedError) => {
                 res.status(500).send({ state, error: storedError });
               }, (errHget) => {
@@ -430,9 +419,9 @@ router.post('/run', (req, res, next) => {
   // Add the email to the set of emails to notify
   // when this workflow is complete
   // TODO we can probably use the email in the run instead
-  const emailPromise = redis.sadd(REDIS_WORKFLOW_EMAIL_SET, req.body.email);
+  const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, req.body.email);
 
-  const runPromise = redis.hset(REDIS_RUNS, runId, JSON.stringify({
+  const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify({
     workflowId,
     email: req.body.email,
     pdbUrl: req.body.pdbUrl,

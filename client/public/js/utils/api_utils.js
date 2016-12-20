@@ -9,7 +9,7 @@ const apiUtils = {
       workflowId,
       email,
       pdbUrl,
-    });
+    }).then(res => res.data.runId);
   },
 
   getPDB(url) {
@@ -52,9 +52,10 @@ const apiUtils = {
     );
   },
 
-  getRun() {
-    // TODO
-    return Promise.reject();
+  getRun(runId) {
+    return axios.get(`${process.env.API_URL}/v1/run/${runId}`).then(res =>
+      res.data
+    );
   },
 
   cancelRun() {

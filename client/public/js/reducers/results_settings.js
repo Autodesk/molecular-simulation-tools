@@ -12,7 +12,7 @@ function resultsSettings(state = initialState, action) {
       return state.set('morph', action.morph);
 
     case actionConstants.FETCHED_RUN:
-      if (action.error || !action.workflow.workflowNodes.size) {
+      if (action.error || !action.workflow.workflowNodes || !action.workflow.workflowNodes.size) {
         return state;
       }
       return state.set('morph', action.workflow.workflowNodes.size - 1);
