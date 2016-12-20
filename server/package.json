@@ -26,7 +26,8 @@
     "object-hash": "^1.1.5",
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
-    "shortid": "^2.2.6"
+    "shortid": "^2.2.6",
+    "validator": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "^3.12.2",

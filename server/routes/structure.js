@@ -1,5 +1,5 @@
 const Busboy = require('busboy');
-const ShortId = require('shortid');
+const shortId = require('shortid');
 const appRoot = require('app-root-path');
 const express = require('express');
 const fs = require('fs-extended');
@@ -20,7 +20,7 @@ router.put('/upload', (req, res) => {
   const busboy = new Busboy({
     headers: req.headers,
   });
-  const uuid = ShortId.generate();
+  const uuid = shortId.generate();
 
   busboy.on('file', (fieldname, file) => {
     const saveTo =

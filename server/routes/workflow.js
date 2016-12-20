@@ -1,15 +1,15 @@
 /**
  * workflow routes
  */
-const Busboy = require('busboy');
 const Docker = require('dockerode');
 const fs = require('fs-extended');
 const path = require('path');
 const Promise = require('bluebird');
-const ShortId = require('shortid');
 const express = require('express');
 const hash = require('object-hash');
 const promiseRedis = require('promise-redis');
+const isEmail = require('validator').isEmail;
+const shortId = require('shortid');
 
 const router = new express.Router();
 
@@ -20,12 +20,10 @@ const OUTPUTS = 'outputs';
 
 /* Redis constants */
 const REDIS_WORKFLOWS = 'workflows';
+const REDIS_RUNS = 'runs';
 const REDIS_WORKFLOW_EMAIL_SET = 'workflow_emails';// redis<SET>
 const REDIS_WORKFLOW_STATUS = 'workflow_status';// redis<HASH>
 const REDIS_WORKFLOW_ERRORS = 'workflow_errors';// redis<HASH>
-
-/* Values for posting workflows */
-const FORM_FIELD_EMAIL = 'email';
 
 /* Docker image vars*/
 const INPUT_FILE_NAME = 'input.json';
@@ -48,7 +46,7 @@ fs.ensureDirSync(WORKFLOW_WORK_FOLDER);
 const Redis = promiseRedis(resolver =>
   new Promise(resolver)
 );
-const redis = Redis.createClient({ host: 'redis', port: 6379 });
+const redis = Redis.createClient({ host: 'localhost', port: 6379 });
 
 /**
  * Hashes all files in a directory. If the files
@@ -412,118 +410,42 @@ router.get('/state/:workflowId', (req, res) => {
   }
 });
 
-router.post('/run', (req, res) => {
-  const busboy = new Busboy({
-    headers: req.headers,
-    limits: { fieldNameSize: 500, fieldSize: 10737418240 },
-  });
-  const uuid = ShortId.generate();
-  const dataDir = `/tmp/workflow_downloads/${uuid}/`;
-  fs.ensureDirSync(dataDir);
-  const cleanup = () => {
-    fs.deleteDirSync(dataDir);
-  };
+router.post('/run', (req, res, next) => {
+  if (!req.body.workflowId) {
+    return next(new Error('Missing required parameter "workflowId"'));
+  }
+  if (!req.body.email) {
+    return next(new Error('Missing required parameter "email"'));
+  }
+  if (!isEmail(req.body.email)) {
+    return next(new Error('Invalid email given'));
+  }
+  if (!req.body.pdbUrl) {
+    return next(new Error('Missing required parameter "pdbUrl"'));
+  }
 
-  /*
-    busboy doesn't wait until piped file streams emit a close event,
-    and this means that the data isn't actually written before the
-    busboy.finish event is fired, so any reading of written files
-    will fail. By using promises we can listen to the 'close' event
-    ensuring that reading those files will work.
-   */
-  const promises = [];
-  let email = null;
-  const error = null;
-  let isInput = false;
+  const workflowId = req.body.workflowId.toString();
+  const runId = shortId.generate();
 
-  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    // console.log(
-    //  'File [' + fieldname + ']: filename: ' + filename + ',
-    //  encoding: ' + encoding + ', mimetype: ' + mimetype
-    // );
-    if (fieldname !== INPUT_FILE_NAME) {
-      console.error(`Unrecognized File name [${fieldname}]: filename: ${filename}, encoding: ${encoding}, mimetype: ${mimetype}`);
-      // Drain the data
-      file.resume();
-    } else {
-      isInput = true;
-      promises.push(new Promise((resolve, reject) => {
-        const writeStream = fs.createWriteStream(path.join(dataDir, INPUT_FILE_NAME));
-        writeStream.on('finish', () => {
-          resolve();
-        });
-        file.on('error', (err) => {
-          reject(err);
-        });
-        file.pipe(writeStream);
-      }));
-    }
-  });
-  busboy.on('field', (fieldname, val) => {
-    if (fieldname === FORM_FIELD_EMAIL) {
-      email = val;
-    } else if (fieldname === INPUT_FILE_NAME) {
-      isInput = true;
-      fs.writeFileSync(path.join(dataDir, INPUT_FILE_NAME), val);
-    } else {
-      console.log(`Unrecognized form field ${fieldname}=${val}`);
-    }
-  });
-  busboy.on('finish', () => {
-    Promise.all(promises)
-      .then(() => {
-        if (email && isInput && !error) {
-          console.log('FINISHED PIPING');
-          const md5 = getWorkflowInputMd5(dataDir);
-          const workflowId = md5;
-          console.log('FINISHED PIPING md5=', md5);
-          const workFolder = path.join(WORKFLOW_WORK_FOLDER, workflowId);
-          fs.deleteDirSync(workFolder);
-          const inputsPath = getWorkflowInputsPath(workflowId);
-          fs.ensureDirSync(workFolder);
-          // fs.copyDirSync(dataDir, inputsPath);
-          fs.renameSync(dataDir, inputsPath);
-          // Add the email to the set of emails to notify
-          // when this workflow is complete
-          redis.sadd(REDIS_WORKFLOW_EMAIL_SET, email)
-            .then((result) => {
-              console.log('Redis result', result);
-              return setWorkflowState(workflowId, WORKFLOW_STATE.running);
-            })
-            .then((result) => {
-              console.log('After setting state', result);
-              executeWorkflow(workflowId);
-              res.send({ workflowId });
-            }, (err) => {
-              res.status(500).send({ error: err });
-              cleanup();
-            });
-        } else {
-          if (error) {
-            res.status(500).send({ error });
-          } else {
-            const errors = [];
-            if (!email) {
-              errors.push('Missing email field');
-            }
-            if (!isInput) {
-              errors.push(`Missing ${INPUT_FILE_NAME}`);
-            }
-            res.status(400).send({ errors });
-          }
-          cleanup();
-        }
-      }, (err) => {
-        console.error(err);
-        res.status(500).send({ error: err });
-        cleanup();
-      });
-  });
+  // Add the email to the set of emails to notify
+  // when this workflow is complete
+  // TODO we can probably use the email in the run instead
+  const emailPromise = redis.sadd(REDIS_WORKFLOW_EMAIL_SET, req.body.email);
 
-  busboy.on('error', (err) => {
-    console.error(err);
-  });
-  req.pipe(busboy);
+  const runPromise = redis.hset(REDIS_RUNS, runId, JSON.stringify({
+    workflowId,
+    email: req.body.email,
+    pdbUrl: req.body.pdbUrl,
+  }));
+
+  const statePromise = setWorkflowState(
+    workflowId, WORKFLOW_STATE.running
+  );
+
+  return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
+    executeWorkflow(workflowId);
+    res.send({ runId });
+  }).catch(next);
 });
 
 module.exports = router;
