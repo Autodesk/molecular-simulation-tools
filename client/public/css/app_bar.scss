@@ -8,6 +8,8 @@ $menu-secondary: #ffffff;
   width: 100%;
   height: 82px;
   background-color: $menu-bg;
+  background-image: url("../img/backDetEnergy.png");
+  background-repeat: no-repeat;
 }
 
 .logo {
@@ -26,7 +28,6 @@ $menu-secondary: #ffffff;
 }
 
 .title {
-    z-index: 1;
     flex: 1;
     display: flex;
     height: 100%;
@@ -44,6 +45,8 @@ $menu-secondary: #ffffff;
     align-items: center;
     justify-content: flex-end;
     width: 100%;
+    overflow: none;
+    white-space: nowrap;
 }
 
 .appLink {

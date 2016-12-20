@@ -74,7 +74,7 @@ class StatusLoad extends React.Component {
             {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
             {this.state.pdbIdError ? this.state.pdbIdError : ''}
           </p>
-          <p className="regFont">
+          <p className="bodyFont">
             Or, browse custom JSON file.
           </p>
           <Button 

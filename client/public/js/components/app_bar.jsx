@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router';
 import Popover from './popover';
 import logoImage from '../../img/logo.png';
-import backImage from '../../img/backDetEnergy.png';
 
 require('../../css/app_bar.scss');
 
@@ -36,7 +35,6 @@ class AppBar extends React.Component {
 
     return (
       <div className="app-bar">
-        <img src={backImage} alt="backImg" className="backImg" />
         <img src={logoImage} alt="logo" className="logo" />
         <div>
           <h2 className="title">{this.props.title}</h2>
