@@ -40,42 +40,47 @@ function WorkflowSteps(props) {
     );
   }
 
+  let stepsEl;
+  if (!props.error) {
+    stepsEl = [
+      <div key={0} className="workflow-steps">
+        <ol>
+          <WorkflowStep
+            primaryText={'Load molecule'}
+            selected={loadSelected}
+            status={loadStatus}
+            onClick={props.clickWorkflowNodeLoad}
+          />
+          <WorkflowStep
+            primaryText={'Enter email'}
+            onClick={props.clickWorkflowNodeEmail}
+            selected={emailSelected}
+            status={emailStatus}
+            last={emailLast}
+          />
+          {resultsNode}
+        </ol>
+      </div>,
+      <div key={1} className="actions">
+        <Button
+          onClick={props.clickAbout}
+        >
+          About
+        </Button>
+        <Button
+          type="raised"
+          onClick={props.clickRun}
+          disabled={runDisabled}
+        >
+          Run
+        </Button>
+      </div>,
+    ];
+  }
+
   return (
     <div className="workflow-steps-pane">
-      {[
-        <div key={0} className="workflow-steps">
-          <ol>
-            <WorkflowStep
-              primaryText={'Load molecule'}
-              selected={loadSelected}
-              status={loadStatus}
-              onClick={props.clickWorkflowNodeLoad}
-            />
-            <WorkflowStep
-              primaryText={'Enter email'}
-              onClick={props.clickWorkflowNodeEmail}
-              selected={emailSelected}
-              status={emailStatus}
-              last={emailLast}
-            />
-            {resultsNode}
-          </ol>
-        </div>,
-        <div key={1} className="actions">
-          <Button
-            onClick={props.clickAbout}
-          >
-            About
-          </Button>
-          <Button
-            type="raised"
-            onClick={props.clickRun}
-            disabled={runDisabled}
-          >
-            Run
-          </Button>
-        </div>,
-      ]}
+      {stepsEl}
     </div>
   );
 }
@@ -86,6 +91,7 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
+  error: React.PropTypes.bool,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowStatus: React.PropTypes.string.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,

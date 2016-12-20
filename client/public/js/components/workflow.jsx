@@ -38,6 +38,7 @@ function Workflow(props) {
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
         clickWorkflowNodeResults={props.clickWorkflowNodeResults}
+        error={!!viewError}
         selection={props.selection}
         workflow={props.workflow}
         workflowStatus={props.workflowStatus}
