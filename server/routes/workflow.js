@@ -387,6 +387,7 @@ router.post('/run', (req, res, next) => {
   const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, req.body.email);
 
   const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify({
+    id: runId,
     workflowId,
     email: req.body.email,
     pdbUrl: req.body.pdbUrl,
@@ -397,7 +398,7 @@ router.post('/run', (req, res, next) => {
   );
 
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
-    executeWorkflow(workflowId, runId);
+    executeWorkflow(runId);
     res.send({ runId });
   }).catch(next);
 });

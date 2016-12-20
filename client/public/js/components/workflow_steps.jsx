@@ -10,7 +10,7 @@ import workflowUtils from '../utils/workflow_utils';
 require('../../css/workflow_steps.scss');
 
 function WorkflowSteps(props) {
-  const running = props.workflowStatus === statusConstants.RUNNING;
+  const running = props.workflow.status === statusConstants.RUNNING;
   const runDisabled = running ||
     !workflowUtils.isRunnable(props.workflow);
 
@@ -25,7 +25,7 @@ function WorkflowSteps(props) {
   let emailLast = true;
 
   let resultsNode;
-  if (props.workflowStatus === statusConstants.COMPLETED) {
+  if (props.workflow.status === statusConstants.COMPLETED) {
     emailLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;
@@ -93,7 +93,6 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   error: React.PropTypes.bool,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

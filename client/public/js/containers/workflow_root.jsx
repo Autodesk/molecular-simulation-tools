@@ -15,7 +15,6 @@ import {
   submitPdbId,
   upload,
 } from '../actions';
-import workflowUtils from '../utils/workflow_utils';
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -29,9 +28,6 @@ function mapStateToProps(state, ownProps) {
     userMessage: state.userMessage,
     workflow: state.workflow,
     workflowId: ownProps.params.workflowId,
-    workflowStatus: workflowUtils.getWorkflowStatus(
-      state.workflow.workflowNodes
-    ),
   };
 }
 

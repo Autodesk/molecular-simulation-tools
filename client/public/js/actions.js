@@ -31,8 +31,7 @@ export function initializeWorkflow(workflowId, runId) {
 
     let workflow;
     try {
-      const runData = await apiUtils.getRun(runId);
-      workflow = runData.workflow;
+      workflow = await apiUtils.getRun(runId);
     } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_RUN,

@@ -38,7 +38,7 @@ function Status(props) {
       <div className="status-info">
         <p>Workflow</p>
         <p>{props.workflow.title}</p>
-        <p>Status: {props.workflowStatus}</p>
+        <p>Status: {props.workflow.status}</p>
         {output}
       </div>
     );
@@ -121,7 +121,6 @@ Status.propTypes = {
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string,
 };
 
 export default Status;

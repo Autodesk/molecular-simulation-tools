@@ -55,6 +55,10 @@ const apiUtils = {
   getRun(runId) {
     return axios.get(`${process.env.API_URL}/v1/run/${runId}`).then(res =>
       res.data
+    ).then(runData =>
+      new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
+        runId: runData.id,
+      }))
     );
   },
 

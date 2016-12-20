@@ -71,7 +71,7 @@ class WorkflowRouter extends React.Component {
   render() {
     let routeEl;
 
-    if (this.props.workflowStatus === statusConstants.RUNNING) {
+    if (this.props.workflow.status === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
           canceling={this.props.workflow.canceling}
@@ -79,11 +79,11 @@ class WorkflowRouter extends React.Component {
           onClickCancel={this.props.clickCancel}
         />
       );
-    } else if (this.props.workflowStatus === statusConstants.CANCELED) {
+    } else if (this.props.workflow.status === statusConstants.CANCELED) {
       routeEl = (
         <Canceled />
       );
-    } else if (this.props.workflowStatus === statusConstants.ERROR) {
+    } else if (this.props.workflow.status === statusConstants.ERROR) {
       routeEl = (
         <Errored />
       );
@@ -107,7 +107,6 @@ class WorkflowRouter extends React.Component {
           submitPdbId={this.props.submitPdbId}
           submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
         />
       );
     }
@@ -149,7 +148,6 @@ WorkflowRouter.propTypes = {
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
-  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default WorkflowRouter;

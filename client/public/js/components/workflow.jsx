@@ -41,7 +41,6 @@ function Workflow(props) {
         error={!!viewError}
         selection={props.selection}
         workflow={props.workflow}
-        workflowStatus={props.workflowStatus}
       />
       <Status
         fetchingPdb={props.fetchingPdb}
@@ -54,7 +53,6 @@ function Workflow(props) {
         submitPdbId={props.submitPdbId}
         submitEmail={props.submitEmail}
         workflow={props.workflow}
-        workflowStatus={props.workflowStatus}
       />
       <View
         colorized={props.colorized}
@@ -84,7 +82,6 @@ Workflow.propTypes = {
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default Workflow;
