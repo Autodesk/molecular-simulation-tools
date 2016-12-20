@@ -28,7 +28,7 @@ const REDIS_WORKFLOW_ERRORS = 'workflow_errors';// redis<HASH>
 /* Docker image vars*/
 const INPUT_FILE_NAME = 'input.json';
 const OUTPUT_FILE_NAME = 'output.json';
-const WORKFLOW_DOCKER_IMAGE = 'docker.io/busybox: latest';
+const WORKFLOW_DOCKER_IMAGE = 'docker.io/busybox:latest';
 const WORKFLOW_KEY = 'workflowId';
 
 const WORKFLOW_STATE = {
@@ -151,7 +151,8 @@ function getDockerContainer(workflowId) {
  * @returns {[Promise]}
  */
 function writeContainerLogs(workflowId, container, isStdOut) {
-  const path = isStdOut ? getWorkflowStdoutPath(workflowId) : getWorkflowStderrPath(workflowId);
+  const pathString = isStdOut ?
+    getWorkflowStdoutPath(workflowId) : getWorkflowStderrPath(workflowId);
   const opts = {
     stdout: isStdOut ? 0 : 1,
     stderr: !isStdOut ? 0 : 1,
@@ -163,14 +164,14 @@ function writeContainerLogs(workflowId, container, isStdOut) {
       } else if (logstream !== null) {
         let logs = '';
         logstream.on('end', () => {
-          fs.writeFileSync(path, logs);
+          fs.writeFileSync(pathString, logs);
           resolve();
         });
         logstream.on('data', (data) => {
           logs += logs + data;
         });
       } else {
-        fs.writeFileSync(path, '');
+        fs.writeFileSync(pathString, '');
         resolve();
       }
     });
@@ -241,11 +242,10 @@ function executeWorkflow(workflowId) {
         createOptions.Cmd = ['/bin/sh', '-c', `cp /inputs/${INPUT_FILE_NAME} /outputs/${OUTPUT_FILE_NAME}`];
         createOptions.HostConfig = {
           Binds: [
-            `${getWorkflowOutputsPath(workflowId)}: /${OUTPUTS}: rw`,
-            `${getWorkflowInputsPath(workflowId)}: /${INPUTS}: rw`,
+            `${getWorkflowOutputsPath(workflowId)}:/${OUTPUTS}:rw`,
+            `${getWorkflowInputsPath(workflowId)}:/${INPUTS}:rw`,
           ],
         };
-
 
         docker.createContainer(createOptions, (createContainerError, container) => {
           console.log(`workflow=${workflowId} created container`);
@@ -265,7 +265,7 @@ function executeWorkflow(workflowId) {
             }
             processContainerEnd(workflowId);
             // container.wait((waitError, endResult) => {
-            //   const result = { container: container, error: waitError, result : endResult };
+            //   const result = { container: container, error: waitError, result: endResult };
             //   resolve(result);
             // });
           });
