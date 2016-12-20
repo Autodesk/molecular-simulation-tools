@@ -1,8 +1,5 @@
-import { List as IList } from 'immutable';
 import axios from 'axios';
-import request from 'superagent';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowNodeRecord from '../records/workflow_node_record';
 
 const API_URL = process.env.API_URL || '';
 
