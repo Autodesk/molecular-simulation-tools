@@ -1,5 +1,5 @@
 import React from 'react';
-import statusConstants from '../constants/status_constants';
+import statusConstants from '../../../../shared/status_constants';
 
 const componentUtils = {
   getIcon(status) {

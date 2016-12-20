@@ -10,6 +10,7 @@ const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
 const dbConstants = require('../constants/db_constants');
 const redis = require('../utils/redis');
+const statusConstants = require('../../shared/status_constants');
 
 const router = new express.Router();
 
@@ -23,13 +24,6 @@ const INPUT_FILE_NAME = 'input.json';
 const OUTPUT_FILE_NAME = 'output.json';
 const WORKFLOW_DOCKER_IMAGE = 'docker.io/busybox:latest';
 const RUN_KEY = 'runId';
-
-const RUN_STATUS = {
-  running: 'running',
-  finished: 'finished',
-  failed: 'failed',
-  none: 'none',
-};
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
@@ -135,15 +129,18 @@ function writeContainerLogs(runId, container, isStdOut) {
 }
 
 function setRunStatus(runId, status) {
-  if (!RUN_STATUS[status]) {
+  if (!statusConstants[status]) {
     return Promise.reject(`Unknown workflow status=${status}`);
   }
 
   return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
     const run = JSON.parse(runString);
-    return redis.hset(dbConstants.REDIS_RUNS, runId, Object.assign({}, run, {
+    const updatedRun = Object.assign({}, run, {
       status,
-    }));
+    });
+    return redis.hset(
+      dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
+    );
   });
 }
 
@@ -168,7 +165,7 @@ function processContainerEnd(runId) {
             setRunStatus(
               runId,
               result.StatusCode === 0 ?
-                RUN_STATUS.finished : RUN_STATUS.failed
+                statusConstants.COMPLETED : statusConstants.ERROR
             );
             // Then remove the container
             container.remove({ force: 1 }, (errRemove) => {
@@ -235,7 +232,7 @@ function executeWorkflow(runId) {
       console.log('Finished docker container ');
     }, (err) => {
       console.error(err);
-      setRunStatus(runId, RUN_STATUS.failed);
+      setRunStatus(runId, statusConstants.ERROR);
       redis.hset(dbConstants.REDIS_WORKFLOW_ERRORS, runId, JSON.stringify(err));
       fs.deleteDirSync(getRunPath(runId));
     });
@@ -248,7 +245,7 @@ function getRunStatus(runId) {
   return redis.hget(dbConstants.REDIS_RUNS, runId).then((run) => {
     let normalizedStatus = run.status;
     if (run.status === null) {
-      normalizedStatus = RUN_STATUS.none;
+      normalizedStatus = statusConstants.IDLE;
     }
     return normalizedStatus;
   }).catch(console.error.bind(console));
@@ -261,7 +258,7 @@ function reattachExistingWorkflowContainers() {
     keys.forEach((runId) => {
       getRunStatus(runId)
         .then((state) => {
-          if (state === RUN_STATUS.running) {
+          if (state === statusConstants.RUNNING) {
             console.log(`runId=${runId} running, reattaching listener to container`);
             processContainerEnd(runId);
           }
@@ -318,11 +315,11 @@ router.get('/:runId', (req, res) => {
     } catch (err) {
       getRunStatus(runId)
         .then((state) => {
-          if (state === RUN_STATUS.finished) {
+          if (state === statusConstants.COMPLETED) {
             // Return the final data
             const outputPath = path.join(getRunOutputsPath(runId), OUTPUT_FILE_NAME);
             res.sendFile(outputPath);
-          } else if (state === RUN_STATUS.failed) {
+          } else if (state === statusConstants.ERROR) {
             redis.hget(dbConstants.REDIS_RUN_ERRORS, runId)
               .then((storedError) => {
                 res.status(500).send({ state, error: storedError });
@@ -349,7 +346,7 @@ router.get('/state/:runId', (req, res) => {
   } else {
     try {
       fs.access(getRunExitCodePath(runId));
-      res.send({ runId, state: RUN_STATUS.finished });
+      res.send({ runId, state: statusConstants.COMPLETED});
     } catch (err) {
       console.error(err);
     }
@@ -396,7 +393,7 @@ router.post('/run', (req, res, next) => {
   }));
 
   const statePromise = setRunStatus(
-    runId, RUN_STATUS.running
+    runId, statusConstants.RUNNING
   );
 
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {

@@ -1,5 +1,5 @@
 import { Record, List as IList } from 'immutable';
-import statusConstants from '../constants/status_constants';
+import statusConstants from '../../../../shared/status_constants';
 
 const WorkflowRecord = new Record({
   canceling: false,
