@@ -338,8 +338,8 @@ router.get('/exitcode/:workflowId', (req, res) => {
 router.get('/temp/:workflowId', (req, res, next) => {
   const workflowId = req.params.workflowId;
 
-  redis.hget(REDIS_WORKFLOWS, workflowId).then((workflow) => {
-    if (!workflow) {
+  redis.hget(REDIS_WORKFLOWS, workflowId).then((workflowString) => {
+    if (!workflowString) {
       const error = new Error(
         `No workflow found for given workflow id ${workflowId}`
       );
@@ -347,7 +347,7 @@ router.get('/temp/:workflowId', (req, res, next) => {
       return next(error);
     }
 
-    return res.send(workflow);
+    return res.send(JSON.parse(workflowString));
   }).catch(next);
 });
 
