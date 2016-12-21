@@ -1,6 +1,7 @@
 import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
+import statusConstants from '../../../../shared/status_constants';
 
 const initialState = new SelectionRecord({
   type: selectionConstants.WORKFLOW_NODE_LOAD,
@@ -43,6 +44,16 @@ function selection(state = initialState, action) {
       return state.merge({
         id: null,
         type: selectionConstants.ABOUT,
+      });
+
+    case actionConstants.FETCHED_RUN:
+      if (action.error ||
+        action.workflow.status !== statusConstants.COMPLETED) {
+        return state;
+      }
+      return state.merge({
+        id: null,
+        type: selectionConstants.WORKFLOW_NODE_RESULTS,
       });
 
     default:

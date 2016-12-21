@@ -56,7 +56,7 @@ export function initializeWorkflow(workflowId, runId) {
       })
     );
 
-    apiUtils.getPDB(workflow.outputPdbUrl).then(modelData =>
+    return apiUtils.getPDB(workflow.outputPdbUrl).then(modelData =>
       dispatch({
         type: actionConstants.FETCHED_OUTPUT_PDB,
         modelData,
