@@ -153,7 +153,6 @@ function processContainerEnd(runId) {
     .then((containerData) => {
       const container = docker.getContainer(containerData.Id);
       container.wait((err, result) => {
-        console.log(`run=${runId} in container=${containerData.Id} finished with exitCode=${result.StatusCode}`);
         fs.writeFileSync(exitcodePath, result.StatusCode);
 
         writeContainerLogs(runId, container, true)
@@ -167,6 +166,22 @@ function processContainerEnd(runId) {
               result.StatusCode === 0 ?
                 statusConstants.COMPLETED : statusConstants.ERROR
             );
+
+            // Set the final output and status on the run
+            redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
+              const run = JSON.parse(runString);
+              const status = result.StatusCode === 0 ?
+                statusConstants.COMPLETED : statusConstants.ERROR;
+              const updatedRun = Object.assign({}, run, {
+                // TODO get the actual output from the container
+                outputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+                status,
+              });
+              redis.hset(
+                dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
+              );
+            });
+
             // Then remove the container
             container.remove({ force: 1 }, (errRemove) => {
               if (errRemove) {
@@ -195,7 +210,9 @@ function executeWorkflow(runId) {
         const createOptions = { Image: WORKFLOW_DOCKER_IMAGE, WorkingDir: '/outputs', Tty: false };
         createOptions.Labels = {};
         createOptions.Labels[RUN_KEY] = runId;
-        createOptions.Cmd = ['/bin/sh', '-c', `cp /inputs/${INPUT_FILE_NAME} /outputs/${OUTPUT_FILE_NAME}`];
+        // createOptions.Cmd = ['/bin/sh', '-c', `cp /inputs/${INPUT_FILE_NAME} /outputs/${OUTPUT_FILE_NAME}`];
+        // TODO get the workflow to actually run
+        createOptions.Cmd = ['/bin/sh', '-c', 'echo "word"'];
         createOptions.HostConfig = {
           Binds: [
             `${getRunOutputsPath(runId)}:/${OUTPUTS}:rw`,
@@ -390,7 +407,7 @@ router.post('/run', (req, res, next) => {
     id: runId,
     workflowId,
     email: req.body.email,
-    pdbUrl: req.body.pdbUrl,
+    inputPdbUrl: req.body.pdbUrl,
   }));
 
   const statePromise = setRunStatus(

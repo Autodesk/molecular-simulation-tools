@@ -16,7 +16,7 @@ class StatusResults extends React.Component {
   }
 
   onClickDownload() {
-    window.location.href = this.props.pdbUrl;
+    window.location.href = this.props.outputPdbUrl;
   }
 
   render() {
@@ -91,7 +91,7 @@ class StatusResults extends React.Component {
 StatusResults.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  pdbUrl: React.PropTypes.string,
+  outputPdbUrl: React.PropTypes.string,
   workflowNodesSize: React.PropTypes.number,
 };
 

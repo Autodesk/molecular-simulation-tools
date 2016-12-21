@@ -4,11 +4,11 @@ import WorkflowRecord from '../records/workflow_record';
 const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
-  run(workflowId, email, pdbUrl) {
+  run(workflowId, email, inputPdbUrl) {
     return axios.post(`${API_URL}/v1/workflow/run`, {
       workflowId,
       email,
-      pdbUrl,
+      pdbUrl: inputPdbUrl,
     }).then(res => res.data.runId);
   },
 

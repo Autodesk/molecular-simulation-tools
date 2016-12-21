@@ -75,28 +75,28 @@ function workflow(state = initialState, action) {
       return state.merge({
         uploadError: '',
         uploadPending: true,
-        pdbUrl: null,
+        inputPdbUrl: null,
       });
 
     case actionConstants.UPLOAD_COMPLETE:
       return state.merge({
         uploadPending: false,
         uploadError: action.err,
-        pdbUrl: action.url,
+        inputPdbUrl: action.url,
       });
 
     case actionConstants.SUBMIT_PDB_ID:
       return state.merge({
         fetchingPdb: true,
         fetchingPdbError: null,
-        pdbUrl: '',
+        inputPdbUrl: '',
       });
 
     case actionConstants.FETCHED_PDB_BY_ID:
       return state.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
-        pdbUrl: action.pdbUrl,
+        inputPdbUrl: action.pdbUrl,
       });
 
     case actionConstants.SUBMIT_EMAIL:

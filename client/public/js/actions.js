@@ -96,13 +96,13 @@ export function clickWorkflowNodeResults() {
   };
 }
 
-export function clickRun(workflowId, email, pdbUrl) {
+export function clickRun(workflowId, email, inputPdbUrl) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(workflowId, email, pdbUrl).then((runId) => {
+    apiUtils.run(workflowId, email, inputPdbUrl).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId,

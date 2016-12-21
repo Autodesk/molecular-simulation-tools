@@ -36,9 +36,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(workflowId, email, pdbUrl) {
+    clickRun(workflowId, email, inputPdbUrl) {
       return () => {
-        dispatch(clickRun(workflowId, email, pdbUrl));
+        dispatch(clickRun(workflowId, email, inputPdbUrl));
       };
     },
     clickWorkflowNodeLoad() {
@@ -82,7 +82,7 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id, stateProps.workflow.email, stateProps.workflow.pdbUrl
+      stateProps.workflow.id, stateProps.workflow.email, stateProps.workflow.inputPdbUrl
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.runId),
   });

@@ -53,7 +53,7 @@ const workflowUtils = {
   },
 
   isRunnable(workflow) {
-    if (!workflow.pdbUrl) {
+    if (!workflow.inputPdbUrl) {
       return false;
     }
     if (!isEmail(workflow.email)) {

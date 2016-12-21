@@ -46,10 +46,10 @@ class StatusLoad extends React.Component {
 
   render() {
     let uploadedElement;
-    if (this.props.pdbUrl) {
+    if (this.props.inputPdbUrl) {
       uploadedElement = (
         <div>
-          <a href={this.props.pdbUrl}>{this.props.pdbUrl}</a>
+          <a href={this.props.inputPdbUrl}>{this.props.inputPdbUrl}</a>
         </div>
       );
     }
@@ -106,7 +106,7 @@ StatusLoad.propTypes = {
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   onUpload: React.PropTypes.func.isRequired,
-  pdbUrl: React.PropTypes.string,
+  inputPdbUrl: React.PropTypes.string,
   submitPdbId: React.PropTypes.func.isRequired,
   uploadPending: React.PropTypes.bool,
   uploadError: React.PropTypes.string,

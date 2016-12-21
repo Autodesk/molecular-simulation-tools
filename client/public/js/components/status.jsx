@@ -78,7 +78,7 @@ function Status(props) {
         submitPdbId={props.submitPdbId}
         uploadError={props.workflow.uploadError}
         uploadPending={props.workflow.uploadPending}
-        pdbUrl={props.workflow.pdbUrl}
+        inputPdbUrl={props.workflow.inputPdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
@@ -94,7 +94,7 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
-        pdbUrl={props.workflow.workflowNodes.last().outputs[0].value}
+        outputPdbUrl={props.workflow.outputPdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {
