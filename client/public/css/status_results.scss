@@ -2,19 +2,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 215px;
+  margin-top: -60px;
 
   .stat {
     margin-bottom: 32px;
     .stat-title {
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px #000000 solid;
     }
 
     .stat-body {
-      display: flex;
-      justify-content: space-between;
-      text-align: center;
+
 
       &.stat-body--single {
         justify-content: center;
@@ -31,3 +30,95 @@
     display: block;
   }
 }
+
+
+.fontHeader{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 500;
+    margin-top: 60px;
+}
+
+.line {
+    border-bottom: 1px rgba(0, 0, 0, 0.2) solid;
+    padding-bottom: 6px;
+}
+
+.fontSub {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.3);
+    padding-bottom: 6px;
+}
+
+.fontLarge {
+    font-size: 40px;
+    font-weight: 300;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: -8px;
+}
+
+// remove def slider
+input[type=range] {
+  -webkit-appearance: none; 
+  width: 100%; 
+  background: transparent; 
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none;  
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  background: transparent; 
+  border-color: transparent;
+  color: transparent;
+}
+
+//style slider
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  height: 16px;
+  width: 16px;
+  border-radius: 50px;
+  background: white;
+  cursor: pointer;
+  margin-top: -8px;
+        -webkit-transition: 0.1s; 
+    transition: 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover, input[type=range]::-webkit-slider-thumb:active {
+    height: 22px;
+    width: 22px;
+    margin-top: -11px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        -webkit-transition: 0.1s; 
+    transition: 0.1s;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 1px;
+  cursor: default;
+  background: rgba(0, 0, 0, 0.1);
+  padding-bottom: 2px;
+  margin: 10px 0 16px 0;
+        -webkit-transition: 0.1s; 
+ transition: 0.1s;
+}
+
+input[type=range]::-webkit-slider-runnable-track:hover, input[type=range]::-webkit-slider-runnable-track:active {
+  background: rgba(0, 0, 0, 0.2);
+        -webkit-transition: 0.1s; 
+  transition: 0.1s;
+}
+

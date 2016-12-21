@@ -1,4 +1,28 @@
 .status-load {
   max-width: 100%;
   word-wrap: break-word;
+
+  .enterMolecule {
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    padding: 11px;
+    outline: none;
+    border:1px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .enterMolecule:focus {
+    outline: none;
+    border:2px solid #5981FF;
+    padding: 10px;
+  }
+
+  .bodyFont {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    padding-left: 4px;
+  }
 }

@@ -6,10 +6,7 @@ volumes:
     driver: local
 
 services:
-
   server:
-    build:
-      context: .
     ports:
       - "4000:4000"
     environment:

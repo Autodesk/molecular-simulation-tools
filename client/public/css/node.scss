@@ -1,20 +1,32 @@
 @import 'variables';
 
 .node {
-  text-align: center;
-  border-bottom: 1px $fg-secondary solid;
-  color: $fg-secondary;
+  text-align: left;
+  border-bottom: 1px rgba(255, 255, 255, 0.2) solid;
+  color: rgba(255, 255, 255, 0.4);
   list-style-type: none;
-  padding: 12px;
+  padding: 30px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  -webkit-transition: 0.2s; 
+  transition: 0.2s;
 
   &.last {
-    border-bottom: none;
+  border-bottom: 1px rgba(255, 255, 255, 0) solid;
   }
 
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    -webkit-transition: 0.2s; 
+    transition: 0.2s;
+  }
+    
   &.selected {
-    background-color: #ffffff;
-    opacity: 0.2;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 1px rgba(255, 255, 255, 0) solid;
+    color: white;
   }
 
   .icon-finished {

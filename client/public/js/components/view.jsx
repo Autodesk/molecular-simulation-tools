@@ -1,15 +1,18 @@
 import React from 'react';
 import { Nbmolviz3dReact } from 'nbmolviz3d';
+import loadImg from '../../img/loadAnim.gif';
 
 require('../../css/view.scss');
 
 function View(props) {
   let view;
-
   if (props.loading) {
     view = (
       <div className="loading">
-        LOADING TODO
+        <div className="animBack">
+          <img src={loadImg} alt="loading" />
+        </div>
+        <p className="anim">Loading! Great things ahead...</p>
       </div>
     );
   } else if (props.error) {
@@ -29,7 +32,6 @@ function View(props) {
       </div>
     );
   }
-
   return (
     <div className="view">
       {view}

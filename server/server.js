@@ -8,6 +8,7 @@ const appConstants = require('./constants/app_constants');
 const runRoutes = require('./routes/run');
 const structureRoutes = require('./routes/structure');
 const workflowRoutes = require('./routes/workflow');
+const versionRouter = require('./version');
 
 // Create the server
 const app = express();
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
+app.use('/version', versionRouter);
 
 // Redirect any other routes to index.html (single page app)
 app.use(new express.Router().get('/*', (req, res) => {

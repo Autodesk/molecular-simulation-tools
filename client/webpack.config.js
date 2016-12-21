@@ -30,7 +30,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'eslint-loader',
       }, {
-        test: /\.png$/,
+        test: /\.(png|gif)$/,
         include: /public\/img/,
         loaders: ['file-loader'],
       }, {

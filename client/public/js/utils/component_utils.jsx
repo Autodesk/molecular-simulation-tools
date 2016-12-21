@@ -1,5 +1,10 @@
 import React from 'react';
 import statusConstants from '../../../../shared/status_constants';
+import statusDoneImage from '../../img/done.svg';
+import statusErrorImage from '../../img/error.svg';
+import statusRunningImage from '../../img/running.svg';
+
+require('../../css/component_utils.scss');
 
 const componentUtils = {
   getIcon(status) {
@@ -7,17 +12,21 @@ const componentUtils = {
 
     if (status === statusConstants.COMPLETED) {
       icon = (
-        <div>
-          TODO icon finished
+        <div className="statusImg" >
+          <img src={statusDoneImage} alt="done" />
         </div>
       );
     } else if (status === statusConstants.ERROR) {
       icon = (
-        <div>TODO icon error</div>
+        <div className="statusImg" >
+          <img src={statusErrorImage} alt="error" />
+        </div>
       );
     } else if (status === statusConstants.RUNNING) {
       icon = (
-        <div>TODO icon loading</div>
+        <div className="statusImg" >
+          <img src={statusRunningImage} alt="running" />
+        </div>
       );
     }
 

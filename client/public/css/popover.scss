@@ -1,4 +1,4 @@
-.popover {
+.custom-popover {
   position: absolute;
   top: 0;
   width: 100%;
@@ -10,8 +10,10 @@
   }
 
   .container {
-    background-color: #ffffff;
-    padding: 12px;
     position: absolute;
+    background-color: #ffffff;
+    padding: 16px 30px 16px 30px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
   }
 }

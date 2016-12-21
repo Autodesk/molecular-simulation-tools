@@ -1,5 +1,5 @@
-$menu-bg: #303f6c;
-$menu-primary: #f0ff66;
+$menu-bg: #292C61;
+$menu-primary: #2FE695;
 $menu-secondary: #ffffff;
 
 .app-bar {
@@ -8,15 +8,26 @@ $menu-secondary: #ffffff;
   width: 100%;
   height: 82px;
   background-color: $menu-bg;
+  background-image: url("../img/backDetEnergy.png");
+  background-repeat: no-repeat;
+}
 
-  .logo {
-    width: 35px;
+.logo {
+    z-index: 1;
+    width: auto;
     height: 35px;
     margin-left: 26px;
     margin-right: 16px;
   }
+    
+.backImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
 
-  .title {
+.title {
     flex: 1;
     display: flex;
     height: 100%;
@@ -26,17 +37,28 @@ $menu-secondary: #ffffff;
     overflow: hidden;
     white-space: nowrap;
     color: $menu-primary;
+    font-size: 2.2rem;
   }
 
-  button, a {
+.appLinks {
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 100%;
+    justify-content: flex-end;
+    width: 100%;
+    overflow: none;
+    white-space: nowrap;
+}
+
+.appLink {
     padding: 0 16px;
     color: $menu-secondary;
     background-color: transparent;
     border: none;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    -webkit-transition: 0.2s; 
+    transition: 0.2s;
 
     &:focus {
       outline: 0;
@@ -44,6 +66,32 @@ $menu-secondary: #ffffff;
 
     &:hover {
       color: $menu-primary;
+      text-decoration: none;
+      -webkit-transition: 0.2s; 
+      transition: 0.2s;
     }
   }
+
+
+.appLinkStrong {
+  color: $menu-primary;
 }
+
+.shareButton {
+  padding: 10px;
+  opacity: 1;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.6;
+    -webkit-transition: 0.1s;
+    transition: 0.1s;
+  }
+}
+
+
+
+
+
