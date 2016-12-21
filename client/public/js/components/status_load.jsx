@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from './button';
 
+require('../../css/status_load.scss');
+
 class StatusLoad extends React.Component {
   constructor(props) {
     super(props);
@@ -57,10 +59,12 @@ class StatusLoad extends React.Component {
         {uploadedElement}
         <div className="upload-container">
           <form
+            className="defInput"
             onSubmit={this.onSubmitPdbId}
           >
             <input
-              style={{ width: '100%' }}
+              className="enterMolecule"
+              style={{ width: '215px' }}
               type="text"
               placeholder="Enter PDB ID here"
               disabled={this.props.fetchingPdb}
@@ -72,8 +76,8 @@ class StatusLoad extends React.Component {
             {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
             {this.state.pdbIdError ? this.state.pdbIdError : ''}
           </p>
-          <p>
-            Or, browse custom file.
+          <p className="bodyFont">
+            Or, browse custom JSON file.
           </p>
           <Button
             type="form"

@@ -7,7 +7,7 @@ function Popover(props) {
 
   return (
     <div
-      className={`popover ${openClass}`}
+      className={`custom-popover ${openClass}`}
       onClick={props.onRequestClose}
     >
       <div

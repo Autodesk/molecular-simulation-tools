@@ -1,30 +1,67 @@
 @import 'variables';
 
 .button {
-  width: 125px;
-  margin: 16px auto;
-  background-color: transparent;
-  font-weight: 600;
   border: none;
   color: $fg-secondary;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 10px;
+  margin: 6px 0 6px 0;
+  background-color: transparent;
+  -webkit-transition: 0.2s; 
+  transition: 0.2s;
 
   &:focus {
     outline: 0;
   }
 
+  &:hover {
+  color: white;
+        -webkit-transition: 0.2s; 
+  transition: 0.2s;
+  }
+
   &.disabled {
-    opacity: 0.6;
+    opacity: 0.4;
   }
 
   &.raised {
-    border: 2px #f1ff66 solid;
+    border: 2px #2FE695 solid;
     border-radius: 20px;
-    color: #f1ff66;
+    color: #2FE695;
+    margin: 20px;
+    width: 160px;
   }
 
   &.form {
-    border: 2px #bbbbbb solid;
+    border:1px solid rgba(0, 0, 0, 0.15);
+    background-color: white;
     border-radius: 20px;
-    color: $fg-primary;
+    color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    -webkit-transition: 0.2s; 
+    transition: 0.2s;
+  }
+    
+  &.small {
+    border:1px solid rgba(0, 0, 0, 0.15);
+    background-color: white;
+    border-radius: 20px;
+    color: rgba(0, 0, 0, 0.6);
+    padding: 4px;
+    width: 40%;
+  }
+    
+    &.form:hover, &.small:hover {
+    color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0px rgba(0, 0, 0, 0.075);
+    -webkit-transition: 0.2s; 
+    transition: 0.2s;
   }
 }
+
+.button:focus {
+    outline: none;
+}
+
