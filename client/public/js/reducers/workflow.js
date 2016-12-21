@@ -42,33 +42,32 @@ function workflow(state = initialState, action) {
 
       return state;
 
-    case actionConstants.FETCHED_PDB: {
-      let workflowNodeIndex;
-      const workflowNode = state.workflowNodes.find((workflowNodeI, index) => {
-        workflowNodeIndex = index;
-        return workflowNodeI.id === action.workflowNodeId;
-      });
-
+    case actionConstants.FETCHED_INPUT_PDB: {
       if (action.err) {
-        return state.set('workflowNodes',
-          state.workflowNodes.set(workflowNodeIndex,
-            workflowNode.merge({
-              fetchingPDB: false,
-              fetchingPDBError: action.err,
-            })
-          )
-        );
+        return state.merge({
+          fetchingPdbError: action.err,
+          fetchingPdb: false,
+        });
       }
 
-      return state.set('workflowNodes',
-        state.workflowNodes.set(workflowNodeIndex,
-          workflowNode.merge({
-            fetchingPDB: false,
-            fetchingPDBError: null,
-            modelData: action.modelData,
-          })
-        )
-      );
+      return state.merge({
+        fetchingPdb: false,
+        inputPdb: action.modelData,
+      });
+    }
+
+    case actionConstants.FETCHED_OUTPUT_PDB: {
+      if (action.err) {
+        return state.merge({
+          fetchingPdbError: action.err,
+          fetchingPdb: false,
+        });
+      }
+
+      return state.merge({
+        fetchingPdb: false,
+        outputPdb: action.modelData,
+      });
     }
 
     case actionConstants.UPLOAD:

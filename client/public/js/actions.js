@@ -43,23 +43,30 @@ export function initializeWorkflow(workflowId, runId) {
       type: actionConstants.FETCHED_RUN,
       workflow,
     });
-    return workflow.workflowNodes.forEach((workflowNode) => {
-      if (!workflowNode.modelData && workflowNode.outputs.length) {
-        apiUtils.getPDB(workflowNode.outputs[0].value).then(modelData =>
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            modelData,
-          })
-        ).catch(error =>
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            err: error,
-          })
-        );
-      }
-    });
+
+    apiUtils.getPDB(workflow.inputPdbUrl).then(modelData =>
+      dispatch({
+        type: actionConstants.FETCHED_INPUT_PDB,
+        modelData,
+      })
+    ).catch(error =>
+      dispatch({
+        type: actionConstants.FETCHED_INPUT_PDB,
+        err: error,
+      })
+    );
+
+    apiUtils.getPDB(workflow.outputPdbUrl).then(modelData =>
+      dispatch({
+        type: actionConstants.FETCHED_OUTPUT_PDB,
+        modelData,
+      })
+    ).catch(error =>
+      dispatch({
+        type: actionConstants.FETCHED_OUTPUT_PDB,
+        err: error,
+      })
+    );
   };
 }
 

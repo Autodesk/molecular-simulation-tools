@@ -19,8 +19,11 @@ function Workflow(props) {
     selectedModelData = selectedWorkflowNode.modelData;
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
-    const selectedWorkflowNode = props.workflow.workflowNodes.get(props.morph);
-    selectedModelData = selectedWorkflowNode.modelData;
+    if (props.morph === 1) {
+      selectedModelData = props.workflow.outputPdb;
+    } else {
+      selectedModelData = props.workflow.inputPdb;
+    }
   }
 
   let viewError;
