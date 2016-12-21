@@ -58,16 +58,18 @@ class StatusLoad extends React.Component {
       <div className="status-info">
         {uploadedElement}
         <div className="upload-container">
-          <form className="defInput"
+          <form
+            className="defInput"
             onSubmit={this.onSubmitPdbId}
           >
-            <input className="enterMolecule" 
-              style={{ width: '215px'}}
+            <input
+              className="enterMolecule"
+              style={{ width: '215px' }}
               type="text"
               placeholder="Enter PDB ID here"
               disabled={this.props.fetchingPdb}
               value={this.state.pdbId}
-              onChange={this.onChangePdbId} 
+              onChange={this.onChangePdbId}
             />
           </form>
           <p className="error">
@@ -77,7 +79,7 @@ class StatusLoad extends React.Component {
           <p className="bodyFont">
             Or, browse custom JSON file.
           </p>
-          <Button 
+          <Button
             type="form"
             disabled={this.props.uploadPending}
             onClick={this.onClickFileUpload}
