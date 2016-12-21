@@ -42,30 +42,31 @@ class AppBar extends React.Component {
         <div>
           <h2 className="title">{this.props.title}</h2>
         </div>
-        <div className='appLinks'>
-            <Link className='appLink appLinkStrong' to="/">
-              Browse all tools
-            </Link>
-            <Popover
-              open={this.state.shareMenuOpen}
-              top={anchorClientRect.bottom}
-              left={anchorClientRect.left}
-              onRequestClose={this.handleRequestClose}
-            >
-              <div className="popDown">
-                <img className="shareButton svg" src={shareTwitterImage} alt="twitter" />
-                <img className="shareButton" src={shareEmailImage} alt="email" />
-                <img className="shareButton" src={shareFacebookImage} alt="facebook" />
-              </div>
-            </Popover>
-            <button className='appLink' 
-              ref={(c) => { this.shareButton = c; }}
-              onClick={this.onClickShare}
-            >
-              Share
-            </button>
-            <Link className='appLink' to="/#join">Join</Link>
-            <button className='appLink' >Help</button>
+        <div className="appLinks">
+          <Link className="appLink appLinkStrong" to="/">
+            Browse all tools
+          </Link>
+          <Popover
+            open={this.state.shareMenuOpen}
+            top={anchorClientRect.bottom}
+            left={anchorClientRect.left}
+            onRequestClose={this.handleRequestClose}
+          >
+            <div className="popDown">
+              <img className="shareButton svg" src={shareTwitterImage} alt="twitter" />
+              <img className="shareButton" src={shareEmailImage} alt="email" />
+              <img className="shareButton" src={shareFacebookImage} alt="facebook" />
+            </div>
+          </Popover>
+          <button
+            className="appLink"
+            ref={(c) => { this.shareButton = c; }}
+            onClick={this.onClickShare}
+          >
+            Share
+          </button>
+          <Link className="appLink" to="/#join">Join</Link>
+          <button className="appLink" >Help</button>
         </div>
       </div>
     );

@@ -20,9 +20,6 @@ class StatusResults extends React.Component {
   }
 
   render() {
-    const morphMax = this.props.workflowNodesSize ?
-      this.props.workflowNodesSize - 1 : 1;
-
     return (
       <div className="status-results">
         <div className="stats">
@@ -58,7 +55,7 @@ class StatusResults extends React.Component {
               id="morph"
               type="range"
               min="0"
-              max="100"
+              max="1"
               step="1"
               onChange={this.onChangeMorph}
             />
