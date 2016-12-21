@@ -74,27 +74,21 @@ $menu-secondary: #ffffff;
 
 
 .appLinkStrong {
-    color: $menu-primary;
-}
-
-.popDown {
-    background-color: white;
-    padding: 16px 30px 16px 30px;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.4);
-    border-radius: 10px;
+  color: $menu-primary;
 }
 
 .shareButton {
-    padding: 10px;
-    opacity: 1;
-    -webkit-transition: 0.1s; 
+  padding: 10px;
+  opacity: 1;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.6;
+    -webkit-transition: 0.1s;
     transition: 0.1s;
-    
-    &:hover {
-        opacity: 0.6;
-        -webkit-transition: 0.1s; 
-        transition: 0.1s;   
-    }
+  }
 }
 
 

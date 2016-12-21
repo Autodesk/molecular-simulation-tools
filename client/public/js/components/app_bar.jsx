@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router';
 import Popover from './popover';
 import logoImage from '../../img/logo.png';
+import shareTwitterImage from '../../img/twitter.svg';
+import shareEmailImage from '../../img/email.svg';
+import shareFacebookImage from '../../img/facebook.svg';
 
 require('../../css/app_bar.scss');
 
@@ -50,9 +53,9 @@ class AppBar extends React.Component {
               onRequestClose={this.handleRequestClose}
             >
               <div className="popDown">
-                <img className="shareButton svg" src="../img/twitter.svg" alt="twitter" />
-                <img className="shareButton" src="../img/email.svg" alt="email" />
-                <img className="shareButton" src="../img/facebook.svg" alt="facebook" />
+                <img className="shareButton svg" src={shareTwitterImage} alt="twitter" />
+                <img className="shareButton" src={shareEmailImage} alt="email" />
+                <img className="shareButton" src={shareFacebookImage} alt="facebook" />
               </div>
             </Popover>
             <button className='appLink' 
