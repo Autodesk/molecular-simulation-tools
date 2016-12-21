@@ -27,44 +27,44 @@ class StatusResults extends React.Component {
       <div className="status-results">
         <div className="stats">
           <div className="stat">
-            <div className="stat-title">
+            <div className="fontHeader line stat-title">
               <div>ENERGY</div>
               <div>kJ/mol</div>
             </div>
             <div className="stat-body">
               <div className="stat-body-item">
-                <div>??</div>
-                <div>BEFORE</div>
+                <div className="fontLarge">45.94</div>
+                <div className="fontSub">BEFORE</div>
               </div>
               <div className="stat-body-item">
-                <div>??</div>
-                <div>AFTER</div>
+                <div className="fontLarge">75.34</div>
+                <div className="fontSub">AFTER</div>
               </div>
             </div>
           </div>
           <div className="stat">
-            <div className="stat-title">
+            <div className="fontHeader line stat-title">
               <div>FINAL RMSD</div>
             </div>
             <div className="stat-body stat-body--single">
               <div className="stat-body-item">
-                <div>??</div>
+                <div className="fontLarge">74.56</div>
               </div>
             </div>
           </div>
           <div>
-            <label className="morph-label" htmlFor="morph">Morph</label>
+            <label className="fontHeader morph-label" htmlFor="morph">MORPH</label>
             <input
               id="morph"
               type="range"
               min="0"
-              max={morphMax}
+              max="100"
               step="1"
               onChange={this.onChangeMorph}
             />
           </div>
           <Button
-            type="form"
+            type="small"
             onClick={this.props.onClickColorize}
           >
             Colorize
@@ -75,10 +75,10 @@ class StatusResults extends React.Component {
             type="form"
             onClick={this.onClickDownload}
           >
-            Download Refined Structure
+            Download
           </Button>
           <Button
-            type="form"
+            type="small"
           >
             Share
           </Button>
