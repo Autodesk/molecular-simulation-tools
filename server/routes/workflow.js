@@ -1,6 +1,7 @@
 /**
  * workflow routes
  */
+const appRoot = require('app-root-path');
 const Docker = require('dockerode');
 const fs = require('fs-extended');
 const path = require('path');
@@ -9,6 +10,7 @@ const express = require('express');
 const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
 const dbConstants = require('../constants/db_constants');
+const ioUtils = require('../utils/io_utils');
 const redis = require('../utils/redis');
 const statusConstants = require('../../shared/status_constants');
 
@@ -22,7 +24,7 @@ const OUTPUTS = 'outputs';
 /* Docker image vars*/
 const INPUT_FILE_NAME = 'input.json';
 const OUTPUT_FILE_NAME = 'output.json';
-const WORKFLOW_DOCKER_IMAGE = 'docker.io/busybox:latest';
+const WORKFLOW_DOCKER_IMAGE = 'docker.io/avirshup/vde:0.0.6';
 const RUN_KEY = 'runId';
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
@@ -160,35 +162,50 @@ function processContainerEnd(runId) {
             writeContainerLogs(runId, container, false)
           )
           .then(() => {
-            // Finally set the state
-            setRunStatus(
-              runId,
-              result.StatusCode === 0 ?
-                statusConstants.COMPLETED : statusConstants.ERROR
-            );
+            // Get the output files
+            const outputJsonPath = `${getRunOutputsPath(runId)}/output.json`;
+            const outputPdbPath = `${getRunOutputsPath(runId)}/out.pdb`;
+            const publicPdbDir = path.join(appRoot.toString(), 'public/structures');
+            let outputData;
+            let publicOutputPdbPath;
 
-            // Set the final output and status on the run
-            redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
-              const run = JSON.parse(runString);
-              const status = result.StatusCode === 0 ?
-                statusConstants.COMPLETED : statusConstants.ERROR;
-              const updatedRun = Object.assign({}, run, {
-                // TODO get the actual output from the container
-                outputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-                status,
-              });
-              redis.hset(
-                dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
-              );
-            });
-
-            // Then remove the container
-            container.remove({ force: 1 }, (errRemove) => {
-              if (errRemove) {
-                console.error(`Run=${runId} Error removing container=${containerData.Id} err]${errRemove}`);
+            Promise.all([
+              ioUtils.makeOutputPublic(outputPdbPath, publicPdbDir),
+              ioUtils.readJsonFile(outputJsonPath),
+            ]).then((results) => {
+              if (results[0]) {
+                publicOutputPdbPath = results[0];
               }
-            });
-            sendEmailsWorkflowEnded(runId);
+              if (results[1]) {
+                outputData = results[1];
+              }
+            }).catch(console.error.bind(console)).then(() => {
+              // Set the final output and status on the run
+              redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
+                const run = JSON.parse(runString);
+                const status = result.StatusCode === 0 ?
+                  statusConstants.COMPLETED : statusConstants.ERROR;
+                const updatedRun = Object.assign({}, run, {
+                  outputPdbPath: publicOutputPdbPath,
+                  status,
+                  outputData,
+                });
+                redis.hset(
+                  dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
+                );
+              }).catch(console.error.bind(console));
+
+              // Then remove the container
+              container.remove({ force: 1 }, (errRemove) => {
+                if (errRemove) {
+                  console.error(`Run=${runId} Error removing container=${containerData.Id} err]${errRemove}`);
+                }
+              });
+              sendEmailsWorkflowEnded(runId);
+
+              console.log(`Completed run ${runId}`);
+            })
+            .catch(console.error.bind(console));
           }).catch(console.error.bind(console));
       });
     }).catch(console.error.bind(console));
@@ -199,7 +216,7 @@ function processContainerEnd(runId) {
  * @param  {[type]} workflowDir [description]
  * @return {[Promise<Bool>]}             [description]
  */
-function executeWorkflow(runId) {
+function executeWorkflow(runId, inputPdbUrl) {
   console.log(`executeWorkflow ${runId}`);
   getDockerImage(WORKFLOW_DOCKER_IMAGE)
     .then(() => {
@@ -210,9 +227,7 @@ function executeWorkflow(runId) {
         const createOptions = { Image: WORKFLOW_DOCKER_IMAGE, WorkingDir: '/outputs', Tty: false };
         createOptions.Labels = {};
         createOptions.Labels[RUN_KEY] = runId;
-        // createOptions.Cmd = ['/bin/sh', '-c', `cp /inputs/${INPUT_FILE_NAME} /outputs/${OUTPUT_FILE_NAME}`];
-        // TODO get the workflow to actually run
-        createOptions.Cmd = ['/bin/sh', '-c', 'echo "word"'];
+        createOptions.Cmd = [inputPdbUrl];
         createOptions.HostConfig = {
           Binds: [
             `${getRunOutputsPath(runId)}:/${OUTPUTS}:rw`,
@@ -415,7 +430,7 @@ router.post('/run', (req, res, next) => {
   );
 
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
-    executeWorkflow(runId);
+    executeWorkflow(runId, req.body.pdbUrl);
     res.send({ runId });
   }).catch(next);
 });
