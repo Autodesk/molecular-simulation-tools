@@ -174,7 +174,8 @@ function processContainerEnd(runId) {
               ioUtils.readJsonFile(outputJsonPath),
             ]).then((results) => {
               if (results[0]) {
-                publicOutputPdbPath = results[0];
+                publicOutputPdbPath =
+                  `/structures/${results[0].split('/').pop()}`;
               }
               if (results[1]) {
                 outputData = results[1];

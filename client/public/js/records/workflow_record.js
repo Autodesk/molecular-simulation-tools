@@ -11,6 +11,7 @@ const WorkflowRecord = new Record({
   fetchingPdbError: null,
   inputPdbUrl: '',
   inputPdb: '',
+  outputData: null,
   outputPdbUrl: '',
   outputPdb: '',
   runId: null,

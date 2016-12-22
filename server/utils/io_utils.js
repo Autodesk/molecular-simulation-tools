@@ -15,7 +15,7 @@ const ioUtils = {
         const hashed = hash(data);
         const targetPath = `${targetDir}/${hashed}.pdb`;
 
-        return fs.writeFile(targetPath, (errWrite) => {
+        return fs.writeFile(targetPath, data, (errWrite) => {
           if (errWrite) {
             return reject(errWrite);
           }
@@ -23,18 +23,6 @@ const ioUtils = {
           return resolve(targetPath);
         });
       });
-    });
-  },
-
-  copyFile(source, target) {
-    return new Promise((resolve, reject) => {
-      const rd = fs.createReadStream(source);
-      rd.on('error', reject);
-
-      const wr = fs.createWriteStream(target);
-      wr.on('error', reject);
-      wr.on('close', resolve);
-      rd.pipe(wr);
     });
   },
 

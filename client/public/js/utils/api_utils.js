@@ -58,6 +58,7 @@ const apiUtils = {
     ).then(runData =>
       new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
         runId: runData.id,
+        outputPdbUrl: `${process.env.API_URL}${runData.outputPdbPath}`,
       }))
     );
   },
