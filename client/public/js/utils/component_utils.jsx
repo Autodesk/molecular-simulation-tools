@@ -1,5 +1,5 @@
 import React from 'react';
-import statusConstants from '../../../../shared/status_constants';
+import { statusConstants } from 'molecular-design-applications-shared';
 import statusDoneImage from '../../img/done.svg';
 import statusErrorImage from '../../img/error.svg';
 import statusRunningImage from '../../img/running.svg';

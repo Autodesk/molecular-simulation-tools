@@ -12,7 +12,7 @@ const shortId = require('shortid');
 const dbConstants = require('../constants/db_constants');
 const ioUtils = require('../utils/io_utils');
 const redis = require('../utils/redis');
-const statusConstants = require('../../shared/status_constants');
+const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const router = new express.Router();
 

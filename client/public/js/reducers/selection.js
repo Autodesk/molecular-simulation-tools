@@ -1,7 +1,7 @@
+import { statusConstants } from 'molecular-design-applications-shared';
 import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
-import statusConstants from '../../../../shared/status_constants';
 
 const initialState = new SelectionRecord({
   type: selectionConstants.WORKFLOW_NODE_LOAD,

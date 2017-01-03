@@ -1,5 +1,5 @@
 import { Record, List as IList } from 'immutable';
-import statusConstants from '../../../../shared/status_constants';
+import { statusConstants } from 'molecular-design-applications-shared';
 
 const WorkflowRecord = new Record({
   canceling: false,
