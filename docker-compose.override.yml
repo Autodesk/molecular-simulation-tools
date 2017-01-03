@@ -14,7 +14,6 @@ services:
 
   redis:
     restart: always
-    command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
       # This is the where the db will be writting. It is defined in ./server/etc/redis/redis.conf
