@@ -40,6 +40,11 @@ APIs:
 	GET workflow/exitcode/:workflowId
 		Returns the exit code of the finished workflow
 
+#### Seed Data
+Currently, Redis needs to be seeded with at least one workflow for the app to use, which you can create with:
+
+    hset workflows 0 '{"id": 0, "title": "Refine ligand and active site in molecules"}'
+
 ### Developing frontend assets
 In addition to mounting local directories as mentioned above, you can recompile the frontend assets on change by running `npm run watch` in the client directory.
 

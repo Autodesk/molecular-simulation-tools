@@ -320,13 +320,13 @@ router.get('/exitcode/:runId', (req, res) => {
   res.sendFile(getRunExitCodePath(runId));
 });
 
-router.get('/temp/:runId', (req, res, next) => {
-  const runId = req.params.runId;
+router.get('/temp/:workflowId', (req, res, next) => {
+  const workflowId = req.params.workflowId;
 
-  redis.hget(dbConstants.REDIS_WORKFLOWS, runId).then((workflowString) => {
+  redis.hget(dbConstants.REDIS_WORKFLOWS, workflowId).then((workflowString) => {
     if (!workflowString) {
       const error = new Error(
-        `No run found for given run id ${runId}`
+        `No workflow found for given workflow id ${workflowId}`
       );
       error.status = 404;
       return next(error);
