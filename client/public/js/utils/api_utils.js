@@ -57,12 +57,14 @@ const apiUtils = {
   getRun(runId) {
     return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
       res.data
-    ).then(runData =>
-      new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
+    ).then((runData) => {
+      const outputPdbUrl = runData.outputPdbPath ?
+        `${API_URL}${runData.outputPdbPath}` : null;
+      return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
         runId: runData.id,
-        outputPdbUrl: `${API_URL}${runData.outputPdbPath}`,
-      }))
-    );
+        outputPdbUrl,
+      }));
+    });
   },
 
   cancelRun() {
