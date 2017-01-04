@@ -30,10 +30,11 @@ tmp-dir: node_modules/jenkins-docker/compose-tmp
 tmp-env: compose-env.txt
 tmp-images: images.txt
 
-build-ver-file: VERSION
+build-ver-file: server/VERSION
 build-manifest-file: build-manifest.txt
 
-s3-artifacts: "*.yml *.conf server/etc/redis/*.conf"
+# Note that multiple entries need to be in array format for zip to handle correctly
+s3-artifacts: ["*.yml", "server/etc/redis/*.conf"]
 s3-zip-bucket: bionano-devops-build-artifacts
 zip-excludes: .archive_excludes
 zip-excludes-input-dirs: .
