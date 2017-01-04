@@ -17,7 +17,8 @@ function Workflow(props) {
       workflowNode => workflowNode.id === props.selection.id
     );
     selectedModelData = selectedWorkflowNode.modelData;
-  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD &&
+  } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
+    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) &&
     props.workflow.inputPdb) {
     selectedModelData = props.workflow.inputPdb;
   } else if (props.selection.type ===
