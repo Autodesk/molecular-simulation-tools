@@ -82,6 +82,7 @@ function workflow(state = initialState, action) {
         uploadPending: false,
         uploadError: action.err,
         inputPdbUrl: action.url,
+        inputPdb: action.data,
       });
 
     case actionConstants.SUBMIT_PDB_ID:

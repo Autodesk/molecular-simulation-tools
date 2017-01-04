@@ -133,12 +133,27 @@ export function upload(file) {
       type: actionConstants.UPLOAD,
       file,
     });
-    apiUtils.upload(file).then(url =>
+
+    const uploadPromise = apiUtils.upload(file);
+
+    const readPromise = new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+
+    Promise.all([uploadPromise, readPromise]).then((results) => {
+      if (!results[0] || !results[1]) {
+        throw new Error('Missing result from upload/read');
+      }
+
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
-        url,
-      })
-    ).catch(err =>
+        url: results[0],
+        data: results[1],
+      });
+    }).catch(err =>
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
         err: err ? (err.message || err) : null,
