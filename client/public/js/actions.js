@@ -2,6 +2,7 @@ import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import realApiUtils from './utils/api_utils';
 import mockApiUtils from './utils/mock_api_utils';
+import workflowUtils from './utils/workflow_utils';
 
 const apiUtils = process.env.NODE_ENV === 'offline' ?
   mockApiUtils : realApiUtils;
@@ -135,14 +136,7 @@ export function upload(file) {
     });
 
     const uploadPromise = apiUtils.upload(file);
-
-    const readPromise = new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result);
-      reader.onerror = reject;
-      reader.readAsText(file);
-    });
-
+    const readPromise = workflowUtils.readPdb(file);
     Promise.all([uploadPromise, readPromise]).then((results) => {
       if (!results[0] || !results[1]) {
         throw new Error('Missing result from upload/read');
@@ -150,8 +144,8 @@ export function upload(file) {
 
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
-        url: results[0],
-        data: results[1],
+        pdbUrl: results[0],
+        pdb: results[1],
       });
     }).catch(err =>
       dispatch({
@@ -168,10 +162,15 @@ export function submitPdbId(pdbId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId).then(pdbUrl =>
+    let pdbUrl;
+    apiUtils.getPdbById(pdbId).then((responsePdbUrl) => {
+      pdbUrl = responsePdbUrl;
+      return apiUtils.getPDB(pdbUrl);
+    }).then(pdb =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
+        pdb,
       })
     ).catch((err) => {
       console.error(err);

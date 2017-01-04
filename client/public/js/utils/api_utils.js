@@ -41,9 +41,11 @@ const apiUtils = {
   },
 
   getPdbById(pdbId) {
-    return fetch(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
-      res.text()
-    );
+    return axios.get(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+      res.data
+    ).catch((err) => {
+      throw err.response.data;
+    });
   },
 
   getWorkflow(workflowId) {
