@@ -106,8 +106,8 @@ function writeContainerLogs(runId, container, isStdOut) {
   const pathString = isStdOut ?
     getRunStdoutPath(runId) : getRunStderrPath(runId);
   const opts = {
-    stdout: isStdOut ? 0 : 1,
-    stderr: !isStdOut ? 0 : 1,
+    stdout: isStdOut,
+    stderr: !isStdOut,
   };
   return new Promise((resolve, reject) => {
     container.logs(opts, (err, logstream) => {
@@ -120,7 +120,7 @@ function writeContainerLogs(runId, container, isStdOut) {
           resolve();
         });
         logstream.on('data', (data) => {
-          logs += logs + data;
+          logs += data;
         });
       } else {
         fs.writeFileSync(pathString, '');
