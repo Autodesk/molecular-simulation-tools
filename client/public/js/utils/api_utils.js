@@ -35,30 +35,30 @@ const apiUtils = {
       data.append('file', file);
 
       return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
-        resolve(`${process.env.API_URL}${res.data.path}`)
+        resolve(`${API_URL}${res.data.path}`)
       ).catch(reject);
     });
   },
 
   getPdbById(pdbId) {
-    return fetch(`${process.env.API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+    return fetch(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
       res.text()
     );
   },
 
   getWorkflow(workflowId) {
-    return axios.get(`${process.env.API_URL}/v1/workflow/temp/${workflowId}`).then(res =>
+    return axios.get(`${API_URL}/v1/workflow/temp/${workflowId}`).then(res =>
       new WorkflowRecord(res.data)
     );
   },
 
   getRun(runId) {
-    return axios.get(`${process.env.API_URL}/v1/run/${runId}`).then(res =>
+    return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
       res.data
     ).then(runData =>
       new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
         runId: runData.id,
-        outputPdbUrl: `${process.env.API_URL}${runData.outputPdbPath}`,
+        outputPdbUrl: `${API_URL}${runData.outputPdbPath}`,
       }))
     );
   },
