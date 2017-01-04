@@ -16,13 +16,17 @@
   }
 
   &:hover {
-  color: white;
-        -webkit-transition: 0.2s; 
-  transition: 0.2s;
+    color: white;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
   }
 
   &.disabled {
     opacity: 0.4;
+  }
+
+  &.active {
+    color: white;
   }
 
   &.raised {

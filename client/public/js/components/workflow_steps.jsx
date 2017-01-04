@@ -14,6 +14,7 @@ function WorkflowSteps(props) {
   const runDisabled = running ||
     !workflowUtils.isRunnable(props.workflow);
 
+  const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
   const loadStatus = props.workflow.inputPdbUrl ?
@@ -64,6 +65,7 @@ function WorkflowSteps(props) {
       <div key={1} className="actions">
         <Button
           onClick={props.clickAbout}
+          active={aboutSelected}
         >
           About
         </Button>
