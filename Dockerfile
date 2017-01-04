@@ -35,6 +35,7 @@ ADD client/package.json $APP/client/package.json
 RUN npm install
 
 RUN touch .env
+RUN echo "NODE_ENV=production" > .env
 ADD ./client/.babelrc $APP/client/.babelrc
 ADD ./client/.eslintignore $APP/client/.eslintignore
 ADD ./client/.eslintrc $APP/client/.eslintrc
@@ -56,6 +57,8 @@ WORKDIR $APP/server
 ADD ./server/ $APP/server/ 
 RUN npm install
 
+RUN touch .env
+RUN echo "NODE_ENV=production" > .env
 ADD ./server/package.json $APP/server/package.json
 RUN cd $APP/server && npm install
 ADD ./server/bin $APP/server/bin
