@@ -1,9 +1,6 @@
 const Busboy = require('busboy');
-const shortId = require('shortid');
-const appRoot = require('app-root-path');
 const express = require('express');
-const fs = require('fs-extended');
-const path = require('path');
+const ioUtils = require('../utils/io_utils');
 
 const router = new express.Router();
 
@@ -16,22 +13,18 @@ router.get('/pdb_by_id/:pdbId', (req, res, next) => {
   return res.send('https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb');
 });
 
-router.put('/upload', (req, res) => {
+router.put('/upload', (req, res, next) => {
   const busboy = new Busboy({
     headers: req.headers,
   });
-  const uuid = shortId.generate();
 
   busboy.on('file', (fieldname, file) => {
-    const saveTo =
-      path.join(appRoot.toString(), 'public/uploads', `${uuid}.pdb`);
-    file.pipe(fs.createWriteStream(saveTo));
+    ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
+      res.send({
+        path: `/structures/${filename}`,
+      });
+    }).catch(next);
   });
-  busboy.on('finish', () =>
-    res.send({
-      path: `/uploads/${uuid}.pdb`,
-    })
-  );
 
   return req.pipe(busboy);
 });

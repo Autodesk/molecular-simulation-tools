@@ -165,17 +165,19 @@ function processContainerEnd(runId) {
             // Get the output files
             const outputJsonPath = `${getRunOutputsPath(runId)}/output.json`;
             const outputPdbPath = `${getRunOutputsPath(runId)}/out.pdb`;
-            const publicPdbDir = path.join(appRoot.toString(), 'public/structures');
+            const publicPdbDir = 'public/structures';
             let outputData;
             let publicOutputPdbPath;
 
             Promise.all([
-              ioUtils.makeOutputPublic(outputPdbPath, publicPdbDir),
+              ioUtils.streamToHashFile(
+                fs.createReadStream(outputPdbPath), publicPdbDir
+              ),
               ioUtils.readJsonFile(outputJsonPath),
             ]).then((results) => {
               if (results[0]) {
                 publicOutputPdbPath =
-                  `/structures/${results[0].split('/').pop()}`;
+                  `/structures/${results[0]}`;
               }
               if (results[1]) {
                 outputData = results[1];
