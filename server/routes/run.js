@@ -6,11 +6,23 @@ const router = new express.Router();
 
 router.get('/:runId', (req, res, next) => {
   redis.hget(dbConstants.REDIS_RUNS, req.params.runId).then((runString) => {
+    if (!runString) {
+      const error = new Error(`Run "${req.params.runId}" not found`);
+      error.status = 404;
+      return next(error);
+    }
+
     const run = JSON.parse(runString);
-    redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
+    return redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
       (workflowString) => {
+        if (!workflowString) {
+          return next(
+            new Error('Corrupt run data references nonexistant workflow')
+          );
+        }
+
         const workflow = JSON.parse(workflowString);
-        res.send(Object.assign({}, run, {
+        return res.send(Object.assign({}, run, {
           workflow,
         }));
       }).catch(next);

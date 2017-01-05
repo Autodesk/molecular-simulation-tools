@@ -102,6 +102,7 @@ class WorkflowRouter extends React.Component {
           submitPdbId={this.props.submitPdbId}
           submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
+          runPage={!!this.props.runId}
         />
       );
     }

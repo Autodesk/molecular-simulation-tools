@@ -34,7 +34,8 @@ function Workflow(props) {
   const fetchingError = props.workflow.fetchingError;
   if (fetchingError && fetchingError.response &&
     fetchingError.response.status === 404) {
-    viewError = 'This workflow does not exist!';
+    const lookingFor = props.runPage ? 'run' : 'workflow';
+    viewError = `This ${lookingFor} does not exist!`;
   }
 
   return (
@@ -85,6 +86,7 @@ Workflow.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
+  runPage: React.PropTypes.bool,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
