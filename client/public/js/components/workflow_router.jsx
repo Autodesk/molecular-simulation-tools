@@ -12,9 +12,7 @@ import Workflow from './workflow';
 
 class WorkflowRouter extends React.Component {
   componentDidMount() {
-    this.initialize(
-      this.props.workflowId, this.props.runId, this.props.workflow.title
-    );
+    this.initialize(this.props.workflowId, this.props.runId);
 
     this.state = {
       snackbarClosed: true,
@@ -38,9 +36,7 @@ class WorkflowRouter extends React.Component {
 
     // Reinitialize when need workflow/run (like on back button)
     if (!fetching && (needWorkflow || needRun)) {
-      this.initialize(
-        nextProps.workflowId, nextProps.runId, nextProps.workflow.title
-      );
+      this.initialize(nextProps.workflowId, nextProps.runId);
     }
 
     if (!this.props.workflow.fetchingError &&
@@ -58,19 +54,18 @@ class WorkflowRouter extends React.Component {
   }
 
   // Set up page for workflow/run distinction
-  initialize(workflowId, runId, workflowTitle) {
+  initialize(workflowId, runId) {
     this.props.initializeWorkflow(workflowId, runId);
-
-    if (runId) {
-      document.title = `Workflow - Run of "${workflowTitle}"`;
-    } else {
-      document.title = `Workflow - "${workflowTitle}"`;
-    }
   }
 
   render() {
-    let routeEl;
+    if (this.props.runId) {
+      document.title = `Workflow - Run of "${this.props.workflow.title}"`;
+    } else {
+      document.title = `Workflow - "${this.props.workflow.title}"`;
+    }
 
+    let routeEl;
     if (this.props.workflow.status === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
