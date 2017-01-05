@@ -4,9 +4,7 @@ import { clickNode } from '../actions';
 
 function mapStateToProps(state) {
   return {
-    nodes: state.nodes,
-    workflow: state.workflow,
-    selection: state.selection,
+    title: state.workflow.title,
   };
 }
 

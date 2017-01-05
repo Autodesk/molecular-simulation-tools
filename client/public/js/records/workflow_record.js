@@ -16,7 +16,7 @@ const WorkflowRecord = new Record({
   outputPdb: '',
   runId: null,
   status: statusConstants.IDLE,
-  title: 'My Workflow',
+  title: '',
   uploadError: null,
   uploadPending: false,
   workflowNodes: new IList(),

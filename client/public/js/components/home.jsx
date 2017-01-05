@@ -7,7 +7,7 @@ function Home(props) {
   return (
     <div className="home">
       <AppBar
-        title="Refine ligand and active site in molecules"
+        title={props.title}
       />
       {props.children}
     </div>
@@ -16,6 +16,7 @@ function Home(props) {
 
 Home.propTypes = {
   children: React.PropTypes.element.isRequired,
+  title: React.PropTypes.string,
 };
 
 export default Home;
