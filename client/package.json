@@ -29,6 +29,7 @@
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",
+    "cors": "^2.8.1",
     "css-loader": "^0.23.1",
     "enzyme": "^2.6.0",
     "eslint": "^2.9.0",
@@ -37,12 +38,14 @@
     "eslint-plugin-import": "^1.6.1",
     "eslint-plugin-jsx-a11y": "^1.0.4",
     "eslint-plugin-react": "^5.0.1",
+    "express": "~4.14.0",
     "file-loader": "^0.9.0",
     "karma": "^0.13.22",
     "karma-mocha": "^0.2.2",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-webpack": "^1.7.0",
     "mocha": "^2.4.5",
+    "morgan": "~1.7.0",
     "node-sass": "^3.6.0",
     "phantomjs-prebuilt": "^2.1.7",
     "react-addons-test-utils": "^15.4.1",
@@ -58,7 +61,8 @@
     "tdd": "karma start",
     "build": "webpack -p",
     "watch": "webpack -p --watch",
-    "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors"
+    "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors",
+    "mock-server": "node test/fixtures/mock_server.js"
   },
   "author": "Autodesk Bio/Nano",
   "license": "Apache 2.0"

@@ -13,15 +13,7 @@ const apiUtils = {
   },
 
   getPDB(url) {
-    return fetch(url).then(res =>
-      res.text()
-    );
-  },
-
-  getModelData(url) {
-    return fetch(url).then(res =>
-      res.json()
-    );
+    return axios.get(url).then(res => res.data);
   },
 
   upload(file) {
