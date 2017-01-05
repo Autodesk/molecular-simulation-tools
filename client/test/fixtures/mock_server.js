@@ -47,7 +47,7 @@ app.get(`${VERSION_PREFIX}/workflow/state/:runId`, (req, res) => {
 });
 */
 
-app.get(`${VERSION_PREFIX}/workflow/temp/:workflowId`, (req, res) => {
+app.get(`${VERSION_PREFIX}/workflow/:workflowId`, (req, res) => {
   res.send({
     id: 0,
     title: 'VDE',

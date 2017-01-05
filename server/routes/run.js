@@ -1,6 +1,10 @@
 const express = require('express');
+const isEmail = require('validator').isEmail;
+const shortId = require('shortid');
 const dbConstants = require('../constants/db_constants');
 const redis = require('../utils/redis');
+const runUtils = require('../utils/run_utils');
+const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const router = new express.Router();
 
@@ -26,6 +30,45 @@ router.get('/:runId', (req, res, next) => {
           workflow,
         }));
       }).catch(next);
+  }).catch(next);
+});
+
+router.post('/', (req, res, next) => {
+  if (!req.body.workflowId && req.body.workflowId !== 0) {
+    return next(new Error('Missing required parameter "workflowId"'));
+  }
+  if (!req.body.email) {
+    return next(new Error('Missing required parameter "email"'));
+  }
+  if (!isEmail(req.body.email)) {
+    return next(new Error('Invalid email given'));
+  }
+  if (!req.body.pdbUrl) {
+    return next(new Error('Missing required parameter "pdbUrl"'));
+  }
+
+  const workflowId = req.body.workflowId.toString();
+  const runId = shortId.generate();
+
+  // Add the email to the set of emails to notify
+  // when this workflow is complete
+  // TODO we can probably use the email in the run instead
+  const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, req.body.email);
+
+  const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify({
+    id: runId,
+    workflowId,
+    email: req.body.email,
+    inputPdbUrl: req.body.pdbUrl,
+  }));
+
+  const statePromise = runUtils.setRunStatus(
+    runId, statusConstants.RUNNING
+  );
+
+  return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
+    runUtils.executeWorkflow(runId, req.body.pdbUrl);
+    res.send({ runId });
   }).catch(next);
 });
 

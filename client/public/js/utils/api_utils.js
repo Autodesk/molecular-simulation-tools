@@ -5,7 +5,7 @@ const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
   run(workflowId, email, inputPdbUrl) {
-    return axios.post(`${API_URL}/v1/workflow/run`, {
+    return axios.post(`${API_URL}/v1/run`, {
       workflowId,
       email,
       pdbUrl: inputPdbUrl,
@@ -41,7 +41,7 @@ const apiUtils = {
   },
 
   getWorkflow(workflowId) {
-    return axios.get(`${API_URL}/v1/workflow/temp/${workflowId}`).then(res =>
+    return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
       new WorkflowRecord(res.data)
     );
   },
