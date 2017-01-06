@@ -186,6 +186,7 @@ const runUtils = {
                     outputPdbPath: publicOutputPdbPath,
                     status,
                     outputData,
+                    ended: Date.now(),
                   });
                   redis.hset(
                     dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)

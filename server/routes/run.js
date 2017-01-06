@@ -60,6 +60,7 @@ router.post('/', (req, res, next) => {
     workflowId,
     email: req.body.email,
     inputPdbUrl: req.body.pdbUrl,
+    created: Date.now(),
   }));
 
   const statePromise = runUtils.setRunStatus(
