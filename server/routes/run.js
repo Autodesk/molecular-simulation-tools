@@ -73,4 +73,27 @@ router.post('/', (req, res, next) => {
   }).catch(next);
 });
 
+router.post('/cancel', (req, res, next) => {
+  if (!req.body.runId && req.body.runId !== 0) {
+    return next(new Error('Missing required parameter "runId"'));
+  }
+
+  return redis.hget(dbConstants.REDIS_RUNS, req.body.runId).then(
+    (runString) => {
+      if (!runString) {
+        return next(new Error(`Run with id "${req.body.runId}" not found`));
+      }
+
+      const run = JSON.parse(runString);
+      const updatedRunString = JSON.stringify(Object.assign({}, run, {
+        status: statusConstants.CANCELED,
+      }));
+
+      return redis.hset(
+        dbConstants.REDIS_RUNS, req.body.runId, updatedRunString
+      ).then(() => res.end()).catch(next);
+    }
+  ).catch(next);
+});
+
 module.exports = router;

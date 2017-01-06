@@ -112,9 +112,7 @@ function workflow(state = initialState, action) {
       }
       return state.merge({
         canceling: false,
-        workflowNodes: state.workflowNodes.map(
-          workflowNode => workflowNode.set('status', statusConstants.CANCELED)
-        ),
+        status: statusConstants.CANCELED,
       });
 
     default:
