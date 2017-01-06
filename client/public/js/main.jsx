@@ -11,20 +11,20 @@ import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
-require('file?name=[name].[ext]!../index.html');
+require('../index.html');
 require('../css/normalize.css');
 require('../css/main.css');
 require('../css/main.scss');
-require('file?name=[name].[ext]!../404.html');
-require('file?name=[name].[ext]!../browserconfig.xml');
-require('file?name=[name].[ext]!../favicon.ico');
-require('file?name=[name].[ext]!../humans.txt');
-require('file?name=[name].[ext]!../LICENSE.txt');
-require('file?name=[name].[ext]!../robots.txt');
-require('file?name=[name].[ext]!../apple-touch-icon.png');
-require('file?name=[name].[ext]!../tile.png');
-require('file?name=[name].[ext]!../crossdomain.xml');
-require('file?name=[name].[ext]!../tile-wide.png');
+require('../404.html');
+require('../browserconfig.xml');
+require('../favicon.ico');
+require('../humans.txt');
+require('../LICENSE.txt');
+require('../robots.txt');
+require('../apple-touch-icon.png');
+require('../tile.png');
+require('../crossdomain.xml');
+require('../tile-wide.png');
 
 injectTapEventPlugin();
 
@@ -34,7 +34,13 @@ render((
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={HomeRoot}>
-        <IndexRoute component={NotFound} />
+        <IndexRoute
+          getComponent={(location, callback) =>
+            System.import('./components/home_page').then(module =>
+              callback(null, module.default)
+            )
+          }
+        />
         <Route path="workflow/:workflowId" component={WorkflowRoot} />
         <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
         <Route path="*" component={NotFound} />

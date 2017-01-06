@@ -12,34 +12,33 @@ module.exports = {
     filename: 'bundle.js',
   },
   devServer: {
-    port: '4000',
-    hot: true,
+    port: 4000,
     historyApiFallback: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel',
+        loader: 'babel-loader',
       }, {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'eslint-loader',
       }, {
-        test: /\.(png|gif)$/,
-        include: /public\/img/,
+        test: /\.(png|gif|ico|html|xml|txt)$/,
+        include: /public/,
         loaders: ['file-loader'],
       }, {
         test: /\.s?css$/,
         include: /public\/css/,
-        loaders: ['style', 'css', 'sass'],
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
       }, {
         test: /\.(woff|woff2|eot|ttf|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url',
+        loader: 'url-loader',
       },
     ],
   },

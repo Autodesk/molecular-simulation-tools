@@ -15,7 +15,7 @@ function Home(props) {
 }
 
 Home.propTypes = {
-  children: React.PropTypes.element.isRequired,
+  children: React.PropTypes.element,
   title: React.PropTypes.string,
 };
 
