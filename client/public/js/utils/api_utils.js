@@ -59,9 +59,10 @@ const apiUtils = {
     });
   },
 
-  cancelRun() {
-    // TODO
-    return Promise.reject();
+  cancelRun(runId) {
+    return axios.post(`${API_URL}/v1/run/cancel`, {
+      runId,
+    });
   },
 };
 
