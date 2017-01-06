@@ -18,13 +18,12 @@ import imgSoon from '../../img/soon.svg';
 import imgTweet from '../../img/tweet.svg';
 import imgFace from '../../img/face.svg';
 
-import '../../css/home_page.css';
+import '../../css/home_page.scss';
 
 function HomePage() {
   return (
     <div className="home-page">
       <nav
-        id="scrollNavigation"
         className="navbar navbar-default navbar-fixed-top"
         role="navigation"
       >
@@ -58,21 +57,21 @@ function HomePage() {
           </div>
         </div>
       </nav>
-      <div id="heroSection" className="heroSection">
-        <img id="m3" alt="hero" src={imgM3} />
-        <img id="m4" alt="hero" src={imgM4} />
-        <img id="m2" alt="hero" src={imgM2} />
-        <img id="m1" alt="hero" src={imgM1} />
-        <div id="heroText" className="heroText heroTextXS" >
-          <h1 id="header" className="h1XS colorLight">Molecular Simulation Tools</h1>
-          <h2 id="subHeader" className="colorHighlight">Run and share molecular simulations</h2>
+      <div className="heroSection">
+        <img className="m3" alt="hero" src={imgM3} />
+        <img className="m4" alt="hero" src={imgM4} />
+        <img className="m2" alt="hero" src={imgM2} />
+        <img className="m1" alt="hero" src={imgM1} />
+        <div className="heroText heroTextXS" >
+          <h1 className="h1XS colorLight">Molecular Simulation Tools</h1>
+          <h2 className="colorHighlight">Run and share molecular simulations</h2>
           <div>
             <img className="socialIcon" alt="Tweet" src={imgTweet} />
             <img className="socialIcon" alt="Share on Facebook" src={imgFace} />
           </div>
         </div>
       </div>
-      <div id="toolCardSection" className="toolsCardSection">
+      <div className="toolsCardSection">
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
@@ -86,18 +85,17 @@ function HomePage() {
           </div>
           <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
             <div className="col-md-4 col-sm-6 col-xs-12">
-              <div id="card1" className="card">
-                <div id="card1" className="cardBack blueBack" />
+              <div className="card">
+                <div className="cardBack blueBack" />
                 <img
-                  id="image1"
                   alt="back"
                   src={imgBack1}
                   className="cardImage img-responsive"
                 />
-                <h5 id="title1" className="cardTitle yellowFont">
+                <h5 className="cardTitle yellowFont">
                   Preparing the outer ligand structure
                 </h5>
-                <p id="info1" className="cardInfo whiteFont">
+                <p className="cardInfo whiteFont">
                   This is the place to put more information regarding this workflow
                 </p>
                 <div className="cardOverlay" />
@@ -108,18 +106,17 @@ function HomePage() {
               </div>
             </div>
             <div className="col-md-4 col-sm-6 col-xs-12">
-              <div id="card2" className="card">
-                <div id="card2" className="cardBack purpleBack" />
+              <div className="card">
+                <div className="cardBack purpleBack" />
                 <img
-                  id="image2"
                   alt="back"
                   src={imgBack2}
                   className="cardImage img-responsive"
                 />
-                <h5 id="title2" className="cardTitle greenFont">
+                <h5 className="cardTitle greenFont">
                   Preparing the outer ligand structure
                 </h5>
-                <p id="info2" className="cardInfo whiteFont">
+                <p className="cardInfo whiteFont">
                   This is the place to put more information regarding this workflow
                 </p>
                 <div className="cardOverlay" />
@@ -130,18 +127,17 @@ function HomePage() {
               </div>
             </div>
             <div className="col-md-4 col-sm-6 col-xs-12">
-              <div id="card3" className="card">
-                <div id="card3" className="cardBack redBack" />
+              <div className="card">
+                <div className="cardBack redBack" />
                 <img
-                  id="image3"
                   alt="back"
                   src={imgBack3}
                   className="cardImage img-responsive"
                 />
-                <h5 id="title3" className="cardTitle whiteFont">
+                <h5 className="cardTitle whiteFont">
                   Preparing the outer ligand structure
                 </h5>
-                <p id="info3" className="cardInfo whiteFont">
+                <p className="cardInfo whiteFont">
                   This is the place to put more information regarding this workflow
                 </p>
                 <div className="cardOverlay" />
@@ -153,18 +149,17 @@ function HomePage() {
               </div>
             </div>
             <div className="col-md-4 col-sm-6 col-xs-12">
-              <div id="card4" className="card">
-                <div id="card4" className="cardBack goldBack" />
+              <div className="card">
+                <div className="cardBack goldBack" />
                 <img
-                  id="image4"
                   alt="card"
                   src={imgBack4}
                   className="cardImage img-responsive"
                 />
-                <h5 id="title4" className="cardTitle whiteFont">
+                <h5 className="cardTitle whiteFont">
                   Preparing the outer ligand structure
                 </h5>
-                <p id="info4" className="cardInfo whiteFont">
+                <p className="cardInfo whiteFont">
                   This is the place to put more information regarding this workflow
                 </p>
                 <div className="cardOverlay" />
@@ -178,7 +173,7 @@ function HomePage() {
           </div>
         </div>
       </div>
-      <div id="aboutSection" className="aboutSection">
+      <div className="aboutSection">
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
@@ -230,7 +225,7 @@ function HomePage() {
           </div>
         </div>
       </div>
-      <div id="joinSection" className="joinSection">
+      <div className="joinSection">
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
@@ -298,7 +293,7 @@ function HomePage() {
           </div>
         </div>
       </div>
-      <div id="contactSection" className="contactSection">
+      <div className="contactSection">
         <div className="container">
           <div className="row">
             <div className="col-sm-4" style={{ paddingBottom: '60px' }}>

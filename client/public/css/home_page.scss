@@ -100,7 +100,7 @@ p
 
 /* ---------------------- HERO --------------------- */
 
-#m1
+.m1
 {
   position: fixed;
   left: 65%;
@@ -108,7 +108,7 @@ p
   z-index: -1;
 }
 
-#m2
+.m2
 {
   position: fixed;
   left: 40%;
@@ -116,7 +116,7 @@ p
   z-index: -1;
 }
 
-#m3
+.m3
 {
   position: fixed;
   left: 100px;
@@ -124,7 +124,7 @@ p
   opacity: 0.3;
 }
 
-#m4
+.m4
 {
   position: fixed;
   left: 0;
@@ -219,79 +219,75 @@ p
   position: relative;
   border-radius: 20px;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-    -webkit-transition: 0.2s;
+  -webkit-transition: 0.2s;
   transition: 0.2s;
-}
 
-.card.active {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  transform: translate3d(0px, -1px, 0px);
+  &:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translate3d(0px, -1px, 0px);
     -webkit-transition: 0.2s;
-  transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  .cardImage {
+    margin-bottom: 20px;
+    border-radius: 20px;
+    width: 100%;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  &:hover .cardImage {
+    opacity: 1;
+    mix-blend-mode: multiply;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  .cardTitle {
+    position: absolute;
+    width: 86%;
+    top: 65px;
+    left: 20px;
+    opacity: 1;
+    font-size: 2em;
+    font-family: 'art-bold';
+    cursor: default;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  &:hover .cardTitle {
+    top: 60px;
+    opacity: 0;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  .cardInfo {
+    position: absolute;
+    width: 86%;
+    top: 75px;
+    left: 20px;
+    opacity: 0;
+    font-size: 1em;
+    font-family: 'art-bold';
+    cursor: default;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
+
+  &:hover .cardInfo {
+    top: 70px;
+    opacity: 1;
+      -webkit-transition: 0.2s;
+    transition: 0.2s;
+  }
 }
-
-.cardImage {
-  margin-bottom: 20px;
-  border-radius: 20px;
-  width: 100%;
-  opacity: 0.4;
-  mix-blend-mode: multiply;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-.cardImage.active {
-  opacity: 1;
-  mix-blend-mode: multiply;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-.cardTitle {
-  position: absolute;
-  width: 86%;
-  top: 65px;
-  left: 20px;
-  opacity: 1;
-  font-size: 2em;
-  font-family: 'art-bold';
-  cursor: default;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-.cardTitle.active {
-  top: 60px;
-  opacity: 0;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-.cardInfo {
-  position: absolute;
-  width: 86%;
-  top: 75px;
-  left: 20px;
-  opacity: 0;
-  font-size: 1em;
-  font-family: 'art-bold';
-  cursor: default;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-.cardInfo.active {
-  top: 70px;
-  opacity: 1;
-    -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-
 
 /* ------- CUSTOMIZATION ------- */
-
-
 .yellowFont
 {
   color: #F1FF66;
@@ -337,6 +333,7 @@ p
 .heroSection
 {
   padding-top: 180px;
+  height: 882px;
 }
 
 .toolsCardSection
