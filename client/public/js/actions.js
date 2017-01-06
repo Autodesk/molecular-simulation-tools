@@ -1,22 +1,7 @@
 import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
-import realApiUtils from './utils/api_utils';
-import mockApiUtils from './utils/mock_api_utils';
-
-const apiUtils = process.env.NODE_ENV === 'offline' ?
-  mockApiUtils : realApiUtils;
-
-// TODO now unnecessary?
-export function initialize() {
-  return (dispatch) => {
-    apiUtils.getGallery().then(nodes =>
-      dispatch({
-        type: actionConstants.INITIALIZE,
-        nodes,
-      })
-    ).catch(console.error.bind(console));
-  };
-}
+import apiUtils from './utils/api_utils';
+import workflowUtils from './utils/workflow_utils';
 
 export function initializeWorkflow(workflowId, runId) {
   return async function initializeWorkflowDispatch(dispatch) {
@@ -43,7 +28,7 @@ export function initializeWorkflow(workflowId, runId) {
 
     let workflow;
     try {
-      workflow = await apiUtils.getRun(workflowId, runId);
+      workflow = await apiUtils.getRun(runId);
     } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_RUN,
@@ -55,23 +40,36 @@ export function initializeWorkflow(workflowId, runId) {
       type: actionConstants.FETCHED_RUN,
       workflow,
     });
-    return workflow.workflowNodes.forEach((workflowNode) => {
-      if (!workflowNode.modelData && workflowNode.outputs.length) {
-        apiUtils.getPDB(workflowNode.outputs[0].value).then(modelData =>
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            modelData,
-          })
-        ).catch(error =>
-          dispatch({
-            type: actionConstants.FETCHED_PDB,
-            workflowNodeId: workflowNode.id,
-            err: error,
-          })
-        );
-      }
-    });
+
+    if (workflow.inputPdbUrl) {
+      apiUtils.getPDB(workflow.inputPdbUrl).then(modelData =>
+        dispatch({
+          type: actionConstants.FETCHED_INPUT_PDB,
+          modelData,
+        })
+      ).catch(error =>
+        dispatch({
+          type: actionConstants.FETCHED_INPUT_PDB,
+          err: error,
+        })
+      );
+    }
+
+    if (workflow.outputPdbUrl) {
+      apiUtils.getPDB(workflow.outputPdbUrl).then(modelData =>
+        dispatch({
+          type: actionConstants.FETCHED_OUTPUT_PDB,
+          modelData,
+        })
+      ).catch(error =>
+        dispatch({
+          type: actionConstants.FETCHED_OUTPUT_PDB,
+          err: error,
+        })
+      );
+    }
+
+    return true;
   };
 }
 
@@ -108,34 +106,19 @@ export function clickWorkflowNodeResults() {
   };
 }
 
-export function clickRun(workflowId, workflowNodes) {
+export function clickRun(workflowId, email, inputPdbUrl) {
   return (dispatch) => {
-    const nodeIds = workflowNodes.map(workflowNode => workflowNode.nodeId);
-
     dispatch({
       type: actionConstants.CLICK_RUN,
-      workflowNodeIds: workflowNodes.map(workflowNode => workflowNode.id),
     });
 
-    apiUtils.run(nodeIds).then((res) => {
-      /*
-      const workflowNodesRan = workflowNodes.map((workflowNode) => {
-        const workflowNodeData = res.workflowNodesData.find(workflowNodeDataI =>
-          workflowNodeDataI.id === workflowNode.nodeId
-        );
-        return workflowNode.set('outputs', [{
-          name: 'pdb',
-          value: workflowNodeData.outputs[0].value,
-        }]);
-      });
-      */
-
+    apiUtils.run(workflowId, email, inputPdbUrl).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
-        runId: res.runId,
+        runId,
       });
 
-      browserHistory.push(`/workflow/${workflowId}/${res.runId}`);
+      browserHistory.push(`/workflow/${workflowId}/${runId}`);
     }).catch((err) => {
       console.error(err);
 
@@ -153,12 +136,20 @@ export function upload(file) {
       type: actionConstants.UPLOAD,
       file,
     });
-    apiUtils.upload(file).then(url =>
+
+    const uploadPromise = apiUtils.upload(file);
+    const readPromise = workflowUtils.readPdb(file);
+    Promise.all([uploadPromise, readPromise]).then((results) => {
+      if (!results[0] || !results[1]) {
+        throw new Error('Missing result from upload/read');
+      }
+
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
-        url,
-      })
-    ).catch(err =>
+        pdbUrl: results[0],
+        pdb: results[1],
+      });
+    }).catch(err =>
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
         err: err ? (err.message || err) : null,
@@ -173,17 +164,23 @@ export function submitPdbId(pdbId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId).then(pdbUrl =>
+    let pdbUrl;
+    apiUtils.getPdbById(pdbId).then((responsePdbUrl) => {
+      pdbUrl = responsePdbUrl;
+      return apiUtils.getPDB(pdbUrl);
+    }).then(pdb =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
+        pdb,
       })
-    ).catch(err =>
+    ).catch((err) => {
+      console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         error: err.message,
-      })
-    );
+      });
+    });
   };
 }
 

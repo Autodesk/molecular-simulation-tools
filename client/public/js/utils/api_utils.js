@@ -1,91 +1,19 @@
-import { Map as IMap } from 'immutable';
-import request from 'superagent';
-import NodeRecord from '../records/node_record';
+import axios from 'axios';
+import WorkflowRecord from '../records/workflow_record';
 
 const API_URL = process.env.API_URL || '';
-// http://metapage.bionano.autodesk.com:4040/metapage?git=https://github.com/dionjwa/convert_pdb_workflow_example&cwl=workflows/read_and_clean.cwl&cwlyml=pdbfile.yml
-const JSON_RPC_TYPE = 'application/json-rpc';
-
-let nodesGlobal;
 
 const apiUtils = {
-  run(nodeIds) {
-    return new Promise((resolve, reject) => {
-      const nodesData = nodesGlobal.valueSeq().filter(node =>
-        nodeIds.contains(node.id)
-      ).map(node =>
-        node.data
-      );
-
-      const jsonrpc = JSON.stringify({
-        method: 'run',
-        params: {
-          workflow: {
-            nodes: nodesData,
-          },
-        },
-        jsonrpc: '2.0',
-      });
-
-      request
-        .post(`${API_URL}/api/rpc/`)
-        .type(JSON_RPC_TYPE)
-        .send(jsonrpc)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            return reject(err);
-          }
-
-          return resolve(res.body.result.nodes);
-        });
-    });
-  },
-
-  getGallery() {
-    return new Promise((resolve, reject) => {
-      const jsonrpc = JSON.stringify({
-        method: 'gallery',
-        params: {},
-        jsonrpc: '2.0',
-      });
-
-      request
-        .post(`${API_URL}/api/rpc/`)
-        .type(JSON_RPC_TYPE)
-        .send(jsonrpc)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            return reject(err);
-          }
-
-          let defaultNodes = new IMap();
-          res.body.result.forEach((nodeData) => {
-            defaultNodes = defaultNodes.set(nodeData.id, new NodeRecord({
-              id: nodeData.id,
-              title: nodeData.meta.name,
-              data: nodeData,
-            }));
-          });
-
-          nodesGlobal = defaultNodes;
-
-          return resolve(defaultNodes);
-        });
-    });
+  run(workflowId, email, inputPdbUrl) {
+    return axios.post(`${API_URL}/v1/run`, {
+      workflowId,
+      email,
+      pdbUrl: inputPdbUrl,
+    }).then(res => res.data.runId);
   },
 
   getPDB(url) {
-    return fetch(url).then(res =>
-      res.text()
-    );
-  },
-
-  getModelData(url) {
-    return fetch(url).then(res =>
-      res.json()
-    );
+    return axios.get(url).then(res => res.data);
   },
 
   upload(file) {
@@ -95,40 +23,40 @@ const apiUtils = {
         return reject('File must have the .pdb extension.');
       }
 
-      const reader = new FileReader();
+      const data = new window.FormData();
+      data.append('file', file);
 
-      reader.onload = () => {
-        fetch(`${API_URL}/pdb_convert`, {
-          method: 'post',
-          body: file,
-        }).then((res) => {
-          if (res.status !== 200) {
-            return reject(`Received status code ${res.status}`);
-          }
-          return res.text();
-        }).then(path =>
-          resolve(`${window.location.origin}/${path}`)
-        ).catch(reject);
-      };
-      reader.onerror = reject;
-
-      return reader.readAsBinaryString(file);
+      return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
+        resolve(`${API_URL}${res.data.path}`)
+      ).catch(reject);
     });
   },
 
-  getPdbById() {
-    // TODO
-    return Promise.reject();
+  getPdbById(pdbId) {
+    return axios.get(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+      res.data
+    ).catch((err) => {
+      throw err.response.data;
+    });
   },
 
-  getWorkflow() {
-    // TODO
-    return Promise.reject();
+  getWorkflow(workflowId) {
+    return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
+      new WorkflowRecord(res.data)
+    );
   },
 
-  getRun() {
-    // TODO
-    return Promise.reject();
+  getRun(runId) {
+    return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
+      res.data
+    ).then((runData) => {
+      const outputPdbUrl = runData.outputPdbPath ?
+        `${API_URL}${runData.outputPdbPath}` : null;
+      return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
+        runId: runData.id,
+        outputPdbUrl,
+      }));
+    });
   },
 
   cancelRun() {

@@ -1,5 +1,9 @@
 import React from 'react';
-import statusConstants from '../constants/status_constants';
+import { statusConstants } from 'molecular-design-applications-shared';
+import statusDoneImage from '../../img/done.svg';
+import statusErrorImage from '../../img/error.svg';
+import statusRunningImage from '../../img/running.svg';
+
 require('../../css/component_utils.scss');
 
 const componentUtils = {
@@ -9,19 +13,19 @@ const componentUtils = {
     if (status === statusConstants.COMPLETED) {
       icon = (
         <div className="statusImg" >
-          <img src="../../img/done.svg" alt="done" />
+          <img src={statusDoneImage} alt="done" />
         </div>
       );
     } else if (status === statusConstants.ERROR) {
       icon = (
         <div className="statusImg" >
-          <img src="../../img/error.svg" alt="error" />
+          <img src={statusErrorImage} alt="error" />
         </div>
       );
     } else if (status === statusConstants.RUNNING) {
       icon = (
         <div className="statusImg" >
-          <img src="../../img/running.svg" alt="running" />
+          <img src={statusRunningImage} alt="running" />
         </div>
       );
     }

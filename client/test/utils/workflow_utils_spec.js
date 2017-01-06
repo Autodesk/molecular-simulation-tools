@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { List as IList } from 'immutable';
 import WorkflowRecord from '../../public/js/records/workflow_record';
 import WorkflowNodeRecord from '../../public/js/records/workflow_node_record';
-import statusConstants from '../../public/js/constants/status_constants';
+import statusConstants from 'molecular-design-applications-shared';
 import workflowUtils from '../../public/js/utils/workflow_utils';
 
 describe('workflowUtils', () => {
@@ -10,15 +10,15 @@ describe('workflowUtils', () => {
 
   beforeEach(() => {
     workflow = new WorkflowRecord({
-      pdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+      inputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
       email: 'justin.mccandless@autodesk.com',
     });
   });
 
   describe('isRunnable', () => {
-    describe('when no pdbUrl', () => {
+    describe('when no inputPdbUrl', () => {
       beforeEach(() => {
-        workflow = workflow.set('pdbUrl', '');
+        workflow = workflow.set('inputPdbUrl', '');
       });
 
       it('returns false', () => {
@@ -36,7 +36,7 @@ describe('workflowUtils', () => {
       });
     });
 
-    describe('when email and pdbUrl', () => {
+    describe('when email and inputPdbUrl', () => {
       it('returns true', () => {
         expect(workflowUtils.isRunnable(workflow)).to.equal(true);
       });

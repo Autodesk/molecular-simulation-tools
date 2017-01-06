@@ -4,10 +4,12 @@
   "description": "Workflow project",
   "main": "public/js/main.jsx",
   "dependencies": {
+    "axios": "^0.15.3",
     "bootstrap": "^3.3.7",
     "dotenv": "^2.0.0",
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
+    "molecular-design-applications-shared": "../shared",
     "nbmolviz3d": "git://github.com/Autodesk/molecule-3d-for-react.git#75272e8c7edd3489656ffd44fad8e053174f7810",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
@@ -16,7 +18,6 @@
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
-    "superagent": "^2.3.0",
     "validator": "^6.2.0"
   },
   "devDependencies": {
@@ -28,6 +29,7 @@
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",
+    "cors": "^2.8.1",
     "css-loader": "^0.23.1",
     "enzyme": "^2.6.0",
     "eslint": "^2.9.0",
@@ -36,12 +38,14 @@
     "eslint-plugin-import": "^1.6.1",
     "eslint-plugin-jsx-a11y": "^1.0.4",
     "eslint-plugin-react": "^5.0.1",
+    "express": "~4.14.0",
     "file-loader": "^0.9.0",
     "karma": "^0.13.22",
     "karma-mocha": "^0.2.2",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-webpack": "^1.7.0",
     "mocha": "^2.4.5",
+    "morgan": "~1.7.0",
     "node-sass": "^3.6.0",
     "phantomjs-prebuilt": "^2.1.7",
     "react-addons-test-utils": "^15.4.1",
@@ -57,7 +61,8 @@
     "tdd": "karma start",
     "build": "webpack -p",
     "watch": "webpack -p --watch",
-    "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors"
+    "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors",
+    "mock-server": "node test/fixtures/mock_server.js"
   },
   "author": "Autodesk Bio/Nano",
   "license": "Apache 2.0"

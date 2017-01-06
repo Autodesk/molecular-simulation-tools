@@ -15,7 +15,6 @@ import {
   submitPdbId,
   upload,
 } from '../actions';
-import workflowUtils from '../utils/workflow_utils';
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -29,9 +28,6 @@ function mapStateToProps(state, ownProps) {
     userMessage: state.userMessage,
     workflow: state.workflow,
     workflowId: ownProps.params.workflowId,
-    workflowStatus: workflowUtils.getWorkflowStatus(
-      state.workflow.workflowNodes
-    ),
   };
 }
 
@@ -40,9 +36,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(workflowNodes, workflowId) {
+    clickRun(workflowId, email, inputPdbUrl) {
       return () => {
-        dispatch(clickRun(workflowNodes, workflowId));
+        dispatch(clickRun(workflowId, email, inputPdbUrl));
       };
     },
     clickWorkflowNodeLoad() {
@@ -86,7 +82,7 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id, stateProps.workflow.workflowNodes
+      stateProps.workflow.id, stateProps.workflow.email, stateProps.workflow.inputPdbUrl
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.runId),
   });

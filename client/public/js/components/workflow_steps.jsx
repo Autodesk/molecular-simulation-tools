@@ -1,22 +1,23 @@
 import React from 'react';
+import { statusConstants } from 'molecular-design-applications-shared';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
 import selectionConstants from '../constants/selection_constants';
-import statusConstants from '../constants/status_constants';
 import workflowUtils from '../utils/workflow_utils';
 
 require('../../css/workflow_steps.scss');
 
 function WorkflowSteps(props) {
-  const running = props.workflowStatus === statusConstants.RUNNING;
+  const running = props.workflow.status === statusConstants.RUNNING;
   const runDisabled = running ||
     !workflowUtils.isRunnable(props.workflow);
 
+  const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = props.workflow.pdbUrl ?
+  const loadStatus = props.workflow.inputPdbUrl ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
@@ -25,7 +26,7 @@ function WorkflowSteps(props) {
   let emailLast = true;
 
   let resultsNode;
-  if (props.workflowStatus === statusConstants.COMPLETED) {
+  if (props.workflow.status === statusConstants.COMPLETED) {
     emailLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;
@@ -40,9 +41,9 @@ function WorkflowSteps(props) {
     );
   }
 
-  let workflowStepsEl;
-  if (props.workflow.workflowNodes.size) {
-    workflowStepsEl = [
+  let stepsEl;
+  if (!props.error) {
+    stepsEl = [
       <div key={0} className="workflow-steps">
         <ol>
           <WorkflowStep
@@ -64,6 +65,7 @@ function WorkflowSteps(props) {
       <div key={1} className="actions">
         <Button
           onClick={props.clickAbout}
+          active={aboutSelected}
         >
           About
         </Button>
@@ -80,7 +82,7 @@ function WorkflowSteps(props) {
 
   return (
     <div className="workflow-steps-pane">
-      {workflowStepsEl}
+      {stepsEl}
     </div>
   );
 }
@@ -91,8 +93,8 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
+  error: React.PropTypes.bool,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

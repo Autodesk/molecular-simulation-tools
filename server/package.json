@@ -12,23 +12,28 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "app-root-path": "^2.0.1",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "busboy": "^0.2.13",
     "cookie-parser": "^1.4.3",
+    "cors": "^2.8.1",
     "debug": "~2.2.0",
     "dockerode": "^2.3.1",
     "express": "^4.14.0",
     "fs-extended": "^0.2.1",
+    "molecular-design-applications-shared": "../shared",
     "morgan": "^1.7.0",
-    "object-hash": "^1.1.5",
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
-    "shortid": "^2.2.6"
+    "shortid": "^2.2.6",
+    "validator": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.8.0"
   }
 }

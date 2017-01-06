@@ -15,6 +15,13 @@ function View(props) {
         <p className="anim">Loading! Great things ahead...</p>
       </div>
     );
+  } else if (props.error) {
+    view = (
+      <div>
+        <h3>Error</h3>
+        <p>{props.error}</p>
+      </div>
+    );
   } else if (props.modelData) {
     view = (
       <div>
@@ -34,6 +41,7 @@ function View(props) {
 
 View.propTypes = {
   colorized: React.PropTypes.bool,
+  error: React.PropTypes.string,
   loading: React.PropTypes.bool,
   modelData: React.PropTypes.string,
 };

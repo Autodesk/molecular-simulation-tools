@@ -14,31 +14,46 @@ Then open your browser to  [http://localhost:4000](http://localhost:4000)
 ## Development
 
 ### Client
-
 See client/README.md
 
 ### Server
 
-	node server/server.js
+    npm run start
 
-APIs:
+#### Environment Variables
+`PORT`: Sets the port that the server will run on.
 
-	GET workflow/state/:workflowId
-		Will be one of [none|running|finished|failed]
+#### API
+All routes are prefixed with the current version.  See the mock server in client/test/fixtures/mock_server.js for example responses.
 
-	POST workflow/run
-		Two fields/files required for this multipart request:
-		email
-		input.json
+##### GET workflow/:workflowId
+Returns the indicated workflow.
 
-	GET workflow/stdout/:workflowId
-		Returns the stdout logs of the finished workflow
+##### GET workflow/stdout/:workflowId
+Returns the stdout logs of the finished workflow
 
-	GET workflow/stderr/:workflowId
-		Returns the stderr logs of the finished workflow
+##### GET workflow/stderr/:workflowId
+Returns the stderr logs of the finished workflow
 
-	GET workflow/exitcode/:workflowId
-		Returns the exit code of the finished workflow
+##### GET workflow/exitcode/:workflowId
+Returns the exit code of the finished workflow
+
+##### GET /run/:runId
+Returns the indicated run with its workflow populated.
+
+##### POST /run
+Runs the indicated workflow.  Requires workflowId, email, and pdbUrl.
+
+##### GET /structure/pdb_by_id/:pdbId
+Returns a url to the pdb file represented by the given pdbId.
+
+##### PUT /structure/upload
+Uploads the given pdb file to the server and returns a public URL to it.
+
+#### Seed Data
+Currently, Redis needs to be seeded with at least one workflow for the app to use, which you can create with:
+
+    hset workflows 0 '{"id": 0, "title": "VDE"}'
 
 ### Developing frontend assets
 In addition to mounting local directories as mentioned above, you can recompile the frontend assets on change by running `npm run watch` in the client directory.

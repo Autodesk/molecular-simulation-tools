@@ -9,6 +9,10 @@ function userMessage(state = initialState, action) {
       if (!action.error) {
         return state;
       }
+      // A 404 error will be displayed elsewhere
+      if (action.error.response && action.error.response.status === 404) {
+        return state;
+      }
       return state.merge({
         autoClose: false,
         message: `We're having trouble connecting. Are you connected to the
@@ -17,6 +21,10 @@ function userMessage(state = initialState, action) {
 
     case actionConstants.FETCHED_RUN:
       if (!action.error) {
+        return state;
+      }
+      // A 404 error will be displayed elsewhere
+      if (action.error.response && action.error.response.status === 404) {
         return state;
       }
       return state.merge({

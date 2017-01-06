@@ -17,10 +17,25 @@ function Workflow(props) {
       workflowNode => workflowNode.id === props.selection.id
     );
     selectedModelData = selectedWorkflowNode.modelData;
+  } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
+    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) &&
+    props.workflow.inputPdb) {
+    selectedModelData = props.workflow.inputPdb;
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
-    const selectedWorkflowNode = props.workflow.workflowNodes.get(props.morph);
-    selectedModelData = selectedWorkflowNode.modelData;
+    if (props.morph === 1) {
+      selectedModelData = props.workflow.outputPdb;
+    } else {
+      selectedModelData = props.workflow.inputPdb;
+    }
+  }
+
+  let viewError;
+  const fetchingError = props.workflow.fetchingError;
+  if (fetchingError && fetchingError.response &&
+    fetchingError.response.status === 404) {
+    const lookingFor = props.runPage ? 'run' : 'workflow';
+    viewError = `This ${lookingFor} does not exist!`;
   }
 
   return (
@@ -31,9 +46,9 @@ function Workflow(props) {
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
         clickWorkflowNodeResults={props.clickWorkflowNodeResults}
+        error={!!viewError}
         selection={props.selection}
         workflow={props.workflow}
-        workflowStatus={props.workflowStatus}
       />
       <Status
         fetchingPdb={props.fetchingPdb}
@@ -46,10 +61,10 @@ function Workflow(props) {
         submitPdbId={props.submitPdbId}
         submitEmail={props.submitEmail}
         workflow={props.workflow}
-        workflowStatus={props.workflowStatus}
       />
       <View
         colorized={props.colorized}
+        error={viewError}
         loading={props.workflow.fetching}
         modelData={selectedModelData}
       />
@@ -71,11 +86,11 @@ Workflow.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
+  runPage: React.PropTypes.bool,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
-  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default Workflow;

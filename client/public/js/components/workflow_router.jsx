@@ -1,5 +1,6 @@
 import React from 'react';
 import { Map as IMap } from 'immutable';
+import { statusConstants } from 'molecular-design-applications-shared';
 import Canceled from './canceled';
 import Errored from './errored';
 import Snackbar from './snackbar';
@@ -8,13 +9,10 @@ import SelectionRecord from '../records/selection_record';
 import UserMessageRecord from '../records/user_message_record';
 import WorkflowRecord from '../records/workflow_record';
 import Workflow from './workflow';
-import statusConstants from '../constants/status_constants';
 
 class WorkflowRouter extends React.Component {
   componentDidMount() {
-    this.initialize(
-      this.props.workflowId, this.props.runId, this.props.workflow.title
-    );
+    this.initialize(this.props.workflowId, this.props.runId);
 
     this.state = {
       snackbarClosed: true,
@@ -38,9 +36,7 @@ class WorkflowRouter extends React.Component {
 
     // Reinitialize when need workflow/run (like on back button)
     if (!fetching && (needWorkflow || needRun)) {
-      this.initialize(
-        nextProps.workflowId, nextProps.runId, nextProps.workflow.title
-      );
+      this.initialize(nextProps.workflowId, nextProps.runId);
     }
 
     if (!this.props.workflow.fetchingError &&
@@ -58,20 +54,19 @@ class WorkflowRouter extends React.Component {
   }
 
   // Set up page for workflow/run distinction
-  initialize(workflowId, runId, workflowTitle) {
+  initialize(workflowId, runId) {
     this.props.initializeWorkflow(workflowId, runId);
-
-    if (runId) {
-      document.title = `Workflow - Run of "${workflowTitle}"`;
-    } else {
-      document.title = `Workflow - "${workflowTitle}"`;
-    }
   }
 
   render() {
-    let routeEl;
+    if (this.props.runId) {
+      document.title = `Workflow - Run of "${this.props.workflow.title}"`;
+    } else {
+      document.title = `Workflow - "${this.props.workflow.title}"`;
+    }
 
-    if (this.props.workflowStatus === statusConstants.RUNNING) {
+    let routeEl;
+    if (this.props.workflow.status === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
           canceling={this.props.workflow.canceling}
@@ -79,11 +74,11 @@ class WorkflowRouter extends React.Component {
           onClickCancel={this.props.clickCancel}
         />
       );
-    } else if (this.props.workflowStatus === statusConstants.CANCELED) {
+    } else if (this.props.workflow.status === statusConstants.CANCELED) {
       routeEl = (
         <Canceled />
       );
-    } else if (this.props.workflowStatus === statusConstants.ERROR) {
+    } else if (this.props.workflow.status === statusConstants.ERROR) {
       routeEl = (
         <Errored />
       );
@@ -107,7 +102,7 @@ class WorkflowRouter extends React.Component {
           submitPdbId={this.props.submitPdbId}
           submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
-          workflowStatus={this.props.workflowStatus}
+          runPage={!!this.props.runId}
         />
       );
     }
@@ -149,7 +144,6 @@ WorkflowRouter.propTypes = {
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
   workflowId: React.PropTypes.string.isRequired,
-  workflowStatus: React.PropTypes.string.isRequired,
 };
 
 export default WorkflowRouter;

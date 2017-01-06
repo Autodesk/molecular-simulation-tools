@@ -1,5 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
-import statusConstants from '../constants/status_constants';
+import { statusConstants } from 'molecular-design-applications-shared';
 
 const workflowUtils = {
   /**
@@ -53,7 +53,7 @@ const workflowUtils = {
   },
 
   isRunnable(workflow) {
-    if (!workflow.pdbUrl) {
+    if (!workflow.inputPdbUrl) {
       return false;
     }
     if (!isEmail(workflow.email)) {
@@ -64,6 +64,15 @@ const workflowUtils = {
     }
 
     return true;
+  },
+
+  readPdb(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
   },
 };
 
