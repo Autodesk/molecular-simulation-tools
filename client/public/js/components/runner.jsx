@@ -1,11 +1,11 @@
 import React from 'react';
 import AppBar from './app_bar';
 
-require('../../css/home.scss');
+require('../../css/runner.scss');
 
-function Home(props) {
+function Runner(props) {
   return (
-    <div className="home">
+    <div className="runner">
       <AppBar
         title={props.title}
       />
@@ -14,9 +14,9 @@ function Home(props) {
   );
 }
 
-Home.propTypes = {
+Runner.propTypes = {
   children: React.PropTypes.element,
   title: React.PropTypes.string,
 };
 
-export default Home;
+export default Runner;

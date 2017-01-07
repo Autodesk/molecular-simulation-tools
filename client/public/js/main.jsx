@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import HomeRoot from './containers/home_root';
+import RunnerRoot from './containers/runner_root';
 import NotFound from './components/not_found';
 import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
@@ -28,21 +28,25 @@ require('../tile-wide.png');
 
 injectTapEventPlugin();
 
-const store = createStore(index, applyMiddleware(thunkMiddleware, loggingMiddleware));
+const store = createStore(
+  index, applyMiddleware(thunkMiddleware, loggingMiddleware)
+);
 
 render((
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" component={HomeRoot}>
-        <IndexRoute
-          getComponent={(location, callback) =>
-            System.import('./components/home_page').then(module =>
-              callback(null, module.default)
-            )
-          }
-        />
-        <Route path="workflow/:workflowId" component={WorkflowRoot} />
-        <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
+      <Route
+        path="/"
+        getComponent={(location, callback) =>
+          System.import('./components/home_page').then(module =>
+            callback(null, module.default)
+          )
+        }
+      />
+      <Route path="/workflow" component={RunnerRoot}>
+        <IndexRoute component={NotFound} />
+        <Route path=":workflowId" component={WorkflowRoot} />
+        <Route path=":workflowId/:runId" component={WorkflowRoot} />
         <Route path="*" component={NotFound} />
       </Route>
       <Route path="*" component={NotFound} />

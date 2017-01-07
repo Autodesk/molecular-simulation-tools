@@ -1,4 +1,6 @@
 import React from 'react';
+import WorkflowCard from './workflow_card';
+import WorkflowRecord from '../records/workflow_record';
 import imgLogo from '../../img/logo.png';
 import imgM1 from '../../img/m1.png';
 import imgM2 from '../../img/m2.png';
@@ -8,17 +10,63 @@ import imgLogo1 from '../../img/logo1.png';
 import imgLogo2 from '../../img/logo2.png';
 import imgLogo3 from '../../img/logo3.png';
 import imgLogo4 from '../../img/logo4.png';
-import imgBack1 from '../../img/back1.png';
-import imgBack2 from '../../img/back2.png';
-import imgBack3 from '../../img/back3.png';
-import imgBack4 from '../../img/back4.png';
 import imgLogoResearch from '../../img/logo_research.png';
 import imgLogos from '../../img/logos.png';
-import imgSoon from '../../img/soon.svg';
 import imgTweet from '../../img/tweet.svg';
 import imgFace from '../../img/face.svg';
-
 import '../../css/home_page.scss';
+
+// TODO this should come from an ajax request
+const workflows = [
+  new WorkflowRecord({
+    id: '0',
+    title: 'Preparing the outer ligand structure',
+    bgIndex: 0,
+    bgColor: '#3762E9',
+    color: '#F1FF66',
+    comingSoon: false,
+    creatorImage: imgLogo1,
+    description: 'This is the place to put more info regarding this workflow',
+    runs: 124,
+    views: 737,
+  }),
+  new WorkflowRecord({
+    id: '0',
+    title: 'Preparing the outer ligand structure',
+    bgColor: '#292E60',
+    bgIndex: 1,
+    color: '#2FE695',
+    comingSoon: false,
+    creatorImage: imgLogo2,
+    description: 'This is the place to put more info regarding this workflow',
+    runs: 124,
+    views: 737,
+  }),
+  new WorkflowRecord({
+    id: '0',
+    title: 'Preparing the outer ligand structure',
+    bgColor: '#42413F',
+    bgIndex: 2,
+    color: '#FFFFFF',
+    comingSoon: true,
+    creatorImage: imgLogo3,
+    description: 'This is the place to put more info regarding this workflow',
+    runs: 124,
+    views: 737,
+  }),
+  new WorkflowRecord({
+    id: '0',
+    title: 'Preparing the outer ligand structure',
+    bgColor: '#DE2755',
+    bgIndex: 3,
+    color: '#FFFFFF',
+    comingSoon: true,
+    creatorImage: imgLogo4,
+    description: 'This is the place to put more info regarding this workflow',
+    runs: 124,
+    views: 737,
+  }),
+];
 
 function HomePage() {
   return (
@@ -84,92 +132,19 @@ function HomePage() {
             </div>
           </div>
           <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
-            <div className="col-md-4 col-sm-6 col-xs-12">
-              <div className="card">
-                <div className="cardBack blueBack" />
-                <img
-                  alt="back"
-                  src={imgBack1}
-                  className="cardImage img-responsive"
+            {
+              workflows.map((workflow, index) =>
+                <WorkflowCard
+                  bgIndex={workflow.bgIndex}
+                  bgColor={workflow.bgColor}
+                  color={workflow.color}
+                  comingSoon={workflow.comingSoon}
+                  creatorImage={workflow.creatorImage}
+                  id={workflow.id}
+                  key={index}
                 />
-                <h5 className="cardTitle yellowFont">
-                  Preparing the outer ligand structure
-                </h5>
-                <p className="cardInfo whiteFont">
-                  This is the place to put more information regarding this workflow
-                </p>
-                <div className="cardOverlay" />
-                <h6 className="cardDeveloper">by Autodesk</h6>
-                <h7 className="cardViews">737 Views</h7>
-                <h7 className="cardRuns">124 Runs</h7>
-                <img src={imgLogo1} alt="card logo" className="cardLogo" />
-              </div>
-            </div>
-            <div className="col-md-4 col-sm-6 col-xs-12">
-              <div className="card">
-                <div className="cardBack purpleBack" />
-                <img
-                  alt="back"
-                  src={imgBack2}
-                  className="cardImage img-responsive"
-                />
-                <h5 className="cardTitle greenFont">
-                  Preparing the outer ligand structure
-                </h5>
-                <p className="cardInfo whiteFont">
-                  This is the place to put more information regarding this workflow
-                </p>
-                <div className="cardOverlay" />
-                <h6 className="cardDeveloper">by Autodesk</h6>
-                <h7 className="cardViews">737 Views</h7>
-                <h7 className="cardRuns">124 Runs</h7>
-                <img src={imgLogo2} alt="card logo" className="cardLogo" />
-              </div>
-            </div>
-            <div className="col-md-4 col-sm-6 col-xs-12">
-              <div className="card">
-                <div className="cardBack redBack" />
-                <img
-                  alt="back"
-                  src={imgBack3}
-                  className="cardImage img-responsive"
-                />
-                <h5 className="cardTitle whiteFont">
-                  Preparing the outer ligand structure
-                </h5>
-                <p className="cardInfo whiteFont">
-                  This is the place to put more information regarding this workflow
-                </p>
-                <div className="cardOverlay" />
-                <h6 className="cardDeveloper">by Autodesk</h6>
-                <h7 className="cardViews">737 Views</h7>
-                <h7 className="cardRuns">124 Runs</h7>
-                <img src={imgLogo3} alt="card logo" className="cardLogo" />
-                <img src={imgSoon} alt="soon" className="soon" />
-              </div>
-            </div>
-            <div className="col-md-4 col-sm-6 col-xs-12">
-              <div className="card">
-                <div className="cardBack goldBack" />
-                <img
-                  alt="card"
-                  src={imgBack4}
-                  className="cardImage img-responsive"
-                />
-                <h5 className="cardTitle whiteFont">
-                  Preparing the outer ligand structure
-                </h5>
-                <p className="cardInfo whiteFont">
-                  This is the place to put more information regarding this workflow
-                </p>
-                <div className="cardOverlay" />
-                <h6 className="cardDeveloper">by Autodesk</h6>
-                <h7 className="cardViews">737 Views</h7>
-                <h7 className="cardRuns">124 Runs</h7>
-                <img src={imgLogo4} alt="card logo" className="cardLogo" />
-                <img src={imgSoon} alt="soon" className="soon" />
-              </div>
-            </div>
+              )
+            }
           </div>
         </div>
       </div>

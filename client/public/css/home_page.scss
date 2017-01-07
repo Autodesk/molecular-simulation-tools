@@ -1,389 +1,214 @@
-body
-{
+.home-page {
   position: relative;
   background: #0E0F17;
-}
 
-/* ---------------------- FONTS --------------------- */
-
-h1
-{
-  font-size: 4em;
-  font-family: 'art-thin';
-  cursor: default;
-}
-
-h2
-{
-  font-size: 2em;
-  font-family: 'art-light';
-  cursor: default;
-}
-
-h3
-{
-  font-size: 4em;
-  font-family: 'art-thin';
-  cursor: default;
-}
-
-h4
-{
-  font-size: 2em;
-  font-family: 'art-light';
-  cursor: default;
-}
-
-h6
-{
-  font-size: 1em;
-  font-family: 'art-bold';
-  cursor: default;
-}
-
-h7
-{
-  font-size: 0.8em;
-  font-family: 'art-bold';
-  cursor: default;
-}
-
-p
-{
-  font-family: 'art-med';
-  cursor: default;
-}
-
-.footerLink, footerLink:visited
-{
-  color: white;
-  font-family: "art-med";
-}
-
-@media (max-width:479px)
-{
-  .h1XS
+  h1
   {
-    font-size: 3em;
-    font-family: 'art-light';
-  }
-}
-
-.colorLight
-{
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.colorHighlight
-{
-  color: #2A5DFA;
-}
-
-.colorGrey
-{
-  color: rgba(0, 0, 0, 0.4);
-}
-
-/* ---------------------- NAVIGATION --------------------- */
-
-.navbar
-{
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background: white;
-}
-
-.nav
-{
-  font-family: 'art-med';
-}
-
-/* ---------------------- HERO --------------------- */
-
-.m1
-{
-  position: fixed;
-  left: 65%;
-  top: 0px;
-  z-index: -1;
-}
-
-.m2
-{
-  position: fixed;
-  left: 40%;
-  top: 0px;
-  z-index: -1;
-}
-
-.m3
-{
-  position: fixed;
-  left: 100px;
-  z-index: -1;
-  opacity: 0.3;
-}
-
-.m4
-{
-  position: fixed;
-  left: 0;
-  z-index: -1;
-}
-
-.heroText
-{
-  position: absolute;
-  margin-top: 200px;
-  text-align: center;
-  width: 100%;
-}
-
-.socialIcon
-{
-  padding: 4px;
-  padding-top: 20px;
-  opacity: 0.2;
-  cursor: pointer;
-  width: 40px;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-}
-
-.socialIcon:hover
-{
-  opacity: 1;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-}
-
-/* ---------------------- TOOLCARDS--------------------- */
-
-.soon 
-{
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  opacity: 0.9;
-}
-
-.cardOverlay
-{
-  position: absolute;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 0 0 20px 20px;
-  width: 100%;
-  height: 80px;
-}
-
-.cardDeveloper
-{
-  position: absolute;
-  bottom: 36px;
-  left: 20px;
-  color: white;
-}
-
-.cardRuns
-{
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: white;
-}
-
-.cardViews
-{
-  position: absolute;
-  bottom: 20px;
-  left: 80px;
-  color: white;
-}
-
-.cardLogo {
-  position: absolute;
-  width: 40px;
-  top: 20px;
-  left: 20px;
-}
-
-.cardBack {
-  position: absolute;
-  border-radius: 20px;
-  width: 100%;
-  height: 100%;
-}
-
-.card {
-  position: relative;
-  border-radius: 20px;
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-
-  &:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    transform: translate3d(0px, -1px, 0px);
-    -webkit-transition: 0.2s;
-    transition: 0.2s;
-  }
-
-  .cardImage {
-    margin-bottom: 20px;
-    border-radius: 20px;
-    width: 100%;
-    opacity: 0.4;
-    mix-blend-mode: multiply;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
-  }
-
-  &:hover .cardImage {
-    opacity: 1;
-    mix-blend-mode: multiply;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
-  }
-
-  .cardTitle {
-    position: absolute;
-    width: 86%;
-    top: 65px;
-    left: 20px;
-    opacity: 1;
-    font-size: 2em;
-    font-family: 'art-bold';
+    font-size: 4em;
+    font-family: 'art-thin';
     cursor: default;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
   }
 
-  &:hover .cardTitle {
-    top: 60px;
-    opacity: 0;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
+  h2
+  {
+    font-size: 2em;
+    font-family: 'art-light';
+    cursor: default;
   }
 
-  .cardInfo {
-    position: absolute;
-    width: 86%;
-    top: 75px;
-    left: 20px;
-    opacity: 0;
+  h3
+  {
+    font-size: 4em;
+    font-family: 'art-thin';
+    cursor: default;
+  }
+
+  h4
+  {
+    font-size: 2em;
+    font-family: 'art-light';
+    cursor: default;
+  }
+
+  h6
+  {
     font-size: 1em;
     font-family: 'art-bold';
     cursor: default;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
   }
 
-  &:hover .cardInfo {
-    top: 70px;
+  h7
+  {
+    font-size: 0.8em;
+    font-family: 'art-bold';
+    cursor: default;
+  }
+
+  p
+  {
+    font-family: 'art-med';
+    cursor: default;
+  }
+
+  .footerLink, footerLink:visited
+  {
+    color: white;
+    font-family: "art-med";
+  }
+
+  @media (max-width:479px)
+  {
+    .h1XS
+    {
+      font-size: 3em;
+      font-family: 'art-light';
+    }
+  }
+
+  .colorLight
+  {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .colorHighlight
+  {
+    color: #2A5DFA;
+  }
+
+  .colorGrey
+  {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  /* ---------------------- NAVIGATION --------------------- */
+
+  .navbar
+  {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: white;
+  }
+
+  .nav
+  {
+    font-family: 'art-med';
+  }
+
+  /* ---------------------- HERO --------------------- */
+
+  .m1
+  {
+    position: fixed;
+    left: 65%;
+    top: 0px;
+    z-index: -1;
+  }
+
+  .m2
+  {
+    position: fixed;
+    left: 40%;
+    top: 0px;
+    z-index: -1;
+  }
+
+  .m3
+  {
+    position: fixed;
+    left: 100px;
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+  .m4
+  {
+    position: fixed;
+    left: 0;
+    z-index: -1;
+  }
+
+  .heroText
+  {
+    position: absolute;
+    margin-top: 200px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .socialIcon
+  {
+    padding: 4px;
+    padding-top: 20px;
+    opacity: 0.2;
+    cursor: pointer;
+    width: 40px;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+  }
+
+  .socialIcon:hover
+  {
     opacity: 1;
-      -webkit-transition: 0.2s;
-    transition: 0.2s;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
   }
-}
 
-/* ------- CUSTOMIZATION ------- */
-.yellowFont
-{
-  color: #F1FF66;
-}
+  /* ---------------------- SECTIONS --------------------- */
+  .heroSection
+  {
+    padding-top: 180px;
+    height: 882px;
+  }
 
-.blueBack
-{
-  background-color: #3762E9;
-}
+  .toolsCardSection
+  {
+    padding-top: 80px;
+    padding-bottom: 0px;
+    background-color: white;
+  }
 
-.greenFont
-{
-  color: #2FE695;
-}
+  .aboutSection
+  {
+    background: #5981FF;
+    color: rgba(255, 255, 255, 0.8);
+    padding-top: 120px;
+    padding-bottom: 160px;
+  }
 
-.purpleBack
-{
-  background-color: #292E60;
-}
+  .joinSection
+  {
+    color: rgba(255, 255, 255, 0.9);
+    padding-top: 120px;
+    padding-bottom: 160px;
+    background: #0E0F17;
+  }
 
-.blueFont
-{
-  color: #5981FF;
-}
+  .contactSection
+  {
+    color: rgba(255, 255, 255, 0.8);
+    padding-top: 120px;
+    background: #0E0F17;
+  }
 
-.goldBack
-{
-  background-color: #42413F;
-}
+  /* ---------------------- JOIN SECTION --------------------- */
 
-.whiteFont
-{
-  color: white;
-}
+  .contactButton, .contactButton:focus
+  {
+    border-radius: 50px;
+    font-family: 'art-bold';
+    border: none;
+    padding: 12px 50px 12px 50px;
+    width: 100%;
+    max-width: 350px;
+    background-color: white;
+    color: #1A1D2F;
+    margin-top: 40px;
+    outline: none;
+  }
 
-.redBack
-{
-  background-color: #DE2755;
-}
-
-/* ---------------------- SECTIONS --------------------- */
-
-.heroSection
-{
-  padding-top: 180px;
-  height: 882px;
-}
-
-.toolsCardSection
-{
-  padding-top: 80px;
-  padding-bottom: 0px;
-  background-color: white;
-}
-
-.aboutSection
-{
-  background: #5981FF;
-  color: rgba(255, 255, 255, 0.8);
-  padding-top: 120px;
-  padding-bottom: 160px;
-}
-
-.joinSection
-{
-  color: rgba(255, 255, 255, 0.9);
-  padding-top: 120px;
-  padding-bottom: 160px;
-  background: #0E0F17;
-}
-
-.contactSection
-{
-  color: rgba(255, 255, 255, 0.8);
-  padding-top: 120px;
-  background: #0E0F17;
-}
-
-/* ---------------------- JOIN SECTION --------------------- */
-
-.contactButton, .contactButton:focus
-{
-  border-radius: 50px;
-  font-family: 'art-bold';
-  border: none;
-  padding: 12px 50px 12px 50px;
-  width: 100%;
-  max-width: 350px;
-  background-color: white;
-  color: #1A1D2F;
-  margin-top: 40px;
-  outline: none;
-}
-
-.line
-{
-  border-top: solid 1px white;
-  padding-bottom: 20px;
+  .line
+  {
+    border-top: solid 1px white;
+    padding-bottom: 20px;
+  }
 }
