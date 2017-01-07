@@ -7,7 +7,6 @@ import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import RunnerRoot from './containers/runner_root';
 import NotFound from './components/not_found';
-import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
@@ -32,21 +31,25 @@ const store = createStore(
   index, applyMiddleware(thunkMiddleware, loggingMiddleware)
 );
 
+function codeSplitHomePage(location, callback) {
+  System.import('./components/home_page').then(module =>
+    callback(null, module.default)
+  );
+}
+function codeSplitWorkflowRoot(location, callback) {
+  System.import('./containers/workflow_root').then(module =>
+    callback(null, module.default)
+  );
+}
+
 render((
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route
-        path="/"
-        getComponent={(location, callback) =>
-          System.import('./components/home_page').then(module =>
-            callback(null, module.default)
-          )
-        }
-      />
+      <Route path="/" getComponent={codeSplitHomePage} />
       <Route path="/workflow" component={RunnerRoot}>
         <IndexRoute component={NotFound} />
-        <Route path=":workflowId" component={WorkflowRoot} />
-        <Route path=":workflowId/:runId" component={WorkflowRoot} />
+        <Route path=":workflowId" getComponent={codeSplitWorkflowRoot} />
+        <Route path=":workflowId/:runId" getComponent={codeSplitWorkflowRoot} />
         <Route path="*" component={NotFound} />
       </Route>
       <Route path="*" component={NotFound} />
