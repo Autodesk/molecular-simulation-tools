@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 require('dotenv').config();
@@ -9,7 +10,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: 'bundle.js',
+    filename: '[chunkhash].[name].js',
   },
   devServer: {
     port: 4000,
@@ -48,5 +49,8 @@ module.exports = {
       'NODE_ENV',
       'API_URL',
     ]),
+    new HtmlWebpackPlugin({
+      template: './public/index.ejs',
+    }),
   ],
 };

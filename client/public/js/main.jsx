@@ -10,13 +10,10 @@ import NotFound from './components/not_found';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
-require('../index.html');
 require('../css/normalize.css');
 require('../css/main.css');
 require('../css/main.scss');
-require('../404.html');
 require('../browserconfig.xml');
-require('../favicon.ico');
 require('../humans.txt');
 require('../LICENSE.txt');
 require('../robots.txt');
@@ -56,5 +53,5 @@ render((
     </Router>
   </Provider>
 ),
-  document.querySelector('.app')
+  document.querySelector('body')
 );
