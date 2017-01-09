@@ -15,6 +15,5 @@
     "expect": true,
   },
   "rules": {
-    "import/no-unresolved": 1,
   },
 }

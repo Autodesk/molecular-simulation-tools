@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Popover from './popover';
-import logoImage from '../../img/logo.png';
+import logoImage from '../../img/logo2.png';
 import shareTwitterImage from '../../img/twitter.svg';
 import shareEmailImage from '../../img/email.svg';
 import shareFacebookImage from '../../img/facebook.svg';

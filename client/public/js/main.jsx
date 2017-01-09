@@ -5,38 +5,48 @@ import { Provider } from 'react-redux';
 import { IndexRoute, Route, Router, browserHistory } from 'react-router';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import HomeRoot from './containers/home_root';
+import RunnerRoot from './containers/runner_root';
 import NotFound from './components/not_found';
-import WorkflowRoot from './containers/workflow_root';
 import index from './reducers/index';
 import loggingMiddleware from './middlewares/logging_middleware';
 
-require('file?name=[name].[ext]!../index.html');
 require('../css/normalize.css');
 require('../css/main.css');
 require('../css/main.scss');
-require('file?name=[name].[ext]!../404.html');
-require('file?name=[name].[ext]!../browserconfig.xml');
-require('file?name=[name].[ext]!../favicon.ico');
-require('file?name=[name].[ext]!../humans.txt');
-require('file?name=[name].[ext]!../LICENSE.txt');
-require('file?name=[name].[ext]!../robots.txt');
-require('file?name=[name].[ext]!../apple-touch-icon.png');
-require('file?name=[name].[ext]!../tile.png');
-require('file?name=[name].[ext]!../crossdomain.xml');
-require('file?name=[name].[ext]!../tile-wide.png');
+require('../browserconfig.xml');
+require('../humans.txt');
+require('../LICENSE.txt');
+require('../robots.txt');
+require('../apple-touch-icon.png');
+require('../tile.png');
+require('../crossdomain.xml');
+require('../tile-wide.png');
 
 injectTapEventPlugin();
 
-const store = createStore(index, applyMiddleware(thunkMiddleware, loggingMiddleware));
+const store = createStore(
+  index, applyMiddleware(thunkMiddleware, loggingMiddleware)
+);
+
+function codeSplitHomePage(location, callback) {
+  System.import('./components/home_page').then(module =>
+    callback(null, module.default)
+  );
+}
+function codeSplitWorkflowRoot(location, callback) {
+  System.import('./containers/workflow_root').then(module =>
+    callback(null, module.default)
+  );
+}
 
 render((
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" component={HomeRoot}>
+      <Route path="/" getComponent={codeSplitHomePage} />
+      <Route path="/workflow" component={RunnerRoot}>
         <IndexRoute component={NotFound} />
-        <Route path="workflow/:workflowId" component={WorkflowRoot} />
-        <Route path="workflow/:workflowId/:runId" component={WorkflowRoot} />
+        <Route path=":workflowId" getComponent={codeSplitWorkflowRoot} />
+        <Route path=":workflowId/:runId" getComponent={codeSplitWorkflowRoot} />
         <Route path="*" component={NotFound} />
       </Route>
       <Route path="*" component={NotFound} />

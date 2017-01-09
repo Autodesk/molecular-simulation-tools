@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Home from '../components/home';
+import Runner from '../components/runner';
 
 function mapStateToProps(state) {
   return {
@@ -7,8 +7,8 @@ function mapStateToProps(state) {
   };
 }
 
-const HomeRoot = connect(
+const RunnerRoot = connect(
   mapStateToProps,
-)(Home);
+)(Runner);
 
-export default HomeRoot;
+export default RunnerRoot;
