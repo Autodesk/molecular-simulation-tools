@@ -1,6 +1,5 @@
 .home-page {
   position: relative;
-  background: #0E0F17;
 
   h1
   {
@@ -101,7 +100,6 @@
     position: fixed;
     left: 65%;
     top: 0px;
-    z-index: -1;
   }
 
   .m2
@@ -109,14 +107,12 @@
     position: fixed;
     left: 40%;
     top: 0px;
-    z-index: -1;
   }
 
   .m3
   {
     position: fixed;
     left: 100px;
-    z-index: -1;
     opacity: 0.3;
   }
 
@@ -124,7 +120,6 @@
   {
     position: fixed;
     left: 0;
-    z-index: -1;
   }
 
   .heroText
@@ -156,8 +151,11 @@
   /* ---------------------- SECTIONS --------------------- */
   .heroSection
   {
+    position: relative;
     padding-top: 180px;
     height: 882px;
+    z-index: -1;
+    background: #0E0F17;
   }
 
   .toolsCardSection
