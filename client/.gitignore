@@ -2,4 +2,5 @@ dist/
 node_modules/
 npm-debug.log
 .env
+stats.json
 .DS_Store

@@ -5,7 +5,16 @@ require('dotenv').config();
 
 module.exports = {
   entry: {
-    app: ['babel-polyfill', './public/js/main.jsx'],
+    app: ['./public/js/main.jsx'],
+    vendor: [
+      'babel-polyfill',
+      'react',
+      'react-dom',
+      'redux',
+      'redux-thunk',
+      'react-redux',
+      'react-router',
+    ],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -51,6 +60,9 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       template: './public/index.ejs',
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['vendor', 'manifest'],
     }),
   ],
 };
