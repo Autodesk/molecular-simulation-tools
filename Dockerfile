@@ -28,6 +28,11 @@ RUN npm install -g forever nodemon grunt grunt-cli webpack
 ENV APP /app
 RUN mkdir -p $APP/shared
 ADD ./shared/ $APP/shared/
+WORKDIR $APP/shared
+RUN npm install
+RUN npm run build
+WORKDIR $APP
+
 RUN mkdir -p $APP/client
 WORKDIR $APP/client
 
