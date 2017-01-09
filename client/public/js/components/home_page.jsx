@@ -11,7 +11,6 @@ import imgLogo2 from '../../img/logo2.png';
 import imgLogo3 from '../../img/logo3.png';
 import imgLogo4 from '../../img/logo4.png';
 import imgLogoResearch from '../../img/logo_research.png';
-import imgLogos from '../../img/logos.png';
 import imgTweet from '../../img/tweet.svg';
 import imgFace from '../../img/face.svg';
 import '../../css/home_page.scss';
@@ -214,13 +213,18 @@ function HomePage() {
                 modeling tools. Come and join us!
               </h4>
             </div>
-            <div className="col-sm-4 col-xs-6">
-              <img
-                src={imgLogos}
-                alt="logo"
-                className="img-responsive"
-                style={{ paddingTop: '20px' }}
-              />
+            <div className="col-sm-4 col-xs-6 creator-images">
+              {
+                workflows.map((workflow, index) => (
+                  <img
+                    key={index}
+                    src={workflow.creatorImage}
+                    alt="creator example"
+                    className="creator-image"
+                    style={{ paddingTop: '20px' }}
+                  />
+                ))
+              }
             </div>
           </div>
           <div className="row" style={{ paddingTop: '40px' }}>
