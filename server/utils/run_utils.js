@@ -3,6 +3,7 @@ const fs = require('fs-extended');
 const path = require('path');
 const Promise = require('bluebird');
 const dbConstants = require('../constants/db_constants');
+const emailUtils = require('../utils/email_utils');
 const ioUtils = require('../utils/io_utils');
 const redis = require('../utils/redis');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
@@ -138,7 +139,23 @@ const runUtils = {
     });
   },
 
-  sendEmailsWorkflowEnded() {
+  sendEmailsWorkflowEnded(runId) {
+    redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
+      if (!runString) {
+        return console.error(runString);
+      }
+
+      const run = JSON.parse(runString);
+
+      return emailUtils.send(
+        run.email,
+        'Your Workflow Has Ended',
+        './views/email_ended.pug',
+        {
+          runUrl: `${process.env.FRONTEND_URL}/workflow/${run.workflowId}/${run.id}`,
+        }
+      );
+    }).catch(console.error.bind(console));
   },
 
   processContainerEnd(runId) {

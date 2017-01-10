@@ -77,8 +77,13 @@ router.post('/', (req, res, next) => {
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
     runUtils.executeWorkflow(runId, req.body.pdbUrl);
 
-    const runUrl = `http://${req.get('host')}/workflow/${workflowId}/${runId}`;
-    emailUtils.sendThanks(req.body.email, runUrl).then(() =>
+    const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
+    emailUtils.send(
+      req.body.email,
+      'Your Workflow is Running',
+      './views/email_thanks.pug',
+      { runUrl }
+    ).then(() =>
       res.send({ runId })
     ).catch(next);
   }).catch(next);
