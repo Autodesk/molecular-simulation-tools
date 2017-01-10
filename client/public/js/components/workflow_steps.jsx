@@ -33,6 +33,7 @@ function WorkflowSteps(props) {
     resultsNode = (
       <WorkflowStep
         primaryText={'Results'}
+        number={3}
         onClick={props.clickWorkflowNodeResults}
         selected={resultsSelected}
         status={statusConstants.COMPLETED}
@@ -48,12 +49,14 @@ function WorkflowSteps(props) {
         <ol>
           <WorkflowStep
             primaryText={'Load molecule'}
+            number={1}
             selected={loadSelected}
             status={loadStatus}
             onClick={props.clickWorkflowNodeLoad}
           />
           <WorkflowStep
             primaryText={'Enter email'}
+            number={2}
             onClick={props.clickWorkflowNodeEmail}
             selected={emailSelected}
             status={emailStatus}
