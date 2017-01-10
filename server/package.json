@@ -26,6 +26,7 @@
     "molecular-design-applications-shared": "../shared",
     "morgan": "^1.7.0",
     "promise-redis": "0.0.5",
+    "pug": "^2.0.0-beta6",
     "redis": "^2.6.3",
     "sendgrid": "^4.7.1",
     "shortid": "^2.2.6",

@@ -76,7 +76,9 @@ router.post('/', (req, res, next) => {
 
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
     runUtils.executeWorkflow(runId, req.body.pdbUrl);
-    emailUtils.sendThanks(req.body.email).then(() =>
+
+    const runUrl = `http://${req.get('host')}/workflow/${workflowId}/${runId}`;
+    emailUtils.sendThanks(req.body.email, runUrl).then(() =>
       res.send({ runId })
     ).catch(next);
   }).catch(next);

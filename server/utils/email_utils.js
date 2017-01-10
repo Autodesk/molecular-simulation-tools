@@ -1,18 +1,19 @@
+const pug = require('pug');
 const sendgridFactory = require('sendgrid');
 const sendgridHelper = require('sendgrid').mail;
 
 const sendgrid = sendgridFactory(process.env.SEND_GRID_API_KEY);
 
-function sendThanks(emailAddress) {
+function sendThanks(emailAddress, runLink) {
   return new Promise((resolve, reject) => {
-    const content = new sendgridHelper.Content(
-      'text/html', '<html><head></head><body><h1>Hi</h1></body></html>'
-    );
+    const html = pug.renderFile('./views/email_thanks.pug', {
+      runLink,
+    });
     const email = new sendgridHelper.Mail(
       new sendgridHelper.Email('no-reply@autodesk.com'),
       'Your Workflow is Running',
       new sendgridHelper.Email(emailAddress),
-      content
+      new sendgridHelper.Content('text/html', html)
     );
 
     const request = sendgrid.emptyRequest({
