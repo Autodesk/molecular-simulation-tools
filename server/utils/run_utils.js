@@ -150,7 +150,7 @@ const runUtils = {
       return emailUtils.send(
         run.email,
         'Your Workflow Has Ended',
-        'views/email_ended.ms',
+        './views/email_ended.ms',
         {
           runUrl: `${process.env.FRONTEND_URL}/workflow/${run.workflowId}/${run.id}`,
         }

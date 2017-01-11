@@ -81,7 +81,7 @@ router.post('/', (req, res, next) => {
     emailUtils.send(
       req.body.email,
       'Your Workflow is Running',
-      'views/email_thanks.ms',
+      './views/email_thanks.ms',
       { runUrl }
     ).then(() =>
       res.send({ runId })
