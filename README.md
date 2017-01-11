@@ -23,6 +23,7 @@ See client/README.md
 #### Environment Variables
 `PORT`: Sets the port that the server will run on.
 `SEND_GRID_API_KEY`: Allows the server to send email via SendGrid.
+`URL`: The url that the server can be accessed on publicly
 `FRONTEND_URL`: The url root that we use for links in emails
 
 #### API

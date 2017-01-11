@@ -1,11 +1,11 @@
 const express = require('express');
 const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
+const statusConstants = require('molecular-design-applications-shared').statusConstants;
 const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
 const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
-const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const router = new express.Router();
 
@@ -81,7 +81,7 @@ router.post('/', (req, res, next) => {
     emailUtils.send(
       req.body.email,
       'Your Workflow is Running',
-      './views/email_thanks.pug',
+      'views/email_thanks.ms',
       { runUrl }
     ).then(() =>
       res.send({ runId })
