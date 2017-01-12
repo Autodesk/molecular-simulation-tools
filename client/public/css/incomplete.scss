@@ -1,12 +1,14 @@
 .errored, .thank-you {
   height: 100%;
-  background-color: #5981FF;
+  background: linear-gradient(to bottom left, #1F2136, #2B2E4B 80%);
   color: white;
 
   .container {
+    position: relative;
     width: auto;
     max-width: 980px;
     padding: 0 15px;
+    text-align: center;
   }
 
   h1 {
@@ -44,24 +46,65 @@
     opacity: 0.5;
   }
 
-  .largeButton {
+  .largeButton, a.largeButton {
+    display: inline-block;
     padding: 15px 60px 15px 60px;
     margin-top: 20px;
     border-radius: 50px;
     border: none;
     outline: none;
     background-color: white;
-    font-family: 'art-bold';
-    color: #5981FF;
-    opacity: 0.95;
-    transition: 0.2s;
+    color: #1F2136;
+    font-weight: 600;
+    opacity: 0.9;
+    -webkit-transition: 0.2s;
     transition: 0.2s;
   }
 
-  .largeButton:hover {
+  .largeButton:hover, a.largeButton:hover {
     opacity: 1;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-        -webkit-transition: 0.2s;
+    -webkit-transition: 0.2s;
     transition: 0.2s;
   }
+}
+
+.line
+{
+    border-top: solid 1px white;
+    padding-bottom: 20px;
+    opacity: 0.5;
+}
+
+.image1
+{
+    opacity: 0.7;
+    position: absolute;
+    top: 400px;
+    left: 70%; 
+    background: url('../img/mol1.png');
+    width: 520px;
+    height: 501px;
+}
+
+.image2
+{
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 5%; 
+    background: url('../img/mol2.png');
+    width: 493px;
+    height: 475px;
+}
+
+.image3
+{
+    opacity: 0.1;
+    position: absolute;
+    top: 300px;
+    left: 60%; 
+    background: url('../img/mol2.png');
+    width: 493px;
+    height: 475px;
 }
