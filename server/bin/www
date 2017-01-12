@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 
+require('dotenv').config();
 var app = require('../server');
 var debug = require('debug')('express:server');
 var http = require('http');

@@ -1,13 +1,17 @@
 const express = require('express');
 const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
+const statusConstants = require('molecular-design-applications-shared').statusConstants;
 const dbConstants = require('../constants/db_constants');
+const emailUtils = require('../utils/email_utils');
 const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
-const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const router = new express.Router();
 
+/**
+ * Get the status of a run
+ */
 router.get('/:runId', (req, res, next) => {
   redis.hget(dbConstants.REDIS_RUNS, req.params.runId).then((runString) => {
     if (!runString) {
@@ -33,6 +37,9 @@ router.get('/:runId', (req, res, next) => {
   }).catch(next);
 });
 
+/**
+ * Start a run
+ */
 router.post('/', (req, res, next) => {
   if (!req.body.workflowId && req.body.workflowId !== 0) {
     return next(new Error('Missing required parameter "workflowId"'));
@@ -69,10 +76,22 @@ router.post('/', (req, res, next) => {
 
   return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
     runUtils.executeWorkflow(runId, req.body.pdbUrl);
-    res.send({ runId });
+
+    const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
+    emailUtils.send(
+      req.body.email,
+      'Your Workflow is Running',
+      './views/email_thanks.ms',
+      { runUrl }
+    ).then(() =>
+      res.send({ runId })
+    ).catch(next);
   }).catch(next);
 });
 
+/**
+ * Cancel a run
+ */
 router.post('/cancel', (req, res, next) => {
   if (!req.body.runId && req.body.runId !== 0) {
     return next(new Error('Missing required parameter "runId"'));

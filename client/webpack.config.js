@@ -59,6 +59,7 @@ module.exports = {
       'API_URL',
     ]),
     new HtmlWebpackPlugin({
+      favicon: './public/img/favicon.png',
       template: './public/index.ejs',
     }),
     new webpack.optimize.CommonsChunkPlugin({

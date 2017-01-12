@@ -70,10 +70,9 @@ ADD ./server/bin $APP/server/bin
 ADD ./server/**.js $APP/server/
 ADD ./server/**.json $APP/server/
 
-WORKDIR $APP
-RUN cp ./server/VERSION $APP/ || true
+RUN cp ./VERSION ../ || true
 
 ENV PORT 4000
 EXPOSE $PORT
 
-CMD ["forever", "server/bin/www"]
+CMD ["forever", "bin/www"]
