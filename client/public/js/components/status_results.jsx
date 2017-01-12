@@ -20,32 +20,19 @@ class StatusResults extends React.Component {
   }
 
   render() {
+    const value = Math.round(this.props.outputData.vde.value * 10000) / 10000;
+
     return (
       <div className="status-results">
         <div className="stats">
           <div className="stat">
             <div className="fontHeader line stat-title">
-              <div>ENERGY</div>
-              <div>kJ/mol</div>
+              <div>OUTPUT ENERGY</div>
+              <div>{this.props.outputData.vde.units}</div>
             </div>
             <div className="stat-body">
               <div className="stat-body-item">
-                <div className="fontLarge">45.94</div>
-                <div className="fontSub">BEFORE</div>
-              </div>
-              <div className="stat-body-item">
-                <div className="fontLarge">75.34</div>
-                <div className="fontSub">AFTER</div>
-              </div>
-            </div>
-          </div>
-          <div className="stat">
-            <div className="fontHeader line stat-title">
-              <div>FINAL RMSD</div>
-            </div>
-            <div className="stat-body stat-body--single">
-              <div className="stat-body-item">
-                <div className="fontLarge">74.56</div>
+                <div className="fontLarge">{value}</div>
               </div>
             </div>
           </div>
@@ -90,6 +77,7 @@ StatusResults.propTypes = {
   onChangeMorph: React.PropTypes.func.isRequired,
   outputPdbUrl: React.PropTypes.string,
   workflowNodesSize: React.PropTypes.number,
+  outputData: React.PropTypes.object,
 };
 
 export default StatusResults;

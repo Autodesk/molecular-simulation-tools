@@ -94,6 +94,7 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
+        outputData={props.workflow.outputData}
         outputPdbUrl={props.workflow.outputPdbUrl}
       />
     );
