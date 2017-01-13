@@ -28,8 +28,6 @@ class WorkflowRouter extends React.Component {
     const changingRunId = nextProps.runId !== this.props.runId;
 
     if (!fetching && (changingWorkflowId || changingRunId)) {
-      console.log('Im calling initialize', fetching, changingWorkflowId, changingRunId);
-      console.log('wfid', nextProps.workflowId, 'rid', nextProps.runId);
       this.initialize(nextProps.workflowId, nextProps.runId);
     }
 
@@ -65,7 +63,7 @@ class WorkflowRouter extends React.Component {
   // Set up page for workflow/run distinction
   initialize(workflowId, runId) {
     if (runId) {
-      return this.props.initializeRun(runId);
+      return this.props.initializeRun(workflowId, runId);
     }
 
     return this.props.initializeWorkflow(workflowId);

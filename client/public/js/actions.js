@@ -27,11 +27,12 @@ export function initializeWorkflow(workflowId) {
   };
 }
 
-export function initializeRun(runId) {
+export function initializeRun(workflowId, runId) {
   return async function initializeRunDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_WORKFLOW,
       runId,
+      workflowId,
     });
 
     let workflow;

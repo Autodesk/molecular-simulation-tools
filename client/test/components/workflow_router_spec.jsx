@@ -2,18 +2,17 @@ import React from 'react';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { setProps, shallow } from 'enzyme';
-import statusConstants from 'molecular-design-applications-shared';
-import Workflow from '../../public/js/components/workflow';
+import { statusConstants } from 'molecular-design-applications-shared';
+import WorkflowRouter from '../../public/js/components/workflow_router';
 import SelectionRecord from '../../public/js/records/selection_record';
 import WorkflowRecord from '../../public/js/records/workflow_record';
 
-describe('Workflow', () => {
+describe('WorkflowRouter', () => {
   let clickAbout;
   let clickRun;
   let clickWorkflowNode;
   let clickWorkflowNodeLoad;
   let clickWorkflowNodeEmail;
-  let initializeWorkflow;
   let onUpload;
   let runId;
   let selection;
@@ -30,7 +29,6 @@ describe('Workflow', () => {
     clickWorkflowNode = () => {};
     clickWorkflowNodeLoad = () => {};
     clickWorkflowNodeEmail = () => {};
-    initializeWorkflow = () => {};
     onUpload = () => {};
     runId = '0';
     selection = new SelectionRecord();
@@ -43,40 +41,44 @@ describe('Workflow', () => {
 
   describe('componentWillReceiveProps', () => {
     let initializeWorkflowSpy;
+    let initializeRunSpy;
 
     beforeEach(() => {
       initializeWorkflowSpy = sinon.spy();
+      initializeRunSpy = sinon.spy();
       wrapper = shallow(
-        <Workflow
+        <WorkflowRouter
           clickAbout={clickAbout}
           clickRun={clickRun}
           clickWorkflowNode={clickWorkflowNode}
           clickWorkflowNodeLoad={clickWorkflowNodeLoad}
           clickWorkflowNodeEmail={clickWorkflowNodeEmail}
           initializeWorkflow={initializeWorkflowSpy}
+          initializeRun={initializeRunSpy}
           onUpload={onUpload}
           runId={runId}
           selection={selection}
           submitPdbId={submitPdbId}
           submitEmail={submitEmail}
           workflow={workflow}
-          workflowId={workflowId} workflowStatus={workflowStatus} />
+          workflowId={workflowId} workflowStatus={workflowStatus}
+        />
       );
     });
 
-    describe('when the workflowId changes', () => {
-      it('calls initializeWorkflow', () => {
+    describe('when the workflowId changes (and we have a runid)', () => {
+      it('calls initializeRun', () => {
         wrapper.setProps({ workflowId: 'newworkflowid' });
 
-        expect(initializeWorkflowSpy.called).to.equal(true);
+        expect(initializeRunSpy.called).to.equal(true);
       });
     });
 
     describe('when the runId changes', () => {
-      it('calls initializeWorkflow', () => {
+      it('calls initializeRun', () => {
         wrapper.setProps({ runId: 'newrunid' });
 
-        expect(initializeWorkflowSpy.called).to.equal(true);
+        expect(initializeRunSpy.called).to.equal(true);
       });
     });
 
@@ -89,10 +91,10 @@ describe('Workflow', () => {
     });
 
     describe('when the runId doesnt change', () => {
-      it('doesnt call initializeWorkflow', () => {
+      it('doesnt call initializeRun', () => {
         wrapper.setProps({ runId });
 
-        expect(initializeWorkflowSpy.called).to.equal(false);
+        expect(initializeRunSpy.called).to.equal(false);
       });
     });
 

@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
+import { statusConstants } from 'molecular-design-applications-shared';
 import WorkflowRecord from '../../public/js/records/workflow_record';
 import WorkflowNodeRecord from '../../public/js/records/workflow_node_record';
-import statusConstants from 'molecular-design-applications-shared';
 import workflowUtils from '../../public/js/utils/workflow_utils';
 
 describe('workflowUtils', () => {

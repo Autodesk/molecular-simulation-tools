@@ -7,8 +7,10 @@ const initialState = new WorkflowRecord();
 function workflow(state = initialState, action) {
   switch (action.type) {
     case actionConstants.INITIALIZE_WORKFLOW: {
-      const replacingWorkflow = state.id && action.workflowId !== state.id;
-      const replacingRun = state.runId && action.runId !== state.runId;
+      const replacingWorkflow = action.workflowId && state.id &&
+        action.workflowId !== state.id;
+      const replacingRun = action.runId && state.runId &&
+        action.runId !== state.runId;
 
       if (replacingWorkflow || replacingRun) {
         return new WorkflowRecord({
