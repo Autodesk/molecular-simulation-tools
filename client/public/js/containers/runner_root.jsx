@@ -4,6 +4,7 @@ import Runner from '../components/runner';
 function mapStateToProps(state) {
   return {
     title: state.workflow.title,
+    workflowId: state.workflow.id,
   };
 }
 

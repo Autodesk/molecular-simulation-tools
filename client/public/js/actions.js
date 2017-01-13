@@ -3,28 +3,36 @@ import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import workflowUtils from './utils/workflow_utils';
 
-export function initializeWorkflow(workflowId, runId) {
+export function initializeWorkflow(workflowId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_WORKFLOW,
+      workflowId,
     });
 
-    if (!runId) {
-      let workflow;
-      try {
-        workflow = await apiUtils.getWorkflow(workflowId);
-      } catch (error) {
-        return dispatch({
-          type: actionConstants.FETCHED_WORKFLOW,
-          error,
-        });
-      }
-
+    let workflow;
+    try {
+      workflow = await apiUtils.getWorkflow(workflowId);
+    } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_WORKFLOW,
-        workflow,
+        error,
       });
     }
+
+    return dispatch({
+      type: actionConstants.FETCHED_WORKFLOW,
+      workflow,
+    });
+  };
+}
+
+export function initializeRun(runId) {
+  return async function initializeRunDispatch(dispatch) {
+    dispatch({
+      type: actionConstants.INITIALIZE_WORKFLOW,
+      runId,
+    });
 
     let workflow;
     try {

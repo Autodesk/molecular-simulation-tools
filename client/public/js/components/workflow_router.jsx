@@ -22,10 +22,18 @@ class WorkflowRouter extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const fetching = nextProps.workflow.fetching;
     const changingWorkflowId = nextProps.workflowId &&
       this.props.workflowId !== nextProps.workflowId;
-    const changingRunId = nextProps.runId &&
-      nextProps.runId !== this.props.runId;
+    const changingRunId = nextProps.runId !== this.props.runId;
+
+    if (!fetching && (changingWorkflowId || changingRunId)) {
+      console.log('Im calling initialize', fetching, changingWorkflowId, changingRunId);
+      console.log('wfid', nextProps.workflowId, 'rid', nextProps.runId);
+      this.initialize(nextProps.workflowId, nextProps.runId);
+    }
+
+    /*
     const missingWorkflow = nextProps.workflowId &&
       nextProps.workflow.id !== nextProps.workflowId;
     const missingRun = nextProps.runId &&
@@ -38,6 +46,7 @@ class WorkflowRouter extends React.Component {
     if (!fetching && (needWorkflow || needRun)) {
       this.initialize(nextProps.workflowId, nextProps.runId);
     }
+    */
 
     if (!this.props.workflow.fetchingError &&
       nextProps.workflow.fetchingError) {
@@ -55,7 +64,11 @@ class WorkflowRouter extends React.Component {
 
   // Set up page for workflow/run distinction
   initialize(workflowId, runId) {
-    this.props.initializeWorkflow(workflowId, runId);
+    if (runId) {
+      return this.props.initializeRun(runId);
+    }
+
+    return this.props.initializeWorkflow(workflowId);
   }
 
   render() {
@@ -130,6 +143,7 @@ WorkflowRouter.propTypes = {
   colorized: React.PropTypes.bool.isRequired,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
+  initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
