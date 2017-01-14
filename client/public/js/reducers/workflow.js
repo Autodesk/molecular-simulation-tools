@@ -1,4 +1,5 @@
 import { statusConstants } from 'molecular-design-applications-shared';
+import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
 
@@ -7,28 +8,41 @@ const initialState = new WorkflowRecord();
 function workflow(state = initialState, action) {
   switch (action.type) {
     case actionConstants.INITIALIZE_WORKFLOW: {
-      const replacingWorkflow = action.workflowId && state.id &&
-        action.workflowId !== state.id;
-      const replacingRun = action.runId && state.runId &&
-        action.runId !== state.runId;
-
-      if (replacingWorkflow || replacingRun) {
+      const workflowsDifferent = action.workflowId !== state.id;
+      if (workflowsDifferent) {
         return new WorkflowRecord({
-          fetching: true,
-          fetchingError: false,
+          run: new RunRecord({
+            fetching: true,
+            fetchingError: false,
+          }),
         });
       }
+
+      const runsDifferent = action.runId !== state.run.id;
+      if (runsDifferent) {
+        return state.merge({
+          run: new RunRecord({
+            fetching: true,
+            fetchingError: false,
+          }),
+        });
+      }
+
       return state.merge({
-        fetching: true,
-        fetchingError: false,
+        run: new RunRecord({
+          fetching: true,
+          fetchingError: false,
+        }),
       });
     }
 
     case actionConstants.FETCHED_WORKFLOW:
       if (action.error) {
         return state.merge({
-          fetching: false,
-          fetchingError: action.error,
+          run: new RunRecord({
+            fetching: true,
+            fetchingError: action.error,
+          }),
         });
       }
       return action.workflow;
@@ -36,14 +50,21 @@ function workflow(state = initialState, action) {
     case actionConstants.FETCHED_RUN:
       if (action.error) {
         return state.merge({
-          fetching: false,
-          fetchingError: action.error,
+          run: new RunRecord({
+            fetching: true,
+            fetchingError: false,
+          }),
         });
       }
       return action.workflow;
 
     case actionConstants.CLICK_RUN:
-      return state.set('status', statusConstants.RUNNING);
+      return state.merge({
+        run: new RunRecord({
+          fetching: true,
+          fetchingError: false,
+        }),
+      });
 
     case actionConstants.RUN_SUBMITTED:
       if (action.err) {
@@ -56,76 +77,78 @@ function workflow(state = initialState, action) {
 
     case actionConstants.FETCHED_INPUT_PDB: {
       if (action.err) {
-        return state.merge({
+        return state.set('run', state.run.merge({
           fetchingPdbError: action.err,
           fetchingPdb: false,
-        });
+        }));
       }
 
-      return state.merge({
+      return state.set('run', state.run.merge({
         fetchingPdb: false,
+        fetchingPdbError: null,
         inputPdb: action.modelData,
-      });
+      }));
     }
 
     case actionConstants.FETCHED_OUTPUT_PDB: {
       if (action.err) {
-        return state.merge({
+        return state.set('run', state.run.merge({
           fetchingPdbError: action.err,
           fetchingPdb: false,
-        });
+        }));
       }
 
-      return state.merge({
+      return state.set('run', state.run.merge({
         fetchingPdb: false,
+        fetchingPdbError: null,
         outputPdb: action.modelData,
-      });
+      }));
     }
 
     case actionConstants.UPLOAD:
-      return state.merge({
+      return state.set('run', state.run.merge({
         uploadError: '',
         uploadPending: true,
         inputPdbUrl: null,
-      });
+      }));
 
     case actionConstants.UPLOAD_COMPLETE:
-      return state.merge({
+      return state.set('run', state.run.merge({
         uploadPending: false,
         uploadError: action.err,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
-      });
+      }));
 
     case actionConstants.SUBMIT_PDB_ID:
-      return state.merge({
+      return state.set('run', state.run.merge({
         fetchingPdb: true,
         fetchingPdbError: null,
         inputPdbUrl: '',
-      });
+      }));
 
     case actionConstants.FETCHED_PDB_BY_ID:
-      return state.merge({
+      return state.set('run', state.run.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
-      });
+      }));
 
     case actionConstants.SUBMIT_EMAIL:
-      return state.set('email', action.email);
+      return state.set('run', state.run.set('email', action.email));
 
     case actionConstants.CLICK_CANCEL:
-      return state.set('canceling', true);
+      return state.set('run', state.run.set('canceling', true));
 
     case actionConstants.SUBMITTED_CANCEL:
       if (action.err) {
-        return state.set('canceling', false);
+        return state.set('run', state.run.set('canceling', false));
       }
-      return state.merge({
+      return state.set('run', state.run.merge({
         canceling: false,
         status: statusConstants.CANCELED,
-      });
+      }));
 
     default:
       return state;

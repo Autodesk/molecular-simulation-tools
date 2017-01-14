@@ -10,23 +10,23 @@ import workflowUtils from '../utils/workflow_utils';
 require('../../css/workflow_steps.scss');
 
 function WorkflowSteps(props) {
-  const running = props.workflow.status === statusConstants.RUNNING;
+  const running = props.workflow.run.status === statusConstants.RUNNING;
   const runDisabled = running ||
-    !workflowUtils.isRunnable(props.workflow);
+    !workflowUtils.isRunnable(props.workflow.run);
 
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = props.workflow.inputPdbUrl ?
+  const loadStatus = props.workflow.run.inputPdbUrl ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
-  const emailStatus = props.workflow.email ?
+  const emailStatus = props.workflow.run.email ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   let emailLast = true;
 
   let resultsNode;
-  if (props.workflow.status === statusConstants.COMPLETED) {
+  if (props.workflow.run.status === statusConstants.COMPLETED) {
     emailLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;

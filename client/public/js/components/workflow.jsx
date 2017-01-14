@@ -19,14 +19,14 @@ function Workflow(props) {
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) &&
-    props.workflow.inputPdb) {
-    selectedModelData = props.workflow.inputPdb;
+    props.workflow.run.inputPdb) {
+    selectedModelData = props.workflow.run.inputPdb;
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     if (props.morph === 1) {
-      selectedModelData = props.workflow.outputPdb;
+      selectedModelData = props.workflow.run.outputPdb;
     } else {
-      selectedModelData = props.workflow.inputPdb;
+      selectedModelData = props.workflow.run.inputPdb;
     }
   }
 

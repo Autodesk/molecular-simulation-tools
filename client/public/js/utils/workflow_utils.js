@@ -52,14 +52,17 @@ const workflowUtils = {
     return statusConstants.RUNNING;
   },
 
-  isRunnable(workflow) {
-    if (!workflow.inputPdbUrl) {
+  isRunnable(run) {
+    if (!run.inputPdbUrl) {
       return false;
     }
-    if (!isEmail(workflow.email)) {
+    if (!isEmail(run.email)) {
       return false;
     }
-    if (workflow.status === statusConstants.RUNNING) {
+    if (run.status === statusConstants.RUNNING) {
+      return false;
+    }
+    if (run.fetching) {
       return false;
     }
 

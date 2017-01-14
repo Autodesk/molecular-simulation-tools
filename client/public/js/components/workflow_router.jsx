@@ -31,21 +31,6 @@ class WorkflowRouter extends React.Component {
       this.initialize(nextProps.workflowId, nextProps.runId);
     }
 
-    /*
-    const missingWorkflow = nextProps.workflowId &&
-      nextProps.workflow.id !== nextProps.workflowId;
-    const missingRun = nextProps.runId &&
-      nextProps.workflow.runId !== nextProps.runId;
-    const fetching = nextProps.workflow.fetching;
-    const needWorkflow = changingWorkflowId && missingWorkflow;
-    const needRun = changingRunId && missingRun;
-
-    // Reinitialize when need workflow/run (like on back button)
-    if (!fetching && (needWorkflow || needRun)) {
-      this.initialize(nextProps.workflowId, nextProps.runId);
-    }
-    */
-
     if (!this.props.workflow.fetchingError &&
       nextProps.workflow.fetchingError) {
       this.setState({
@@ -77,19 +62,19 @@ class WorkflowRouter extends React.Component {
     }
 
     let routeEl;
-    if (this.props.workflow.status === statusConstants.RUNNING) {
+    if (this.props.workflow.run.status === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
-          canceling={this.props.workflow.canceling}
-          email={this.props.workflow.email}
+          canceling={this.props.workflow.run.canceling}
+          email={this.props.workflow.run.email}
           onClickCancel={this.props.clickCancel}
         />
       );
-    } else if (this.props.workflow.status === statusConstants.CANCELED) {
+    } else if (this.props.workflow.run.status === statusConstants.CANCELED) {
       routeEl = (
         <Canceled />
       );
-    } else if (this.props.workflow.status === statusConstants.ERROR) {
+    } else if (this.props.workflow.run.status === statusConstants.ERROR) {
       routeEl = (
         <Errored />
       );
@@ -102,8 +87,8 @@ class WorkflowRouter extends React.Component {
           clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
           clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
           colorized={this.props.colorized}
-          fetchingPdb={this.props.fetchingPdb}
-          fetchingPdbError={this.props.fetchingPdbError}
+          fetchingPdb={this.props.workflow.fetchingPdb}
+          fetchingPdbError={this.props.workflow.fetchingPdbError}
           morph={this.props.morph}
           nodes={this.props.nodes}
           onClickColorize={this.props.onClickColorize}
@@ -139,8 +124,6 @@ WorkflowRouter.propTypes = {
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
-  fetchingPdb: React.PropTypes.bool,
-  fetchingPdbError: React.PropTypes.string,
   initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
