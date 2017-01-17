@@ -1,6 +1,6 @@
 service-name: mdtapps
 # NOTE override this value in the Jenkins job as it varies by environment
-environment: local
+environment: dev
 
 # parameters used when calling cloudformation update-stack
 # NOTE set this value in the Jenkins job as it varies by environment
