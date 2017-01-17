@@ -40,7 +40,9 @@ class AppBar extends React.Component {
       <div className="app-bar">
         <img src={logoImage} alt="logo" className="logo" />
         <div>
-          <h2 className="title">{this.props.title}</h2>
+          <h2 className="title">
+            <Link to={`/workflow/${this.props.workflowId}`}>{this.props.title}</Link>
+          </h2>
         </div>
         <div className="appLinks">
           <Link className="appLink appLinkStrong" to="/">
@@ -75,6 +77,7 @@ class AppBar extends React.Component {
 
 AppBar.propTypes = {
   title: React.PropTypes.string,
+  workflowId: React.PropTypes.string,
 };
 
 export default AppBar;

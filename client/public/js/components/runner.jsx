@@ -8,6 +8,7 @@ function Runner(props) {
     <div className="runner">
       <AppBar
         title={props.title}
+        workflowId={props.workflowId}
       />
       {props.children}
     </div>
@@ -17,6 +18,7 @@ function Runner(props) {
 Runner.propTypes = {
   children: React.PropTypes.element,
   title: React.PropTypes.string,
+  workflowId: React.PropTypes.string,
 };
 
 export default Runner;

@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
-import WorkflowRecord from '../../public/js/records/workflow_record';
+import { statusConstants } from 'molecular-design-applications-shared';
+import RunRecord from '../../public/js/records/run_record';
 import WorkflowNodeRecord from '../../public/js/records/workflow_node_record';
-import statusConstants from 'molecular-design-applications-shared';
 import workflowUtils from '../../public/js/utils/workflow_utils';
 
 describe('workflowUtils', () => {
-  let workflow;
+  let run;
 
   beforeEach(() => {
-    workflow = new WorkflowRecord({
+    run = new RunRecord({
       inputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
       email: 'justin.mccandless@autodesk.com',
     });
@@ -18,27 +18,27 @@ describe('workflowUtils', () => {
   describe('isRunnable', () => {
     describe('when no inputPdbUrl', () => {
       beforeEach(() => {
-        workflow = workflow.set('inputPdbUrl', '');
+        run = run.set('inputPdbUrl', '');
       });
 
       it('returns false', () => {
-        expect(workflowUtils.isRunnable(workflow)).to.equal(false);
+        expect(workflowUtils.isRunnable(run)).to.equal(false);
       });
     });
 
     describe('when no email', () => {
       beforeEach(() => {
-        workflow = workflow.set('email', '');
+        run = run.set('email', '');
       });
 
       it('returns false', () => {
-        expect(workflowUtils.isRunnable(workflow)).to.equal(false);
+        expect(workflowUtils.isRunnable(run)).to.equal(false);
       });
     });
 
     describe('when email and inputPdbUrl', () => {
       it('returns true', () => {
-        expect(workflowUtils.isRunnable(workflow)).to.equal(true);
+        expect(workflowUtils.isRunnable(run)).to.equal(true);
       });
     });
   });

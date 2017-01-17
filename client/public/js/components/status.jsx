@@ -38,7 +38,7 @@ function Status(props) {
       <div className="status-info">
         <p>Workflow</p>
         <p>{props.workflow.title}</p>
-        <p>Status: {props.workflow.status}</p>
+        <p>Status: {props.workflow.run.status}</p>
         {output}
       </div>
     );
@@ -76,16 +76,16 @@ function Status(props) {
         fetchingPdbError={props.fetchingPdbError}
         onUpload={props.onUpload}
         submitPdbId={props.submitPdbId}
-        uploadError={props.workflow.uploadError}
-        uploadPending={props.workflow.uploadPending}
-        inputPdbUrl={props.workflow.inputPdbUrl}
+        uploadError={props.workflow.run.uploadError}
+        uploadPending={props.workflow.run.uploadPending}
+        inputPdbUrl={props.workflow.run.inputPdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
     selection = (
       <StatusEmail
         submitEmail={props.submitEmail}
-        email={props.workflow.email}
+        email={props.workflow.run.email}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
@@ -94,7 +94,8 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
-        outputPdbUrl={props.workflow.outputPdbUrl}
+        outputData={props.workflow.run.outputData}
+        outputPdbUrl={props.workflow.run.outputPdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {

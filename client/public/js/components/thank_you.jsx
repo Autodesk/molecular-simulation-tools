@@ -6,9 +6,12 @@ import '../../css/incomplete.scss';
 function ThankYou(props) {
   return (
     <div className="thank-you">
+      <div className="image1" />
+      <div className="image2" />
+      <div className="image3" />
       <div className="container">
         <div>
-          <h1>Congratulations {props.email}!</h1>
+          <h1>Thanks {props.email}!</h1>
           <div className="line" />
         </div>
         <p>
@@ -16,9 +19,8 @@ function ThankYou(props) {
           next 24 hours.
         </p>
         <p>
-          Be patient. We will send you and email once results are available.
+          Be patient. We will send you an email once results are available.
         </p>
-        <br />
         <p>
           You can safely close your broser now.
         </p>

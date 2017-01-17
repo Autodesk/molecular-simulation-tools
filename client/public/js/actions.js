@@ -3,28 +3,37 @@ import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import workflowUtils from './utils/workflow_utils';
 
-export function initializeWorkflow(workflowId, runId) {
+export function initializeWorkflow(workflowId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_WORKFLOW,
+      workflowId,
     });
 
-    if (!runId) {
-      let workflow;
-      try {
-        workflow = await apiUtils.getWorkflow(workflowId);
-      } catch (error) {
-        return dispatch({
-          type: actionConstants.FETCHED_WORKFLOW,
-          error,
-        });
-      }
-
+    let workflow;
+    try {
+      workflow = await apiUtils.getWorkflow(workflowId);
+    } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_WORKFLOW,
-        workflow,
+        error,
       });
     }
+
+    return dispatch({
+      type: actionConstants.FETCHED_WORKFLOW,
+      workflow,
+    });
+  };
+}
+
+export function initializeRun(workflowId, runId) {
+  return async function initializeRunDispatch(dispatch) {
+    dispatch({
+      type: actionConstants.INITIALIZE_WORKFLOW,
+      runId,
+      workflowId,
+    });
 
     let workflow;
     try {
@@ -41,8 +50,8 @@ export function initializeWorkflow(workflowId, runId) {
       workflow,
     });
 
-    if (workflow.inputPdbUrl) {
-      apiUtils.getPDB(workflow.inputPdbUrl).then(modelData =>
+    if (workflow.run.inputPdbUrl) {
+      apiUtils.getPDB(workflow.run.inputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_INPUT_PDB,
           modelData,
@@ -55,8 +64,8 @@ export function initializeWorkflow(workflowId, runId) {
       );
     }
 
-    if (workflow.outputPdbUrl) {
-      apiUtils.getPDB(workflow.outputPdbUrl).then(modelData =>
+    if (workflow.run.outputPdbUrl) {
+      apiUtils.getPDB(workflow.run.outputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_OUTPUT_PDB,
           modelData,
@@ -119,6 +128,7 @@ export function clickRun(workflowId, email, inputPdbUrl) {
       });
 
       browserHistory.push(`/workflow/${workflowId}/${runId}`);
+      dispatch(initializeRun(workflowId, runId));
     }).catch((err) => {
       console.error(err);
 

@@ -9,6 +9,7 @@ import {
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   clickWorkflowNodeResults,
+  initializeRun,
   initializeWorkflow,
   messageTimeout,
   submitEmail,
@@ -19,8 +20,6 @@ import {
 function mapStateToProps(state, ownProps) {
   return {
     colorized: state.resultsSettings.colorized,
-    fetchingPdb: state.workflow.fetchingPdb,
-    fetchingPdbError: state.workflow.fetchingPdbError,
     morph: state.resultsSettings.morph,
     nodes: state.nodes,
     selection: state.selection,
@@ -49,6 +48,9 @@ function mapDispatchToProps(dispatch) {
     },
     clickWorkflowNodeResults() {
       dispatch(clickWorkflowNodeResults());
+    },
+    initializeRun(workflowId, runId) {
+      dispatch(initializeRun(workflowId, runId));
     },
     initializeWorkflow(workflowId, runId) {
       dispatch(initializeWorkflow(workflowId, runId));
@@ -82,9 +84,9 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id, stateProps.workflow.email, stateProps.workflow.inputPdbUrl
+      stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputPdbUrl
     ),
-    clickCancel: dispatchProps.clickCancel(stateProps.workflow.runId),
+    clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
   });
 }
 

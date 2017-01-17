@@ -1,4 +1,5 @@
 import axios from 'axios';
+import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 
 const API_URL = process.env.API_URL || '';
@@ -53,8 +54,9 @@ const apiUtils = {
       const outputPdbUrl = runData.outputPdbPath ?
         `${API_URL}${runData.outputPdbPath}` : null;
       return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
-        runId: runData.id,
-        outputPdbUrl,
+        run: new RunRecord(Object.assign({}, runData, {
+          outputPdbUrl,
+        })),
       }));
     });
   },
