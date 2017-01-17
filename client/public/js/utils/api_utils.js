@@ -3,6 +3,7 @@ import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 
 const API_URL = process.env.API_URL || '';
+const RCSB_URL = 'https://files.rcsb.org/download';
 
 const apiUtils = {
   run(workflowId, email, inputPdbUrl) {
@@ -34,10 +35,12 @@ const apiUtils = {
   },
 
   getPdbById(pdbId) {
-    return axios.get(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
-      res.data
-    ).catch((err) => {
-      throw err.response.data;
+    const pdbUrl = `${RCSB_URL}/${pdbId}.pdb`;
+    return axios.get(pdbUrl).then(res => ({
+      pdbUrl,
+      pdb: res.data,
+    })).catch((err) => {
+      throw err;
     });
   },
 

@@ -174,23 +174,18 @@ export function submitPdbId(pdbId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    let pdbUrl;
-    apiUtils.getPdbById(pdbId).then((responsePdbUrl) => {
-      pdbUrl = responsePdbUrl;
-      return apiUtils.getPDB(pdbUrl);
-    }).then(pdb =>
+    apiUtils.getPdbById(pdbId).then(({ pdbUrl, pdb }) =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
         pdb,
       })
-    ).catch((err) => {
-      console.error(err);
+    ).catch(err =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        error: err.message,
-      });
-    });
+        err: err.message,
+      })
+    );
   };
 }
 
