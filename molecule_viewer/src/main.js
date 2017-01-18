@@ -3,7 +3,11 @@ const THREE = require('three');
 window.THREE = THREE;
 
 require('webvr-polyfill');
-require('./vendor/wgs');
+
+const WGS = require('./vendor/wgs');
+
+window.WGS = WGS;
+
 require('./vendor/firefly');
 require('./vendor/nanocore');
 require('./vendor/molview');
