@@ -11,7 +11,7 @@ function getGlobal() {
  * @param {string} s - namespace (e.g. 'Autodesk.Viewing')
  * @return {Object} namespace
  */
-var AutodeskNamespace = function (s) {
+window.AutodeskNamespace = function (s) {
     var ns = getGlobal();
 
     var parts = s.split('.');
@@ -866,48 +866,6 @@ avp.ENABLE_INLINE_WORKER = true;
             return true;
     }
 
-    function loadLocalFile(url, onSuccess, onFailure, options) {
-
-        if (url.indexOf("file://") === 0)
-            url = url.substr(7);
-
-        function postProcess(data) {
-            if (options.responseType == "json") {
-                try {
-                    return JSON.parse(data.toString("utf8"));
-                } catch(e) {
-                    onFailure(e);
-                }
-            }
-            return data;
-        }
-
-        //Always use async on Node
-        require('fs').readFile(url, function(error, data) {
-            if (error) {
-                onFailure(0,0,{httpStatusText:error, url:url});
-            } else {
-                if (data[0] == 31 && data[1] == 139) {
-                    require('zlib').gunzip(data, null, function(error, data) {
-                        if (error)
-                            onFailure(0,0,{httpStatusText:error, url:url});
-                        else {
-                            data = postProcess(data);
-                            if (options.ondata)
-                                options.ondata(data);
-                            onSuccess(data);
-                        }
-                    });
-                } else {
-                    data = postProcess(data);
-                    if (options.ondata)
-                        options.ondata(data);
-                    onSuccess(data);
-                 }
-            }
-        });
-    }
-
     /**
      *  Performs a GET/HEAD request to Viewing Service.
      *
@@ -930,12 +888,6 @@ avp.ENABLE_INLINE_WORKER = true;
     ViewingService.rawGet = function (viewingServiceBaseUrl, api, url, onSuccess, onFailure, options) {
 
         var options = options ? options : {};
-
-        //NODE
-        if (av.isNodeJS && !isRemotePath(viewingServiceBaseUrl, url)) {
-            loadLocalFile(url, onSuccess, onFailure, options);
-            return;
-        }
 
         //See if it can be mapped to a direct OSS path
         var ossUrl = ViewingService.getDirectOSSUrl(options, url);

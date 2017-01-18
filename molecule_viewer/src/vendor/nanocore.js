@@ -1,3 +1,4 @@
+Autodesk = window.Autodesk || {};
 Autodesk.Nano = Autodesk.Nano || {};
 Autodesk.Nano.MODEL_START_LOADED_EVENT = "Nano.ModelStartlLoaded";
 Autodesk.Nano.MODEL_LOAD_ERROR_EVENT = "Nano.ModelLoadedError";

@@ -1,7 +1,8 @@
 /**
  * Created by andrewkimoto on 12/2/16.
  */
-var Autodesk = Autodesk || {};
+var Autodesk = window.Autodesk || {};
+var avp = Autodesk.Viewing.Private;
 //top level object for all molviewers
 Autodesk.$ADSKMOLVIEW = function(container, options) {
     var headless = Autodesk.Viewing.Private.getParameterByName('headless');
@@ -1179,7 +1180,6 @@ Autodesk.MoleculeViewer.prototype._initialize = function _initialize(options) {
 
 
 Autodesk.MoleculeViewer.prototype.initializeCookie = function initializeCookie(options) {
-    var avp = Autodesk.Viewing.Private;
     var sessionID = Autodesk.Viewing.Private.getParameterByName('session');
     var loadEmpty = avp.getParameterByName("empty") === 'true';
 
@@ -1513,7 +1513,6 @@ Autodesk.GuiMoleculeViewer.prototype.loadViewData = function loadViewData(option
 };
 
 Autodesk.GuiMoleculeViewer.prototype.initializeCookie = function initializeCookie(options) {
-    var avp = Autodesk.Viewing.Private;
     var sessionID = Autodesk.Viewing.Private.getParameterByName('session');
     var loadEmpty = avp.getParameterByName("empty") === 'true' ? true : false;
 
@@ -8055,7 +8054,6 @@ Autodesk.Viewing.MolViewer.MolViewerMan.prototype.setDefaultReps = function setD
 
 Autodesk.Viewing.MolViewer.MolViewerMan.prototype.getPDBData = function getPDBData() {
     var config3d = {};
-    var avp = Autodesk.Viewing.Private;
     var canvasConfig = avp.getParameterByName("canvasConfig");
     if (canvasConfig) {
         config3d.canvasConfig = JSON.parse(canvasConfig);
@@ -21720,8 +21718,6 @@ Autodesk.Viewing.Extensions.Section.SectionTool = function(viewer, options)
         section.add(section3D);
         var section2D = new THREE.Object3D();
         section.add(section2D);
-
-        var avp = Autodesk.Viewing.Private;
 
 
         var toPlaneCoords = avp.Intersector.makePlaneBasis(plane);
