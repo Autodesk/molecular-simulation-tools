@@ -11,7 +11,7 @@
   "author": "Autodesk BioNano",
   "license": "ISC",
   "dependencies": {
-    "three": "^0.83.0",
+    "three": "^0.71.0",
     "webvr-polyfill": "^0.9.25"
   },
   "devDependencies": {
