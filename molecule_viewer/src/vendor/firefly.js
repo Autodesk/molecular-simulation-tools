@@ -347,7 +347,7 @@ var getAndroidVersion = av.getAndroidVersion = function(ua) {
 };
 
 // Determine if this is a touch or notouch device.
-var isTouchDevice = av.isTouchDevice = function() {
+window.isTouchDevice = av.isTouchDevice = function() {
     /*
     // Temporarily disable touch support through hammer on Android 5, to debug
     // some specific gesture issue with Chromium WebView when loading viewer3D.js.
@@ -444,7 +444,7 @@ var detectWebGL = av.detectWebGL = function()
 // Convert touchstart event to click to remove the delay between the touch and
 // the click event which is sent after touchstart with about 300ms deley.
 // Should be used in UI elements on touch devices.
-var touchStartToClick = av.touchStartToClick = function(e) {
+window.touchStartToClick = av.touchStartToClick = function(e) {
     e.preventDefault();  // Stops the firing of delayed click event.
     e.stopPropagation();
     e.target.click();    // Maps to immediate click.
