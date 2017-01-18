@@ -24,7 +24,7 @@ class WorkflowStep extends React.Component {
         className={`node ${selectedClass} ${lastClass}`}
         onClick={this.onClick}
       >
-        <span>{this.props.primaryText}</span>
+        <span>{`${this.props.number}. ${this.props.primaryText}`}</span>
         <span>{rightIcon}</span>
       </li>
     );
@@ -34,6 +34,7 @@ class WorkflowStep extends React.Component {
 WorkflowStep.propTypes = {
   last: React.PropTypes.bool,
   onClick: React.PropTypes.func.isRequired,
+  number: React.PropTypes.number.isRequired,
   selected: React.PropTypes.bool,
   status: React.PropTypes.string,
   primaryText: React.PropTypes.string.isRequired,
