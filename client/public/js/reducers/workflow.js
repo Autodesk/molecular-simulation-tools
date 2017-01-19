@@ -1,5 +1,4 @@
 import { statusConstants } from 'molecular-design-applications-shared';
-import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
 
@@ -11,38 +10,30 @@ function workflow(state = initialState, action) {
       const workflowsDifferent = action.workflowId !== state.id;
       if (workflowsDifferent) {
         return new WorkflowRecord({
-          run: new RunRecord({
-            fetching: true,
-            fetchingError: false,
-          }),
+          fetching: true,
+          fetchingError: false,
         });
       }
 
       const runsDifferent = action.runId !== state.run.id;
       if (runsDifferent) {
         return state.merge({
-          run: new RunRecord({
-            fetching: true,
-            fetchingError: false,
-          }),
+          fetching: true,
+          fetchingError: false,
         });
       }
 
       return state.merge({
-        run: new RunRecord({
-          fetching: true,
-          fetchingError: false,
-        }),
+        fetching: true,
+        fetchingError: false,
       });
     }
 
     case actionConstants.FETCHED_WORKFLOW:
       if (action.error) {
         return state.merge({
-          run: new RunRecord({
-            fetching: true,
-            fetchingError: action.error,
-          }),
+          fetching: false,
+          fetchingError: action.error,
         });
       }
       return action.workflow;
@@ -50,20 +41,16 @@ function workflow(state = initialState, action) {
     case actionConstants.FETCHED_RUN:
       if (action.error) {
         return state.merge({
-          run: new RunRecord({
-            fetching: true,
-            fetchingError: false,
-          }),
+          fetching: false,
+          fetchingError: false,
         });
       }
       return action.workflow;
 
     case actionConstants.CLICK_RUN:
       return state.merge({
-        run: new RunRecord({
-          fetching: true,
-          fetchingError: false,
-        }),
+        fetching: true,
+        fetchingError: false,
       });
 
     case actionConstants.RUN_SUBMITTED:
