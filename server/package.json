@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^2.0.1",
+    "axios": "^0.15.3",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "busboy": "^0.2.13",

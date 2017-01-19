@@ -26,6 +26,10 @@ app.post(`${VERSION_PREFIX}/run/cancel`, (req, res) => {
   res.end();
 });
 
+app.get(`${VERSION_PREFIX}/structure/pdb_by_id/:pdbId`, (req, res) => {
+  res.send(`http://localhost:${PORT}/simple.pdb`);
+});
+
 app.put(`${VERSION_PREFIX}/structure/upload`, (req, res) => {
   res.send({
     path: '/simple.pdb',
