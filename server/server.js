@@ -37,6 +37,9 @@ app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
 app.use('/version', versionRouter);
 
+// API 404s
+app.use(new express.Router().get(`${appConstants.VERSION_PREFIX}/*`, routeUtils.notFound));
+
 // Redirect any other routes to index.html (single page app)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
