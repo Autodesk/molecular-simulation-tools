@@ -13,7 +13,7 @@ Autodesk.$ADSKMOLVIEW = function(container, options) {
     this.appID = THREE.Math.generateUUID();
     this.container = container;
     this.ApiConnector = new Autodesk.Nano.ApiConnector(this);
-    this.Loader = new Autodesk.Viewing.MolViewerLoader(this);
+    this.Loader = new Autodesk.Viewing.MolViewerLoader(this, options);
     this.StateManager = new Autodesk.Nano.StateManager(this); //create new StateManager
     this.The3DNanoMan = null;
 
@@ -1148,8 +1148,6 @@ Autodesk.MoleculeViewer = function(app, container, options) {
     //unique id for the app instance.
     this.appID = THREE.Math.generateUUID;
 
-    this.Loader = new Autodesk.Viewing.MolViewerLoader();
-
     me.initializeCookie.call(this,options);
 };
 
@@ -1184,11 +1182,11 @@ Autodesk.MoleculeViewer.prototype.initializeCookie = function initializeCookie(o
     var loadEmpty = avp.getParameterByName("empty") === 'true';
 
     // set the connectionID for use with all api calls the ensure constant load balancer server.
-    this.Loader.setConnectionID();
+    this.app.Loader.setConnectionID();
 
     if(!sessionID){
         if(!loadEmpty) {
-            sessionID = this.Loader.getCookieItem('sessionCookie');
+            sessionID = this.app.Loader.getCookieItem('sessionCookie');
             if(sessionID===null || sessionID === undefined){
                 sessionID = 'default';
             }
@@ -1200,7 +1198,7 @@ Autodesk.MoleculeViewer.prototype.initializeCookie = function initializeCookie(o
         this.sessionID = null;
     }else {
         this.sessionID = sessionID;
-        this.Loader.sessionID = sessionID; // initviewercb uses this to load the session
+        this.app.Loader.sessionID = sessionID; // initviewercb uses this to load the session
     }
     //toolbars
     this.getToolbar(true,false,true);
@@ -1428,7 +1426,7 @@ Autodesk.GuiMoleculeViewer = function(app, container, options) {
     };
 
     var stringToDOM = Autodesk.Viewing.Private.stringToDOM = function(str) {
-        var d = that.app.container.createElement("div");
+        var d = document.createElement('div');
         d.innerHTML = str;
         return d.firstChild;
     };
@@ -29998,9 +29996,11 @@ Autodesk.Viewing.MolViewer.StatusView.prototype.showCustomMessage = function sho
  */
 
 
-Autodesk.Viewing.MolViewerLoader = function(app) {
+Autodesk.Viewing.MolViewerLoader = function(app, options) {
     avp.DEBUG_SHADERS = true;  //to make sure we are good
     this.app = app;
+
+    this.options = this.options = Autodesk.Viewing.MolViewerLoader.prototype.getOptionsFromQueryString.call(this,null,options);
 };
 
 Autodesk.Viewing.MolViewerLoader.prototype = Object.create(Autodesk.Nano.Loader.prototype);

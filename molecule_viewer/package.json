@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p",
-    "dev": "webpack -p --watch"
+    "dev": "webpack --watch"
   },
   "author": "Autodesk BioNano",
   "license": "ISC",
