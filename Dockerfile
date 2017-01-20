@@ -65,14 +65,14 @@ RUN npm install
 RUN touch .env
 RUN echo "NODE_ENV=production" > .env
 ADD ./server/package.json $APP/server/package.json
-RUN cd $APP/server && npm install
 ADD ./server/bin $APP/server/bin
 ADD ./server/**.js $APP/server/
 ADD ./server/**.json $APP/server/
+RUN npm run build
 
 RUN cp ./VERSION ../ || true
 
 ENV PORT 4000
 EXPOSE $PORT
 
-CMD ["forever", "bin/www"]
+CMD ["forever", "dist/bin/www.js"]

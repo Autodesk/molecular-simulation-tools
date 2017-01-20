@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./",
-    "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "dev": "nodemon ./bin/www --exec babel-node --presets es2016",
+    "build": "babel -d dist --ignore node_modules,build,dist --copy-files ./ bin/www",
+    "start": "node dist/bin/www.js"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +34,9 @@
     "validator": "^6.2.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0",
+    "babel-preset-es2016": "^6.22.0",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
