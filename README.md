@@ -51,7 +51,7 @@ Runs the indicated workflow.  Requires workflowId, email, and pdbUrl.
 Returns the pdb data and a url to the pdb file represented by the given pdbId.  For some workflow ids, the pdb will be processed before being returned, and a `data` parameter will also be included with additional data.
 
 ##### PUT /structure/upload
-Uploads the given pdb file to the server and returns a public URL to it.
+Uploads the given pdb file to the server and returns a public URL to it.  Sends formdata with a `workflowId` and a `file`.
 
 #### Seed Data
 Currently, Redis needs to be seeded with at least one workflow for the app to use, which you can create with:

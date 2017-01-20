@@ -1,6 +1,7 @@
 const Busboy = require('busboy');
 const axios = require('axios');
 const express = require('express');
+const fs = require('fs');
 const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
 
@@ -46,14 +47,48 @@ router.get('/pdb_by_id', (req, res, next) => {
 });
 
 router.put('/upload', (req, res, next) => {
+  let workflowId;
+
   const busboy = new Busboy({
     headers: req.headers,
   });
 
+  busboy.on('field', (fieldname, val) => {
+    if (fieldname === 'workflowId') {
+      workflowId = val;
+    }
+  });
+
   busboy.on('file', (fieldname, file) => {
     ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
-      res.send({
-        path: `/structures/${filename}`,
+      fs.readFile(`public/structures/${filename}`, 'utf8', (err, inputPdb) => {
+        if (err) {
+          return next(err);
+        }
+
+        if (!workflowId) {
+          return next(new Error('Needs a valid workflow id.'));
+        }
+
+        return workflowUtils.processInput(workflowId, inputPdb).then(
+          ({ pdb, data }) => {
+            if (!pdb) {
+              return res.send({
+                pdbUrl: `/structures/${filename}`,
+                pdb: inputPdb,
+              });
+            }
+
+            return ioUtils.stringToHashFile(pdb, 'public/structures').then(
+              processedFilename =>
+                res.send({
+                  pdbUrl: `/structures/${processedFilename}`,
+                  pdb,
+                  data,
+                })
+            ).catch(next);
+          }
+        ).catch(next);
       });
     }).catch(next);
   });

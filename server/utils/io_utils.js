@@ -3,6 +3,7 @@ const appRoot = require('app-root-path');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const shortid = require('shortid');
 
 const ioUtils = {
   readJsonFile(source) {
@@ -31,7 +32,9 @@ const ioUtils = {
         hash.end();
         resolve(hash.read());
       });
-      readableStream.on('error', reject);
+      readableStream.on('error', (err) => {
+        reject(err);
+      });
 
       readableStream.pipe(hash);
     });
@@ -54,26 +57,49 @@ const ioUtils = {
    * @returns {Promise}j
    */
   streamToHashFile(readableStream, targetDir) {
-    const pass = new PassThrough();
-    readableStream.pipe(pass);
+    // Write the input to a temp file
+    return new Promise((resolve, reject) => {
+      const filename = `tmp_${shortid.generate()}.pdb`;
+      const saveTo = path.join(appRoot.toString(), 'public/tmp', filename);
+      const writeableStream = fs.createWriteStream(saveTo);
 
-    return ioUtils.hashStream(readableStream).then((hashed) => {
-      const filename = `${hashed}.pdb`;
-      const saveTo = path.join(appRoot.toString(), targetDir, filename);
+      writeableStream.on('finish', (err) => {
+        if (err) {
+          return reject(err);
+        }
 
-      return new Promise((resolve, reject) => {
-        fs.exists(saveTo, (exists) => {
-          if (!exists) {
-            const writeableStream = fs.createWriteStream(saveTo);
-            writeableStream.on('finish', () => resolve(filename));
-            writeableStream.on('error', reject);
-            return pass.pipe(writeableStream);
-          }
-
-          return resolve(filename);
-        });
+        return resolve(saveTo);
       });
-    });
+
+      readableStream.pipe(writeableStream);
+    }).then(tempFilepath =>
+      // Hash the temp file
+      ioUtils.hashStream(fs.createReadStream(tempFilepath)).then((hashed) => {
+        const filename = `${hashed}.pdb`;
+        const saveTo = path.join(appRoot.toString(), targetDir, filename);
+
+        // Save to the final filepath if needed, with the hash as the filename
+        // And delete the temp file
+        return new Promise((resolve, reject) => {
+          fs.exists(saveTo, (exists) => {
+            if (!exists) {
+              const writeableStream = fs.createWriteStream(saveTo);
+              writeableStream.on('finish', () => {
+                ioUtils.deleteFile(tempFilepath).then(() =>
+                  resolve(filename)
+                ).catch(reject);
+              });
+              writeableStream.on('error', reject);
+              return fs.createReadStream(tempFilepath).pipe(writeableStream);
+            }
+
+            return ioUtils.deleteFile(tempFilepath).then(() =>
+              resolve(filename)
+            ).catch(reject);
+          });
+        });
+      })
+    );
   },
 
   /**
@@ -101,6 +127,23 @@ const ioUtils = {
         }
 
         return resolve(filename);
+      });
+    });
+  },
+
+  /**
+   * Delete the indicated file
+   * @param filepath {String}
+   * @returns {Promise} resolves with {String}
+   */
+  deleteFile(filepath) {
+    return new Promise((resolve, reject) => {
+      fs.unlink(filepath, (err) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(filepath);
       });
     });
   },
