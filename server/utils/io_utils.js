@@ -38,10 +38,20 @@ const ioUtils = {
   },
 
   /**
+   * Synchronously hash a simple string
+   * @param string {String}
+   * @returns {String}
+   */
+  hashString(string) {
+    return crypto.createHash('sha1').update(string).digest('hex');
+  },
+
+  /**
    * Given a readable stream, hash its contents and write it to the given
    * directory with its hash as its name
    * @param readableStream {Stream}
    * @param targetDir {String}
+   * @returns {Promise}j
    */
   streamToHashFile(readableStream, targetDir) {
     const pass = new PassThrough();
@@ -62,6 +72,35 @@ const ioUtils = {
 
           return resolve(filename);
         });
+      });
+    });
+  },
+
+  /**
+   * Given a string of file contents, write the string to a file whose name is
+   * a hash of its contents
+   * @param string {String}
+   * @param targetDir {String}
+   * @returns {Promise}j
+   */
+  stringToHashFile(string, targetDir) {
+    const hashed = ioUtils.hashString(string);
+    const filename = `${hashed}.pdb`;
+    const saveTo = path.join(appRoot.toString(), targetDir, filename);
+
+    return new Promise((resolve, reject) => {
+      fs.exists(saveTo, (exists) => {
+        if (!exists) {
+          return fs.writeFile(saveTo, string, (err) => {
+            if (err) {
+              return reject(err);
+            }
+
+            return resolve(filename);
+          });
+        }
+
+        return resolve(filename);
       });
     });
   },

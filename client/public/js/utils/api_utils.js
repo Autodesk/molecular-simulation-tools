@@ -1,4 +1,5 @@
 import axios from 'axios';
+import querystring from 'querystring';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 
@@ -33,8 +34,9 @@ const apiUtils = {
     });
   },
 
-  getPdbById(pdbId) {
-    return axios.get(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+  getPdbById(pdbId, workflowId = '1') {
+    const query = querystring.stringify({ pdbId, workflowId });
+    return axios.get(`${API_URL}/v1/structure/pdb_by_id?${query}`).then(res =>
       res.data
     ).catch((err) => {
       throw err.response.data;
