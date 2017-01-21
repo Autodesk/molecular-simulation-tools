@@ -4,6 +4,7 @@ const statusConstants = require('molecular-design-applications-shared').statusCo
 const dbConstants = require('../constants/db_constants');
 const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
+const seedData = require('../utils/seed_data');
 
 const router = new express.Router();
 
@@ -13,8 +14,7 @@ const router = new express.Router();
  * itself actually succeeds or not).
  */
 router.get('/', (req, res, next) => {
-  // TODO this should come from seed data
-  const workflowId = '0';
+  const workflowId = seedData[0].id;
   const runId = `test-${shortid.generate()}`;
   const email = 'test@autodesk.com';
   const inputPdbUrl = 'https://files.rcsb.org/download/3aid.pdb';
