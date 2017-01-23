@@ -16,7 +16,6 @@ router.get('/pdb_by_id/:pdbId', (req, res, next) => {
 });
 
 router.put('/upload', (req, res, next) => {
-  log.trace('/upload');
   const busboy = new Busboy({
     headers: req.headers,
   });
@@ -29,9 +28,7 @@ router.put('/upload', (req, res, next) => {
     next(error);
   });
   busboy.on('file', (fieldname, file) => {
-    log.trace({api:'upload', event:'file', fieldname:fieldname});
     ioUtils.streamToHashFile(file, `public/${appConstants.STRUCTURES}`).then((filename) => {
-      log.trace({api:'upload', message:'streamed file to hash', filename:filename});
       res.send({
         path: `/${appConstants.STRUCTURES}/${filename}`,
       });
