@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require('express');
 const shortid = require('shortid');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
@@ -12,11 +14,14 @@ const router = new express.Router();
  * Tries running a test run. Does everything the same as /run except no emails.
  * Returns success if submitting the run succeeds (doesn't care if the run
  * itself actually succeeds or not).
+ * TODO: change above so that workflow job is submitted and results are verified 
+ * to have succeeded before this route returns. 
  */
 router.get('/', (req, res, next) => {
   const workflowId = seedData[0].id;
-  const runId = `test-${shortid.generate()}`;
-  const email = 'test@autodesk.com';
+  const runId      = `test-${shortid.generate()}`;
+  var   resReturn  = { runId, success: true };
+  const email      = 'test@autodesk.com';
   const inputPdbUrl = 'https://files.rcsb.org/download/3aid.pdb';
 
   const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify({
@@ -31,10 +36,14 @@ router.get('/', (req, res, next) => {
     runId, statusConstants.RUNNING
   );
 
-  return Promise.all([runPromise, statePromise]).then(() => {
+  return Promise.all( [runPromise, statePromise] ).then(() => {
     runUtils.executeWorkflow(runId, inputPdbUrl);
 
-    res.send({ runId });
+    const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
+    resReturn.path = req.path;
+    resReturn.workflowURL = runUrl;
+    resReturn.message = 'Your workflow is running.';
+    res.send(resReturn);
   }).catch(next);
 });
 
