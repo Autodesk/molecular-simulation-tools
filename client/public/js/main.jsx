@@ -28,8 +28,8 @@ const store = createStore(
   index, applyMiddleware(thunkMiddleware, loggingMiddleware)
 );
 
-function codeSplitHomePage(location, callback) {
-  System.import('./components/home_page').then(module =>
+function codeSplitHomePageRoot(location, callback) {
+  System.import('./containers/home_page_root').then(module =>
     callback(null, module.default)
   );
 }
@@ -42,7 +42,7 @@ function codeSplitWorkflowRoot(location, callback) {
 render((
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" getComponent={codeSplitHomePage} />
+      <Route path="/" getComponent={codeSplitHomePageRoot} />
       <Route path="/workflow" component={RunnerRoot}>
         <IndexRoute component={NotFound} />
         <Route path=":workflowId" getComponent={codeSplitWorkflowRoot} />

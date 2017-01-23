@@ -1,73 +1,38 @@
 import React from 'react';
 import WorkflowCard from './workflow_card';
+import WorkflowCardLoading from './workflow_card_loading';
 import WorkflowRecord from '../records/workflow_record';
 import imgLogo from '../../img/logo.png';
 import imgM1 from '../../img/m1.png';
 import imgM2 from '../../img/m2.png';
 import imgM3 from '../../img/m3.png';
 import imgM4 from '../../img/m4.png';
-import imgLogo1 from '../../img/logo1.png';
-import imgLogo2 from '../../img/logo2.png';
-import imgLogo3 from '../../img/logo3.png';
-import imgLogo4 from '../../img/logo4.png';
 import imgLogoResearch from '../../img/logo_research.png';
 import imgTweet from '../../img/tweet.svg';
 import imgFace from '../../img/face.svg';
 import '../../css/home_page.scss';
 
-// TODO this should come from an ajax request
-const workflows = [
-  new WorkflowRecord({
-    id: '0',
-    title: 'Preparing the outer ligand structure',
-    bgIndex: 0,
-    bgColor: '#3762E9',
-    color: '#F1FF66',
-    comingSoon: false,
-    creatorImage: imgLogo1,
-    description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
-  }),
-  new WorkflowRecord({
-    id: '0',
-    title: 'Preparing the outer ligand structure',
-    bgColor: '#292E60',
-    bgIndex: 1,
-    color: '#2FE695',
-    comingSoon: false,
-    creatorImage: imgLogo2,
-    description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
-  }),
-  new WorkflowRecord({
-    id: '0',
-    title: 'Preparing the outer ligand structure',
-    bgColor: '#42413F',
-    bgIndex: 2,
-    color: '#FFFFFF',
-    comingSoon: true,
-    creatorImage: imgLogo3,
-    description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
-  }),
-  new WorkflowRecord({
-    id: '0',
-    title: 'Preparing the outer ligand structure',
-    bgColor: '#DE2755',
-    bgIndex: 3,
-    color: '#FFFFFF',
-    comingSoon: true,
-    creatorImage: imgLogo4,
-    description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
-  }),
-];
+function HomePage(props) {
+  let workflowCards = [];
 
-function HomePage() {
+  if (props.workflows.length) {
+    workflowCards = props.workflows.map((workflow, index) =>
+      <WorkflowCard
+        bgIndex={workflow.bgIndex}
+        bgColor={workflow.bgColor}
+        color={workflow.color}
+        comingSoon={workflow.comingSoon}
+        creatorImage={workflow.creatorImage}
+        id={workflow.id}
+        key={index}
+      />
+    );
+  } else {
+    for (let i = 0; i < 6; i += 1) {
+      workflowCards.push(<WorkflowCardLoading key={i} />);
+    }
+  }
+
   return (
     <div className="home-page">
       <nav
@@ -131,19 +96,7 @@ function HomePage() {
             </div>
           </div>
           <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
-            {
-              workflows.map((workflow, index) =>
-                <WorkflowCard
-                  bgIndex={workflow.bgIndex}
-                  bgColor={workflow.bgColor}
-                  color={workflow.color}
-                  comingSoon={workflow.comingSoon}
-                  creatorImage={workflow.creatorImage}
-                  id={workflow.id}
-                  key={index}
-                />
-              )
-            }
+            {workflowCards}
           </div>
         </div>
       </div>
@@ -215,7 +168,7 @@ function HomePage() {
             </div>
             <div className="col-sm-4 col-xs-6 creator-images">
               {
-                workflows.map((workflow, index) => (
+                props.workflows.map((workflow, index) => (
                   <img
                     key={index}
                     src={workflow.creatorImage}
@@ -306,5 +259,9 @@ function HomePage() {
     </div>
   );
 }
+
+HomePage.propTypes = {
+  workflows: React.PropTypes.arrayOf(WorkflowRecord),
+};
 
 export default HomePage;
