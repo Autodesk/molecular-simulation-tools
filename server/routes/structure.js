@@ -1,6 +1,8 @@
 const Busboy = require('busboy');
 const express = require('express');
 const ioUtils = require('../utils/io_utils');
+const appConstants = require('../constants/app_constants');
+log.warn('appConstants=' + JSON.stringify(appConstants));
 
 const router = new express.Router();
 
@@ -14,14 +16,24 @@ router.get('/pdb_by_id/:pdbId', (req, res, next) => {
 });
 
 router.put('/upload', (req, res, next) => {
+  log.trace('/upload');
   const busboy = new Busboy({
     headers: req.headers,
   });
 
+  busboy.on('field', (fieldname, file) => {
+    log.trace({api:'upload', event:'field', field:fieldname});
+  });
+  busboy.on('error', (error) => {
+    log.error({message:'on busboy error', error:error});
+    next(error);
+  });
   busboy.on('file', (fieldname, file) => {
-    ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
+    log.trace({api:'upload', event:'file', fieldname:fieldname});
+    ioUtils.streamToHashFile(file, `public/${appConstants.STRUCTURES}`).then((filename) => {
+      log.trace({api:'upload', message:'streamed file to hash', filename:filename});
       res.send({
-        path: `/structures/${filename}`,
+        path: `/${appConstants.STRUCTURES}/${filename}`,
       });
     }).catch(next);
   });

@@ -57,20 +57,24 @@ RUN npm run build
 # Server build/install packages
 #######################################
 RUN mkdir -p $APP/server
+ADD ./server/package.json $APP/server/package.json
 WORKDIR $APP/server
-
-ADD ./server/ $APP/server/ 
 RUN npm install
 
+# ADD ./server $APP/server
 RUN touch .env
 RUN echo "NODE_ENV=production" > .env
-ADD ./server/package.json $APP/server/package.json
-RUN cd $APP/server && npm install
+
+# RUN cd $APP/server && npm install
 ADD ./server/bin $APP/server/bin
-ADD ./server/**.js $APP/server/
+ADD ./server/constants $APP/server/constants
+ADD ./server/etc $APP/server/etc
+ADD ./server/routes $APP/server/routes
+ADD ./server/utils $APP/server/utils
+ADD ./server/test $APP/server/test
 ADD ./server/**.json $APP/server/
 
-RUN cp ./VERSION ../ || true
+RUN cp ./server/VERSION $APP/ || true
 
 ENV PORT 4000
 EXPOSE $PORT

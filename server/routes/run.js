@@ -1,4 +1,5 @@
 const express = require('express');
+const request = require('request');
 const isEmail = require('validator').isEmail;
 const shortId = require('shortid');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
@@ -13,14 +14,20 @@ const router = new express.Router();
  * Get the status of a run
  */
 router.get('/:runId', (req, res, next) => {
+  log.info({w:'/run/' + req.params.runId});
   redis.hget(dbConstants.REDIS_RUNS, req.params.runId).then((runString) => {
     if (!runString) {
       const error = new Error(`Run "${req.params.runId}" not found`);
       error.status = 404;
+      console.error(error);
       return next(error);
     }
 
     const run = JSON.parse(runString);
+    if (run.outputPdbPath && run.outputPdbPath.indexOf('ccc:9000') > -1) {
+      run.outputPdbPath = run.outputPdbPath.replace('ccc:9000', 'localhost:9000');
+    }
+    run.params = null;//This is too big to send and unnecessary
     return redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
       (workflowString) => {
         if (!workflowString) {
@@ -28,7 +35,6 @@ router.get('/:runId', (req, res, next) => {
             new Error('Corrupt run data references nonexistant workflow')
           );
         }
-
         const workflow = JSON.parse(workflowString);
         return res.send(Object.assign({}, run, {
           workflow,
@@ -50,43 +56,45 @@ router.post('/', (req, res, next) => {
   if (!isEmail(req.body.email)) {
     return next(new Error('Invalid email given'));
   }
-  if (!req.body.pdbUrl) {
-    return next(new Error('Missing required parameter "pdbUrl"'));
+
+  var getInputPromise = null;
+  if (req.body.pdbData) {
+    getInputPromise = Promise.resolve(req.body.pdbData);
+  } else if (req.body.pdbUrl) {
+    var pdbUrl = req.body.pdbUrl;
+    if (!pdbUrl.startsWith('http')) {
+      pdbUrl = `http://localhost:${process.env.PORT}${pdbUrl}`;
+    }
+    getInputPromise = new Promise((resolve, reject) => {
+      request(pdbUrl, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          resolve(body);
+        } else {
+          reject(error != null ? error : `statusCode=${response.statusCode}`);
+        }
+      });
+    });
+  } else {
+    return next(new Error('Missing required parameter "pdbUrl" or "pdbData"'));
   }
 
-  const workflowId = req.body.workflowId.toString();
-  const runId = shortId.generate();
-
-  // Add the email to the set of emails to notify
-  // when this workflow is complete
-  // TODO we can probably use the email in the run instead
-  const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, req.body.email);
-
-  const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify({
-    id: runId,
-    workflowId,
-    email: req.body.email,
-    inputPdbUrl: req.body.pdbUrl,
-    created: Date.now(),
-  }));
-
-  const statePromise = runUtils.setRunStatus(
-    runId, statusConstants.RUNNING
-  );
-
-  return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
-    runUtils.executeWorkflow(runId, req.body.pdbUrl);
-
-    const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
-    emailUtils.send(
-      req.body.email,
-      'Your Workflow is Running',
-      './views/email_thanks.ms',
-      { runUrl }
-    ).then(() =>
-      res.send({ runId })
-    ).catch(next);
-  }).catch(next);
+  getInputPromise
+    .then(pdbData => {
+      var params = {pdbData};
+      runUtils.executeWorkflow(req.body.workflowId, req.body.email, params)
+        .then(jobId => {
+          log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
+            res.send({runId:jobId});
+        })
+        .error(err => {
+          log.error(err);
+          next(err);
+        });
+    })
+    .catch(err => {
+      log.error(err);
+      next(err);
+    });
 });
 
 /**
