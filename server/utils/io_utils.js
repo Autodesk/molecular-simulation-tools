@@ -7,9 +7,14 @@ const shortId = require('shortid');
 
 
 /**
- * Hash the contents of the given stream
- * @param readableStream {Stream}
+ * Hash the contents of the given file
+ * @param String {filePath}
  * @returns {Promise}
+ */
+/**
+ * Hash the contents of the given file
+ * @param  {String} filePath
+ * @return {Promise<String>} Hash of the file content.
  */
 function hashFile(filePath) {
   return new Promise((resolve, reject) => {

@@ -2,7 +2,6 @@ const Busboy = require('busboy');
 const express = require('express');
 const ioUtils = require('../utils/io_utils');
 const appConstants = require('../constants/app_constants');
-log.warn('appConstants=' + JSON.stringify(appConstants));
 
 const router = new express.Router();
 

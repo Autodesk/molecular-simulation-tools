@@ -52,8 +52,10 @@ const runUtils = {
   },
 
   processJobFinished(jobResult) {
-    // log.info({message:'processJobFinished', jobResult:jobResult});
     const runId = jobResult.jobId;
+    //Add the job id to all further log calls
+    const log = global.log.child({f:'processJobFinished', runId:runId});
+    log.debug({jobResult});
     // Check for errors in the job result
     // Set the final output and status on the run
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
@@ -77,7 +79,9 @@ const runUtils = {
         dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
       );
     })
-    .catch(console.error.bind(console))
+    .catch(err => {
+      return log.error({error:JSON.stringify(err)});
+    })
     .then(ignored => {
       runUtils.sendEmailsWorkflowEnded(runId);
     });

@@ -36,8 +36,7 @@
     "request": "^2.79.0",
     "sendgrid": "^4.7.1",
     "shortid": "^2.2.6",
-    "validator": "^6.2.0",
-    "ws": "^1.1.1"
+    "validator": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
