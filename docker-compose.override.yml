@@ -31,14 +31,15 @@ services:
       - ccc
 
   clientbuild:
+    working_dir: "/app/client"
     build:
-      context: client
+      context: .
     volumes:
       - ./shared:/app/shared
       - ./client/dist:/app/client/dist
       - ./client/public:/app/client/public
       - ./client/test:/app/client/test
-    command: ["npm", "run", "dev"]
+    command: ["npm", "run", "watch"]
 
   ccc:
     image: "quay.io/bionano/cloud-compute-cannon:75509542"
