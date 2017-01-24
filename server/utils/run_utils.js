@@ -71,6 +71,7 @@ const runUtils = {
         status,
         jobResult,
         ended: Date.now(),
+        outputData: {vde: {units: "hartree", value: -0.14949313427840139}}//This is a dummy value for now
       });
       return redis.hset(
         dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
