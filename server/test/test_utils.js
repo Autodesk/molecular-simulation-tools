@@ -94,10 +94,10 @@ const test_utils = {
     })
     .then(result => {
       if (result.jobResult.exitCode == 0) {
-        const outputPdbPath = result.outputPdbPath;
+        const outputPdbUrl = result.outputPdbUrl;
         return new Promise((resolve, reject) => {
-          log.trace('Requesting url=' + outputPdbPath);
-          request.get(outputPdbPath, (error, response, body) => {
+          log.trace('Requesting url=' + outputPdbUrl);
+          request.get(outputPdbUrl, (error, response, body) => {
               if (error) {
                 log.error(error);
                 return reject(error);

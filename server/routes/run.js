@@ -24,8 +24,8 @@ router.get('/:runId', (req, res, next) => {
     }
 
     const run = JSON.parse(runString);
-    if (run.outputPdbPath && run.outputPdbPath.indexOf('ccc:9000') > -1) {
-      run.outputPdbPath = run.outputPdbPath.replace('ccc:9000', 'localhost:9000');
+    if (run.outputPdbUrl && run.outputPdbUrl.indexOf('ccc:9000') > -1) {
+      run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
     }
     run.params = null;//This is too big to send and unnecessary
     return redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
