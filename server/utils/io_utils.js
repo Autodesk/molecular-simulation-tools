@@ -32,9 +32,7 @@ const ioUtils = {
         hash.end();
         resolve(hash.read());
       });
-      readableStream.on('error', (err) => {
-        reject(err);
-      });
+      readableStream.on('error', reject);
 
       readableStream.pipe(hash);
     });
