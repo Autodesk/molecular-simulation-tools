@@ -109,24 +109,26 @@ const runUtils = {
     /* When we have more than one workflow, we'll switch on the workflow Id */
     const workflowPromise = runUtils.executeWorkflow0(params);
 
-    var jobId = null;
     return workflowPromise
       .then(jobResult => {
         log.info({jobResult:jobResult});
-        jobId = jobResult.jobId;
+        const runId = jobResult.jobId;
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
         emailUtils.send(
           email,
           'Your Workflow is Running',
-          './views/email_thanks.ms',
+          'views/email_thanks.ms',
           { runUrl }
-        );
-        //Record the jobId with all the other data
+        )
+        .catch(err => {
+          log.error({message: 'Failed to send email', error:JSON.stringify(err)});
+        });
+        //Record the runId with all the other data
         const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, email);
 
         const runPayload = {
-          id: jobId,
+          id: runId,
           workflowId,
           email: email,
           // params: params,
@@ -134,16 +136,16 @@ const runUtils = {
         };
         log.debug(JSON.stringify(runPayload).substr(0, 300));
 
-        const runPromise = redis.hset(dbConstants.REDIS_RUNS, jobId, JSON.stringify(runPayload));
-        const statePromise = runUtils.setRunStatus(jobId, statusConstants.RUNNING);
+        const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(runPayload));
+        const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
 
         return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
-          return jobId;
+          return runId;
         });
       })
-      .then(jobId => {
-        runUtils.monitorRun(jobId);
-        return jobId;
+      .then(runId => {
+        runUtils.monitorRun(runId);
+        return runId;
       })
       .error(err => {
         log.error(err);

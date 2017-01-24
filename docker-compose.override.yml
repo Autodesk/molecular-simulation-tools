@@ -17,6 +17,7 @@ services:
       - ./server/etc:/app/server/etc
       - ./server/main:/app/server/main
       - ./server/routes:/app/server/routes
+      - ./server/views:/app/server/views
       - ./server/test:/app/server/test
       - ./server/utils:/app/server/utils
       - ./tmp:/tmp

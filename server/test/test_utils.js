@@ -90,7 +90,7 @@ const test_utils = {
               }
             });
         });
-      }, {max_tries:20, interval:2000});
+      }, {max_tries:40, interval:2000});
     })
     .then(result => {
       if (result.jobResult.exitCode == 0) {
