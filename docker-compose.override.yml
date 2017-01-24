@@ -22,12 +22,23 @@ services:
       - ./server/utils:/app/server/utils
       - ./shared:/app/shared
       - ./tmp:/tmp
+      - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
       CCC: "ccc:9000"
     links:
       - redis
       - ccc
+
+  clientbuild:
+    build:
+      context: client
+    volumes:
+      - ./shared:/app/shared
+      - ./client/dist:/app/client/dist
+      - ./client/public:/app/client/public
+      - ./client/test:/app/client/test
+    command: ["npm", "run", "dev"]
 
   ccc:
     image: "quay.io/bionano/cloud-compute-cannon:75509542"

@@ -63,11 +63,9 @@ const runUtils = {
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
       var outputPdbUrl = `${process.env["CCC"]}/${jobResult.jobId}/outputs/out.pdb`;
-      log.warn("processJobFinished outputPdbUrl=" + outputPdbUrl);
       if (!outputPdbUrl.startsWith('http')) {
         outputPdbUrl = `http://${outputPdbUrl}`;
       }
-      log.warn("processJobFinished2 outputPdbUrl=" + outputPdbUrl);
       const updatedRun = Object.assign({}, run, {
         outputPdbUrl,
         status,
