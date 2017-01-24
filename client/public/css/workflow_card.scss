@@ -3,10 +3,11 @@ $transition-time: 0.2s;
 .workflow-card {
   display: block;
   position: relative;
+  width: 360px;
   height: 300px;
   overflow: hidden;
   margin-top: 32px;
-  margin-left: 32px;
+  margin-left: 26px;
   border-radius: 20px;
   transition: $transition-time;
   background-repeat: none;
@@ -152,11 +153,16 @@ $transition-time: 0.2s;
   }
 
   &.workflow-card-loading {
-    .card:hover {
+    &:hover {
       box-shadow: 0 0 0 rgba(0, 0, 0, 0);
       transform: none;
+
+      .bg-image {
+        opacity: 0.4;
+      }
     }
-    .cardBack {
+
+    .bg-image {
       background-color: #afafaf;
     }
 
