@@ -140,7 +140,7 @@ function onListening(addr) {
 function init() {
     const redis = require('../utils/redis');
     const dbConstants = require('../constants/db_constants');
-    return redis.hset(dbConstants.REDIS_WORKFLOWS, 0, JSON.stringify({ id: 0, title: 'VDE' }));
+    return redis.hset(dbConstants.REDIS_WORKFLOWS, '0', JSON.stringify({ id: '0', title: 'VDE' }));
 }
 
 /**
