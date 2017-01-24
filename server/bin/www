@@ -4,10 +4,36 @@
  * Module dependencies.
  */
 
+if (!('toJSON' in Error.prototype))
+  Object.defineProperty(Error.prototype, 'toJSON', {
+    value: function () {
+    var alt = {};
+
+    Object.getOwnPropertyNames(this).forEach(function (key) {
+      alt[key] = this[key];
+    }, this);
+
+    return alt;
+  },
+  configurable: true,
+  writable: true
+});
+
 require('dotenv').config();
-var app = require('../server');
+var bunyan = require('bunyan');
+const streams = [
+  {
+    level: bunyan.DEBUG,
+    stream: require('bunyan-format')({outputMode:'short'})
+  }
+];
+global.log = bunyan.createLogger({name: "mdt", level:bunyan.TRACE, streams: streams});
+
+var app = require('../main/server');
 var debug = require('debug')('express:server');
 var http = require('http');
+
+
 
 /**
  * Get port from environment and store in Express.
@@ -15,20 +41,28 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
+process.env.PORT = port;
+
+
 
 /**
- * Create HTTP server.
- */
+  Before we create the server, we'll populate the database
+  with workflows
+*/
+init()
+  .then((resolve, reject) => {
+    /**
+     * Create HTTP server.
+     */
+    var server = http.createServer(app);
 
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening(server.address()));
+  });
 
 /**
  * Normalize a port into a number, string, or false.
@@ -66,11 +100,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      log.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      log.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -82,10 +116,36 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+function onListening(addr) {
+  return () => {
+    var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+    log.debug('Listening on ' + bind);
+    var test_utils = require('../test/test_utils');
+    //Wait a bit, sometimes docker takes a while
+    setTimeout(() => {
+      test_utils.runAllTests()
+        .catch(err => {
+          log.error({status:'Test failed:', error:JSON.stringify(err)});
+        });
+    }, 1000);
+  }
 }
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function init() {
+    const redis = require('../utils/redis');
+    const dbConstants = require('../constants/db_constants');
+    return redis.hset(dbConstants.REDIS_WORKFLOWS, '0', JSON.stringify({ id: '0', title: 'VDE' }));
+}
+
+/**
+ * Proxy requests to port 9000 to the CCC server
+ */
+const httpProxy = require('http-proxy');
+httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+

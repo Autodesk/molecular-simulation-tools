@@ -1,6 +1,7 @@
 const Busboy = require('busboy');
 const express = require('express');
 const ioUtils = require('../utils/io_utils');
+const appConstants = require('../constants/app_constants');
 
 const router = new express.Router();
 
@@ -18,10 +19,17 @@ router.put('/upload', (req, res, next) => {
     headers: req.headers,
   });
 
+  busboy.on('field', (fieldname, file) => {
+    log.trace({api:'upload', event:'field', field:fieldname});
+  });
+  busboy.on('error', (error) => {
+    log.error({message:'on busboy error', error:error});
+    next(error);
+  });
   busboy.on('file', (fieldname, file) => {
-    ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
+    ioUtils.streamToHashFile(file, `public/${appConstants.STRUCTURES}`).then((filename) => {
       res.send({
-        path: `/structures/${filename}`,
+        path: `/${appConstants.STRUCTURES}/${filename}`,
       });
     }).catch(next);
   });

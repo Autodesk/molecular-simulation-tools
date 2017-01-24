@@ -4,12 +4,12 @@ const cors = require('cors');
 const express = require('express');
 const logger = require('morgan');
 const path = require('path');
-const appConstants = require('./constants/app_constants');
-const routeUtils = require('./utils/route_utils');
-const runRoutes = require('./routes/run');
-const structureRoutes = require('./routes/structure');
-const workflowRoutes = require('./routes/workflow');
-const testRoutes = require('./routes/test');
+const appConstants = require('../constants/app_constants');
+const routeUtils = require('../utils/route_utils');
+const runRoutes = require('../routes/run');
+const structureRoutes = require('../routes/structure');
+const workflowRoutes = require('../routes/workflow');
+const testRoutes = require('../routes/test');
 const versionRouter = require('./version');
 
 // Create the server
@@ -23,12 +23,12 @@ app.use(cookieParser());
 app.use(cors());
 
 // Serve static files
-app.use(express.static(path.join(__dirname, '../client/dist')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Static file 404s
-app.use(new express.Router().get('/structures/*', routeUtils.notFound));
-app.use(new express.Router().get('/assets/*', routeUtils.notFound));
+app.use(new express.Router().get('../structures/*', routeUtils.notFound));
+app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 
 /**
  * Add server routes
@@ -41,7 +41,7 @@ app.use('/version', versionRouter);
 
 // Redirect any other routes to index.html (single page app)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
 // error handler
