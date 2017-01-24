@@ -20,6 +20,7 @@ services:
       - ./server/views:/app/server/views
       - ./server/test:/app/server/test
       - ./server/utils:/app/server/utils
+      - ./shared:/app/shared
       - ./tmp:/tmp
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:

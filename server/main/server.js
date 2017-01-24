@@ -9,6 +9,7 @@ const routeUtils = require('../utils/route_utils');
 const runRoutes = require('../routes/run');
 const structureRoutes = require('../routes/structure');
 const workflowRoutes = require('../routes/workflow');
+const testRoutes = require('../routes/test');
 const versionRouter = require('./version');
 
 // Create the server
@@ -35,6 +36,7 @@ app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/test`, testRoutes);
 app.use('/version', versionRouter);
 
 // Redirect any other routes to index.html (single page app)
