@@ -77,25 +77,21 @@ const ioUtils = {
         const saveTo = path.join(appRoot.toString(), targetDir, filename);
 
         // Save to the final filepath if needed, with the hash as the filename
-        // And delete the temp file
         return new Promise((resolve, reject) => {
           fs.exists(saveTo, (exists) => {
-            if (!exists) {
-              const writeableStream = fs.createWriteStream(saveTo);
-              writeableStream.on('finish', () => {
-                ioUtils.deleteFile(tempFilepath).then(() =>
-                  resolve(filename)
-                ).catch(reject);
-              });
-              writeableStream.on('error', reject);
-              return fs.createReadStream(tempFilepath).pipe(writeableStream);
+            if (exists) {
+              return resolve();
             }
 
-            return ioUtils.deleteFile(tempFilepath).then(() =>
-              resolve(filename)
-            ).catch(reject);
+            const writeableStream = fs.createWriteStream(saveTo);
+            writeableStream.on('finish', resolve);
+            writeableStream.on('error', reject);
+            return fs.createReadStream(tempFilepath).pipe(writeableStream);
           });
-        });
+        }).then(() =>
+          // Finally, cleanup by deleting the temp file
+          ioUtils.deleteFile(tempFilepath).then(() => filename)
+        );
       })
     );
   },
