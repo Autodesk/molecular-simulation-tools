@@ -47,6 +47,12 @@ const apiUtils = {
     );
   },
 
+  getWorkflows() {
+    return axios.get(`${API_URL}/v1/workflow`).then(res =>
+      res.data.map(workflowData => new WorkflowRecord(workflowData))
+    );
+  },
+
   getRun(runId) {
     return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
       res.data

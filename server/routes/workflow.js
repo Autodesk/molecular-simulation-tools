@@ -23,6 +23,9 @@ router.get('/exitcode/:runId', (req, res) => {
   res.sendFile(runUtils.getRunExitCodePath(runId));
 });
 
+/**
+ * Get the workflow indicated by the given worklowId
+ */
 router.get('/:workflowId', (req, res, next) => {
   const workflowId = req.params.workflowId;
 
@@ -36,6 +39,21 @@ router.get('/:workflowId', (req, res, next) => {
     }
 
     return res.send(JSON.parse(workflowString));
+  }).catch(next);
+});
+
+/**
+ * Get all workflows
+ */
+router.get('/', (req, res, next) => {
+  redis.hgetall(dbConstants.REDIS_WORKFLOWS).then((workflowsHash) => {
+    if (!workflowsHash) {
+      return next(new Error('Failed to get workflows.'));
+    }
+
+    return res.send(Object.values(workflowsHash).map(workflowString =>
+      JSON.parse(workflowString)
+    ));
   }).catch(next);
 });
 
