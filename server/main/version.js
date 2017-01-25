@@ -7,10 +7,12 @@ var express = require('express');
 var router  = express.Router();
 var fs      = require('fs');
 
-var packageJSON = require('../package.json');
+console.log("cwd=" + process.cwd());
+console.log("__dirname=" + __dirname);
+var packageJSON = require(__dirname + '/../package.json');
 // Path to VERSION file at App root, created by Jenkins. 
 // Relative path assumes we are starting in /app/server (w/o trailing slash)
-var versionFilePath = __dirname + "/../../VERSION";
+var versionFilePath = __dirname + "/../VERSION";
 
 var newLine = /\n/g;
 
@@ -19,6 +21,7 @@ function getVersion() {
   try {
     if(!fs.existsSync(versionFilePath)) {
       console.log("VERSION file not found: " + versionFilePath + " (cwd=" + process.cwd() + ")");
+      return version;
     }
 
     version = fs.readFileSync(versionFilePath, {
