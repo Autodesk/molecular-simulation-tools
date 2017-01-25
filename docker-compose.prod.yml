@@ -11,7 +11,7 @@ services:
       - "4000:4000"
     environment:
       PORT: "4000"
-      CCC: "internal-lb.${BNR_ENVIRONMENT}.bionano.bio:9000"
+      CCC: "ccc.bionano.autodesk.com:9000"
     logging:
       driver: json-file
     links:
