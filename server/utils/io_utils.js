@@ -1,7 +1,6 @@
-const PassThrough = require('stream').PassThrough;
 const appRoot = require('app-root-path');
 const crypto = require('crypto');
-const fs = require('fs');
+const fs = require('fs-extended');
 const path = require('path');
 const shortid = require('shortid');
 
@@ -12,7 +11,6 @@ const ioUtils = {
         if (err) {
           return reject(err);
         }
-
         return resolve(JSON.parse(contents));
       });
     });
@@ -62,6 +60,7 @@ const ioUtils = {
       const writeableStream = fs.createWriteStream(saveTo);
 
       writeableStream.on('finish', (err) => {
+        log.trace({f:'streamToHashFile', event:'finish writing temp file'});
         if (err) {
           return reject(err);
         }
@@ -84,7 +83,10 @@ const ioUtils = {
             }
 
             const writeableStream = fs.createWriteStream(saveTo);
-            writeableStream.on('finish', resolve);
+            writeableStream.on('finish', () => {
+              log.trace({f:'streamToHashFile', event:'finish writing file'});
+              resolve();
+            });
             writeableStream.on('error', reject);
             return fs.createReadStream(tempFilepath).pipe(writeableStream);
           });

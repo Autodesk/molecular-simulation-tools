@@ -5,6 +5,7 @@ const express = require('express');
 const fs = Promise.promisifyAll(require('fs'));
 const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
+const appConstants = require('../constants/app_constants');
 
 const router = new express.Router();
 
@@ -55,11 +56,15 @@ router.put('/upload', (req, res, next) => {
   });
 
   busboy.on('field', (fieldname, val) => {
+    log.trace({api:'upload', event:'field', field:fieldname});
     if (fieldname === 'workflowId') {
       workflowId = val;
     }
   });
-
+  busboy.on('error', (error) => {
+    log.error({message:'on busboy error', error:error});
+    next(error);
+  });
   busboy.on('file', (fieldname, file) => {
     ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
       fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((err, inputPdb) => {
@@ -79,7 +84,7 @@ router.put('/upload', (req, res, next) => {
             return ioUtils.stringToHashFile(pdb, 'public/structures').then(
               processedFilename =>
                 res.send({
-                  pdbUrl: `/structures/${processedFilename}`,
+                  pdbUrl: `/${appConstants.STRUCTURES}/${processedFilename}`,
                   pdb,
                   data,
                 })
