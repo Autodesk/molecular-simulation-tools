@@ -1,7 +1,8 @@
 const Busboy = require('busboy');
+const Promise = require('bluebird');
 const axios = require('axios');
 const express = require('express');
-const fs = require('fs');
+const fs = Promise.promisifyAll(require('fs'));
 const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
 
@@ -61,11 +62,7 @@ router.put('/upload', (req, res, next) => {
 
   busboy.on('file', (fieldname, file) => {
     ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
-      fs.readFile(`public/structures/${filename}`, 'utf8', (err, inputPdb) => {
-        if (err) {
-          return next(err);
-        }
-
+      fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((err, inputPdb) => {
         if (!workflowId) {
           return next(new Error('Needs a valid workflow id.'));
         }
@@ -89,7 +86,7 @@ router.put('/upload', (req, res, next) => {
             ).catch(next);
           }
         ).catch(next);
-      });
+      }).catch(next);
     }).catch(next);
   });
 
