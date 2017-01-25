@@ -7,6 +7,7 @@ Predictive molecular modeling applications based on the [Molecular Design Toolki
 	git clone https://github.com/Autodesk/molecular-design-applications
 	cd molecular-design-applications
 	git submodule update --init --recursive
+	echo "0.0.1-local" > VERSION
 	docker-compose up
 
 Then open your browser to  [http://localhost:4000](http://localhost:4000)

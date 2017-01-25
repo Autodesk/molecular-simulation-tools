@@ -29,6 +29,7 @@ sdist/
 .installed.cfg
 *.egg
 .DS_Store
+VERSION
 
 #CCC
 ccc_local_storage
