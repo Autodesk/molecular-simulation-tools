@@ -9,11 +9,11 @@ var fs      = require('fs');
 
 console.log("cwd=" + process.cwd());
 console.log("__dirname=" + __dirname);
-var packageJSON = require('./package.json');
-// Unless explicitly changed, process.cwd() is the directory containing package.json
-// Path to VERSION file at root of this node application. Same location as package.json 
-// In a typcial container, this usually means '/app/server' but your mileage may vary
-var versionFilePath = './VERSION';
+// Path to package.json and VERSION files are same - at root of this node application. 
+// Use the same logic to find both files.
+// In a typcial container, this usually means '/app/server' 
++var packageJSON = require(__dirname + '/../package.json');
++var versionFilePath = __dirname + '/../VERSION';
 
 var newLine = /\n/g;
 
