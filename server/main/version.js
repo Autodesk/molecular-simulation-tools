@@ -9,10 +9,11 @@ var fs      = require('fs');
 
 console.log("cwd=" + process.cwd());
 console.log("__dirname=" + __dirname);
-var packageJSON = require(__dirname + '/../package.json');
-// Path to VERSION file at App root, created by Jenkins. 
-// Relative path assumes we are starting in /app/server (w/o trailing slash)
-var versionFilePath = __dirname + "/../VERSION";
+var packageJSON = require('./package.json');
+// Unless explicitly changed, process.cwd() is the directory containing package.json
+// Path to VERSION file at root of this node application. Same location as package.json 
+// In a typcial container, this usually means '/app/server' but your mileage may vary
+var versionFilePath = './VERSION';
 
 var newLine = /\n/g;
 
