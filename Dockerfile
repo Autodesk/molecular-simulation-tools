@@ -78,7 +78,7 @@ ADD ./server/utils $APP/server/utils
 ADD ./server/views $APP/server/views
 ADD ./server/**.json $APP/server/
 
-ADD ./VERSION $APP/
+ADD ./VERSION $APP/server/
 
 ENV PORT 4000
 EXPOSE $PORT
