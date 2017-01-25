@@ -11,7 +11,7 @@ function workflow(state = initialState, action) {
       if (workflowsDifferent) {
         return new WorkflowRecord({
           fetching: true,
-          fetchingError: false,
+          fetchingError: null,
         });
       }
 
@@ -19,13 +19,13 @@ function workflow(state = initialState, action) {
       if (runsDifferent) {
         return state.merge({
           fetching: true,
-          fetchingError: false,
+          fetchingError: null,
         });
       }
 
       return state.merge({
         fetching: true,
-        fetchingError: false,
+        fetchingError: null,
       });
     }
 
@@ -42,7 +42,7 @@ function workflow(state = initialState, action) {
       if (action.error) {
         return state.merge({
           fetching: false,
-          fetchingError: false,
+          fetchingError: action.error,
         });
       }
       return action.workflow;
@@ -50,7 +50,7 @@ function workflow(state = initialState, action) {
     case actionConstants.CLICK_RUN:
       return state.merge({
         fetching: true,
-        fetchingError: false,
+        fetchingError: null,
       });
 
     case actionConstants.RUN_SUBMITTED:
@@ -94,7 +94,7 @@ function workflow(state = initialState, action) {
 
     case actionConstants.UPLOAD:
       return state.set('run', state.run.merge({
-        uploadError: '',
+        uploadError: null,
         uploadPending: true,
         inputPdbUrl: null,
       }));
