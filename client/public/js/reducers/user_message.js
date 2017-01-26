@@ -42,6 +42,15 @@ function userMessage(state = initialState, action) {
         message: 'Failed to cancel, check your connection and try again.',
       });
 
+    case actionConstants.FETCHED_PDB_BY_ID:
+      if (!action.err) {
+        return initialState;
+      }
+      return state.merge({
+        autoClose: true,
+        message: 'Couldn\'t find a pdb with that id, please try again.',
+      });
+
     case actionConstants.MESSAGE_TIMEOUT:
       return initialState;
 

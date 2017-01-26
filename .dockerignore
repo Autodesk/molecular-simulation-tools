@@ -6,4 +6,6 @@
 **/node_modules/
 client/dist
 build
+ccc_local_storage
+tmp
 
