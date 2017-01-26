@@ -64,11 +64,15 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onUpload(file) {
-      dispatch(upload(file));
+    onUpload(workflowId) {
+      return (file) => {
+        dispatch(upload(file, workflowId));
+      };
     },
-    submitPdbId(pdbId) {
-      dispatch(submitPdbId(pdbId));
+    submitPdbId(workflowId) {
+      return (pdbId) => {
+        dispatch(submitPdbId(pdbId, workflowId));
+      };
     },
     submitEmail(email) {
       dispatch(submitEmail(email));
@@ -87,6 +91,8 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputPdbUrl
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
+    onUpload: dispatchProps.onUpload(stateProps.workflow.id),
+    submitPdbId: dispatchProps.submitPdbId(stateProps.workflow.id),
   });
 }
 
