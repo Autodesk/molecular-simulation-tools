@@ -1,6 +1,6 @@
 service-name: mdtapps
 # NOTE override this value in the Jenkins job as it varies by environment
-environment: local
+environment: dev
 
 # parameters used when calling cloudformation update-stack
 # NOTE set this value in the Jenkins job as it varies by environment
@@ -18,7 +18,7 @@ verify-enabled: true
 # NOTE set this value in the Jenkins job as it varies by environment
 verify-url-full: ""
 
-build-compose-file: docker-compose.yml -f docker-compose.override.yml
+build-compose-file: docker-compose.yml -f docker-compose.build.yml
 jenkins-test-compose-file: ""
 jenkins-test-container: ""
 

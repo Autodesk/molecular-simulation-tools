@@ -11,6 +11,7 @@
     "keymirror": "^0.1.1",
     "molecular-design-applications-shared": "../shared",
     "molecule-viewer-proxy": "../molecule_viewer",
+    "querystring": "^0.2.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.5",

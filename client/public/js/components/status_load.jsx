@@ -37,6 +37,10 @@ class StatusLoad extends React.Component {
       });
     }
 
+    this.setState({
+      pdbIdError: '',
+    });
+
     return this.props.submitPdbId(this.state.pdbId);
   }
 

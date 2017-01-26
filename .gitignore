@@ -13,6 +13,7 @@ client/dist
 **/node_modules
 npm-debug.log
 tmp
+dump.rdb
 
 # for python
 __pycache__/
@@ -29,3 +30,7 @@ sdist/
 .installed.cfg
 *.egg
 .DS_Store
+VERSION
+
+#CCC
+ccc_local_storage
