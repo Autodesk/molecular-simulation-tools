@@ -13,7 +13,7 @@ const WorkflowRecord = new Record({
   run: new RunRecord(),
   runCount: 0,
   title: '',
-  views: 0,
+  viewCount: 0,
   workflowNodes: new IList(),
 });
 

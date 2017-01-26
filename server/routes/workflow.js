@@ -39,7 +39,15 @@ router.get('/:workflowId', (req, res, next) => {
       return next(error);
     }
 
-    return res.send(JSON.parse(workflowString));
+    const workflow = JSON.parse(workflowString);
+
+    // Write +1 viewCount for this workflow
+    workflow.viewCount += 1;
+    return redis.hset(
+      dbConstants.REDIS_WORKFLOWS, workflowId, JSON.stringify(workflow)
+    ).then(() =>
+      res.send(workflow)
+    ).catch(next);
   }).catch(next);
 });
 

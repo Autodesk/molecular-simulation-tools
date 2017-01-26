@@ -62,7 +62,7 @@ function WorkflowCard(props) {
       </p>
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
-        <h7 className="cardViews">737 Views</h7>
+        <h7 className="cardViews">{props.viewCount} Views</h7>
         <h7 className="cardRuns">{props.runCount} Runs</h7>
       </div>
       {comingSoonEl}
@@ -79,6 +79,7 @@ WorkflowCard.propTypes = {
   id: React.PropTypes.string.isRequired,
   runCount: React.PropTypes.number,
   title: React.PropTypes.string,
+  viewCount: React.PropTypes.number,
 };
 
 export default WorkflowCard;
