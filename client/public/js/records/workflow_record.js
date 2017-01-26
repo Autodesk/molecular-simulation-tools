@@ -10,6 +10,7 @@ const WorkflowRecord = new Record({
   id: null,
   fetching: false,
   fetchingError: null,
+  selectLigands: false,
   run: new RunRecord(),
   runs: 0,
   title: '',

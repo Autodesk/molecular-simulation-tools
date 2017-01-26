@@ -2,6 +2,7 @@ import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
+import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusEmail from './status_email';
 import StatusResults from './status_results';
@@ -96,6 +97,16 @@ function Status(props) {
         workflowNodesSize={props.workflow.workflowNodes.size}
         outputData={props.workflow.run.outputData}
         outputPdbUrl={props.workflow.run.outputPdbUrl}
+      />
+    );
+  } else if (
+    props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION
+  ) {
+    const ligands = props.workflow.run.inputPdbProcessingData ?
+      props.workflow.run.inputPdbProcessingData.get('ligands') : null;
+    selection = (
+      <StatusLigandSelection
+        ligands={ligands}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {

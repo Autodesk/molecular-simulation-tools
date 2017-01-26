@@ -9,6 +9,8 @@ const RunRecord = new Record({
   id: null,
   inputPdbUrl: '',
   inputPdb: '',
+  inputPdbProcessingData: null,
+  ligandSelection: null,
   outputData: null,
   outputPdbUrl: '',
   outputPdb: '',

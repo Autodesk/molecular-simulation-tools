@@ -97,6 +97,12 @@ export function clickWorkflowNode(workflowNodeId) {
   };
 }
 
+export function clickWorkflowNodeLigandSelection() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION,
+  };
+}
+
 export function clickWorkflowNodeLoad() {
   return {
     type: actionConstants.CLICK_WORKFLOW_NODE_LOAD,
@@ -174,11 +180,12 @@ export function submitPdbId(pdbId, workflowId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId, workflowId).then(({ pdbUrl, pdb }) =>
+    apiUtils.getPdbById(pdbId, workflowId).then(({ pdbUrl, pdb, data }) =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
         pdb,
+        data,
       })
     ).catch(err =>
       dispatch({

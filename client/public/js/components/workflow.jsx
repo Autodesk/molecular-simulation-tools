@@ -44,6 +44,7 @@ function Workflow(props) {
         clickAbout={props.clickAbout}
         clickRun={props.clickRun}
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
+        clickWorkflowNodeLigandSelection={props.clickWorkflowNodeLigandSelection}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
         clickWorkflowNodeResults={props.clickWorkflowNodeResults}
         error={!!viewError}
@@ -75,6 +76,7 @@ function Workflow(props) {
 Workflow.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
+  clickWorkflowNodeLigandSelection: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,

@@ -18,7 +18,7 @@ const apiUtils = {
     return axios.get(url).then(res => res.data);
   },
 
-  upload(file, workflowId = '0') {
+  upload(file, workflowId) {
     return new Promise((resolve, reject) => {
       const extension = file.name.split('.').pop();
       if (extension !== 'pdb') {
@@ -35,7 +35,7 @@ const apiUtils = {
     });
   },
 
-  getPdbById(pdbId, workflowId = '1') {
+  getPdbById(pdbId, workflowId) {
     const query = querystring.stringify({ pdbId, workflowId });
     return axios.get(`${API_URL}/v1/structure/pdb_by_id?${query}`).then(res =>
       res.data

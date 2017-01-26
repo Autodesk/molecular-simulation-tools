@@ -120,6 +120,7 @@ function workflow(state = initialState, action) {
         fetchingPdbError: action.error,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
+        inputPdbProcessingData: action.data,
       }));
 
     case actionConstants.SUBMIT_EMAIL:

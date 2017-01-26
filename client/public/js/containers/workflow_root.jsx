@@ -6,6 +6,7 @@ import {
   clickCancel,
   clickColorize,
   clickRun,
+  clickWorkflowNodeLigandSelection,
   clickWorkflowNodeLoad,
   clickWorkflowNodeEmail,
   clickWorkflowNodeResults,
@@ -39,6 +40,9 @@ function mapDispatchToProps(dispatch) {
       return () => {
         dispatch(clickRun(workflowId, email, inputPdbUrl));
       };
+    },
+    clickWorkflowNodeLigandSelection() {
+      dispatch(clickWorkflowNodeLigandSelection());
     },
     clickWorkflowNodeLoad() {
       dispatch(clickWorkflowNodeLoad());
