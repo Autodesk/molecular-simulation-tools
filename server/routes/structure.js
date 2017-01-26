@@ -67,7 +67,7 @@ router.put('/upload', (req, res, next) => {
   });
   busboy.on('file', (fieldname, file) => {
     ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
-      fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((err, inputPdb) => {
+      fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((inputPdb) => {
         if (!workflowId) {
           return next(new Error('Needs a valid workflow id.'));
         }
