@@ -3,6 +3,10 @@
 /**
  * Module dependencies.
  */
+const dbConstants = require('../constants/db_constants');
+const dbUtils = require('../utils/db_utils');
+const seedData = require('../utils/seed_data');
+const redis = require('../utils/redis');
 
 if (!('toJSON' in Error.prototype))
   Object.defineProperty(Error.prototype, 'toJSON', {
@@ -52,20 +56,21 @@ process.env.PORT = port;
   Before we create the server, we'll populate the database
   with workflows
 */
-init()
-  .then((resolve, reject) => {
-    /**
-     * Create HTTP server.
-     */
-    var server = http.createServer(app);
+Promise.all(seedData.map(workflow =>
+  dbUtils.seed(redis, dbConstants.REDIS_WORKFLOWS, workflow)
+)).then(() => {
+  /**
+   * Create HTTP server.
+   */
+  const server = http.createServer(app);
 
-    /**
-     * Listen on provided port, on all network interfaces.
-     */
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening(server.address()));
-  });
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening(server.address()));
+}).catch(console.error.bind(console));
 
 /**
  * Normalize a port into a number, string, or false.
@@ -137,18 +142,7 @@ function onListening(addr) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
- */
-
-function init() {
-    const redis = require('../utils/redis');
-    const dbConstants = require('../constants/db_constants');
-    return redis.hset(dbConstants.REDIS_WORKFLOWS, '0', JSON.stringify({ id: '0', title: 'VDE' }));
-}
-
-/**
  * Proxy requests to port 9000 to the CCC server
  */
 const httpProxy = require('http-proxy');
 httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
-
