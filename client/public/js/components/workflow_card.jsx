@@ -63,7 +63,7 @@ function WorkflowCard(props) {
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
         <h7 className="cardViews">737 Views</h7>
-        <h7 className="cardRuns">124 Runs</h7>
+        <h7 className="cardRuns">{props.runCount} Runs</h7>
       </div>
       {comingSoonEl}
     </Link>
@@ -77,6 +77,7 @@ WorkflowCard.propTypes = {
   comingSoon: React.PropTypes.bool,
   creatorImage: React.PropTypes.string,
   id: React.PropTypes.string.isRequired,
+  runCount: React.PropTypes.number,
   title: React.PropTypes.string,
 };
 

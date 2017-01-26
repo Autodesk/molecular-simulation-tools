@@ -40,6 +40,7 @@ class HomePage extends React.Component {
           color={workflow.color}
           comingSoon={workflow.comingSoon}
           creatorImage={workflow.creatorImage}
+          runCount={workflow.runCount}
           title={workflow.title}
           id={workflow.id}
           key={index}

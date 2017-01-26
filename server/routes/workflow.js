@@ -5,6 +5,7 @@ const express = require('express');
 const dbConstants = require('../constants/db_constants');
 const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
+const workflowUtils = require('../utils/workflow_utils');
 
 const router = new express.Router();
 
@@ -43,17 +44,22 @@ router.get('/:workflowId', (req, res, next) => {
 });
 
 /**
- * Get all workflows
+ * Get all workflows, including their run count
  */
 router.get('/', (req, res, next) => {
-  redis.hgetall(dbConstants.REDIS_WORKFLOWS).then((workflowsHash) => {
-    if (!workflowsHash) {
-      return next(new Error('Failed to get workflows.'));
-    }
+  Promise.all([
+    redis.hgetall(dbConstants.REDIS_WORKFLOWS),
+    redis.hgetall(dbConstants.REDIS_RUNS),
+  ]).then(([workflowsHash, runsHash]) => {
+    const runCounts = workflowUtils.getRunCountsByWorkflows(runsHash || {});
 
-    return res.send(Object.values(workflowsHash).map(workflowString =>
-      JSON.parse(workflowString)
-    ));
+    const workflows = Object.values(workflowsHash || {}).map((workflowString) => {
+      const workflow = JSON.parse(workflowString);
+      workflow.runCount = runCounts.get(workflow.id) || 0;
+      return workflow;
+    });
+
+    return res.send(workflows);
   }).catch(next);
 });
 

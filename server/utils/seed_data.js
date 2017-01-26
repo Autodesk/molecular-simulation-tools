@@ -8,8 +8,7 @@ const workflows = [
     comingSoon: false,
     creatorImage: '/assets/logo1.png',
     description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
+    views: 0,
   }, {
     id: '1',
     title: 'Preparing the outer ligand structure',
@@ -19,8 +18,7 @@ const workflows = [
     comingSoon: false,
     creatorImage: '/assets/logo2.png',
     description: 'This is the place to put more info regarding this workflow',
-    runs: 124,
-    views: 737,
+    views: 0,
   },
 ];
 
