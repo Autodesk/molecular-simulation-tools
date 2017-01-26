@@ -74,22 +74,22 @@ class HomePage extends React.Component {
             <div className="collapse navbar-collapse navbar-ex1-collapse">
               <ul className="nav navbar-nav">
                 <li>
-                  <a href="#heroSection">Home</a>
+                  <a href="#home">Home</a>
                 </li>
                 <li>
-                  <a href="#aboutSection">About</a>
+                  <a href="#about">About</a>
                 </li>
                 <li>
-                  <a href="#joinSection">Join Us</a>
+                  <a href="#join">Join Us</a>
                 </li>
                 <li>
-                  <a href="#contactSection">Contact</a>
+                  <a href="#contact">Contact</a>
                 </li>
               </ul>
             </div>
           </div>
         </nav>
-        <div className="heroSection">
+        <div className="heroSection" id="home">
           <img className="m3" alt="hero" src={imgM3} />
           <img className="m4" alt="hero" src={imgM4} />
           <img className="m2" alt="hero" src={imgM2} />
@@ -120,7 +120,7 @@ class HomePage extends React.Component {
             </div>
           </div>
         </div>
-        <div className="aboutSection">
+        <div className="aboutSection" id="about">
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
@@ -172,7 +172,7 @@ class HomePage extends React.Component {
             </div>
           </div>
         </div>
-        <div className="joinSection">
+        <div className="joinSection" id="join">
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
@@ -245,7 +245,7 @@ class HomePage extends React.Component {
             </div>
           </div>
         </div>
-        <div className="contactSection">
+        <div className="contactSection" id="contact">
           <div className="container">
             <div className="row">
               <div className="col-sm-4" style={{ paddingBottom: '60px' }}>
