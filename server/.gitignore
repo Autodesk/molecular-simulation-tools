@@ -1,3 +1,4 @@
 node_modules/
 public/uploads/*
 public/structures/*
+public/tmp/*

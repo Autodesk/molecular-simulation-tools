@@ -140,14 +140,14 @@ export function clickRun(workflowId, email, inputPdbUrl) {
   };
 }
 
-export function upload(file) {
+export function upload(file, workflowId) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.UPLOAD,
       file,
     });
 
-    const uploadPromise = apiUtils.upload(file);
+    const uploadPromise = apiUtils.upload(file, workflowId);
     const readPromise = workflowUtils.readPdb(file);
     Promise.all([uploadPromise, readPromise]).then((results) => {
       if (!results[0] || !results[1]) {
@@ -168,13 +168,13 @@ export function upload(file) {
   };
 }
 
-export function submitPdbId(pdbId) {
+export function submitPdbId(pdbId, workflowId) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId).then(({ pdbUrl, pdb }) =>
+    apiUtils.getPdbById(pdbId, workflowId).then(({ pdbUrl, pdb }) =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,

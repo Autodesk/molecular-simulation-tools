@@ -1,34 +1,8 @@
-const PassThrough = require('stream').PassThrough;
 const appRoot = require('app-root-path');
 const crypto = require('crypto');
 const fs = require('fs-extended');
 const path = require('path');
-const shortId = require('shortid');
-
-
-/**
- * Hash the contents of the given file
- * @param String {filePath}
- * @returns {Promise}
- */
-/**
- * Hash the contents of the given file
- * @param  {String} filePath
- * @return {Promise<String>} Hash of the file content.
- */
-function hashFile(filePath) {
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha1');
-    hash.setEncoding('hex');
-    const readableStream = fs.createReadStream(filePath);
-    readableStream.on('end', () => {
-      hash.end();
-      resolve(hash.read());
-    });
-    readableStream.on('error', reject);
-    readableStream.pipe(hash);
-  });
-}
+const shortid = require('shortid');
 
 const ioUtils = {
   readJsonFile(source) {
@@ -43,40 +17,132 @@ const ioUtils = {
   },
 
   /**
+   * Hash the contents of the given stream
+   * @param readableStream {Stream}
+   * @returns {Promise}
+   */
+  hashStream(readableStream) {
+    return new Promise((resolve, reject) => {
+      const hash = crypto.createHash('sha1');
+      hash.setEncoding('hex');
+
+      readableStream.on('end', () => {
+        hash.end();
+        resolve(hash.read());
+      });
+      readableStream.on('error', reject);
+
+      readableStream.pipe(hash);
+    });
+  },
+
+  /**
+   * Synchronously hash a simple string
+   * @param string {String}
+   * @returns {String}
+   */
+  hashString(string) {
+    return crypto.createHash('sha1').update(string).digest('hex');
+  },
+
+  /**
    * Given a readable stream, hash its contents and write it to the given
    * directory with its hash as its name
    * @param readableStream {Stream}
    * @param targetDir {String}
+   * @returns {Promise}j
    */
   streamToHashFile(readableStream, targetDir) {
-    const tempFileName = `/tmp/${shortId.generate()}`;
-    log.trace({f:'streamToHashFile', targetDir:targetDir, tempFileName:tempFileName});
+    // Write the input to a temp file
     return new Promise((resolve, reject) => {
-      const writeableStream = fs.createWriteStream(tempFileName);
-      writeableStream.on('error', reject);
-      writeableStream.on('finish', () => {
-        log.trace({f:'streamToHashFile', event:'finish'});
-        //Now that the file is written, get the hash, and mv the file
-        //path that is created from the file hash
-        resolve(tempFileName);
+      const filename = `tmp_${shortid.generate()}.pdb`;
+      const saveTo = path.join(appRoot.toString(), 'public/tmp', filename);
+      const writeableStream = fs.createWriteStream(saveTo);
+
+      writeableStream.on('finish', (err) => {
+        log.trace({f:'streamToHashFile', event:'finish writing temp file'});
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(saveTo);
       });
-      writeableStream.on('end', () => {
-        log.trace({f:'streamToHashFile', event:'end'});
-      });
+
       readableStream.pipe(writeableStream);
-    })
-    .then(filename => {
-      return hashFile(filename);
-    })
-    .then(hashValue => {
-      //Now move the temp file to the hash name
-      const fileName = `${hashValue}.pdb`;
-      const saveTo = path.join(appRoot.toString(), targetDir, `${fileName}`);
-      fs.ensureDirSync(path.dirname(saveTo));
-      fs.moveFileSync(tempFileName, saveTo);
-      return fileName;
+    }).then(tempFilepath =>
+      // Hash the temp file
+      ioUtils.hashStream(fs.createReadStream(tempFilepath)).then((hashed) => {
+        const filename = `${hashed}.pdb`;
+        const saveTo = path.join(appRoot.toString(), targetDir, filename);
+
+        // Save to the final filepath if needed, with the hash as the filename
+        return new Promise((resolve, reject) => {
+          fs.exists(saveTo, (exists) => {
+            if (exists) {
+              return resolve();
+            }
+
+            const writeableStream = fs.createWriteStream(saveTo);
+            writeableStream.on('finish', () => {
+              log.trace({f:'streamToHashFile', event:'finish writing file'});
+              resolve();
+            });
+            writeableStream.on('error', reject);
+            return fs.createReadStream(tempFilepath).pipe(writeableStream);
+          });
+        }).then(() =>
+          // Finally, cleanup by deleting the temp file
+          ioUtils.deleteFile(tempFilepath).then(() => filename)
+        );
+      })
+    );
+  },
+
+  /**
+   * Given a string of file contents, write the string to a file whose name is
+   * a hash of its contents
+   * @param string {String}
+   * @param targetDir {String}
+   * @returns {Promise}j
+   */
+  stringToHashFile(string, targetDir) {
+    const hashed = ioUtils.hashString(string);
+    const filename = `${hashed}.pdb`;
+    const saveTo = path.join(appRoot.toString(), targetDir, filename);
+
+    return new Promise((resolve, reject) => {
+      fs.exists(saveTo, (exists) => {
+        if (!exists) {
+          return fs.writeFile(saveTo, string, (err) => {
+            if (err) {
+              return reject(err);
+            }
+
+            return resolve(filename);
+          });
+        }
+
+        return resolve(filename);
+      });
     });
-  }
+  },
+
+  /**
+   * Delete the indicated file
+   * @param filepath {String}
+   * @returns {Promise} resolves with {String}
+   */
+  deleteFile(filepath) {
+    return new Promise((resolve, reject) => {
+      fs.unlink(filepath, (err) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(filepath);
+      });
+    });
+  },
 };
 
 module.exports = ioUtils;

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import querystring from 'querystring';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 
@@ -17,7 +18,7 @@ const apiUtils = {
     return axios.get(url).then(res => res.data);
   },
 
-  upload(file) {
+  upload(file, workflowId = '0') {
     return new Promise((resolve, reject) => {
       const extension = file.name.split('.').pop();
       if (extension !== 'pdb') {
@@ -26,15 +27,17 @@ const apiUtils = {
 
       const data = new window.FormData();
       data.append('file', file);
+      data.append('workflowId', workflowId);
 
       return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
-        resolve(`${API_URL}${res.data.path}`)
+        resolve(`${API_URL}${res.data.pdbUrl}`)
       ).catch(reject);
     });
   },
 
-  getPdbById(pdbId) {
-    return axios.get(`${API_URL}/v1/structure/pdb_by_id/${pdbId}`).then(res =>
+  getPdbById(pdbId, workflowId = '1') {
+    const query = querystring.stringify({ pdbId, workflowId });
+    return axios.get(`${API_URL}/v1/structure/pdb_by_id?${query}`).then(res =>
       res.data
     ).catch((err) => {
       throw err.response.data;
