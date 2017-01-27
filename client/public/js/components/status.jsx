@@ -106,7 +106,9 @@ function Status(props) {
       props.workflow.run.inputPdbProcessingData.get('ligands') : null;
     selection = (
       <StatusLigandSelection
+        changeLigandSelection={props.changeLigandSelection}
         ligands={ligands}
+        selectedLigand={props.selectedLigand}
       />
     );
   } else if (props.selection.type === selectionConstants.ABOUT) {
@@ -123,12 +125,14 @@ function Status(props) {
 }
 
 Status.propTypes = {
+  changeLigandSelection: React.PropTypes.func,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
+  selectedLigand: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,

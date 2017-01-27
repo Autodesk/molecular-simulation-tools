@@ -99,13 +99,18 @@ function workflow(state = initialState, action) {
         inputPdbUrl: null,
       }));
 
-    case actionConstants.UPLOAD_COMPLETE:
+    case actionConstants.UPLOAD_COMPLETE: {
+      const ligands = action.data ? Object.keys(action.data.ligands) : [];
+
       return state.set('run', state.run.merge({
         uploadPending: false,
         uploadError: action.err,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
+        inputPdbProcessingData: action.data,
+        selectedLigand: ligands.length === 1 ? ligands[0] : '',
       }));
+    }
 
     case actionConstants.SUBMIT_PDB_ID:
       return state.set('run', state.run.merge({
@@ -114,14 +119,18 @@ function workflow(state = initialState, action) {
         inputPdbUrl: '',
       }));
 
-    case actionConstants.FETCHED_PDB_BY_ID:
+    case actionConstants.FETCHED_PDB_BY_ID: {
+      const ligands = action.data ? Object.keys(action.data.ligands) : [];
+
       return state.set('run', state.run.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
         inputPdbProcessingData: action.data,
+        selectedLigand: ligands.length === 1 ? ligands[0] : '',
       }));
+    }
 
     case actionConstants.SUBMIT_EMAIL:
       return state.set('run', state.run.set('email', action.email));
@@ -137,6 +146,12 @@ function workflow(state = initialState, action) {
         canceling: false,
         status: statusConstants.CANCELED,
       }));
+
+    case actionConstants.CHANGE_LIGAND_SELECTION:
+      return state.set(
+        'run',
+        state.run.set('selectedLigand', action.ligandString)
+      );
 
     default:
       return state;

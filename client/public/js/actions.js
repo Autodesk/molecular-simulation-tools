@@ -162,7 +162,8 @@ export function upload(file, workflowId) {
 
       dispatch({
         type: actionConstants.UPLOAD_COMPLETE,
-        pdbUrl: results[0],
+        pdbUrl: results[0].pdbUrl,
+        data: results[0].data,
         pdb: results[1],
       });
     }).catch(err =>
@@ -237,6 +238,13 @@ export function messageTimeout() {
 export function clickColorize() {
   return {
     type: actionConstants.CLICK_COLORIZE,
+  };
+}
+
+export function changeLigandSelection(ligandString) {
+  return {
+    type: actionConstants.CHANGE_LIGAND_SELECTION,
+    ligandString,
   };
 }
 

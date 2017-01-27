@@ -44,7 +44,7 @@ function WorkflowSteps(props) {
 
   let selectLigandsNode;
   if (props.workflow.selectLigands) {
-    const status = props.workflow.run.ligandSelection ?
+    const status = props.workflow.run.selectedLigand ?
       statusConstants.COMPLETED : statusConstants.IDLE;
     const ligandSelectionSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION;

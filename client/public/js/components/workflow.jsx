@@ -52,12 +52,14 @@ function Workflow(props) {
         workflow={props.workflow}
       />
       <Status
+        changeLigandSelection={props.changeLigandSelection}
         fetchingPdb={props.fetchingPdb}
         fetchingPdbError={props.fetchingPdbError}
         nodes={props.nodes}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onUpload={props.onUpload}
+        selectedLigand={props.selectedLigand}
         selection={props.selection}
         submitPdbId={props.submitPdbId}
         submitEmail={props.submitEmail}
@@ -74,6 +76,7 @@ function Workflow(props) {
 }
 
 Workflow.propTypes = {
+  changeLigandSelection: React.PropTypes.func,
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNodeLigandSelection: React.PropTypes.func.isRequired,
@@ -89,6 +92,7 @@ Workflow.propTypes = {
   onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   runPage: React.PropTypes.bool,
+  selectedLigand: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,

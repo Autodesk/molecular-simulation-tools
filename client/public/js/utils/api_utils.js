@@ -30,7 +30,10 @@ const apiUtils = {
       data.append('workflowId', workflowId);
 
       return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
-        resolve(`${API_URL}${res.data.pdbUrl}`)
+        resolve({
+          pdbUrl: `${API_URL}${res.data.pdbUrl}`,
+          data: res.data.data,
+        })
       ).catch(reject);
     });
   },

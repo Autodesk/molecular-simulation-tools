@@ -81,6 +81,7 @@ class WorkflowRouter extends React.Component {
     } else {
       routeEl = (
         <Workflow
+          changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
           clickWorkflowNodeLigandSelection={this.props.clickWorkflowNodeLigandSelection}
@@ -95,6 +96,7 @@ class WorkflowRouter extends React.Component {
           onClickColorize={this.props.onClickColorize}
           onChangeMorph={this.props.onChangeMorph}
           onUpload={this.props.onUpload}
+          selectedLigand={this.props.selectedLigand}
           selection={this.props.selection}
           submitPdbId={this.props.submitPdbId}
           submitEmail={this.props.submitEmail}
@@ -118,6 +120,7 @@ class WorkflowRouter extends React.Component {
 
 WorkflowRouter.propTypes = {
   canceling: React.PropTypes.bool,
+  changeLigandSelection: React.PropTypes.func,
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
@@ -135,6 +138,7 @@ WorkflowRouter.propTypes = {
   onMessageTimeout: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   runId: React.PropTypes.string,
+  selectedLigand: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
