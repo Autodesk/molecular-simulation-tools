@@ -18,7 +18,8 @@ function Workflow(props) {
     );
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
-    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) &&
+    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL ||
+    props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
     props.workflow.run.inputPdb) {
     selectedModelData = props.workflow.run.inputPdb;
   } else if (props.selection.type ===
@@ -70,6 +71,7 @@ function Workflow(props) {
         error={viewError}
         loading={props.workflow.fetching}
         modelData={selectedModelData}
+        selectedLigand={props.selectedLigand}
       />
     </div>
   );

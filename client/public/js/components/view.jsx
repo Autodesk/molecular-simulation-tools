@@ -6,14 +6,14 @@ require('../../css/view.scss');
 
 class View extends React.Component {
   componentDidMount() {
-    this.renderMolecueViewer(this.props.modelData);
+    this.renderMolecueViewer(this.props.modelData, this.props.selectedLigand);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.renderMolecueViewer(nextProps.modelData);
+    this.renderMolecueViewer(nextProps.modelData, nextProps.selectedLigand);
   }
 
-  renderMolecueViewer(modelData) {
+  renderMolecueViewer(modelData, selectedLigand) {
     if (modelData && !this.moleculeViewer) {
       this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
         headless: true,
@@ -21,6 +21,20 @@ class View extends React.Component {
 
       // TODO use modelData instead of hard coded pdbid
       this.moleculeViewer.importPDB('3aid');
+    }
+
+    if (modelData && this.moleculeViewer) {
+      if (selectedLigand) {
+        // TODO Fix bug in molviewer that requires this timeout
+        setTimeout(() => {
+          // TODO this is hardcoded while I yet don't understand how to select ARQ
+          const ligandSelectionString =
+            selectedLigand === 'ARQ' ? 'A' : 'B';
+          this.moleculeViewer.clearSelection();
+          this.moleculeViewer.select(`1.${ligandSelectionString}`);
+          this.moleculeViewer.focusOnSelection();
+        }, 500);
+      }
     }
 
     // TODO colorized like: this.moleculeViewer.setColor('ribbon', 'blue', '1');
@@ -58,6 +72,7 @@ View.propTypes = {
   error: React.PropTypes.string,
   loading: React.PropTypes.bool,
   modelData: React.PropTypes.string,
+  selectedLigand: React.PropTypes.string,
 };
 
 export default View;
