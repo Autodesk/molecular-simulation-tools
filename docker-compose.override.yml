@@ -42,7 +42,7 @@ services:
     command: ["npm", "run", "watch"]
 
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:75509542"
+    image: "quay.io/bionano/cloud-compute-cannon:5ea44065"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage

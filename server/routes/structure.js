@@ -6,11 +6,13 @@ const fs = Promise.promisifyAll(require('fs'));
 const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
 const appConstants = require('../constants/app_constants');
+const shortid = require('shortid');
 
 const router = new express.Router();
 
 const RCSB_URL = 'https://files.rcsb.org/download';
 
+/* JUSTIN: Is this obsolete? */
 router.get('/pdb_by_id', (req, res, next) => {
   if (!req.query.pdbId) {
     return next(new Error('Needs a valid pdb id.'));
@@ -48,53 +50,46 @@ router.get('/pdb_by_id', (req, res, next) => {
   );
 });
 
-router.put('/upload', (req, res, next) => {
-  let workflowId;
-
+/**
+ * [description]
+ * @param  {[type]}   '/executeWorkflow1Step0' [description]
+ * @param  {Function} (req,                    res,          next)         [description]
+ * @param  {[type]}   'utf8').then((err,       inputPdb      [description]
+ * @return {[type]}                            {"prepJson": "URL", "prepPdb": "URL"}
+ */
+router.post('/executeWorkflow1Step0', (req, res, next) => {
   const busboy = new Busboy({
     headers: req.headers,
   });
 
-  busboy.on('field', (fieldname, val) => {
-    log.trace({api:'upload', event:'field', field:fieldname});
-    if (fieldname === 'workflowId') {
-      workflowId = val;
-    }
-  });
-  busboy.on('error', (error) => {
-    log.error({message:'on busboy error', error:error});
-    next(error);
-  });
-  busboy.on('file', (fieldname, file) => {
-    ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
-      fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((err, inputPdb) => {
-        if (!workflowId) {
-          return next(new Error('Needs a valid workflow id.'));
-        }
+  const tmpFileName = `/tmp/_temp_executeWorkflow1Step0_${shortid.generate()}`;
+  const cleanup = () => {
+    try {
+      fs.deleteFileSync(tmpFileName);
+    } catch(err) {log.error(err);}
+  }
 
-        return workflowUtils.processInput(workflowId, inputPdb).then(
-          ({ pdb, data }) => {
-            if (!pdb) {
-              return res.send({
-                pdbUrl: `/structures/${filename}`,
-                pdb: inputPdb,
-              });
-            }
+  const handleError = (err) => {
+    cleanup();
+    log.error(JSON.stringify(err));
+    next(err);
+  }
 
-            return ioUtils.stringToHashFile(pdb, 'public/structures').then(
-              processedFilename =>
-                res.send({
-                  pdbUrl: `/${appConstants.STRUCTURES}/${processedFilename}`,
-                  pdb,
-                  data,
-                })
-            ).catch(next);
-          }
-        ).catch(next);
-      }).catch(next);
-    }).catch(next);
+  busboy.on('error', handleError);
+  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    const writeStream = fs.createWriteStream(tmpFileName);
+    writeStream.on('finish', () => {
+      workflowUtils.executeWorkflow1Step0(fs.createReadStream(tmpFileName))
+        .then(jobResult => {
+          cleanup();
+          res.send(jobResult);
+        })
+        .catch(handleError);
+    });
+    writeStream.on('error', handleError);
+    file.pipe(writeStream);
+    file.on('error', handleError);
   });
-
   return req.pipe(busboy);
 });
 

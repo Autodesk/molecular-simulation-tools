@@ -6,7 +6,7 @@ const statusConstants = require('molecular-design-applications-shared').statusCo
 
 const test_utils = {
   runAllTests() {
-    return Promise.all([test_utils.runTest1(), test_utils.runTest2()])//
+    return Promise.all([test_utils.runTest1(), test_utils.runTest2(), test_utils.runTest_executeWorkflow1Step0()])
       .then(results => {
         var successCount = 0;
         var totalCount = 0;
@@ -25,6 +25,29 @@ const test_utils = {
         log.error(err);
         return {success:false, error:JSON.stringify(err)};
       });
+  },
+
+  /**
+   * Only tests if the job ran with exitCode==0.
+   */
+  runTest_executeWorkflow1Step0() {
+    const pbdPath = 'test/1bna.pdb';
+    var pdbDataStream = fs.createReadStream(pbdPath, {encoding:'utf8'});
+    var port = process.env.PORT;
+    const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
+    return new Promise((resolve, reject) => {
+      request.post({url:url, formData:{file:pdbDataStream}},
+        (err, httpResponse, body) => {
+          if (err) {
+            return reject({success:false, error:JSON.stringify(err)});
+          }
+          if (httpResponse.statusCode == 200) {
+            resolve({success:true, body:JSON.parse(body)});
+          } else {
+            resolve({success:false, body:body, statusCode:httpResponse.statusCode});
+          }
+        });
+    });
   },
 
   /**
@@ -90,13 +113,12 @@ const test_utils = {
               }
             });
         });
-      }, {max_tries:40, interval:2000});
+      }, {max_tries:240, interval:2000});
     })
     .then(result => {
       if (result.jobResult.exitCode == 0) {
         const outputPdbUrl = result.outputPdbUrl;
         return new Promise((resolve, reject) => {
-          log.trace('Requesting url=' + outputPdbUrl);
           request.get(outputPdbUrl, (error, response, body) => {
               if (error) {
                 log.error(error);
@@ -104,8 +126,11 @@ const test_utils = {
               }
               //We're not actually checking the result here, just making
               //sure that the request succeeds
-              console.log('response ' + response.statusCode);
-              resolve(true);
+              if (response.statusCode == 200) {
+                resolve(true);
+              } else {
+                reject({statusCode:response.statusCode, body});
+              }
             });
         })
         .then(() => {
