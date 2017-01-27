@@ -79,18 +79,20 @@ const workflowUtils = {
       appendStdOut: true,
       appendStdErr: true,
       image: 'docker.io/avirshup/mst:workflow_qmmm1-0.0.alpha0',
+      mountApiServer: process.env["CCC"] == "ccc:9000",
       createOptions: {
-        Cmd: ["/inputs/input.pdb"]
+        Cmd: ["/inputs/input.pdb"],
+        Env: [
+          `CCC=${process.env["CCC"]}`
+        ]
       }
     };
+
     return ccc.run(jobJson, cccInput)
       .then(jobResult => {
         if (jobResult.exitCode == 0) {
+          log.info(jobResult);
           var baseUrl = jobResult.outputsBaseUrl;
-          //Local dev version
-          if (!baseUrl.startsWith('http')) {
-            baseUrl = 'http://localhost:9000/' + baseUrl;
-          }
           var result = {
             success: true,
             "prepJson": baseUrl + 'prep.json',

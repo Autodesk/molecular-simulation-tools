@@ -51,7 +51,8 @@ router.get('/pdb_by_id', (req, res, next) => {
 });
 
 /**
- * [description]
+ * First step in workflow1: selecting a ligand.
+ * Test with: curl -F file=@`pwd`/server/test/1bna.pdb localhost:4000/v1/structure/executeWorkflow1Step0
  * @param  {[type]}   '/executeWorkflow1Step0' [description]
  * @param  {Function} (req,                    res,          next)         [description]
  * @param  {[type]}   'utf8').then((err,       inputPdb      [description]

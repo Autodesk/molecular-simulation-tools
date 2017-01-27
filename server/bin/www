@@ -146,6 +146,9 @@ function init() {
 /**
  * Proxy requests to port 9000 to the CCC server
  */
-const httpProxy = require('http-proxy');
-httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+if (process.env["CCC"] == 'ccc:9000') {
+  const httpProxy = require('http-proxy');
+  httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+}
+
 
