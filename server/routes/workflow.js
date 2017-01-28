@@ -25,7 +25,7 @@ router.get('/exitcode/:runId', (req, res) => {
 });
 
 /**
- * Get the workflow indicated by the given worklowId
+ * Get the workflow indicated by the given workflowId
  */
 router.get('/:workflowId', (req, res, next) => {
   const workflowId = req.params.workflowId;
@@ -42,7 +42,7 @@ router.get('/:workflowId', (req, res, next) => {
     const workflow = JSON.parse(workflowString);
 
     // Write +1 viewCount for this workflow
-    workflow.viewCount += 1;
+    workflow.viewCount = workflow.viewCount ? workflow.viewCount + 1 : 1;
     return redis.hset(
       dbConstants.REDIS_WORKFLOWS, workflowId, JSON.stringify(workflow)
     ).then(() =>
