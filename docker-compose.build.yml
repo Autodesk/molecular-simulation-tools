@@ -4,10 +4,7 @@ services:
   server:
     build:
       context: .
-    ports:
-      - "4000:4000"
     environment:
-      PORT: "4000"
       CCC: "internal-lb.${BNR_ENVIRONMENT}.bionano.bio:9000"
     logging:
       driver: json-file
