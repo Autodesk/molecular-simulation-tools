@@ -26,6 +26,10 @@ See client/README.md
 `SEND_GRID_API_KEY`: Allows the server to send email via SendGrid.
 `URL`: The url that the server can be accessed on publicly
 `FRONTEND_URL`: The url root that we use for links in emails
+`GA_VIEW_ID`: Used to retrieve number of views for each workflow from Google Analytics
+
+#### GA Key File
+Your Google Analytics key file should be placed at server/google_api_key.json.  This will be used to fetch the view count from the Google Analytics API.
 
 #### API
 All routes are prefixed with the current version.  See the mock server in client/test/fixtures/mock_server.js for example responses.
