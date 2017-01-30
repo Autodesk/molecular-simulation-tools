@@ -44,6 +44,11 @@ router.post('/executeWorkflow1Step0', (req, res, next) => {
     writeStream.on('finish', () => {
       workflowUtils.executeWorkflow1Step0(fs.createReadStream(tmpFileName))
         .then(jobResult => {
+          if (!jobResult.success) {
+            const error = new Error('Failed to execute processing');
+            error.result = jobResult;
+            return handleError(error);
+          }
           cleanup();
           res.send(jobResult);
         })

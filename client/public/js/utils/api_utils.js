@@ -1,5 +1,4 @@
 import axios from 'axios';
-import querystring from 'querystring';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 
@@ -14,7 +13,7 @@ const apiUtils = {
     }).then(res => res.data.runId);
   },
 
-  getPDB(url) {
+  getPdb(url) {
     return axios.get(url).then(res => res.data);
   },
 
@@ -61,6 +60,17 @@ const apiUtils = {
     return axios.post(`${API_URL}/v1/run/cancel`, {
       runId,
     });
+  },
+
+  processInput(pdb) {
+    const file = new window.Blob(
+      [pdb], { type: 'text/pdb' }
+    );
+    const data = new window.FormData();
+    data.append('file', file);
+
+    return axios.post(`${API_URL}/v1/structure/executeWorkflow1Step0`, data)
+      .then(res => res.data.prepPdb);
   },
 };
 

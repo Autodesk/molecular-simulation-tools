@@ -52,7 +52,7 @@ export function initializeRun(workflowId, runId) {
     });
 
     if (workflow.run.inputPdbUrl) {
-      apiUtils.getPDB(workflow.run.inputPdbUrl).then(modelData =>
+      apiUtils.getPdb(workflow.run.inputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_INPUT_PDB,
           modelData,
@@ -66,7 +66,7 @@ export function initializeRun(workflowId, runId) {
     }
 
     if (workflow.run.outputPdbUrl) {
-      apiUtils.getPDB(workflow.run.outputPdbUrl).then(modelData =>
+      apiUtils.getPdb(workflow.run.outputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_OUTPUT_PDB,
           modelData,
@@ -169,8 +169,15 @@ export function upload(file, workflowId) {
   };
 }
 
-export function processInput(workflowId) {
-  // TODO using hardcoded per-workflow endpoints
+export function processInput(workflowId, pdb) {
+  // TODO backend should handle distinguishing by workflowId
+  switch (workflowId) {
+    case '1':
+      return apiUtils.processInput(pdb);
+
+    default:
+      return Promise.resolve(pdb);
+  }
 }
 
 export function submitPdbId(pdbId, workflowId) {
@@ -179,14 +186,17 @@ export function submitPdbId(pdbId, workflowId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    rcsbApiUtils.getPdbById(pdbId).then(({ pdbUrl, pdb }) => {
-      dispatch({
-        type: actionConstants.FETCHED_PDB_BY_ID,
-        pdbUrl,
-        pdb,
-      });
-      processInput(workflowId);
-    }).catch(err =>
+    rcsbApiUtils.getPdbById(pdbId).then(({ pdb }) =>
+      processInput(workflowId, pdb).then(processedPdbUrl =>
+        apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
+          dispatch({
+            type: actionConstants.FETCHED_PDB_BY_ID,
+            pdbUrl: processedPdbUrl,
+            pdb: processedPdb,
+          })
+        )
+      )
+    ).catch(err =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         err: err.message,
