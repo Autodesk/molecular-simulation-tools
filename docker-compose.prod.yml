@@ -7,10 +7,7 @@ volumes:
 services:
   server:
     image: "quay.io/bionano/mdtapps_server:${VERSION}"
-    ports:
-      - "4000:4000"
     environment:
-      PORT: "4000"
       CCC: "ccc.bionano.autodesk.com:9000"
     logging:
       driver: json-file

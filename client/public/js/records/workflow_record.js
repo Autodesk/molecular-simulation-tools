@@ -11,9 +11,9 @@ const WorkflowRecord = new Record({
   fetching: false,
   fetchingError: null,
   run: new RunRecord(),
-  runs: 0,
+  runCount: 0,
   title: '',
-  views: 0,
+  viewCount: 0,
   workflowNodes: new IList(),
 });
 

@@ -32,35 +32,41 @@ function WorkflowCard(props) {
     comingSoonEl = <img src={imgSoon} alt="soon" className="soon" />;
   }
 
+  const bgColor = props.bgColor || '#3763e9';
+
   return (
-    <div className="workflow-card col-md-4 col-sm-6 col-xs-12">
-      <Link className="card" to={`/workflow/${props.id}`}>
-        <div
-          className="cardBack"
-          style={{ backgroundColor: props.bgColor || '#3763e9' }}
-        />
-        <img
-          alt="back"
-          src={bgImage}
-          className="cardImage img-responsive"
-        />
-        <h5
-          className="cardTitle"
-          style={{ color: props.color || '#ffffff' }}
-        >
-          Preparing the outer ligand structure
-        </h5>
-        <p className="cardInfo">
-          This is the place to put more information regarding this workflow
-        </p>
-        <div className="cardOverlay" />
+    <Link
+      className="workflow-card col-md-4 col-sm-6 col-xs-12"
+      to={`/workflow/${props.id}`}
+      style={{ backgroundColor: bgColor }}
+    >
+      <div
+        className="bg-image"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+        }}
+      />
+      <img
+        src={`${process.env.API_URL}${props.creatorImage}`}
+        alt="card logo"
+        className="cardLogo"
+      />
+      <h5
+        className="cardTitle"
+        style={{ color: props.color || '#ffffff' }}
+      >
+        {props.title}
+      </h5>
+      <p className="cardInfo">
+        This is the place to put more information regarding this workflow
+      </p>
+      <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
-        <h7 className="cardViews">737 Views</h7>
-        <h7 className="cardRuns">124 Runs</h7>
-        <img src={props.creatorImage} alt="card logo" className="cardLogo" />
-        {comingSoonEl}
-      </Link>
-    </div>
+        <h7 className="cardViews">{props.viewCount} Views</h7>
+        <h7 className="cardRuns">{props.runCount} Runs</h7>
+      </div>
+      {comingSoonEl}
+    </Link>
   );
 }
 
@@ -71,6 +77,9 @@ WorkflowCard.propTypes = {
   comingSoon: React.PropTypes.bool,
   creatorImage: React.PropTypes.string,
   id: React.PropTypes.string.isRequired,
+  runCount: React.PropTypes.number,
+  title: React.PropTypes.string,
+  viewCount: React.PropTypes.number,
 };
 
 export default WorkflowCard;

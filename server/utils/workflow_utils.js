@@ -129,6 +129,28 @@ const workflowUtils = {
       }
     });
   },
+
+  /**
+   * Gets the total number of runs per workflow and returns the results in a
+   * hash, given the runStrings in the db
+   * @param runHash {Array of Strings}
+   * @returns {Map}
+   */
+  getRunCountsByWorkflows(runHash) {
+    const runCounts = new Map();
+
+    Object.values(runHash).forEach((runString) => {
+      const run = JSON.parse(runString);
+
+      if (!runCounts.has(run.workflowId)) {
+        runCounts.set(run.workflowId, 0);
+      }
+
+      runCounts.set(run.workflowId, runCounts.get(run.workflowId) + 1);
+    });
+
+    return runCounts;
+  },
 };
 
 module.exports = workflowUtils;
