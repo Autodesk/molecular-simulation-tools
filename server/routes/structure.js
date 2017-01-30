@@ -12,44 +12,6 @@ const router = new express.Router();
 
 const RCSB_URL = 'https://files.rcsb.org/download';
 
-/* JUSTIN: Is this obsolete? */
-router.get('/pdb_by_id', (req, res, next) => {
-  if (!req.query.pdbId) {
-    return next(new Error('Needs a valid pdb id.'));
-  }
-  if (!req.query.workflowId) {
-    return next(new Error('Needs a valid workflow id.'));
-  }
-
-  // Fetch the pdb from RCSB
-  const pdbUrl = `${RCSB_URL}/${req.query.pdbId}.pdb`;
-  return axios.get(pdbUrl).then(resRcsb =>
-    workflowUtils.processInput(req.query.workflowId, resRcsb.data).then(
-      ({ pdb, data }) => {
-        // If no processing was done
-        if (!pdb) {
-          return res.send({
-            pdbUrl,
-            pdb: resRcsb.data,
-          });
-        }
-
-        // Otherwise save the processed pdb
-        return ioUtils.stringToHashFile(pdb, 'public/structures').then(
-          filename =>
-            res.send({
-              pdbUrl: `/structures/${filename}`,
-              pdb,
-              data,
-            })
-        ).catch(next);
-      }
-    ).catch(next)
-  ).catch(() =>
-    next(new Error(`Failed to get pdbid ${req.query.pdbId} from RCSB`))
-  );
-});
-
 /**
  * First step in workflow1: selecting a ligand.
  * Test with: curl -F file=@`pwd`/server/test/1bna.pdb localhost:4000/v1/structure/executeWorkflow1Step0

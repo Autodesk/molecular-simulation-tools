@@ -35,15 +35,6 @@ const apiUtils = {
     });
   },
 
-  getPdbById(pdbId, workflowId = '1') {
-    const query = querystring.stringify({ pdbId, workflowId });
-    return axios.get(`${API_URL}/v1/structure/pdb_by_id?${query}`).then(res =>
-      res.data
-    ).catch((err) => {
-      throw err.response.data;
-    });
-  },
-
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
       new WorkflowRecord(res.data)

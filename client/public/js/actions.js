@@ -1,6 +1,7 @@
 import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
+import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
 export function initializeWorkflow(workflowId) {
@@ -168,19 +169,24 @@ export function upload(file, workflowId) {
   };
 }
 
+export function processInput(workflowId) {
+  // TODO using hardcoded per-workflow endpoints
+}
+
 export function submitPdbId(pdbId, workflowId) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId, workflowId).then(({ pdbUrl, pdb }) =>
+    rcsbApiUtils.getPdbById(pdbId).then(({ pdbUrl, pdb }) => {
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl,
         pdb,
-      })
-    ).catch(err =>
+      });
+      processInput(workflowId);
+    }).catch(err =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         err: err.message,
