@@ -92,17 +92,17 @@ function workflow(state = initialState, action) {
       }));
     }
 
-    case actionConstants.UPLOAD:
+    case actionConstants.INPUT_FILE:
       return state.set('run', state.run.merge({
-        uploadError: null,
-        uploadPending: true,
+        inputFileError: null,
+        inputFilePending: true,
         inputPdbUrl: null,
       }));
 
-    case actionConstants.UPLOAD_COMPLETE:
+    case actionConstants.INPUT_FILE_COMPLETE:
       return state.set('run', state.run.merge({
-        uploadPending: false,
-        uploadError: action.err,
+        inputFilePending: false,
+        inputFileError: action.err,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
       }));

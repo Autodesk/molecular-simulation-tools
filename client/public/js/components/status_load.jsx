@@ -7,10 +7,10 @@ class StatusLoad extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onUpload = this.onUpload.bind(this);
+    this.onSelectInputFile = this.onSelectInputFile.bind(this);
     this.onSubmitPdbId = this.onSubmitPdbId.bind(this);
     this.onChangePdbId = this.onChangePdbId.bind(this);
-    this.onClickFileUpload = this.onClickFileUpload.bind(this);
+    this.onClickInputFile = this.onClickInputFile.bind(this);
 
     this.state = {
       pdbId: '',
@@ -24,7 +24,7 @@ class StatusLoad extends React.Component {
     });
   }
 
-  onClickFileUpload() {
+  onClickInputFile() {
     this.fileInput.click();
   }
 
@@ -44,14 +44,14 @@ class StatusLoad extends React.Component {
     return this.props.submitPdbId(this.state.pdbId);
   }
 
-  onUpload(e) {
-    this.props.onUpload(e.target.files[0]);
+  onSelectInputFile(e) {
+    this.props.onSelectInputFile(e.target.files[0]);
   }
 
   render() {
-    let uploadedElement;
+    let inputFileElement;
     if (this.props.inputPdbUrl) {
-      uploadedElement = (
+      inputFileElement = (
         <div>
           <a href={this.props.inputPdbUrl}>{this.props.inputPdbUrl}</a>
         </div>
@@ -60,8 +60,8 @@ class StatusLoad extends React.Component {
 
     return (
       <div className="status-info status-load">
-        {uploadedElement}
-        <div className="upload-container">
+        {inputFileElement}
+        <div className="input-file-container">
           <form
             className="defInput"
             onSubmit={this.onSubmitPdbId}
@@ -85,8 +85,8 @@ class StatusLoad extends React.Component {
           </p>
           <Button
             type="form"
-            disabled={this.props.uploadPending}
-            onClick={this.onClickFileUpload}
+            disabled={this.props.inputFilePending}
+            onClick={this.onClickInputFile}
           >
             <div>
               Browse
@@ -94,13 +94,13 @@ class StatusLoad extends React.Component {
                 ref={(c) => { this.fileInput = c; }}
                 className="file-input"
                 type="file"
-                disabled={this.props.uploadPending}
-                onChange={this.onUpload}
+                disabled={this.props.inputFilePending}
+                onChange={this.onSelectInputFile}
               />
             </div>
           </Button>
           <div className="error">
-            {this.props.uploadError}
+            {this.props.inputFileError}
           </div>
         </div>
       </div>
@@ -111,11 +111,11 @@ class StatusLoad extends React.Component {
 StatusLoad.propTypes = {
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
-  onUpload: React.PropTypes.func.isRequired,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   inputPdbUrl: React.PropTypes.string,
   submitPdbId: React.PropTypes.func.isRequired,
-  uploadPending: React.PropTypes.bool,
-  uploadError: React.PropTypes.string,
+  inputFilePending: React.PropTypes.bool,
+  inputFileError: React.PropTypes.string,
 };
 
 export default StatusLoad;

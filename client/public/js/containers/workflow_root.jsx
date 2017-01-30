@@ -14,7 +14,7 @@ import {
   messageTimeout,
   submitEmail,
   submitPdbId,
-  upload,
+  selectInputFile,
 } from '../actions';
 
 function mapStateToProps(state, ownProps) {
@@ -64,9 +64,9 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onUpload(workflowId) {
+    onSelectInputFile(workflowId) {
       return (file) => {
-        dispatch(upload(file, workflowId));
+        dispatch(selectInputFile(file, workflowId));
       };
     },
     submitPdbId(workflowId) {
@@ -91,7 +91,7 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputPdbUrl
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
-    onUpload: dispatchProps.onUpload(stateProps.workflow.id),
+    onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),
     submitPdbId: dispatchProps.submitPdbId(stateProps.workflow.id),
   });
 }

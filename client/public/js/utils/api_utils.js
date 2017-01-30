@@ -17,23 +17,6 @@ const apiUtils = {
     return axios.get(url).then(res => res.data);
   },
 
-  upload(file, workflowId = '0') {
-    return new Promise((resolve, reject) => {
-      const extension = file.name.split('.').pop();
-      if (extension !== 'pdb') {
-        return reject('File must have the .pdb extension.');
-      }
-
-      const data = new window.FormData();
-      data.append('file', file);
-      data.append('workflowId', workflowId);
-
-      return axios.put(`${API_URL}/v1/structure/upload`, data).then(res =>
-        resolve(`${API_URL}${res.data.pdbUrl}`)
-      ).catch(reject);
-    });
-  },
-
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
       new WorkflowRecord(res.data)

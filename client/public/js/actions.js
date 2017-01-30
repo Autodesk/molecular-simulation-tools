@@ -141,34 +141,6 @@ export function clickRun(workflowId, email, inputPdbUrl) {
   };
 }
 
-export function upload(file, workflowId) {
-  return (dispatch) => {
-    dispatch({
-      type: actionConstants.UPLOAD,
-      file,
-    });
-
-    const uploadPromise = apiUtils.upload(file, workflowId);
-    const readPromise = workflowUtils.readPdb(file);
-    Promise.all([uploadPromise, readPromise]).then((results) => {
-      if (!results[0] || !results[1]) {
-        throw new Error('Missing result from upload/read');
-      }
-
-      dispatch({
-        type: actionConstants.UPLOAD_COMPLETE,
-        pdbUrl: results[0],
-        pdb: results[1],
-      });
-    }).catch(err =>
-      dispatch({
-        type: actionConstants.UPLOAD_COMPLETE,
-        err: err ? (err.message || err) : null,
-      })
-    );
-  };
-}
-
 export function processInput(workflowId, pdb) {
   // TODO backend should handle distinguishing by workflowId
   switch (workflowId) {
@@ -178,6 +150,40 @@ export function processInput(workflowId, pdb) {
     default:
       return Promise.resolve(pdb);
   }
+}
+
+export function selectInputFile(file, workflowId) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.INPUT_FILE,
+      file,
+    });
+
+    const extension = file.name.split('.').pop();
+    if (extension !== 'pdb') {
+      return dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        err: 'File must have the .pdb extension',
+      });
+    }
+
+    return workflowUtils.readPdb(file).then(pdb =>
+      processInput(workflowId, pdb).then(processedPdbUrl =>
+        apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
+          dispatch({
+            type: actionConstants.INPUT_FILE_COMPLETE,
+            pdbUrl: processedPdbUrl,
+            pdb: processedPdb,
+          })
+        )
+      )
+    ).catch(err =>
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        err: err ? (err.message || err) : null,
+      })
+    );
+  };
 }
 
 export function submitPdbId(pdbId, workflowId) {

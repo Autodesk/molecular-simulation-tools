@@ -17,6 +17,8 @@ const actionConstants = keyMirror({
   FETCHED_WORKFLOW: null,
   FETCHED_RUN: null,
   GET_PDB: null,
+  INPUT_FILE: null,
+  INPUT_FILE_COMPLETE: null,
   INITIALIZE: null,
   INITIALIZE_WORKFLOW: null,
   MESSAGE_TIMEOUT: null,
@@ -24,8 +26,6 @@ const actionConstants = keyMirror({
   SUBMIT_PDB_ID: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,
-  UPLOAD: null,
-  UPLOAD_COMPLETE: null,
 });
 
 export default actionConstants;

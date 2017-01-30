@@ -74,10 +74,10 @@ function Status(props) {
       <StatusLoad
         fetchingPdb={props.fetchingPdb}
         fetchingPdbError={props.fetchingPdbError}
-        onUpload={props.onUpload}
+        onSelectInputFile={props.onSelectInputFile}
         submitPdbId={props.submitPdbId}
-        uploadError={props.workflow.run.uploadError}
-        uploadPending={props.workflow.run.uploadPending}
+        inputFileError={props.workflow.run.inputFileError}
+        inputFilePending={props.workflow.run.inputFilePending}
         inputPdbUrl={props.workflow.run.inputPdbUrl}
       />
     );
@@ -117,7 +117,7 @@ Status.propTypes = {
   nodes: React.PropTypes.instanceOf(IMap),
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  onUpload: React.PropTypes.func.isRequired,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
