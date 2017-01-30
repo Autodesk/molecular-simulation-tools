@@ -1,20 +1,16 @@
 const Busboy = require('busboy');
 const Promise = require('bluebird');
-const axios = require('axios');
 const express = require('express');
 const fs = Promise.promisifyAll(require('fs'));
-const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
-const appConstants = require('../constants/app_constants');
 const shortid = require('shortid');
 
 const router = new express.Router();
 
-const RCSB_URL = 'https://files.rcsb.org/download';
-
 /**
  * First step in workflow1: selecting a ligand.
- * Test with: curl -F file=@`pwd`/server/test/1bna.pdb localhost:4000/v1/structure/executeWorkflow1Step0
+ * Test with:
+ * curl -F file=@`pwd`/server/test/1bna.pdb localhost:4000/v1/structure/executeWorkflow1Step0
  * @param  {[type]}   '/executeWorkflow1Step0' [description]
  * @param  {Function} (req,                    res,          next)         [description]
  * @param  {[type]}   'utf8').then((err,       inputPdb      [description]
@@ -29,28 +25,32 @@ router.post('/executeWorkflow1Step0', (req, res, next) => {
   const cleanup = () => {
     try {
       fs.deleteFileSync(tmpFileName);
-    } catch(err) {log.error(err);}
-  }
+    } catch (err) {
+      log.error(err);
+    }
+  };
 
   const handleError = (err) => {
     cleanup();
     log.error(JSON.stringify(err));
     next(err);
-  }
+  };
 
   busboy.on('error', handleError);
-  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+  busboy.on('file', (fieldname, file) => {
     const writeStream = fs.createWriteStream(tmpFileName);
     writeStream.on('finish', () => {
       workflowUtils.executeWorkflow1Step0(fs.createReadStream(tmpFileName))
-        .then(jobResult => {
+        .then((jobResult) => {
           if (!jobResult.success) {
             const error = new Error('Failed to execute processing');
             error.result = jobResult;
-            return handleError(error);
+            handleError(error);
+            return;
           }
           cleanup();
           res.send(jobResult);
+          return;
         })
         .catch(handleError);
     });
