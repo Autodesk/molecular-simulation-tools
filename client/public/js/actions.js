@@ -142,7 +142,7 @@ export function clickRun(workflowId, email, inputPdbUrl) {
 }
 
 export function selectInputFile(file, workflowId) {
-  return (dispatch) => {
+  return async function selectInputFileDispatch(dispatch) {
     dispatch({
       type: actionConstants.INPUT_FILE,
       file,
@@ -150,75 +150,66 @@ export function selectInputFile(file, workflowId) {
 
     const extension = file.name.split('.').pop();
     if (extension !== 'pdb') {
-      return dispatch({
+      dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         err: 'File must have the .pdb extension',
       });
+      return;
     }
 
-    let inputPdb;
-    let processedPdbUrl;
+    try {
+      const inputPdb = await workflowUtils.readPdb(file);
+      const processedPdbUrl = await apiUtils.processInput(workflowId, inputPdb);
 
-    return workflowUtils.readPdb(file).then((pdb) => {
-      inputPdb = pdb;
-      return apiUtils.processInput(workflowId, pdb);
-    }).then((pdbUrl) => {
-      processedPdbUrl = pdbUrl;
-
-      // If no processing was needed
-      if (!processedPdbUrl) {
-        return Promise.resolve(inputPdb);
+      let processedPdb;
+      if (processedPdbUrl) {
+        processedPdb = await apiUtils.getPdb(processedPdbUrl);
+      } else {
+        processedPdb = inputPdb;
       }
 
-      return apiUtils.getPdb(processedPdbUrl);
-    }).then(processedPdb =>
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         pdbUrl: processedPdbUrl,
         pdb: processedPdb,
-      })
-    )
-    .catch(err =>
+      });
+    } catch (err) {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         err: err ? (err.message || err) : null,
-      })
-    );
+      });
+    }
   };
 }
 
 export function submitPdbId(pdbId, workflowId) {
-  return (dispatch) => {
+  return async function submitPdbIdDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    let processedPdbUrl;
-    let inputPdb;
+    try {
+      const { pdb: inputPdb } = await rcsbApiUtils.getPdbById(pdbId);
+      const processedPdbUrl = await apiUtils.processInput(workflowId, inputPdb);
 
-    rcsbApiUtils.getPdbById(pdbId).then(({ pdb }) => {
-      inputPdb = pdb;
-      return apiUtils.processInput(workflowId, inputPdb);
-    }).then((pdbUrl) => {
-      // If no processing was needed
-      if (!pdbUrl) {
-        return Promise.resolve(inputPdb);
+      let processedPdb;
+      if (processedPdbUrl) {
+        processedPdb = await apiUtils.getPdb(processedPdbUrl);
+      } else {
+        processedPdb = inputPdb;
       }
-      processedPdbUrl = pdbUrl;
-      return apiUtils.getPdb(processedPdbUrl);
-    }).then(processedPdb =>
+
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         pdbUrl: processedPdbUrl,
         pdb: processedPdb,
-      })
-    )
-    .catch(err =>
+      });
+    } catch (err) {
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         err: err.message,
-      })
-    );
+      });
+    }
   };
 }
 
