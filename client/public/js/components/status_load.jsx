@@ -58,6 +58,8 @@ class StatusLoad extends React.Component {
       );
     }
 
+    const disabled = this.props.inputFilePending || this.props.fetchingPdb;
+
     return (
       <div className="status-info status-load">
         {inputFileElement}
@@ -71,7 +73,7 @@ class StatusLoad extends React.Component {
               style={{ width: '215px' }}
               type="text"
               placeholder="Enter PDB ID here"
-              disabled={this.props.fetchingPdb}
+              disabled={disabled}
               value={this.state.pdbId}
               onChange={this.onChangePdbId}
             />
@@ -85,7 +87,7 @@ class StatusLoad extends React.Component {
           </p>
           <Button
             type="form"
-            disabled={this.props.inputFilePending}
+            disabled={disabled}
             onClick={this.onClickInputFile}
           >
             <div>
@@ -94,7 +96,7 @@ class StatusLoad extends React.Component {
                 ref={(c) => { this.fileInput = c; }}
                 className="file-input"
                 type="file"
-                disabled={this.props.inputFilePending}
+                disabled={disabled}
                 onChange={this.onSelectInputFile}
               />
             </div>
