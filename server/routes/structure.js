@@ -84,39 +84,19 @@ router.post('/executeWorkflow0Step0', (req, res, next) => {
  * @return {[type]}                            {"prepJson": "URL", "prepPdb": "URL"}
  */
 router.post('/executeWorkflow1Step0', (req, res, next) => {
-  const busboy = new Busboy({
-    headers: req.headers,
-  });
-
-  const tmpFileName = `/tmp/_temp_executeWorkflow1Step0_${shortid.generate()}`;
-  const cleanup = () => {
-    try {
-      fs.deleteFileSync(tmpFileName);
-    } catch(err) {log.error(err);}
+  var inputs = req.body.inputs;
+  if (!inputs) {
+    return next(new Error('No inputs'));
   }
 
-  const handleError = (err) => {
-    cleanup();
-    log.error(JSON.stringify(err));
-    next(err);
-  }
-
-  busboy.on('error', handleError);
-  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    const writeStream = fs.createWriteStream(tmpFileName);
-    writeStream.on('finish', () => {
-      workflowUtils.executeWorkflow1Step0(fs.createReadStream(tmpFileName))
-        .then(jobResult => {
-          cleanup();
-          res.send(jobResult);
-        })
-        .catch(handleError);
+  workflowUtils.executeWorkflow1Step0(inputs)
+    .then(jobResult => {
+        res.send(jobResult);
+    })
+    .error(err => {
+      log.error(err);
+      next(err);
     });
-    writeStream.on('error', handleError);
-    file.pipe(writeStream);
-    file.on('error', handleError);
-  });
-  return req.pipe(busboy);
 });
 
 module.exports = router;

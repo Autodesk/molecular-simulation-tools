@@ -89,7 +89,12 @@ const workflowUtils = {
           '--outputdir', '/outputs/']
       }
     };
-    return workflowUtils.executeCCCJob(jobJson);
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        return {
+          runId: jobResult.jobId
+        }
+      });
   },
 
   /**
@@ -100,18 +105,32 @@ const workflowUtils = {
    * @return {Promise<{success:true, prepJson:<URL>, prepPdb:<URL>}>}
    */
   executeWorkflow1Step0(inputs) {
-    // var cccInput = {};
-    // cccInput["input.pdb"] = pdbDataStream;
+    log.warn(JSON.stringify(inputs).substr(0, 100));
+
     const jobJson = {
       wait: true,
-      image: 'avirshup/mst:workflows-0.0.alpha3',
+      image: 'avirshup/mst:workflows-0.0.alpha4',
       inputs: inputs,
       createOptions: {
-        Cmd: ["/inputs/input.pdb"]
+        Cmd: ['minimize',
+          '--preprocess', '/inputs/input.pdb',
+          '--outputdir', '/outputs/']
       }
     };
-
-    return workflowUtils.executeCCCJob(jobJson);
+    log.info({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        log.info({jobResult:jobResult});
+        var outputs = {};
+        for (var i = 0; i < jobResult.outputs.length; i++) {
+          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+        }
+        return {
+          success: jobResult.exitCode == 0,
+          outputs: outputs,
+          jobResult: jobResult
+        }
+      });
   },
 
   /**
@@ -122,19 +141,7 @@ const workflowUtils = {
    * @return {Promise<{success:true, prepJson:<URL>, prepPdb:<URL>}>}
    */
   executeWorkflow1Step1(inputs) {
-    // var cccInputs = [
-    //   {
-    //     name: "workflow_state.dill",
-    //     value: workflowStateDllUrl,
-    //     type: 'url'
-    //   },
-    //   {
-    //     name: "selection.json",
-    //     value: selectionJsonUrl,
-    //     type: 'url'
-    //   },
-    // ];
-
+    log.info({f:'executeWorkflow1Step1', inputs});
     const jobJson = {
       wait: true,
       appendStdOut: true,
@@ -145,9 +152,8 @@ const workflowUtils = {
       createOptions: {
         Cmd: ['minimize',
           '--restart', '/inputs/workflow_state.dill',
-          '--selection', '/inputs/selection.json',
-          '--outputdir', '/outputs/'
-          ],
+          '--setoutput', 'user_atom_selection=/inputs/selection.json',
+          '--outputdir', '/outputs/'],
         Env: [
           `CCC=${process.env["CCC"]}`
         ]
@@ -155,50 +161,38 @@ const workflowUtils = {
     };
 
     return ccc.submitJobJson(jobJson)
+      return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        if (jobResult.exitCode == 0) {
-          log.info(jobResult);
-          var baseUrl = jobResult.outputsBaseUrl;
-          var result = {
-            success: true,
-            // "final_structure.pdb": baseUrl + 'final_structure.pdb',
-            // "results.json": baseUrl + 'results.json',
-            job: jobResult
-          }
-          for (var i = 0; i < jobResult.outputs.length; i++) {
-            result[jobResult.outputs[i]] = baseUrl + jobResult.outputs[i];
-          }
-          return result;
-        } else {
-          return {success:false, job:jobResult};
+        return {
+          runId: jobResult.jobId
         }
       });
   },
 
-  processInput(workflowId, pdb) {
-    return new Promise((resolve) => {
-      // TODO hardcoding this for every workflow seems fragile, is there a
-      // better abstraction for this?
-      switch (workflowId) {
-        case '1':
-          // TODO this should be replaced by something that runs the real Python
-          // pdb processing and returns real data instead of this hardcoded data
-          return resolve({
-            data: {
-              ligands: {
-                // Hardcoded data for 3aid
-                ARQ: Array(42).fill().map((val, index) => 1846 + index),
-              },
-            },
-            pdb,
-          });
+  // processInput(workflowId, pdb) {
+  //   return new Promise((resolve) => {
+  //     // TODO hardcoding this for every workflow seems fragile, is there a
+  //     // better abstraction for this?
+  //     switch (workflowId) {
+  //       case '1':
+  //         // TODO this should be replaced by something that runs the real Python
+  //         // pdb processing and returns real data instead of this hardcoded data
+  //         return resolve({
+  //           data: {
+  //             ligands: {
+  //               // Hardcoded data for 3aid
+  //               ARQ: Array(42).fill().map((val, index) => 1846 + index),
+  //             },
+  //           },
+  //           pdb,
+  //         });
 
-        // Handles workflows that don't require input processing (like VDE)
-        default:
-          return resolve({ pdb: '', data: {} });
-      }
-    });
-  },
+  //       // Handles workflows that don't require input processing (like VDE)
+  //       default:
+  //         return resolve({ pdb: '', data: {} });
+  //     }
+  //   });
+  // },
 };
 
 module.exports = workflowUtils;
