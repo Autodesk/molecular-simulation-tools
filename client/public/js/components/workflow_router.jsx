@@ -87,8 +87,6 @@ class WorkflowRouter extends React.Component {
           clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
           clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
           colorized={this.props.colorized}
-          fetchingPdb={this.props.workflow.fetchingPdb}
-          fetchingPdbError={this.props.workflow.fetchingPdbError}
           morph={this.props.morph}
           nodes={this.props.nodes}
           onClickColorize={this.props.onClickColorize}

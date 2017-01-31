@@ -51,8 +51,6 @@ function Workflow(props) {
         workflow={props.workflow}
       />
       <Status
-        fetchingPdb={props.fetchingPdb}
-        fetchingPdbError={props.fetchingPdbError}
         nodes={props.nodes}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
@@ -79,8 +77,6 @@ Workflow.propTypes = {
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
-  fetchingPdb: React.PropTypes.bool,
-  fetchingPdbError: React.PropTypes.string,
   morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
   onClickColorize: React.PropTypes.func.isRequired,

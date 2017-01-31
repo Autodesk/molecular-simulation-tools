@@ -181,8 +181,8 @@ export function submitPdbId(pdbId, workflowId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    rcsbApiUtils.getPdbById(pdbId).then(({ pdb }) =>
-      apiUtils.processInput(workflowId, pdb).then(processedPdbUrl =>
+    rcsbApiUtils.getPdbById(pdbId).then(({ pdb, pdbUrl }) =>
+      apiUtils.processInput(workflowId, pdb, pdbUrl).then(processedPdbUrl =>
         apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
           dispatch({
             type: actionConstants.FETCHED_PDB_BY_ID,
