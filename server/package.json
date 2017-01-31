@@ -34,6 +34,7 @@
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
     "request": "^2.79.0",
+    "request-promise": "^4.1.1",
     "sendgrid": "^4.7.1",
     "shortid": "^2.2.6",
     "validator": "^6.2.0"
