@@ -6,7 +6,7 @@ const testUtils = require('../test/test_utils');
 
 const router = new express.Router();
 
-router.get('/test', (req, res) => {
+router.get('/', (req, res) => {
   testUtils.runTest2()
     .then((result) => {
       res.send({success:result.success});
@@ -15,7 +15,7 @@ router.get('/test', (req, res) => {
     });
 });
 
-router.get('/test-all', (req, res) => {
+router.get('/all', (req, res) => {
   testUtils.runAllTests()
     .then((result) => {
       res.send(result);
