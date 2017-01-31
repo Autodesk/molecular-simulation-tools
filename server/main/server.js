@@ -36,7 +36,7 @@ app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
-app.use(`${appConstants.VERSION_PREFIX}/test`, testRoutes);
+app.use('/test', testRoutes);
 app.use('/version', versionRouter);
 
 // API 404s
