@@ -48,7 +48,7 @@ const apiUtils = {
   processInput(workflowId, pdb) {
     // TODO backend should handle distinguishing by workflowId
     if (workflowId !== '1') {
-      return Promise.resolve(pdb);
+      return Promise.resolve();
     }
 
     const file = new window.Blob(

@@ -156,17 +156,29 @@ export function selectInputFile(file, workflowId) {
       });
     }
 
-    return workflowUtils.readPdb(file).then(pdb =>
-      apiUtils.processInput(workflowId, pdb).then(processedPdbUrl =>
-        apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
-          dispatch({
-            type: actionConstants.INPUT_FILE_COMPLETE,
-            pdbUrl: processedPdbUrl,
-            pdb: processedPdb,
-          })
-        )
-      )
-    ).catch(err =>
+    let inputPdb;
+    let processedPdbUrl;
+
+    return workflowUtils.readPdb(file).then((pdb) => {
+      inputPdb = pdb;
+      return apiUtils.processInput(workflowId, pdb);
+    }).then((pdbUrl) => {
+      processedPdbUrl = pdbUrl;
+
+      // If no processing was needed
+      if (!processedPdbUrl) {
+        return Promise.resolve(inputPdb);
+      }
+
+      return apiUtils.getPdb(processedPdbUrl);
+    }).then(processedPdb =>
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        pdbUrl: processedPdbUrl,
+        pdb: processedPdb,
+      })
+    )
+    .catch(err =>
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         err: err ? (err.message || err) : null,
@@ -181,17 +193,27 @@ export function submitPdbId(pdbId, workflowId) {
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    rcsbApiUtils.getPdbById(pdbId).then(({ pdb, pdbUrl }) =>
-      apiUtils.processInput(workflowId, pdb, pdbUrl).then(processedPdbUrl =>
-        apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
-          dispatch({
-            type: actionConstants.FETCHED_PDB_BY_ID,
-            pdbUrl: processedPdbUrl,
-            pdb: processedPdb,
-          })
-        )
-      )
-    ).catch(err =>
+    let processedPdbUrl;
+    let inputPdb;
+
+    rcsbApiUtils.getPdbById(pdbId).then(({ pdb }) => {
+      inputPdb = pdb;
+      return apiUtils.processInput(workflowId, inputPdb);
+    }).then((pdbUrl) => {
+      // If no processing was needed
+      if (!pdbUrl) {
+        return Promise.resolve(inputPdb);
+      }
+      processedPdbUrl = pdbUrl;
+      return apiUtils.getPdb(processedPdbUrl);
+    }).then(processedPdb =>
+      dispatch({
+        type: actionConstants.FETCHED_PDB_BY_ID,
+        pdbUrl: processedPdbUrl,
+        pdb: processedPdb,
+      })
+    )
+    .catch(err =>
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         err: err.message,
