@@ -57,12 +57,17 @@ function workflow(state = initialState, action) {
 
     case actionConstants.RUN_SUBMITTED:
       if (action.err) {
-        return state.set('workflowNodes', state.workflowNodes.map(
-          workflowNode => workflowNode.set('status', statusConstants.IDLE))
-        );
+        return state.merge({
+          fetching: false,
+          workflowNodes: state.workflowNodes.map(
+            workflowNode => workflowNode.set('status', statusConstants.IDLE)
+          ),
+        });
       }
 
-      return state;
+      return state.merge({
+        fetching: false,
+      });
 
     case actionConstants.FETCHED_INPUT_PDB: {
       if (action.err) {
