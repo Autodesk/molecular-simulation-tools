@@ -49,20 +49,10 @@ class StatusLoad extends React.Component {
   }
 
   render() {
-    let inputFileElement;
-    if (this.props.inputPdbUrl) {
-      inputFileElement = (
-        <div>
-          <a href={this.props.inputPdbUrl}>{this.props.inputPdbUrl}</a>
-        </div>
-      );
-    }
-
     const disabled = this.props.inputFilePending || this.props.fetchingPdb;
 
     return (
       <div className="status-info status-load">
-        {inputFileElement}
         <div className="input-file-container">
           <form
             className="defInput"
@@ -114,7 +104,6 @@ StatusLoad.propTypes = {
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
-  inputPdbUrl: React.PropTypes.string,
   submitPdbId: React.PropTypes.func.isRequired,
   inputFilePending: React.PropTypes.bool,
   inputFileError: React.PropTypes.string,

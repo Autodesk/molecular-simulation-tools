@@ -10,15 +10,15 @@ describe('workflowUtils', () => {
 
   beforeEach(() => {
     run = new RunRecord({
-      inputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+      inputPdb: 'impdbdata',
       email: 'justin.mccandless@autodesk.com',
     });
   });
 
   describe('isRunnable', () => {
-    describe('when no inputPdbUrl', () => {
+    describe('when no inputPdb', () => {
       beforeEach(() => {
-        run = run.set('inputPdbUrl', '');
+        run = run.set('inputPdb', '');
       });
 
       it('returns false', () => {
@@ -36,7 +36,7 @@ describe('workflowUtils', () => {
       });
     });
 
-    describe('when email and inputPdbUrl', () => {
+    describe('when email and inputPdb', () => {
       it('returns true', () => {
         expect(workflowUtils.isRunnable(run)).to.equal(true);
       });

@@ -78,7 +78,6 @@ function Status(props) {
         submitPdbId={props.submitPdbId}
         inputFileError={props.workflow.run.inputFileError}
         inputFilePending={props.workflow.run.inputFilePending}
-        inputPdbUrl={props.workflow.run.inputPdbUrl}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
