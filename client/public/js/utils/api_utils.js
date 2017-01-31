@@ -45,7 +45,12 @@ const apiUtils = {
     });
   },
 
-  processInput(pdb) {
+  processInput(workflowId, pdb) {
+    // TODO backend should handle distinguishing by workflowId
+    if (workflowId !== '1') {
+      return Promise.resolve(pdb);
+    }
+
     const file = new window.Blob(
       [pdb], { type: 'text/pdb' }
     );

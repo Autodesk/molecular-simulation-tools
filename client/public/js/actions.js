@@ -141,17 +141,6 @@ export function clickRun(workflowId, email, inputPdbUrl) {
   };
 }
 
-export function processInput(workflowId, pdb) {
-  // TODO backend should handle distinguishing by workflowId
-  switch (workflowId) {
-    case '1':
-      return apiUtils.processInput(pdb);
-
-    default:
-      return Promise.resolve(pdb);
-  }
-}
-
 export function selectInputFile(file, workflowId) {
   return (dispatch) => {
     dispatch({
@@ -168,7 +157,7 @@ export function selectInputFile(file, workflowId) {
     }
 
     return workflowUtils.readPdb(file).then(pdb =>
-      processInput(workflowId, pdb).then(processedPdbUrl =>
+      apiUtils.processInput(workflowId, pdb).then(processedPdbUrl =>
         apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
           dispatch({
             type: actionConstants.INPUT_FILE_COMPLETE,
@@ -193,7 +182,7 @@ export function submitPdbId(pdbId, workflowId) {
     });
 
     rcsbApiUtils.getPdbById(pdbId).then(({ pdb }) =>
-      processInput(workflowId, pdb).then(processedPdbUrl =>
+      apiUtils.processInput(workflowId, pdb).then(processedPdbUrl =>
         apiUtils.getPdb(processedPdbUrl).then(processedPdb =>
           dispatch({
             type: actionConstants.FETCHED_PDB_BY_ID,
