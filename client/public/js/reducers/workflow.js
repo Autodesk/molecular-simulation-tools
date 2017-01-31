@@ -96,7 +96,8 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputFileError: null,
         inputFilePending: true,
-        inputPdbUrl: null,
+        inputPdbUrl: '',
+        inputPdb: '',
       }));
 
     case actionConstants.INPUT_FILE_COMPLETE:
@@ -112,6 +113,7 @@ function workflow(state = initialState, action) {
         fetchingPdb: true,
         fetchingPdbError: null,
         inputPdbUrl: '',
+        inputPdb: '',
       }));
 
     case actionConstants.FETCHED_PDB_BY_ID:
