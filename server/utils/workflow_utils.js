@@ -11,57 +11,85 @@ const workflowUtils = {
    * @param  {[type]} params [description]
    * @return {[type]}        [description]
    */
-  executeWorkflow0(params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
-    }
-    log.debug({workflow:"executeWorkflow0", params:paramsToLog});
+  executeCCCJob(jobJson) {
+    var paramsToLog = Object.assign({}, {image:jobJson.image});
+    log.debug({workflow:"executeWorkflow", params:paramsToLog});
 
-    var cccInput = {
-      name: "input.pdb",
-    };
-    if (params.pdbUrl) {
-      var pdbUrl = params.pdbUrl;
-      if (!pdbUrl.startsWith('http')) {
-        if (!pdbUrl.startsWith('/')) {
-          pdbUrl = `/${pdbUrl}`;
-        }
-        pdbUrl = `http://localhost:${process.env.PORT}${pdbUrl}`;
-      }
-      cccInput.value = pdbUrl;
-      cccInput.type = 'url';
+    /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
+    jobJson['mountApiServer'] = process.env["CCC"] == "ccc:9000";
+
+    if (!jobJson.createOptions) {
+      jobJson.createOptions = {};
+    }
+    if (!jobJson.createOptions.Env) {
+      jobJson.createOptions.Env = [];
     }
 
-    if (!params.pdbUrl) {
-      cccInput.value = params.pdbData;
-      cccInput.type = 'inline';
-    }
+    jobJson.appendStdOut = true;
+    jobJson.appendStdErr = true;
 
-    if (!cccInput.type) {
-      return Promise.reject('Missing pdbUrl or pdbData field in parameters');
-    }
+    jobJson.createOptions.Env.push(`CCC=${process.env["CCC"]}`);
+
+    return ccc.submitJobJson(jobJson);
+  },
+
+  executeWorkflow0Step0(inputs) {
+    log.warn(JSON.stringify(inputs).substr(0, 100));
 
     const jobJson = {
-      wait: false,
-      appendStdOut: true,
-      appendStdErr: true,
-      // image: 'docker.io/avirshup/vde:0.0.7',
-      image: 'docker.io/busybox:latest',
-      /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
-      mountApiServer: process.env["CCC"] == "ccc:9000",
-      inputs: [cccInput],
+      wait: true,
+      image: 'avirshup/mst:workflows-0.0.alpha3',
+      inputs: inputs,
       createOptions: {
-        WorkingDir: '/outputs',
-        // Cmd: [params.pdbUrl],
-        Cmd: ["cp", "/inputs/input.pdb", "/outputs/out.pdb"],
-        Env: [
-          `CCC=${process.env["CCC"]}`
+        Cmd: ['vde',
+          '--preprocess', '/inputs/input.pdb',
+          '--outputdir', '/outputs/'
         ]
       }
     };
-    // log.info({jobJson:jobJson});
-    return ccc.submitJobJson(jobJson);
+    log.info({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        log.info({jobResult:jobResult});
+        var outputs = {};
+        for (var i = 0; i < jobResult.outputs.length; i++) {
+          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+        }
+        return {
+          success: jobResult.exitCode == 0,
+          outputs: outputs,
+          jobResult: jobResult
+        }
+      });
+  },
+
+  /**
+   * Run a conversion of a pdb file.
+   * Inputs: [
+   *   {
+   *     name: "workflow_state.dill",
+   *     type: "inline",
+   *     value: "workflow_state.dill stringified"
+   *   }
+   * ]
+   * @param  {[type]} inputs An array of CCC inputs
+   * @return {[type]}        [description]
+   */
+  executeWorkflow0Step1(inputs) {
+    log.warn({inputs:inputs})
+
+    const jobJson = {
+      wait: false,
+      image: 'avirshup/mst:workflows-0.0.alpha3',
+      inputs: inputs,
+      createOptions: {
+        WorkingDir: '/outputs',
+        Cmd: ['vde',
+          '--restart', '/inputs/workflow_state.dill',
+          '--outputdir', '/outputs/']
+      }
+    };
+    return workflowUtils.executeCCCJob(jobJson);
   },
 
   /**
@@ -71,32 +99,74 @@ const workflowUtils = {
    * @param  {String} pdbData
    * @return {Promise<{success:true, prepJson:<URL>, prepPdb:<URL>}>}
    */
-  executeWorkflow1Step0(pdbDataStream) {
-    var cccInput = {};
-    cccInput["input.pdb"] = pdbDataStream;
+  executeWorkflow1Step0(inputs) {
+    // var cccInput = {};
+    // cccInput["input.pdb"] = pdbDataStream;
+    const jobJson = {
+      wait: true,
+      image: 'avirshup/mst:workflows-0.0.alpha3',
+      inputs: inputs,
+      createOptions: {
+        Cmd: ["/inputs/input.pdb"]
+      }
+    };
+
+    return workflowUtils.executeCCCJob(jobJson);
+  },
+
+  /**
+   * The first step in workflow1, where a pdb
+   * needs to be processed before a ligand
+   * can be selected
+   * @param  {String} pdbData
+   * @return {Promise<{success:true, prepJson:<URL>, prepPdb:<URL>}>}
+   */
+  executeWorkflow1Step1(inputs) {
+    // var cccInputs = [
+    //   {
+    //     name: "workflow_state.dill",
+    //     value: workflowStateDllUrl,
+    //     type: 'url'
+    //   },
+    //   {
+    //     name: "selection.json",
+    //     value: selectionJsonUrl,
+    //     type: 'url'
+    //   },
+    // ];
+
     const jobJson = {
       wait: true,
       appendStdOut: true,
       appendStdErr: true,
-      image: 'docker.io/avirshup/mst:workflow_qmmm1-0.0.alpha0',
+      image: 'avirshup/mst:workflows-0.0.alpha2',
+      inputs: inputs,
       mountApiServer: process.env["CCC"] == "ccc:9000",
       createOptions: {
-        Cmd: ["/inputs/input.pdb"],
+        Cmd: ['minimize',
+          '--restart', '/inputs/workflow_state.dill',
+          '--selection', '/inputs/selection.json',
+          '--outputdir', '/outputs/'
+          ],
         Env: [
           `CCC=${process.env["CCC"]}`
         ]
       }
     };
 
-    return ccc.run(jobJson, cccInput)
+    return ccc.submitJobJson(jobJson)
       .then(jobResult => {
         if (jobResult.exitCode == 0) {
           log.info(jobResult);
           var baseUrl = jobResult.outputsBaseUrl;
           var result = {
             success: true,
-            "prepJson": baseUrl + 'prep.json',
-            "prepPdb": baseUrl + 'prep.pdb'
+            // "final_structure.pdb": baseUrl + 'final_structure.pdb',
+            // "results.json": baseUrl + 'results.json',
+            job: jobResult
+          }
+          for (var i = 0; i < jobResult.outputs.length; i++) {
+            result[jobResult.outputs[i]] = baseUrl + jobResult.outputs[i];
           }
           return result;
         } else {

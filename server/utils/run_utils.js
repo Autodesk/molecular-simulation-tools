@@ -100,15 +100,26 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
+  executeWorkflow(workflowId, email, inputs) {
+    var inputsToLog = inputs.slice();
+    for(var i = 0; i < inputsToLog.length; i++) {
+      inputsToLog[i].value = inputsToLog[i].value.substr(0, 100);
     }
-    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email, params:paramsToLog});
+    var paramsToLog = Object.assign({}, {inputs:inputsToLog});
+    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email, inputs:paramsToLog});
     log.info({message: "Running"});
     /* When we have more than one workflow, we'll switch on the workflow Id */
-    const workflowPromise = workflowUtils.executeWorkflow0(params);
+    var workflowPromise = null;
+    switch(workflowId) {
+      case 0:
+          workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
+          break;
+      case 1:
+          workflowPromise = workflowUtils.executeWorkflow1(inputs);
+          break;
+      default:
+        return Promise.reject({error:`No workflow for workflowId=${workflowId}`});
+    }
 
     return workflowPromise
       .then(jobResult => {

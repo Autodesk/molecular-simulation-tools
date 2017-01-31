@@ -58,6 +58,31 @@ router.get('/pdb_by_id', (req, res, next) => {
  * @param  {[type]}   'utf8').then((err,       inputPdb      [description]
  * @return {[type]}                            {"prepJson": "URL", "prepPdb": "URL"}
  */
+router.post('/executeWorkflow0Step0', (req, res, next) => {
+  var inputs = req.body.inputs;
+  if (!inputs) {
+    return next(new Error('No inputs'));
+  }
+
+  workflowUtils.executeWorkflow0Step0(inputs)
+    .then(jobResult => {
+        res.send(jobResult);
+    })
+    .error(err => {
+      log.error(err);
+      next(err);
+    });
+});
+
+
+/**
+ * First step in workflow1: selecting a ligand.
+ * Test with: curl -F file=@`pwd`/server/test/1bna.pdb localhost:4000/v1/structure/executeWorkflow1Step0
+ * @param  {[type]}   '/executeWorkflow1Step0' [description]
+ * @param  {Function} (req,                    res,          next)         [description]
+ * @param  {[type]}   'utf8').then((err,       inputPdb      [description]
+ * @return {[type]}                            {"prepJson": "URL", "prepPdb": "URL"}
+ */
 router.post('/executeWorkflow1Step0', (req, res, next) => {
   const busboy = new Busboy({
     headers: req.headers,
