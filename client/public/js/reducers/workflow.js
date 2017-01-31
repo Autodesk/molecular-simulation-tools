@@ -1,4 +1,5 @@
 import { statusConstants } from 'molecular-design-applications-shared';
+import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
 
@@ -20,6 +21,7 @@ function workflow(state = initialState, action) {
         return state.merge({
           fetching: true,
           fetchingError: null,
+          run: new RunRecord(),
         });
       }
 
