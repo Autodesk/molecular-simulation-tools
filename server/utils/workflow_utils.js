@@ -1,6 +1,12 @@
 const CCCC = require('cloud-compute-cannon-client');
 const ccc = CCCC.connect(process.env["CCC"]);
 
+/* Delete all current jobs in debug mode */
+if (process.env["CCC"] == 'ccc:9000') {
+  ccc.deletePending();
+}
+
+
 const workflowUtils = {
 
   /**
@@ -12,9 +18,6 @@ const workflowUtils = {
    * @return {[type]}        [description]
    */
   executeCCCJob(jobJson) {
-    var paramsToLog = Object.assign({}, {image:jobJson.image});
-    log.debug({workflow:"executeWorkflow", params:paramsToLog});
-
     /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
     jobJson['mountApiServer'] = process.env["CCC"] == "ccc:9000";
 
@@ -34,11 +37,9 @@ const workflowUtils = {
   },
 
   executeWorkflow0Step0(inputs) {
-    log.warn(JSON.stringify(inputs).substr(0, 100));
-
     const jobJson = {
       wait: true,
-      image: 'avirshup/mst:workflows-0.0.alpha3',
+      image: 'avirshup/mst:workflows-0.0.alpha4',
       inputs: inputs,
       createOptions: {
         Cmd: ['vde',
@@ -47,10 +48,9 @@ const workflowUtils = {
         ]
       }
     };
-    log.info({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    log.debug({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        log.info({jobResult:jobResult});
         var outputs = {};
         for (var i = 0; i < jobResult.outputs.length; i++) {
           outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
@@ -80,7 +80,7 @@ const workflowUtils = {
 
     const jobJson = {
       wait: false,
-      image: 'avirshup/mst:workflows-0.0.alpha3',
+      image: 'avirshup/mst:workflows-0.0.alpha4',
       inputs: inputs,
       createOptions: {
         WorkingDir: '/outputs',
@@ -91,9 +91,9 @@ const workflowUtils = {
     };
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        return {
-          runId: jobResult.jobId
-        }
+        log.warn({f:"executeWorkflow0Step1", jobResult});
+        //Return the jobId as the runId
+        return jobResult.jobId;
       });
   },
 
@@ -117,6 +117,7 @@ const workflowUtils = {
           '--outputdir', '/outputs/']
       }
     };
+
     log.info({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
@@ -133,6 +134,7 @@ const workflowUtils = {
       });
   },
 
+
   /**
    * The first step in workflow1, where a pdb
    * needs to be processed before a ligand
@@ -146,7 +148,7 @@ const workflowUtils = {
       wait: true,
       appendStdOut: true,
       appendStdErr: true,
-      image: 'avirshup/mst:workflows-0.0.alpha2',
+      image: 'avirshup/mst:workflows-0.0.alpha4',
       inputs: inputs,
       mountApiServer: process.env["CCC"] == "ccc:9000",
       createOptions: {
@@ -163,9 +165,8 @@ const workflowUtils = {
     return ccc.submitJobJson(jobJson)
       return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        return {
-          runId: jobResult.jobId
-        }
+        //Return the jobId as the runId
+        return jobResult.jobId;
       });
   },
 

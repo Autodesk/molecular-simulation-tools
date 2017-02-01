@@ -55,7 +55,7 @@ services:
       #the container. Only used for local docker providers (not cloud)
       HOST_PWD: "$PWD"
       #Sets the max log level (bunyan where 10=trace 40=warn)
-      LOG_LEVEL: "30"
+      LOG_LEVEL: "40"
       STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
     links:
       - redis

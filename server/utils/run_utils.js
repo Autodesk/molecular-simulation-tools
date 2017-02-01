@@ -60,12 +60,12 @@ const runUtils = {
       const run = JSON.parse(runString);
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
-      var outputPdbUrl = `${process.env["CCC"]}/${jobResult.jobId}/outputs/out.pdb`;
-      if (!outputPdbUrl.startsWith('http')) {
-        outputPdbUrl = `http://${outputPdbUrl}`;
+      var outputs = {};
+      for (var i = 0; i < jobResult.outputs.length; i++) {
+        outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
       }
       const updatedRun = Object.assign({}, run, {
-        outputPdbUrl,
+        outputs,
         status,
         jobResult,
         ended: Date.now(),
@@ -88,6 +88,10 @@ const runUtils = {
   },
 
   monitorRun(runId) {
+    if (!runId) {
+      log.error('Missing runId');
+      throw "Missing runId";
+    }
     log.debug('Monitoring run ' + runId);
     runUtils.waitOnJob(runId)
       .then(result => {
@@ -124,9 +128,8 @@ const runUtils = {
     }
 
     return workflowPromise
-      .then(jobResult => {
-        log.info({jobResult:jobResult});
-        const runId = jobResult.jobId;
+      .then(runId => {
+        log.info({workflowId, runId});
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
         emailUtils.send(
@@ -158,6 +161,9 @@ const runUtils = {
         });
       })
       .then(runId => {
+        if (!runId) {
+          throw 'Missing runId for '
+        }
         runUtils.monitorRun(runId);
         return runId;
       })
