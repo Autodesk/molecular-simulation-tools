@@ -60,12 +60,12 @@ const runUtils = {
       const run = JSON.parse(runString);
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
-      var outputPdbUrl = `${process.env["CCC"]}/${jobResult.jobId}/outputs/out.pdb`;
-      if (!outputPdbUrl.startsWith('http')) {
-        outputPdbUrl = `http://${outputPdbUrl}`;
+      var outputs = {};
+      for (var i = 0; i < jobResult.outputs.length; i++) {
+        outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
       }
       const updatedRun = Object.assign({}, run, {
-        outputPdbUrl,
+        outputs,
         status,
         jobResult,
         ended: Date.now(),
@@ -88,6 +88,10 @@ const runUtils = {
   },
 
   monitorRun(runId) {
+    if (!runId) {
+      log.error('Missing runId');
+      throw "Missing runId";
+    }
     log.debug('Monitoring run ' + runId);
     runUtils.waitOnJob(runId)
       .then(result => {
@@ -100,20 +104,23 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
+  executeWorkflow(workflowId, email, inputs) {
+    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
+    var workflowPromise = null;
+    switch(workflowId) {
+      case 0:
+          workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
+          break;
+      case 1:
+          workflowPromise = workflowUtils.executeWorkflow1Step1(inputs);
+          break;
+      default:
+        return Promise.reject({error:`No workflow for workflowId=${workflowId}`});
     }
-    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email, params:paramsToLog});
-    log.info({message: "Running"});
-    /* When we have more than one workflow, we'll switch on the workflow Id */
-    const workflowPromise = workflowUtils.executeWorkflow0(params);
 
     return workflowPromise
-      .then(jobResult => {
-        log.info({jobResult:jobResult});
-        const runId = jobResult.jobId;
+      .then(runId => {
+        log.info({workflowId, runId});
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
         emailUtils.send(
@@ -132,7 +139,6 @@ const runUtils = {
           id: runId,
           workflowId,
           email: email,
-          // params: params,
           created: Date.now(),
         };
         log.debug(JSON.stringify(runPayload).substr(0, 300));
@@ -145,6 +151,9 @@ const runUtils = {
         });
       })
       .then(runId => {
+        if (!runId) {
+          throw 'Missing runId for '
+        }
         runUtils.monitorRun(runId);
         return runId;
       })

@@ -1,133 +1,160 @@
 const CCCC = require('cloud-compute-cannon-client');
 const ccc = CCCC.connect(process.env["CCC"]);
 
+/* Delete all current jobs in debug mode */
+if (process.env["CCC"] == 'ccc:9000') {
+  ccc.deletePending();
+}
+
+const WORKFLOW_IMAGE = 'avirshup/mst:workflows-0.0.alpha5';
+
 const workflowUtils = {
 
   /**
-   * Run a conversion of a pdb file.
-   * {
-   *   pdbData: <pdb file as a string>
-   * }
-   * @param  {[type]} params [description]
-   * @return {[type]}        [description]
+   * Performs a CCC job.
+   * @param  {BasicBatchProcessRequest} jobJson https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx typedef BasicBatchProcessRequest
+   * @return {JobResult} https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx typedef JobResult
    */
-  executeWorkflow0(params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
-    }
-    log.debug({workflow:"executeWorkflow0", params:paramsToLog});
+  executeCCCJob(jobJson) {
+    /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
+    jobJson['mountApiServer'] = process.env["CCC"] == "ccc:9000";
 
-    var cccInput = {
-      name: "input.pdb",
-    };
-    if (params.pdbUrl) {
-      var pdbUrl = params.pdbUrl;
-      if (!pdbUrl.startsWith('http')) {
-        if (!pdbUrl.startsWith('/')) {
-          pdbUrl = `/${pdbUrl}`;
-        }
-        pdbUrl = `http://localhost:${process.env.PORT}${pdbUrl}`;
-      }
-      cccInput.value = pdbUrl;
-      cccInput.type = 'url';
+    if (!jobJson.createOptions) {
+      jobJson.createOptions = {};
+    }
+    if (!jobJson.createOptions.Env) {
+      jobJson.createOptions.Env = [];
     }
 
-    if (!params.pdbUrl) {
-      cccInput.value = params.pdbData;
-      cccInput.type = 'inline';
-    }
+    jobJson.appendStdOut = true;
+    jobJson.appendStdErr = true;
 
-    if (!cccInput.type) {
-      return Promise.reject('Missing pdbUrl or pdbData field in parameters');
-    }
+    jobJson.createOptions.Env.push(`CCC=${process.env["CCC"]}`);
 
-    const jobJson = {
-      wait: false,
-      appendStdOut: true,
-      appendStdErr: true,
-      // image: 'docker.io/avirshup/vde:0.0.7',
-      image: 'docker.io/busybox:latest',
-      /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
-      mountApiServer: process.env["CCC"] == "ccc:9000",
-      inputs: [cccInput],
-      createOptions: {
-        WorkingDir: '/outputs',
-        // Cmd: [params.pdbUrl],
-        Cmd: ["cp", "/inputs/input.pdb", "/outputs/out.pdb"],
-        Env: [
-          `CCC=${process.env["CCC"]}`
-        ]
-      }
-    };
-    // log.info({jobJson:jobJson});
     return ccc.submitJobJson(jobJson);
   },
 
   /**
-   * The first step in workflow1, where a pdb
-   * needs to be processed before a ligand
-   * can be selected
-   * @param  {String} pdbData
-   * @return {Promise<{success:true, prepJson:<URL>, prepPdb:<URL>}>}
+   * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+   * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
-  executeWorkflow1Step0(pdbDataStream) {
-    var cccInput = {};
-    cccInput["input.pdb"] = pdbDataStream;
+  executeWorkflow0Step0(inputs) {
+
+    const jobJson = {
+      wait: true,
+      image: WORKFLOW_IMAGE,
+      inputs: inputs,
+      createOptions: {
+        Cmd: ['vde',
+          '--preprocess', '/inputs/' + inputs[0].name,
+          '--outputdir', '/outputs/'
+        ]
+      }
+    };
+    log.debug({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        var outputs = {};
+        for (var i = 0; i < jobResult.outputs.length; i++) {
+          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+        }
+        return {
+          success: jobResult.exitCode == 0,
+          outputs: outputs,
+          jobResult: jobResult
+        }
+      });
+  },
+
+  /**
+   * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+   * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
+   */
+  executeWorkflow0Step1(inputs) {
+    const jobJson = {
+      wait: false,
+      image: WORKFLOW_IMAGE,
+      inputs: inputs,
+      createOptions: {
+        WorkingDir: '/outputs',
+        Cmd: ['vde',
+          '--restart', '/inputs/workflow_state.dill',
+          '--outputdir', '/outputs/']
+      }
+    };
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        //Return the jobId as the runId
+        return jobResult.jobId;
+      });
+  },
+
+  /**
+   * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+   * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
+   */
+  executeWorkflow1Step0(inputs) {
+    const jobJson = {
+      wait: true,
+      image: WORKFLOW_IMAGE,
+      inputs: inputs,
+      createOptions: {
+        Cmd: ['minimize',
+          '--preprocess', '/inputs/input.pdb',
+          '--outputdir', '/outputs/']
+      }
+    };
+
+    log.debug({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return workflowUtils.executeCCCJob(jobJson)
+      .then(jobResult => {
+        var outputs = {};
+        for (var i = 0; i < jobResult.outputs.length; i++) {
+          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+        }
+        return {
+          success: jobResult.exitCode == 0,
+          outputs: outputs,
+          jobResult: jobResult
+        }
+      });
+  },
+
+
+  /**
+   * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+   * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
+   */
+  executeWorkflow1Step1(inputs) {
+    log.debug({f:'executeWorkflow1Step1', inputs});
     const jobJson = {
       wait: true,
       appendStdOut: true,
       appendStdErr: true,
-      image: 'docker.io/avirshup/mst:workflow_qmmm1-0.0.alpha0',
+      image: WORKFLOW_IMAGE,
+      inputs: inputs,
       mountApiServer: process.env["CCC"] == "ccc:9000",
       createOptions: {
-        Cmd: ["/inputs/input.pdb"],
+        Cmd: ['minimize',
+          '--restart', '/inputs/workflow_state.dill',
+          '--setoutput', 'user_atom_selection=/inputs/selection.json',
+          '--outputdir', '/outputs/'],
         Env: [
           `CCC=${process.env["CCC"]}`
         ]
       }
     };
 
-    return ccc.run(jobJson, cccInput)
+    return ccc.submitJobJson(jobJson)
+      return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        if (jobResult.exitCode == 0) {
-          log.info(jobResult);
-          var baseUrl = jobResult.outputsBaseUrl;
-          var result = {
-            success: true,
-            "prepJson": baseUrl + 'prep.json',
-            "prepPdb": baseUrl + 'prep.pdb'
-          }
-          return result;
-        } else {
-          return {success:false, job:jobResult};
-        }
+        //Return the jobId as the runId
+        return jobResult.jobId;
       });
-  },
-
-  processInput(workflowId, pdb) {
-    return new Promise((resolve) => {
-      // TODO hardcoding this for every workflow seems fragile, is there a
-      // better abstraction for this?
-      switch (workflowId) {
-        case '1':
-          // TODO this should be replaced by something that runs the real Python
-          // pdb processing and returns real data instead of this hardcoded data
-          return resolve({
-            data: {
-              ligands: {
-                // Hardcoded data for 3aid
-                ARQ: Array(42).fill().map((val, index) => 1846 + index),
-              },
-            },
-            pdb,
-          });
-
-        // Handles workflows that don't require input processing (like VDE)
-        default:
-          return resolve({ pdb: '', data: {} });
-      }
-    });
   },
 
   /**
@@ -152,5 +179,7 @@ const workflowUtils = {
     return runCounts;
   },
 };
+
+workflowUtils.ccc = ccc;
 
 module.exports = workflowUtils;

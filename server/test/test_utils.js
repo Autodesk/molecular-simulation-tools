@@ -1,22 +1,29 @@
-const request = require('request');
 const fs = require('fs-extended');
 const path = require('path');
 const retry = require('bluebird-retry');
+const request = require('request-promise');
+const workflowUtils = require('../utils/workflow_utils');
+
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const test_utils = {
   runAllTests() {
-    return Promise.all([test_utils.runTest1(), test_utils.runTest2(), test_utils.runTest_executeWorkflow1Step0()])
+    return Promise.all([test_utils.runTestWorkflowVDE(), test_utils.runTestWorkflowVDE()])
       .then(results => {
         var successCount = 0;
         var totalCount = 0;
+        var problems = [];
         results.forEach(r => {
             totalCount++;
             successCount += r.success == true ? 1 : 0;
+            if (!r.success) {
+              problems.push(r);
+            }
         });
         if (successCount == totalCount && totalCount > 0) {
           log.info(`Success: ${successCount} / ${totalCount} tests passed`);
         } else {
+          log.error({problems});
           log.error(`Failure: ${successCount} / ${totalCount} tests passed`);
         }
         return {success: (successCount == totalCount && totalCount > 0), results:results};
@@ -27,124 +34,147 @@ const test_utils = {
       });
   },
 
-  /**
-   * Only tests if the job ran with exitCode==0.
-   */
-  runTest_executeWorkflow1Step0() {
-    const pbdPath = 'test/1bna.pdb';
-    var pdbDataStream = fs.createReadStream(pbdPath, {encoding:'utf8'});
+  runTestCCC() {
+    return workflowUtils.ccc.status()
+      .then(status => {
+        return {success:true, ccc_status:status};
+      });
+  },
+
+  runTestWorkflowVDE() {
+    const formData = {
+      inputs: [
+        {
+          name: 'input.json',
+          value: JSON.stringify({"input": "C"})
+        }
+      ]
+    };
+
+    var port = process.env.PORT;
+
+    return Promise.resolve(true)
+      //Step 1
+      .then(ignored => {
+        const url = `http://localhost:${port}/v1/structure/executeWorkflow0Step0`;
+        return request.post({url:url, body: formData, json:true})
+          .then(body => {
+            if (!body.success) {
+                throw {success:false, body};
+            }
+            return body;
+          });
+      })
+      //Step 2
+      .then(result => {
+        var inputs = [];
+        for (outputName in result.outputs) {
+          inputs.push({
+            name: outputName,
+            type: 'url',
+            value: result.outputs[outputName]
+          });
+        }
+        const formData = {
+          email: "dionjw@gmail.com",
+          inputs: inputs,
+          workflowId: 0
+        };
+
+        const url = `http://localhost:${port}/v1/run`;
+        return request.post({url:url, body: formData, json:true});
+      })
+      .then(jobResult => {
+        log.warn({message:"test post w0s1", jobResult});
+        return jobResult.runId;
+      })
+      .then(runId => {
+        if (!runId || runId == "undefined") {
+          throw `runId=${runId}`;
+        }
+        const url = `http://localhost:${port}/v1/run/${runId}`;
+        return retry(function() {
+          return request.get({url:url, json:true})
+            .then(body => {
+              if (body.status == statusConstants.RUNNING) {
+                throw 'Not yet completed';
+              }
+              return body;
+            });
+        }, {max_tries: 200, interval:2000});
+      })
+      .then(finalResult => {
+        const success = finalResult.status == statusConstants.COMPLETED && finalResult.outputs['final_structure.pdb'] !== undefined;
+        return {success:success, job:finalResult};
+      });
+  },
+
+  runTestWorkflowQMMM() {
+    const formData = {
+      inputs: [
+        {
+          name: 'input.pdb',
+          value: fs.readFileSync('test/3aid.pdb', {encoding:'utf8'})
+        }
+      ]
+    };
+
     var port = process.env.PORT;
     const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
-    return new Promise((resolve, reject) => {
-      request.post({url:url, formData:{file:pdbDataStream}},
-        (err, httpResponse, body) => {
-          if (err) {
-            return reject({success:false, error:JSON.stringify(err)});
-          }
-          if (httpResponse.statusCode == 200) {
-            resolve({success:true, body:JSON.parse(body)});
-          } else {
-            resolve({success:false, body:body, statusCode:httpResponse.statusCode});
-          }
+    //Step 1
+    return Promise.resolve(true)
+      .then(ignored => {
+        return request.post({url:url, body: formData, json:true});
+      })
+      .then(body => {
+        if (!body.success) {
+            throw {success:false, message: 'exitCode==' + body.jobResult.exitCode, body};
+        }
+        return body;
+      })
+      //Step 2
+      .then(result => {
+        var inputs = [];
+        for (outputName in result.outputs) {
+          inputs.push({
+            name: outputName,
+            type: 'url',
+            value: result.outputs[outputName]
+          });
+        }
+        inputs.push({
+          name: 'selection.json',
+          value: fs.readFileSync('test/selection.json', {encoding:'utf8'})
         });
-    });
-  },
+        const formData = {
+          email: "dionjw@gmail.com",
+          inputs: inputs,
+          workflowId: 1
+        };
 
-  /**
-   * Upload a PDB by PDB url, and run conversion
-   * @return {[type]} [description]
-   */
-  runTest2() {
-    const pdbUrl = 'https://files.rcsb.org/download/1BNA.pdb';
-    const params = {
-      email: "dionjw@gmail.com",
-      pdbUrl: pdbUrl,
-      workflowId: 0
-    }
-    return test_utils.runWorkflow0(params);
-  },
-
-  /**
-   * Upload a PDB file, and run conversion
-   * @return {[type]} [description]
-   */
-  runTest1() {
-    var testFilePath = './test/1bna.pdb';
-    var pdbData = fs.readFileSync(testFilePath, {encoding:'utf8'});
-    const params = {
-      email: "dionjw@gmail.com",
-      pdbData: pdbData,
-      workflowId: 0
-    }
-    return test_utils.runWorkflow0(params);
-  },
-
-  runWorkflow0(params) {
-    return new Promise((resolve, reject) => {
-      var port = process.env.PORT;
-      const url = `http://localhost:${port}/v1/run`;
-      request.post(url, {body: params, json:true},
-        (error, response, body) => {
-          if (error) {
-            log.error(error);
-            return reject(error);
-          }
-          resolve(body);
-        });
-    })
-    .then(result => {
-      const runId = result.runId;
-      return retry(() => {
-        return new Promise((resolve, reject) => {
-          var port = process.env.PORT;
-          const url = `http://localhost:${port}/v1/run/${runId}`;
-          request.get(url, (error, response, body) => {
-              if (error) {
-                log.error(error);
-                return reject(error);
+        const url = `http://localhost:${port}/v1/run`;
+        return request.post({url:url, body: formData, json:true});
+      })
+      .then(jobResult => {
+        return jobResult.runId;
+      })
+      .then(runId => {
+        const url = `http://localhost:${port}/v1/run/${runId}`;
+        return retry(function() {
+          return request.get({url:url, json:true})
+            .then(body => {
+              log.debug({body});
+              if (body.status == statusConstants.RUNNING) {
+                throw 'Not yet completed';
               }
-              var getResult = JSON.parse(body);
-              const status = getResult.status;
-              if (status === statusConstants.RUNNING) {
-                log.trace('Rejecting because body.status=' + status);
-                reject(getResult);
-              } else {
-                resolve(getResult);
-              }
+              return body;
             });
-        });
-      }, {max_tries:240, interval:2000});
-    })
-    .then(result => {
-      if (result.jobResult.exitCode == 0) {
-        const outputPdbUrl = result.outputPdbUrl;
-        return new Promise((resolve, reject) => {
-          request.get(outputPdbUrl, (error, response, body) => {
-              if (error) {
-                log.error(error);
-                return reject(error);
-              }
-              //We're not actually checking the result here, just making
-              //sure that the request succeeds
-              if (response.statusCode == 200) {
-                resolve(true);
-              } else {
-                reject({statusCode:response.statusCode, body});
-              }
-            });
-        })
-        .then(() => {
-          return {success:true, result:result};
-        });
-      } else {
-        return {success:false, result:result};
-      }
-    })
-    .catch(err => {
-      log.error(err);
-      return {success:false, error:JSON.stringify(err)};
-    });
-  },
+        }, {max_tries: 200, interval:2000});
+      })
+      .then(finalResult => {
+        return {success:finalResult.status === statusConstants.COMPLETED, job:finalResult};
+      });
+  }
 };
 
 module.exports = test_utils;

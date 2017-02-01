@@ -58,6 +58,23 @@ Returns the pdb data and a url to the pdb file represented by the given pdbId.  
 ##### PUT /structure/upload
 Uploads the given pdb file to the server and returns a public URL to it.  Sends formdata with a `workflowId` and a `file`.
 
+#### Test API
+
+These methods are **not** prefixed with the version tag. I.e. they are e.g. http://localhost:4000/test and not http://localhost:4000/v1/test.
+
+##### GET /test
+Checks connectivity to the CCC compute server. Does not test workflows.
+
+##### GET /test/workflow[0,1]
+Tests the workflow with baked in test data
+
+##### GET /test/all
+Tests all workflows
+
+For development:
+
+	curl --max-time 10000 localhost:4000/test/all
+
 #### Seed Data
 Currently, Redis needs to be seeded with at least one workflow for the app to use, which you can create with:
 
