@@ -87,13 +87,11 @@ class WorkflowRouter extends React.Component {
           clickWorkflowNodeEmail={this.props.clickWorkflowNodeEmail}
           clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
           colorized={this.props.colorized}
-          fetchingPdb={this.props.workflow.fetchingPdb}
-          fetchingPdbError={this.props.workflow.fetchingPdbError}
           morph={this.props.morph}
           nodes={this.props.nodes}
           onClickColorize={this.props.onClickColorize}
           onChangeMorph={this.props.onChangeMorph}
-          onUpload={this.props.onUpload}
+          onSelectInputFile={this.props.onSelectInputFile}
           selection={this.props.selection}
           submitPdbId={this.props.submitPdbId}
           submitEmail={this.props.submitEmail}
@@ -131,7 +129,7 @@ WorkflowRouter.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onMessageTimeout: React.PropTypes.func.isRequired,
-  onUpload: React.PropTypes.func.isRequired,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,

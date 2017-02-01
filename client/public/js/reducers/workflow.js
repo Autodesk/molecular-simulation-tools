@@ -1,4 +1,5 @@
 import { statusConstants } from 'molecular-design-applications-shared';
+import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
 
@@ -20,6 +21,7 @@ function workflow(state = initialState, action) {
         return state.merge({
           fetching: true,
           fetchingError: null,
+          run: new RunRecord(),
         });
       }
 
@@ -55,12 +57,17 @@ function workflow(state = initialState, action) {
 
     case actionConstants.RUN_SUBMITTED:
       if (action.err) {
-        return state.set('workflowNodes', state.workflowNodes.map(
-          workflowNode => workflowNode.set('status', statusConstants.IDLE))
-        );
+        return state.merge({
+          fetching: false,
+          workflowNodes: state.workflowNodes.map(
+            workflowNode => workflowNode.set('status', statusConstants.IDLE)
+          ),
+        });
       }
 
-      return state;
+      return state.merge({
+        fetching: false,
+      });
 
     case actionConstants.FETCHED_INPUT_PDB: {
       if (action.err) {
@@ -92,17 +99,18 @@ function workflow(state = initialState, action) {
       }));
     }
 
-    case actionConstants.UPLOAD:
+    case actionConstants.INPUT_FILE:
       return state.set('run', state.run.merge({
-        uploadError: null,
-        uploadPending: true,
-        inputPdbUrl: null,
+        inputFileError: null,
+        inputFilePending: true,
+        inputPdbUrl: '',
+        inputPdb: '',
       }));
 
-    case actionConstants.UPLOAD_COMPLETE:
+    case actionConstants.INPUT_FILE_COMPLETE:
       return state.set('run', state.run.merge({
-        uploadPending: false,
-        uploadError: action.err,
+        inputFilePending: false,
+        inputFileError: action.err,
         inputPdbUrl: action.pdbUrl,
         inputPdb: action.pdb,
       }));
@@ -112,6 +120,7 @@ function workflow(state = initialState, action) {
         fetchingPdb: true,
         fetchingPdbError: null,
         inputPdbUrl: '',
+        inputPdb: '',
       }));
 
     case actionConstants.FETCHED_PDB_BY_ID:

@@ -13,8 +13,8 @@ const RunRecord = new Record({
   outputPdbUrl: '',
   outputPdb: '',
   status: statusConstants.IDLE,
-  uploadError: null,
-  uploadPending: false,
+  inputFileError: null,
+  inputFilePending: false,
 });
 
 export default RunRecord;

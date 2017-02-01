@@ -62,7 +62,7 @@ function Status(props) {
 
     selection = (
       <div className="status-info">
-        <p>Node in Workflow "{props.workflow.title}"</p>
+        <p>Node in Workflow &#34;{props.workflow.title}&#34;</p>
         <p>{node.title}</p>
         <p>Status: {workflowNode.status}</p>
         {output}
@@ -72,13 +72,12 @@ function Status(props) {
     props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
     selection = (
       <StatusLoad
-        fetchingPdb={props.fetchingPdb}
-        fetchingPdbError={props.fetchingPdbError}
-        onUpload={props.onUpload}
+        fetchingPdb={props.workflow.run.fetchingPdb}
+        fetchingPdbError={props.workflow.run.fetchingPdbError}
+        onSelectInputFile={props.onSelectInputFile}
         submitPdbId={props.submitPdbId}
-        uploadError={props.workflow.run.uploadError}
-        uploadPending={props.workflow.run.uploadPending}
-        inputPdbUrl={props.workflow.run.inputPdbUrl}
+        inputFileError={props.workflow.run.inputFileError}
+        inputFilePending={props.workflow.run.inputFilePending}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
@@ -112,12 +111,10 @@ function Status(props) {
 }
 
 Status.propTypes = {
-  fetchingPdb: React.PropTypes.bool,
-  fetchingPdbError: React.PropTypes.string,
   nodes: React.PropTypes.instanceOf(IMap),
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  onUpload: React.PropTypes.func.isRequired,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
