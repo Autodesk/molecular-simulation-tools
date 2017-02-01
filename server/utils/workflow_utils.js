@@ -11,7 +11,7 @@ const workflowUtils = {
             data: {
               ligands: {
                 // Hardcoded data for 3aid
-                ARQ: Array(42).fill().map((val, index) => 1846 + index),
+                ARQ401: ['1.A.A-100'],
               },
             },
             pdb,

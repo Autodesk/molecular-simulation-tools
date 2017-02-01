@@ -39,6 +39,13 @@ function Workflow(props) {
     viewError = `This ${lookingFor} does not exist!`;
   }
 
+  let selectionStrings = null;
+  if (props.workflow.run.selectedLigand) {
+    selectionStrings = props.workflow.run.inputPdbProcessingData.get('ligands').get(
+      props.workflow.run.selectedLigand
+    );
+  }
+
   return (
     <div className="workflow">
       <WorkflowSteps
@@ -60,7 +67,7 @@ function Workflow(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onUpload={props.onUpload}
-        selectedLigand={props.selectedLigand}
+        selectedLigand={props.workflow.run.selectedLigand}
         selection={props.selection}
         submitPdbId={props.submitPdbId}
         submitEmail={props.submitEmail}
@@ -71,7 +78,7 @@ function Workflow(props) {
         error={viewError}
         loading={props.workflow.fetching}
         modelData={selectedModelData}
-        selectedLigand={props.selectedLigand}
+        selectionStrings={selectionStrings}
       />
     </div>
   );
@@ -94,7 +101,6 @@ Workflow.propTypes = {
   onChangeMorph: React.PropTypes.func.isRequired,
   onUpload: React.PropTypes.func.isRequired,
   runPage: React.PropTypes.bool,
-  selectedLigand: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,

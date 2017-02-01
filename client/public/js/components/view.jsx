@@ -1,4 +1,5 @@
 import React from 'react';
+import { List as IList } from 'immutable';
 import $ADSKMOLVIEW from 'molecule-viewer-proxy';
 import loadImg from '../../img/loadAnim.gif';
 
@@ -6,14 +7,14 @@ require('../../css/view.scss');
 
 class View extends React.Component {
   componentDidMount() {
-    this.renderMolecueViewer(this.props.modelData, this.props.selectedLigand);
+    this.renderMolecueViewer(this.props.modelData, this.props.selectionStrings);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.renderMolecueViewer(nextProps.modelData, nextProps.selectedLigand);
+    this.renderMolecueViewer(nextProps.modelData, nextProps.selectionStrings);
   }
 
-  renderMolecueViewer(modelData, selectedLigand) {
+  renderMolecueViewer(modelData, selectionStrings) {
     if (modelData && !this.moleculeViewer) {
       this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
         headless: true,
@@ -21,17 +22,18 @@ class View extends React.Component {
 
       // TODO use modelData instead of hard coded pdbid
       this.moleculeViewer.importPDB('3aid');
+      window.moleculeViewer = this.moleculeViewer;
     }
 
     if (modelData && this.moleculeViewer) {
-      if (selectedLigand) {
+      if (selectionStrings) {
         // TODO Fix bug in molviewer that requires this timeout
         setTimeout(() => {
           // TODO this is hardcoded while I yet don't understand how to select ARQ
-          const ligandSelectionString =
-            selectedLigand === 'ARQ' ? 'A' : 'B';
           this.moleculeViewer.clearSelection();
-          this.moleculeViewer.select(`1.${ligandSelectionString}`);
+          selectionStrings.forEach(selectionString =>
+            this.moleculeViewer.select(selectionString)
+          );
           this.moleculeViewer.focusOnSelection();
         }, 500);
       }
@@ -72,7 +74,7 @@ View.propTypes = {
   error: React.PropTypes.string,
   loading: React.PropTypes.bool,
   modelData: React.PropTypes.string,
-  selectedLigand: React.PropTypes.string,
+  selectionStrings: React.PropTypes.instanceOf(IList),
 };
 
 export default View;

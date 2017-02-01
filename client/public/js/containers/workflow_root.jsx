@@ -25,7 +25,6 @@ function mapStateToProps(state, ownProps) {
     morph: state.resultsSettings.morph,
     nodes: state.nodes,
     runId: ownProps.params.runId,
-    selectedLigand: state.workflow.run.selectedLigand,
     selection: state.selection,
     userMessage: state.userMessage,
     workflow: state.workflow,
