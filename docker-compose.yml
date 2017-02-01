@@ -13,6 +13,7 @@ services:
       - "4000:4000"
     environment:
       PORT: "4000"
+      SEND_GRID_API_KEY:
     links:
       - redis
 
