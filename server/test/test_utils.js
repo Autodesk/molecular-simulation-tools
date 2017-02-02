@@ -3,12 +3,13 @@ const path = require('path');
 const retry = require('bluebird-retry');
 const request = require('request-promise');
 const workflowUtils = require('../utils/workflow_utils');
+const cccUtils = require('../utils/ccc_utils');
 
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const test_utils = {
   runAllTests() {
-    return Promise.all([test_utils.runTestWorkflowVDE(), test_utils.runTestWorkflowVDE()])
+    return Promise.all([test_utils.runTestWorkflowVDE(), test_utils.runTestWorkflowQMMM()])
       .then(results => {
         var successCount = 0;
         var totalCount = 0;
@@ -35,9 +36,12 @@ const test_utils = {
   },
 
   runTestCCC() {
-    return workflowUtils.ccc.status()
-      .then(status => {
-        return {success:true, ccc_status:status};
+    return cccUtils.promise()
+      .then(ccc => {
+        return ccc.status()
+          .then(status => {
+            return {success:true, ccc_status:status};
+          });
       });
   },
 
@@ -106,6 +110,10 @@ const test_utils = {
       .then(finalResult => {
         const success = finalResult.status == statusConstants.COMPLETED && finalResult.outputs['final_structure.pdb'] !== undefined;
         return {success:success, job:finalResult};
+      })
+      .catch(err =>  {
+        log.error(err);
+        return {success:false, error:JSON.stringify(err).substr(0, 500)};
       });
   },
 
@@ -163,7 +171,6 @@ const test_utils = {
         return retry(function() {
           return request.get({url:url, json:true})
             .then(body => {
-              log.debug({body});
               if (body.status == statusConstants.RUNNING) {
                 throw 'Not yet completed';
               }
@@ -173,6 +180,10 @@ const test_utils = {
       })
       .then(finalResult => {
         return {success:finalResult.status === statusConstants.COMPLETED, job:finalResult};
+      })
+      .catch(err =>  {
+        log.error(err);
+        return {success:false, error:JSON.stringify(err).substr(0, 500)};
       });
   }
 };

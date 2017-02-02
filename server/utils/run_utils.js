@@ -6,11 +6,8 @@ const emailUtils = require('../utils/email_utils');
 const workflowUtils = require('../utils/workflow_utils');
 const ioUtils = require('../utils/io_utils');
 const redis = require('../utils/redis');
-const CCCC = require('cloud-compute-cannon-client');
+const cccUtils = require('../utils/ccc_utils.js');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
-
-/* CCC client */
-const ccc = CCCC.connect(process.env["CCC"]);
 
 const runUtils = {
 
@@ -84,7 +81,10 @@ const runUtils = {
   },
 
   waitOnJob(runId) {
-    return ccc.getJobResult(runId);
+    return cccUtils.promise()
+      .then(ccc => {
+        return ccc.getJobResult(runId);
+      });
   },
 
   monitorRun(runId) {
@@ -130,7 +130,7 @@ const runUtils = {
           { runUrl }
         )
         .catch(err => {
-          log.error({message: 'Failed to send email', error:JSON.stringify(err)});
+          log.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
         });
         //Record the runId with all the other data
         const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, email);

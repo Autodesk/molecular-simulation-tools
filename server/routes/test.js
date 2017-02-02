@@ -9,10 +9,10 @@ const router = new express.Router();
 router.get('/', (req, res) => {
   testUtils.runTestCCC()
     .then((result) => {
-      log.info({message:result});
-      res.send({success:true});
-    }, (err) => {
-      res.sendStatus(500).send(JSON.stringify({test:'failed', error:JSON.stringify(err)}));
+      res.send({success:true, result});
+    })
+    .catch((err) => {
+      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
     });
 });
 
@@ -22,10 +22,11 @@ router.get('/workflow0', (req, res) => {
       if (result.success) {
         res.send(result);
       } else {
-        res.sendStatus(500).send(result);
+        res.status(500).send(result);
       }
-    }, (err) => {
-      res.sendStatus(500).send(JSON.stringify({test:'failed', error:JSON.stringify(err)}));
+    })
+    .catch((err) => {
+      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
     });
 });
 
@@ -35,10 +36,11 @@ router.get('/workflow1', (req, res) => {
       if (result.success) {
         res.send(result);
       } else {
-        res.sendStatus(500).send(result);
+        res.status(500).send(result);
       }
-    }, (err) => {
-      res.sendStatus(500).send(JSON.stringify({test:'failed', error:JSON.stringify(err)}));
+    })
+    .catch((err) => {
+      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
     });
 });
 
@@ -48,10 +50,11 @@ router.get('/all', (req, res) => {
       if (result.success) {
         res.send(result);
       } else {
-        res.sendStatus(500).send(result);
+        res.status(500).send(result);
       }
-    }, (err) => {
-      res.sendStatus(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
+    })
+    .catch((err) => {
+      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
     });
 });
 

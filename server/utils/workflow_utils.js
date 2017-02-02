@@ -1,10 +1,4 @@
-const CCCC = require('cloud-compute-cannon-client');
-const ccc = CCCC.connect(process.env["CCC"]);
-
-/* Delete all current jobs in debug mode */
-if (process.env["CCC"] == 'ccc:9000') {
-  ccc.deletePending();
-}
+const cccUtils = require('../utils/ccc_utils');
 
 const WORKFLOW_IMAGE = 'avirshup/mst:workflows-0.0.alpha5';
 
@@ -31,12 +25,27 @@ const workflowUtils = {
 
     jobJson.createOptions.Env.push(`CCC=${process.env["CCC"]}`);
 
-    return ccc.submitJobJson(jobJson);
+    return cccUtils.promise()
+      .then(ccc => {
+        return ccc.submitJobJson(jobJson);
+      });
   },
 
   /**
    * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   *         e.g. inputs: [
+   *           {
+   *             name: "input.pdb",
+   *             type: "url",
+   *             value: "http://s3.location.input.pdb"
+   *           },
+   *           {
+   *             name: "other.file",
+   *             type: "inline",
+   *             value: "Actual file content string"
+   *           }
+   *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeWorkflow0Step0(inputs) {
@@ -47,7 +56,7 @@ const workflowUtils = {
       inputs: inputs,
       createOptions: {
         Cmd: ['vde',
-          '--preprocess', '/inputs/' + inputs[0].name,
+          '--preprocess', `/inputs/${inputs[0].name}`,
           '--outputdir', '/outputs/'
         ]
       }
@@ -70,6 +79,18 @@ const workflowUtils = {
   /**
    * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   *         e.g. inputs: [
+   *           {
+   *             name: "input.pdb",
+   *             type: "url",
+   *             value: "http://s3.location.input.pdb"
+   *           },
+   *           {
+   *             name: "other.file",
+   *             type: "inline",
+   *             value: "Actual file content string"
+   *           }
+   *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeWorkflow0Step1(inputs) {
@@ -94,6 +115,18 @@ const workflowUtils = {
   /**
    * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   *         e.g. inputs: [
+   *           {
+   *             name: "input.pdb",
+   *             type: "url",
+   *             value: "http://s3.location.input.pdb"
+   *           },
+   *           {
+   *             name: "other.file",
+   *             type: "inline",
+   *             value: "Actual file content string"
+   *           }
+   *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeWorkflow1Step0(inputs) {
@@ -103,7 +136,7 @@ const workflowUtils = {
       inputs: inputs,
       createOptions: {
         Cmd: ['minimize',
-          '--preprocess', '/inputs/input.pdb',
+          '--preprocess', `/inputs/${inputs[0].name}`,
           '--outputdir', '/outputs/']
       }
     };
@@ -127,30 +160,31 @@ const workflowUtils = {
   /**
    * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
+   *         e.g. inputs: [
+   *           {
+   *             name: "input.pdb",
+   *             type: "url",
+   *             value: "http://s3.location.input.pdb"
+   *           },
+   *           {
+   *             name: "other.file",
+   *             type: "inline",
+   *             value: "Actual file content string"
+   *           }
+   *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeWorkflow1Step1(inputs) {
     log.debug({f:'executeWorkflow1Step1', inputs});
     const jobJson = {
-      wait: true,
-      appendStdOut: true,
-      appendStdErr: true,
-      image: WORKFLOW_IMAGE,
-      inputs: inputs,
-      mountApiServer: process.env["CCC"] == "ccc:9000",
       createOptions: {
         Cmd: ['minimize',
           '--restart', '/inputs/workflow_state.dill',
           '--setoutput', 'user_atom_selection=/inputs/selection.json',
-          '--outputdir', '/outputs/'],
-        Env: [
-          `CCC=${process.env["CCC"]}`
-        ]
+          '--outputdir', '/outputs/']
       }
     };
-
-    return ccc.submitJobJson(jobJson)
-      return workflowUtils.executeCCCJob(jobJson)
+    return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
         //Return the jobId as the runId
         return jobResult.jobId;
@@ -179,7 +213,5 @@ const workflowUtils = {
     return runCounts;
   },
 };
-
-workflowUtils.ccc = ccc;
 
 module.exports = workflowUtils;
