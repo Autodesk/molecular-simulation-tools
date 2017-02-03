@@ -15,27 +15,49 @@ class View extends React.Component {
   }
 
   renderMolecueViewer(modelData, selectionStrings) {
+    let molViewerPromise;
+
     if (modelData && !this.moleculeViewer) {
+      // TODO async promise hack, molviewer should be updated to give a better
+      // way to let me know it can be used
+      molViewerPromise = new Promise((resolve, reject) => {
+        this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
+          headless: true,
+        });
+        if (this.moleculeViewer) {
+          resolve(this.moleculeViewer);
+        } else {
+          reject(new Error('Failed creating app'));
+        }
+      }).then(() => {
+        window.moleculeViewer = this.moleculeViewer;
+        this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+      });
+
+      /*
       this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
         headless: true,
       });
-
-      // TODO use modelData instead of hard coded pdbid
-      this.moleculeViewer.importPDB('3aid');
-      window.moleculeViewer = this.moleculeViewer;
+      try {
+        this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+      } catch (err) {
+        console.error(err);
+      }
+      */
     }
 
     if (modelData && this.moleculeViewer) {
       if (selectionStrings) {
-        // TODO Fix bug in molviewer that requires this timeout
-        setTimeout(() => {
-          // TODO this is hardcoded while I yet don't understand how to select ARQ
-          this.moleculeViewer.clearSelection();
-          selectionStrings.forEach(selectionString =>
-            this.moleculeViewer.select(selectionString)
-          );
-          this.moleculeViewer.focusOnSelection();
-        }, 500);
+        // TODO Fix bug in molviewer that requires this promise AND timeout
+        molViewerPromise.then(() => {
+          setTimeout(() => {
+            this.moleculeViewer.clearSelection();
+            selectionStrings.forEach(selectionString =>
+              this.moleculeViewer.select(selectionString)
+            );
+            this.moleculeViewer.focusOnSelection();
+          }, 500);
+        });
       }
     }
 

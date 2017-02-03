@@ -11,7 +11,7 @@ const workflowUtils = {
             data: {
               ligands: {
                 // Hardcoded data for 3aid
-                ARQ401: ['1.A.A-100'],
+                ARQ401: ['1.A.A-401'],
               },
             },
             pdb,
