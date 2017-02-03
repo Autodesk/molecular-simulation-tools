@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList } from 'immutable';
-import $ADSKMOLVIEW from 'molecule-viewer-proxy';
+import $ADSKMOLVIEW from 'tirrenu';
 import loadImg from '../../img/loadAnim.gif';
 
 require('../../css/view.scss');

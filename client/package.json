@@ -10,7 +10,6 @@
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
     "molecular-design-applications-shared": "../shared",
-    "molecule-viewer-proxy": "../molecule_viewer",
     "querystring": "^0.2.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
@@ -19,6 +18,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
+    "tirrenu": "../molecule_viewer/tirrenu-1.3.1.tgz",
     "validator": "^6.2.0"
   },
   "devDependencies": {
