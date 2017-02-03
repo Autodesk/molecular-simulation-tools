@@ -17,27 +17,43 @@ class View extends React.Component {
     this.renderMolecueViewer(nextProps.modelData, nextProps.selectionStrings);
   }
 
+  onMolViewModelInitialized(modelData) {
+    this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+    this.moleculeViewer.mv.removeEventListener(
+      MOL_VIEW_INITIALIZED, this.onMolViewModelInitializedBound,
+    );
+  }
+
+  onMolViewModelLoaded(selectionStrings) {
+    this.moleculeViewer.clearSelection();
+    selectionStrings.forEach(selectionString =>
+      this.moleculeViewer.select(selectionString)
+    );
+    this.moleculeViewer.focusOnSelection();
+    this.moleculeViewer.mv.removeEventListener(
+      MOL_VIEW_MODEL_LOADED, this.onMolViewModelLoadedBound,
+    );
+  }
+
   renderMolecueViewer(modelData, selectionStrings) {
     if (modelData && !this.moleculeViewer) {
       this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
         headless: true,
       });
 
-      this.moleculeViewer.mv.addEventListener(MOL_VIEW_INITIALIZED, () => {
-        this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
-      });
+      this.onMolViewModelInitializedBound =
+        this.onMolViewModelInitialized.bind(this, modelData);
+      this.moleculeViewer.mv.addEventListener(
+        MOL_VIEW_INITIALIZED, this.onMolViewModelInitializedBound,
+      );
     }
 
     if (modelData && this.moleculeViewer) {
       if (selectionStrings) {
+        this.onMolViewModelLoadedBound =
+          this.onMolViewModelLoaded.bind(this, selectionStrings);
         this.moleculeViewer.mv.addEventListener(
-          MOL_VIEW_MODEL_LOADED, () => {
-            this.moleculeViewer.clearSelection();
-            selectionStrings.forEach(selectionString =>
-              this.moleculeViewer.select(selectionString)
-            );
-            this.moleculeViewer.focusOnSelection();
-          }
+          MOL_VIEW_MODEL_LOADED, this.onMolViewModelLoadedBound,
         );
       }
     }
