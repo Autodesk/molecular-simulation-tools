@@ -92,6 +92,7 @@ function Status(props) {
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
     selection = (
       <StatusResults
+        morph={props.morph}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
@@ -128,6 +129,7 @@ Status.propTypes = {
   changeLigandSelection: React.PropTypes.func,
   fetchingPdb: React.PropTypes.bool,
   fetchingPdbError: React.PropTypes.string,
+  morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap),
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,

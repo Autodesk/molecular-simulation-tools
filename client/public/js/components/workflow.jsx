@@ -63,6 +63,7 @@ function Workflow(props) {
         changeLigandSelection={props.changeLigandSelection}
         fetchingPdb={props.fetchingPdb}
         fetchingPdbError={props.fetchingPdbError}
+        morph={props.morph}
         nodes={props.nodes}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}

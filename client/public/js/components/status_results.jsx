@@ -44,6 +44,7 @@ class StatusResults extends React.Component {
               min="0"
               max="1"
               step="1"
+              value={this.props.morph}
               onChange={this.onChangeMorph}
             />
           </div>
@@ -75,9 +76,10 @@ class StatusResults extends React.Component {
 StatusResults.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
+  morph: React.PropTypes.number.isRequired,
+  outputData: React.PropTypes.object,
   outputPdbUrl: React.PropTypes.string,
   workflowNodesSize: React.PropTypes.number,
-  outputData: React.PropTypes.object,
 };
 
 export default StatusResults;

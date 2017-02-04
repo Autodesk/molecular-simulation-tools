@@ -14,48 +14,65 @@ class View extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.renderMolecueViewer(nextProps.modelData, nextProps.selectionStrings);
+    const newModelData = nextProps.modelData !== this.props.modelData ?
+      nextProps.modelData : null;
+    this.renderMolecueViewer(newModelData, nextProps.selectionStrings);
   }
 
-  onMolViewModelInitialized(modelData) {
-    this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
-    this.moleculeViewer.mv.removeEventListener(
-      MOL_VIEW_INITIALIZED, this.onMolViewModelInitializedBound,
-    );
+  createMoleculeViewer() {
+    this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
+      headless: true,
+    });
+
+    return new Promise((resolve) => {
+      const molViewInitialized = () => {
+        this.moleculeViewer.mv.removeEventListener(
+          MOL_VIEW_INITIALIZED, molViewInitialized,
+        );
+        resolve();
+      };
+
+      this.moleculeViewer.mv.addEventListener(
+        MOL_VIEW_INITIALIZED, molViewInitialized,
+      );
+    });
   }
 
-  onMolViewModelLoaded(selectionStrings) {
-    this.moleculeViewer.clearSelection();
-    selectionStrings.forEach(selectionString =>
-      this.moleculeViewer.select(selectionString)
-    );
-    this.moleculeViewer.focusOnSelection();
-    this.moleculeViewer.mv.removeEventListener(
-      MOL_VIEW_MODEL_LOADED, this.onMolViewModelLoadedBound,
-    );
+  addModelToMoleculeViewer(modelData) {
+    return new Promise((resolve) => {
+      const molViewModelLoaded = () => {
+        this.moleculeViewer.mv.removeEventListener(
+          MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
+        );
+        resolve();
+      };
+
+      this.moleculeViewer.mv.addEventListener(
+        MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
+      );
+      this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+    });
   }
 
   renderMolecueViewer(modelData, selectionStrings) {
-    if (modelData && !this.moleculeViewer) {
-      this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
-        headless: true,
-      });
+    let createMoleculeViewerPromise = Promise.resolve();
 
-      this.onMolViewModelInitializedBound =
-        this.onMolViewModelInitialized.bind(this, modelData);
-      this.moleculeViewer.mv.addEventListener(
-        MOL_VIEW_INITIALIZED, this.onMolViewModelInitializedBound,
-      );
+    if (modelData && !this.moleculeViewer) {
+      createMoleculeViewerPromise = this.createMoleculeViewer();
     }
 
     if (modelData && this.moleculeViewer) {
-      if (selectionStrings) {
-        this.onMolViewModelLoadedBound =
-          this.onMolViewModelLoaded.bind(this, selectionStrings);
-        this.moleculeViewer.mv.addEventListener(
-          MOL_VIEW_MODEL_LOADED, this.onMolViewModelLoadedBound,
-        );
-      }
+      createMoleculeViewerPromise.then(() => {
+        this.addModelToMoleculeViewer(modelData).then(() => {
+          if (selectionStrings) {
+            this.moleculeViewer.clearSelection();
+            selectionStrings.forEach(selectionString =>
+              this.moleculeViewer.select(selectionString),
+            );
+            this.moleculeViewer.focusOnSelection();
+          }
+        });
+      });
     }
 
     // TODO colorized like: this.moleculeViewer.setColor('ribbon', 'blue', '1');
