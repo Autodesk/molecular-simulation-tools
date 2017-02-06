@@ -130,10 +130,7 @@ const test_utils = {
     var port = process.env.PORT;
     const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
     //Step 1
-    return Promise.resolve(true)
-      .then(ignored => {
-        return request.post({url:url, body: formData, json:true});
-      })
+    return request.post({url:url, body: formData, json:true})
       .then(body => {
         if (!body.success) {
             throw {success:false, message: 'exitCode==' + body.jobResult.exitCode, body};
