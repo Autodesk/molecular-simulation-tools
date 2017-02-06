@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
       res.send({success:true, result});
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
+      res.status(500).send(JSON.stringify({success:false, error:err}));
     });
 });
 
@@ -26,7 +26,7 @@ router.get('/workflow0', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
+      res.status(500).send(JSON.stringify({success:false, error:err}));
     });
 });
 
@@ -40,7 +40,7 @@ router.get('/workflow1', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
+      res.status(500).send(JSON.stringify({success:false, error:err}));
     });
 });
 
@@ -54,7 +54,7 @@ router.get('/all', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:JSON.stringify(err)}));
+      res.status(500).send(JSON.stringify({success:false, error:err}));
     });
 });
 
