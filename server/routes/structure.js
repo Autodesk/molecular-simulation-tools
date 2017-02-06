@@ -3,7 +3,6 @@ const Promise = require('bluebird');
 const express = require('express');
 const fs = Promise.promisifyAll(require('fs'));
 const workflowUtils = require('../utils/workflow_utils');
-const shortid = require('shortid');
 
 const router = new express.Router();
 
