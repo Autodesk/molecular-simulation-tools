@@ -47,9 +47,9 @@ router.get('/:runId', (req, res, next) => {
  * Start a run
  */
 router.post('/', (req, res, next) => {
-  var workflowId = req.body.workflowId;
-  var email = req.body.email;
-  var inputs = req.body.inputs;
+  let workflowId = req.body.workflowId;
+  let email = req.body.email;
+  let inputs = req.body.inputs;
   log.info({email:email});
   log.info({workflowId:workflowId});
   if (workflowId === undefined) {
