@@ -20,7 +20,7 @@
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "busboy": "^0.2.13",
-    "cloud-compute-cannon-client": "^0.1.51",
+    "cloud-compute-cannon-client": "^0.1.52",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "debug": "~2.2.0",
