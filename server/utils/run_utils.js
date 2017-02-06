@@ -57,16 +57,19 @@ const runUtils = {
       const run = JSON.parse(runString);
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
-      var outputs = {};
+      var outputs = [];
       for (var i = 0; i < jobResult.outputs.length; i++) {
-        outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+        outputs.push({
+          name: jobResult.outputs[i],
+          type: 'url',
+          value: jobResult.outputsBaseUrl + jobResult.outputs[i]
+        });
       }
       const updatedRun = Object.assign({}, run, {
         outputs,
         status,
         jobResult,
         ended: Date.now(),
-        outputData: {vde: {units: "hartree", value: -0.14949313427840139}}//This is a dummy value for now
       });
       return redis.hset(
         dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)

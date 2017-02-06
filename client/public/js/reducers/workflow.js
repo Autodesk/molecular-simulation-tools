@@ -78,24 +78,24 @@ function workflow(state = initialState, action) {
       }
 
       return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        inputPdb: action.modelData,
+        fetching: false,
+        fetchingError: null,
+        inputs: action.outputs,
       }));
     }
 
     case actionConstants.FETCHED_OUTPUT_PDB: {
       if (action.err) {
         return state.set('run', state.run.merge({
-          fetchingPdbError: action.err,
-          fetchingPdb: false,
+          fetchingError: action.err,
+          fetching: false,
         }));
       }
 
       return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        outputPdb: action.modelData,
+        fetching: false,
+        fetchingError: null,
+        inputs: action.modelData,
       }));
     }
 
@@ -103,32 +103,28 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputFileError: null,
         inputFilePending: true,
-        inputPdbUrl: '',
-        inputPdb: '',
+        inputs: [],
       }));
 
     case actionConstants.INPUT_FILE_COMPLETE:
       return state.set('run', state.run.merge({
         inputFilePending: false,
         inputFileError: action.err,
-        inputPdbUrl: action.pdbUrl,
-        inputPdb: action.pdb,
+        inputs: action.outputs,
       }));
 
     case actionConstants.SUBMIT_PDB_ID:
       return state.set('run', state.run.merge({
         fetchingPdb: true,
         fetchingPdbError: null,
-        inputPdbUrl: '',
-        inputPdb: '',
+        inputs: [],
       }));
 
     case actionConstants.FETCHED_PDB_BY_ID:
       return state.set('run', state.run.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
-        inputPdbUrl: action.pdbUrl,
-        inputPdb: action.pdb,
+        inputs: action.inputs,
       }));
 
     case actionConstants.SUBMIT_EMAIL:

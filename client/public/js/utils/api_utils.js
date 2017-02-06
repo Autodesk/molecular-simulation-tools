@@ -5,16 +5,12 @@ import WorkflowRecord from '../records/workflow_record';
 const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
-  run(workflowId, email, inputPdb) {
+  run(workflowId, email, inputs) {
     return axios.post(`${API_URL}/v1/run`, {
       workflowId,
       email,
-      pdb: inputPdb,
+      inputs,
     }).then(res => res.data.runId);
-  },
-
-  getPdb(url) {
-    return axios.get(url).then(res => res.data);
   },
 
   getWorkflow(workflowId) {
@@ -45,20 +41,24 @@ const apiUtils = {
     });
   },
 
-  processInput(workflowId, pdb) {
-    // TODO backend should handle distinguishing by workflowId
-    if (workflowId !== '1') {
-      return Promise.resolve();
-    }
-
-    const file = new window.Blob(
-      [pdb], { type: 'text/pdb' }
-    );
-    const data = new window.FormData();
-    data.append('file', file);
-
-    return axios.post(`${API_URL}/v1/structure/executeWorkflow1Step0`, data)
-      .then(res => res.data.prepPdb);
+  processInputPdb(workflowId, pdb) {
+    const data = {
+      inputs: [
+        {
+          name: 'input.pdb',
+          type: 'inline',
+          value: pdb,
+        },
+      ],
+    };
+    return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
+      .then(res => {
+        if (res.data.success) {
+          return res.data.outputs;
+        } else {
+          throw {message:"Job failed", result:res.data};
+        }
+      });
   },
 };
 

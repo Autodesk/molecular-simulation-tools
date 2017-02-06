@@ -64,10 +64,15 @@ const workflowUtils = {
     log.debug({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        var outputs = {};
+        var outputs = [];
         for (var i = 0; i < jobResult.outputs.length; i++) {
-          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+          outputs.push({
+            name: jobResult.outputs[i],
+            type: 'url',
+            value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
+          });
         }
+
         return {
           success: jobResult.exitCode == 0,
           outputs: outputs,
@@ -144,9 +149,13 @@ const workflowUtils = {
     log.debug({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        var outputs = {};
+        var outputs = [];
         for (var i = 0; i < jobResult.outputs.length; i++) {
-          outputs[jobResult.outputs[i]] = jobResult.outputsBaseUrl + jobResult.outputs[i];
+          outputs.push({
+            name: jobResult.outputs[i],
+            type: 'url',
+            value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
+          });
         }
         return {
           success: jobResult.exitCode == 0,
