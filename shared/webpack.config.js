@@ -18,14 +18,14 @@ module.exports = {
     historyApiFallback: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel',
+        loader: 'babel-loader',
       }, {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
