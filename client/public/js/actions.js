@@ -192,7 +192,6 @@ export function selectInputFile(file, workflowId) {
 }
 
 export function submitPdbId(pdbId, workflowId) {
-  console.log('submitPdbId pdbId', pdbId);
   return async function submitPdbIdDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
@@ -200,11 +199,7 @@ export function submitPdbId(pdbId, workflowId) {
 
     try {
       const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
-      console.log('submitPdbId pdbDownload', pdbDownload);
-      // const { pdb: inputPdb } = await rcsbApiUtils.getPdbById(pdbId);
       const outputs = await apiUtils.processInputPdb(workflowId, pdbDownload.pdb);
-      console.log('submitPdbId outputs', outputs);
-      
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
         inputs: outputs,
