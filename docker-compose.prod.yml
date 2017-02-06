@@ -11,6 +11,8 @@ services:
       CCC: "ccc.bionano.autodesk.com:9000"
     logging:
       driver: json-file
+      options:
+        max-size: 50m
     links:
       - redis
 
@@ -23,3 +25,7 @@ services:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
       # This is the where the db will be writting. It is defined in ./server/etc/redis/redis.conf
       - redis-data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m

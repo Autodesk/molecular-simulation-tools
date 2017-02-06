@@ -42,7 +42,7 @@ services:
     command: ["npm", "run", "watch"]
 
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:75509542"
+    image: "quay.io/bionano/cloud-compute-cannon:6ecc24dc"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
@@ -56,6 +56,9 @@ services:
       HOST_PWD: "$PWD"
       #Sets the max log level (bunyan where 10=trace 40=warn)
       LOG_LEVEL: "40"
+      STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      REMOVE_JOBS_ON_STARTUP: 'true'
+      DISABLE_STARTUP_TEST: 'true'
     links:
       - redis
       - fluentd

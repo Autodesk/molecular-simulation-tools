@@ -11,12 +11,16 @@
     padding: 11px;
     outline: none;
     border:1px solid rgba(0, 0, 0, 0.15);
-  }
 
-  .enterMolecule:focus {
-    outline: none;
-    border:2px solid #5981FF;
-    padding: 10px;
+    &:focus {
+      outline: none;
+      border:2px solid #5981FF;
+      padding: 10px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   .bodyFont {

@@ -11,5 +11,6 @@
     "expect": true,
   },
   "rules": {
+    "no-param-reassign": 1,
   },
 }

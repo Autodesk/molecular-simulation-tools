@@ -17,7 +17,7 @@ const app = express();
 
 // Express boilerplate middlewares
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '200mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());

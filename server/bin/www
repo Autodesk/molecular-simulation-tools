@@ -70,6 +70,7 @@ Promise.all(seedData.map(workflow =>
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening(server.address()));
+  server.timeout = 8 * 60 * 1000; // 8 minutes
 }).catch(console.error.bind(console));
 
 /**
@@ -130,19 +131,28 @@ function onListening(addr) {
       ? 'pipe ' + addr
       : 'port ' + addr.port;
     log.debug('Listening on ' + bind);
-    var test_utils = require('../test/test_utils');
+    const test_utils = require('../test/test_utils');
+    const retry = require('bluebird-retry');
     //Wait a bit, sometimes docker takes a while
-    setTimeout(() => {
-      test_utils.runAllTests()
-        .catch(err => {
-          log.error({status:'Test failed:', error:JSON.stringify(err)});
-        });
-    }, 1000);
+    retry(
+        function() {
+          return test_utils.runTestCCC();
+        },
+        {max_tries: 20, interval:1000}
+      )
+      .then(status => {
+          log.info({message:'Test CCC connection', success:status.success});
+      })
+      .catch(err => {
+        log.error({status:'Test failed:', error:JSON.stringify(err)});
+      });
   }
 }
 
 /**
  * Proxy requests to port 9000 to the CCC server
  */
-const httpProxy = require('http-proxy');
-httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+if (process.env["CCC"] == 'ccc:9000') {
+  const httpProxy = require('http-proxy');
+  httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+}

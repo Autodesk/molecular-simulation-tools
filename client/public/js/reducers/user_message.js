@@ -54,6 +54,16 @@ function userMessage(state = initialState, action) {
     case actionConstants.MESSAGE_TIMEOUT:
       return initialState;
 
+    case actionConstants.RUN_SUBMITTED:
+      if (!action.err) {
+        return state;
+      }
+
+      return state.merge({
+        autoClose: true,
+        message: 'Failed to submit run, check your connection and try again.',
+      });
+
     default:
       return state;
   }

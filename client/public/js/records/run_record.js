@@ -7,14 +7,11 @@ const RunRecord = new Record({
   fetchingPdb: false,
   fetchingPdbError: null,
   id: null,
-  inputPdbUrl: '',
-  inputPdb: '',
-  outputData: null,
-  outputPdbUrl: '',
-  outputPdb: '',
+  inputs: [],
+  outputs: [],
   status: statusConstants.IDLE,
-  uploadError: null,
-  uploadPending: false,
+  inputFileError: null,
+  inputFilePending: false,
 });
 
 export default RunRecord;

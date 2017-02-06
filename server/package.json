@@ -13,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^2.0.1",
-    "axios": "^0.15.3",
     "babel-polyfill": "^6.22.0",
     "bluebird": "^3.4.6",
     "bluebird-retry": "^0.10.1",
@@ -21,7 +20,7 @@
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "busboy": "^0.2.13",
-    "cloud-compute-cannon-client": "^0.1.39",
+    "cloud-compute-cannon-client": "^0.1.52",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "debug": "~2.2.0",
@@ -36,6 +35,7 @@
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
     "request": "^2.79.0",
+    "request-promise": "^4.1.1",
     "sendgrid": "^4.7.1",
     "shortid": "^2.2.6",
     "validator": "^6.2.0"
