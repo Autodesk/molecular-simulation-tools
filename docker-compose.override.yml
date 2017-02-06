@@ -22,24 +22,14 @@ services:
       - ./server/utils:/app/server/utils
       - ./shared:/app/shared
       - ./tmp:/tmp
-      - ./client/dist:/app/client/dist
+      # Uncomment this if you want to do client development
+      # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
       CCC: "ccc:9000"
     links:
       - redis
       - ccc
-
-  clientbuild:
-    working_dir: "/app/client"
-    build:
-      context: .
-    volumes:
-      - ./shared:/app/shared
-      - ./client/dist:/app/client/dist
-      - ./client/public:/app/client/public
-      - ./client/test:/app/client/test
-    command: ["npm", "run", "watch"]
 
   ccc:
     image: "quay.io/bionano/cloud-compute-cannon:6ecc24dc"

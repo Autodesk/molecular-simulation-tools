@@ -23,6 +23,7 @@
     "webpack": "^2.2.0-rc.3"
   },
   "dependencies": {
-    "keymirror": "^0.1.1"
+    "keymirror": "^0.1.1",
+    "webpack": "^2.2.1"
   }
 }
