@@ -14,12 +14,12 @@ var cccPromise =
     },
     {max_tries: 50, interval:1000}
   )
-  .then(ignored => {
+  .then(() => {
     if (process.env["CCC"] === 'ccc:9000') {
       log.warn('Dev mode, deleting all jobs');
       return ccc.deleteAllJobs()
         .then(result => {
-          log.info({m:'result from ccc.delete all something', result});
+          log.info({m:'result from ccc.delete all', result});
           return ccc;
         });
     } else {
