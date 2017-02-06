@@ -186,6 +186,9 @@ const workflowUtils = {
   executeWorkflow1Step1(inputs) {
     log.debug({f:'executeWorkflow1Step1', inputs});
     const jobJson = {
+      wait: false,
+      image: WORKFLOW_IMAGE,
+      inputs: inputs,
       createOptions: {
         Cmd: ['minimize',
           '--restart', '/inputs/workflow_state.dill',
