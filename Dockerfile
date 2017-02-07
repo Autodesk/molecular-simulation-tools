@@ -26,6 +26,8 @@ RUN npm install -g forever nodemon grunt grunt-cli webpack
 # # Client build/install packages
 # #######################################
 ENV APP /app
+RUN mkdir -p $APP/molecule_viewer
+ADD ./molecule_viewer/ $APP/molecule_viewer/
 RUN mkdir -p $APP/shared
 ADD ./shared/ $APP/shared/
 WORKDIR $APP/shared
