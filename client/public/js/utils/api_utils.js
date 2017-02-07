@@ -76,7 +76,7 @@ const apiUtils = {
    * @param jsonUrl {String}
    * @returns {Object}
    */
-  getIOStatus(jsonUrl) {
+  getIoData(jsonUrl) {
     return axios.get(jsonUrl).then((res) => {
       if (!res.data.success) {
         throw new Error(res.data.errors);

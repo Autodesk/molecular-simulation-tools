@@ -15,6 +15,5 @@
     "expect": true,
   },
   "rules": {
-    "no-unused-expressions": 1
-  },
+  }
 }

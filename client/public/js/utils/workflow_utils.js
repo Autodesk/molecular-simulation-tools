@@ -98,8 +98,8 @@ const workflowUtils = {
       throw new Error('Expected a json file in step0 response.');
     }
 
-    // Check the json status
-    await apiUtils.getIOStatus(jsonInput.value);
+    // Get the json data for these inputs
+    jsonInput.fetchedValue = await apiUtils.getIoData(jsonInput.value);
 
     // Get the processed input pdb
     const pdbInputIndex = inputs.findIndex(input =>
