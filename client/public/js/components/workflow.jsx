@@ -14,7 +14,7 @@ function Workflow(props) {
   // TODO this will never happen b/c not displaying nodes anymore
   if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const selectedWorkflowNode = props.workflow.workflowNodes.find(
-      workflowNode => workflowNode.id === props.selection.id
+      workflowNode => workflowNode.id === props.selection.id,
     );
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||

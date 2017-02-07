@@ -59,6 +59,30 @@ const apiUtils = {
         throw new Error({ message: 'Job failed', result: res.data });
       });
   },
+
+  /**
+   * Fetch and parse the json file that is returned from step0 input processing
+   * @param jsonUrl {String}
+   * @returns {Object}
+   */
+  getIOStatus(jsonUrl) {
+    return axios.get(jsonUrl).then((res) => {
+      if (!res.data.success) {
+        throw new Error(res.data.errors);
+      }
+
+      return res.data;
+    });
+  },
+
+  /**
+   * Get the pdb data string from its url
+   * @param pdbUrl {String}
+   * @returns {String}
+   */
+  getPdb(pdbUrl) {
+    return axios.get(pdbUrl).then(res => res.data);
+  },
 };
 
 export default apiUtils;
