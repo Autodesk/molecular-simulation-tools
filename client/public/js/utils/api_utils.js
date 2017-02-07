@@ -62,7 +62,7 @@ const apiUtils = {
     return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
       .then((res) => {
         if (!res.data.success) {
-          const error = new Error('Job failed');
+          const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
           throw error;
         }
