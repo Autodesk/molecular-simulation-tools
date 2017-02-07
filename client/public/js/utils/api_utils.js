@@ -55,9 +55,8 @@ const apiUtils = {
       .then(res => {
         if (res.data.success) {
           return res.data.outputs;
-        } else {
-          throw {message:"Job failed", result:res.data};
         }
+        throw new Error({ message: 'Job failed', result: res.data });
       });
   },
 };

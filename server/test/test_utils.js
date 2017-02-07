@@ -71,14 +71,7 @@ const test_utils = {
       })
       //Step 2
       .then(result => {
-        var inputs = [];
-        for (outputName in result.outputs) {
-          inputs.push({
-            name: outputName,
-            type: 'url',
-            value: result.outputs[outputName]
-          });
-        }
+        var inputs = result.outputs;
         const formData = {
           email: "dionjw@gmail.com",
           inputs: inputs,
@@ -108,7 +101,13 @@ const test_utils = {
         }, {max_tries: 200, interval:2000});
       })
       .then(finalResult => {
-        const success = finalResult.status == statusConstants.COMPLETED && finalResult.outputs['final_structure.pdb'] !== undefined;
+        let foundFinalStucture = false;
+        finalResult.outputs.forEach(output => {
+          if (output.name === 'final_structure.pdb') {
+            foundFinalStucture = true;
+          }
+        });
+        const success = finalResult.status == statusConstants.COMPLETED && foundFinalStucture;
         return {success:success, job:finalResult};
       })
       .catch(err =>  {
@@ -139,14 +138,14 @@ const test_utils = {
       })
       //Step 2
       .then(result => {
-        var inputs = [];
-        for (outputName in result.outputs) {
-          inputs.push({
-            name: outputName,
-            type: 'url',
-            value: result.outputs[outputName]
-          });
-        }
+        var inputs = result.outputs;
+        // for (outputName in result.outputs) {
+        //   inputs.push({
+        //     name: outputName,
+        //     type: 'url',
+        //     value: result.outputs[outputName]
+        //   });
+        // }
         inputs.push({
           name: 'selection.json',
           value: fs.readFileSync('test/selection.json', {encoding:'utf8'})
@@ -176,7 +175,14 @@ const test_utils = {
         }, {max_tries: 200, interval:2000});
       })
       .then(finalResult => {
-        return {success:finalResult.status === statusConstants.COMPLETED, job:finalResult};
+        let foundFinalStucture = false;
+        finalResult.outputs.forEach(output => {
+          if (output.name === 'final_structure.pdb') {
+            foundFinalStucture = true;
+          }
+        });
+        const success = finalResult.status == statusConstants.COMPLETED && foundFinalStucture;
+        return {success:success, job:finalResult};
       })
       .catch(err =>  {
         log.error(err);
