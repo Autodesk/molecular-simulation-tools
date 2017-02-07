@@ -1,6 +1,7 @@
 import isEmail from 'validator/lib/isEmail';
 import { statusConstants } from 'molecular-design-applications-shared';
 import apiUtils from './api_utils';
+import ioUtils from './io_utils';
 
 const workflowUtils = {
   /**
@@ -54,7 +55,7 @@ const workflowUtils = {
   },
 
   isRunnable(run) {
-    if (!run.inputPdb) {
+    if (!ioUtils.getInputPdb(run.inputs)) {
       return false;
     }
     if (!isEmail(run.email)) {

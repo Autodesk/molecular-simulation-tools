@@ -14,7 +14,6 @@ class StatusLoad extends React.Component {
 
     this.state = {
       pdbId: '',
-      pdbIdError: '',
     };
   }
 
@@ -30,16 +29,6 @@ class StatusLoad extends React.Component {
 
   onSubmitPdbId(e) {
     e.preventDefault();
-
-    if (this.state.pdbId.length !== 4) {
-      return this.setState({
-        pdbIdError: 'Invalid PDB ID',
-      });
-    }
-
-    this.setState({
-      pdbIdError: '',
-    });
 
     return this.props.submitPdbId(this.state.pdbId);
   }
@@ -68,10 +57,6 @@ class StatusLoad extends React.Component {
               onChange={this.onChangePdbId}
             />
           </form>
-          <p className="error">
-            {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
-            {this.state.pdbIdError ? this.state.pdbIdError : ''}
-          </p>
           <p className="bodyFont">
             Or, browse custom JSON file.
           </p>
@@ -102,7 +87,6 @@ class StatusLoad extends React.Component {
 
 StatusLoad.propTypes = {
   fetchingPdb: React.PropTypes.bool,
-  fetchingPdbError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   inputFilePending: React.PropTypes.bool,

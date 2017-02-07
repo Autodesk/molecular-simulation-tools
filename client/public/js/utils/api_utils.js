@@ -52,11 +52,14 @@ const apiUtils = {
       ],
     };
     return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
-      .then(res => {
-        if (res.data.success) {
-          return res.data.outputs;
+      .then((res) => {
+        if (!res.data.success) {
+          const error = new Error('Job failed');
+          error.result = res.data;
+          throw error;
         }
-        throw new Error({ message: 'Job failed', result: res.data });
+
+        return res.data.outputs;
       });
   },
 

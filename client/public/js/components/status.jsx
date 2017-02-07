@@ -73,7 +73,6 @@ function Status(props) {
     selection = (
       <StatusLoad
         fetchingPdb={props.workflow.run.fetchingPdb}
-        fetchingPdbError={props.workflow.run.fetchingPdbError}
         onSelectInputFile={props.onSelectInputFile}
         submitPdbId={props.submitPdbId}
         inputFileError={props.workflow.run.inputFileError}
