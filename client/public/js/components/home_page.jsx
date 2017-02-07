@@ -134,14 +134,14 @@ class HomePage extends React.Component {
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-4" >
-                <p>
-                  Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical simulations the right
-                    way. These tools are a growing
-                    of chemical simulation pipelines, addressing everything from structural biology to
-                    small molecule spectroscopy. When you use these tools, you get:
-                      <ol><li>Simulations backed by powerful, academic modeling tools,</li>
-                      <li>easy-to-use graphical interfaces, and</li>
-                      <li>automatic, standardized handling of your data.</li></ol>
+                <p> Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical
+                    simulations the right way. These tools are a growing
+                    of chemical simulation pipelines, addressing everything from structural
+                    biology to  small molecule spectroscopy. When you use these tools, you get:
+                  <ol><li>Simulations backed by powerful, academic modeling tools,</li>
+                    <li>easy-to-use graphical interfaces, and</li>
+                    <li>automatic, standardized handling of your data.</li>
+                  </ol>
                     This powerful combination of technologies gives you access to heavy-duty
                     molecular simulations, automated to make sure they're being run the right way.
                 </p>
@@ -154,11 +154,11 @@ class HomePage extends React.Component {
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
-                <p>
-                  The Autodesk BioNano group is building a modern, open infrastructure for computer-aided
-                    biological and nanoscale design. To do this, we need to have reliable, reproducible
-                    molecular simulation, so that scientists, engineers, and designers can understand
-                    the properties of their molecular building materials.
+                <p> The Autodesk BioNano group is building a modern, open infrastructure for
+                     computer-aided biological and nanoscale design. To do this, we need
+                     to have reliable, reproducible molecular simulation, so that scientists,
+                     engineers, and designers can understand the properties of their molecular
+                     building materials.
                 </p>
               </div>
             </div>
