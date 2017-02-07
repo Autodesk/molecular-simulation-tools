@@ -1,37 +1,45 @@
 import axios from 'axios';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
+import ioUtils from './io_utils';
 
 const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
+  /**
+   * Start a run
+   * @param workflowId {String}
+   * @param email {String}
+   * @param inputs {IList}
+   * @returns {Promise}
+   */
   run(workflowId, email, inputs) {
     return axios.post(`${API_URL}/v1/run`, {
       workflowId,
       email,
-      inputs,
+      inputs: ioUtils.formatInputsForServer(inputs),
     }).then(res => res.data.runId);
   },
 
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
-      new WorkflowRecord(res.data)
+      new WorkflowRecord(res.data),
     );
   },
 
   getWorkflows() {
     return axios.get(`${API_URL}/v1/workflow`).then(res =>
-      res.data.map(workflowData => new WorkflowRecord(workflowData))
+      res.data.map(workflowData => new WorkflowRecord(workflowData)),
     );
   },
 
   getRun(runId) {
     return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
-      res.data
+      res.data,
     ).then(runData =>
       new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
         run: new RunRecord(runData),
-      }))
+      })),
     );
   },
 

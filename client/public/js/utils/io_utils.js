@@ -12,6 +12,17 @@ const ioUtils = {
 
     return pdbIo ? pdbIo.fetchedValue : null;
   },
+
+  /**
+   * Returns new inputs with all client-only fields removed, converted to array
+   * @param inputs {IList}
+   * @returns {Array}
+   */
+  formatInputsForServer(inputs) {
+    return inputs.map(input =>
+      input.set('fetchedValue', null)
+    ).toJS();
+  },
 };
 
 export default ioUtils;
