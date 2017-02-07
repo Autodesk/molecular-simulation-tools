@@ -104,6 +104,7 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputFileError: null,
         inputFilePending: true,
+        fetchingPdbError: null,
         inputs: [],
       }));
 

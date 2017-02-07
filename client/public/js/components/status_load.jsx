@@ -35,10 +35,15 @@ class StatusLoad extends React.Component {
 
   onSelectInputFile(e) {
     this.props.onSelectInputFile(e.target.files[0]);
+
+    this.setState({
+      pdbId: '',
+    });
   }
 
   render() {
     const disabled = this.props.inputFilePending || this.props.fetchingPdb;
+    const inputErrorClass = this.props.fetchingPdbError ? 'error' : '';
 
     return (
       <div className="status-info status-load">
@@ -48,7 +53,7 @@ class StatusLoad extends React.Component {
             onSubmit={this.onSubmitPdbId}
           >
             <input
-              className="enterMolecule"
+              className={`enterMolecule ${inputErrorClass}`}
               style={{ width: '215px' }}
               type="text"
               placeholder="Enter PDB ID here"
@@ -63,6 +68,7 @@ class StatusLoad extends React.Component {
           <Button
             type="form"
             disabled={disabled}
+            error={!!this.props.inputFileError}
             onClick={this.onClickInputFile}
           >
             <div>
@@ -76,20 +82,23 @@ class StatusLoad extends React.Component {
               />
             </div>
           </Button>
-          <div className="error">
-            {this.props.inputFileError}
-          </div>
         </div>
       </div>
     );
   }
 }
 
+StatusLoad.defaultProps = {
+  fetchingPdbError: null,
+  inputFileError: null,
+};
+
 StatusLoad.propTypes = {
-  fetchingPdb: React.PropTypes.bool,
+  fetchingPdb: React.PropTypes.bool.isRequired,
+  fetchingPdbError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
-  inputFilePending: React.PropTypes.bool,
+  inputFilePending: React.PropTypes.bool.isRequired,
   inputFileError: React.PropTypes.string,
 };
 
