@@ -43,12 +43,21 @@ function userMessage(state = initialState, action) {
       });
 
     case actionConstants.FETCHED_PDB_BY_ID:
-      if (!action.err) {
+      if (!action.error) {
         return initialState;
       }
       return state.merge({
         autoClose: true,
-        message: 'Couldn\'t find a pdb with that id, please try again.',
+        message: action.error,
+      });
+
+    case actionConstants.INPUT_FILE_COMPLETE:
+      if (!action.error) {
+        return initialState;
+      }
+      return state.merge({
+        autoClose: true,
+        message: action.error,
       });
 
     case actionConstants.MESSAGE_TIMEOUT:

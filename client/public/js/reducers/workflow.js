@@ -1,4 +1,5 @@
 import { statusConstants } from 'molecular-design-applications-shared';
+import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
@@ -103,15 +104,20 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputFileError: null,
         inputFilePending: true,
+        fetchingPdbError: null,
         inputs: [],
       }));
 
-    case actionConstants.INPUT_FILE_COMPLETE:
+    case actionConstants.INPUT_FILE_COMPLETE: {
+      const inputs = action.inputs ?
+        action.inputs.map(input => new IoRecord(input)) :
+        [];
       return state.set('run', state.run.merge({
         inputFilePending: false,
-        inputFileError: action.err,
-        inputs: action.outputs,
+        inputFileError: action.error,
+        inputs,
       }));
+    }
 
     case actionConstants.SUBMIT_PDB_ID:
       return state.set('run', state.run.merge({
@@ -120,12 +126,16 @@ function workflow(state = initialState, action) {
         inputs: [],
       }));
 
-    case actionConstants.FETCHED_PDB_BY_ID:
+    case actionConstants.FETCHED_PDB_BY_ID: {
+      const inputs = action.inputs ?
+        action.inputs.map(input => new IoRecord(input)) :
+        [];
       return state.set('run', state.run.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
-        inputs: action.inputs,
+        inputs,
       }));
+    }
 
     case actionConstants.SUBMIT_EMAIL:
       return state.set('run', state.run.set('email', action.email));

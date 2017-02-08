@@ -5,6 +5,7 @@ import Status from '../components/status';
 import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowSteps from '../components/workflow_steps';
+import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
 require('../../css/workflow.scss');
@@ -14,20 +15,20 @@ function Workflow(props) {
   // TODO this will never happen b/c not displaying nodes anymore
   if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const selectedWorkflowNode = props.workflow.workflowNodes.find(
-      workflowNode => workflowNode.id === props.selection.id
+      workflowNode => workflowNode.id === props.selection.id,
     );
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) &&
-    props.workflow.run.inputPdb) {
-    selectedModelData = props.workflow.run.inputPdb;
+    props.workflow.run.inputs.size) {
+    selectedModelData = ioUtils.getInputPdb(props.workflow.run.inputs);
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
-    if (props.morph === 1) {
-      selectedModelData = props.workflow.run.outputPdb;
-    } else {
-      selectedModelData = props.workflow.run.inputPdb;
-    }
+    const modelDatas = props.workflow.run.inputs
+      .concat(props.workflow.runs.outputs)
+      .map(input => input.pdb);
+
+    selectedModelData = modelDatas.get(props.morph);
   }
 
   let viewError;

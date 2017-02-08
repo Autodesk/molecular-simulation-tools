@@ -71,7 +71,7 @@ class StatusEmail extends React.Component {
 }
 
 StatusEmail.propTypes = {
-  email: React.PropTypes.string,
+  email: React.PropTypes.string.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
 };
 

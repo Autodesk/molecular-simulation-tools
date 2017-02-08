@@ -169,23 +169,24 @@ export function selectInputFile(file, workflowId) {
     if (extension !== 'pdb') {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        err: 'File must have the .pdb extension',
+        error: 'File must have the .pdb extension',
       });
       return;
     }
 
     try {
       const inputPdb = await workflowUtils.readPdb(file);
-      const outputs = await apiUtils.processInputPdb(workflowId, inputPdb);
+      const inputs = await workflowUtils.processInput(workflowId, inputPdb);
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        outputs,
+        inputs,
       });
     } catch (err) {
+      console.error(err);
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        err: err ? (err.message || err) : null,
+        error: err ? (err.message || err) : null,
       });
     }
   };
@@ -199,15 +200,17 @@ export function submitPdbId(pdbId, workflowId) {
 
     try {
       const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
-      const outputs = await apiUtils.processInputPdb(workflowId, pdbDownload.pdb);
+      const inputs = await workflowUtils.processInput(workflowId, pdbDownload.pdb);
+
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        inputs: outputs,
+        inputs,
       });
     } catch (err) {
+      console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        err: err.message,
+        error: err.message || err,
       });
     }
   };

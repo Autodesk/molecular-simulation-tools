@@ -88,7 +88,7 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputs
+      stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputs,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),
@@ -99,7 +99,7 @@ function mergeProps(stateProps, dispatchProps) {
 const WorkflowRoot = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(WorkflowRouter);
 
 export default WorkflowRoot;

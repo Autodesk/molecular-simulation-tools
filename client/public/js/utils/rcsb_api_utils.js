@@ -8,8 +8,8 @@ const rcsbApiUtils = {
     return axios.get(pdbUrl).then(res => ({
       pdbUrl,
       pdb: res.data,
-    })).catch((err) => {
-      throw err;
+    })).catch(() => {
+      throw new Error('Couldn\'t find a pdb with that id, please try again.');
     });
   },
 };

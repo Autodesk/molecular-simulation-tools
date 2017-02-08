@@ -111,10 +111,10 @@ const runUtils = {
     const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
     var workflowPromise = null;
     switch(workflowId) {
-      case 0:
+      case '0':
           workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
           break;
-      case 1:
+      case '1':
           workflowPromise = workflowUtils.executeWorkflow1Step1(inputs);
           break;
       default:
