@@ -41,8 +41,6 @@ RUN npm install
 
 RUN touch .env
 RUN echo "NODE_ENV=production" >> .env
-RUN echo "GA_ID=UA-63638898-8" >> .env
-RUN echo "HEAP_ID=2590460155" >> .env
 ADD ./client/.babelrc $APP/client/.babelrc
 ADD ./client/.eslintignore $APP/client/.eslintignore
 ADD ./client/.eslintrc $APP/client/.eslintrc
