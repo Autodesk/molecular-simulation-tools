@@ -47,51 +47,30 @@ router.get('/:runId', (req, res, next) => {
  * Start a run
  */
 router.post('/', (req, res, next) => {
-  if (!req.body.workflowId && req.body.workflowId !== 0) {
+  let workflowId = req.body.workflowId;
+  let email = req.body.email;
+  let inputs = req.body.inputs;
+  log.info({email:email});
+  log.info({workflowId:workflowId});
+  if (workflowId === undefined) {
     return next(new Error('Missing required parameter "workflowId"'));
   }
-  if (!req.body.email) {
+  if (!email) {
     return next(new Error('Missing required parameter "email"'));
   }
-  if (!isEmail(req.body.email)) {
+  if (!isEmail(email)) {
     return next(new Error('Invalid email given'));
   }
-
-  var getInputPromise = null;
-  if (req.body.pdbData) {
-    getInputPromise = Promise.resolve(req.body.pdbData);
-  } else if (req.body.pdbUrl) {
-    var pdbUrl = req.body.pdbUrl;
-    if (!pdbUrl.startsWith('http')) {
-      pdbUrl = `http://localhost:${process.env.PORT}${pdbUrl}`;
-    }
-    getInputPromise = new Promise((resolve, reject) => {
-      request(pdbUrl, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-          resolve(body);
-        } else {
-          reject(error != null ? error : `statusCode=${response.statusCode}`);
-        }
-      });
-    });
-  } else {
-    return next(new Error('Missing required parameter "pdbUrl" or "pdbData"'));
+  if (!inputs) {
+    return next(new Error('No inputs'));
   }
 
-  getInputPromise
-    .then(pdbData => {
-      var params = {pdbData};
-      runUtils.executeWorkflow(req.body.workflowId, req.body.email, params)
-        .then(jobId => {
-          log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
-            res.send({runId:jobId});
-        })
-        .error(err => {
-          log.error(err);
-          next(err);
-        });
+  runUtils.executeWorkflow(workflowId, email, inputs)
+    .then(jobId => {
+      log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
+        res.send({runId:jobId});
     })
-    .catch(err => {
+    .error(err => {
       log.error(err);
       next(err);
     });

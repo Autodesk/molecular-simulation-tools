@@ -12,8 +12,8 @@ console.log("__dirname=" + __dirname);
 // Path to package.json and VERSION files are same - at root of this node application. 
 // Use the same logic to find both files.
 // In a typcial container, this usually means '/app/server' 
-var packageJSON = require(__dirname + '/../package.json');
-var versionFilePath = __dirname + '/../VERSION';
+const packageJSON = JSON.parse(fs.readFileSync('package.json', {encoding:'utf8'}));
+const versionFilePath = 'VERSION';
 
 var newLine = /\n/g;
 

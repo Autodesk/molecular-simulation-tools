@@ -1,4 +1,6 @@
 import { statusConstants } from 'molecular-design-applications-shared';
+import IoRecord from '../records/io_record';
+import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
 
@@ -20,6 +22,7 @@ function workflow(state = initialState, action) {
         return state.merge({
           fetching: true,
           fetchingError: null,
+          run: new RunRecord(),
         });
       }
 
@@ -55,12 +58,17 @@ function workflow(state = initialState, action) {
 
     case actionConstants.RUN_SUBMITTED:
       if (action.err) {
-        return state.set('workflowNodes', state.workflowNodes.map(
-          workflowNode => workflowNode.set('status', statusConstants.IDLE))
-        );
+        return state.merge({
+          fetching: false,
+          workflowNodes: state.workflowNodes.map(
+            workflowNode => workflowNode.set('status', statusConstants.IDLE),
+          ),
+        });
       }
 
-      return state;
+      return state.merge({
+        fetching: false,
+      });
 
     case actionConstants.FETCHED_INPUT_PDB: {
       if (action.err) {
@@ -71,43 +79,44 @@ function workflow(state = initialState, action) {
       }
 
       return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        inputPdb: action.modelData,
+        fetching: false,
+        fetchingError: null,
+        inputs: action.outputs,
       }));
     }
 
     case actionConstants.FETCHED_OUTPUT_PDB: {
       if (action.err) {
         return state.set('run', state.run.merge({
-          fetchingPdbError: action.err,
-          fetchingPdb: false,
+          fetchingError: action.err,
+          fetching: false,
         }));
       }
 
       return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        outputPdb: action.modelData,
+        fetching: false,
+        fetchingError: null,
+        inputs: action.modelData,
       }));
     }
 
-    case actionConstants.UPLOAD:
+    case actionConstants.INPUT_FILE:
       return state.set('run', state.run.merge({
-        uploadError: null,
-        uploadPending: true,
-        inputPdbUrl: null,
+        inputFileError: null,
+        inputFilePending: true,
+        fetchingPdbError: null,
+        inputs: [],
       }));
 
-    case actionConstants.UPLOAD_COMPLETE: {
+    case actionConstants.INPUT_FILE_COMPLETE: {
       const ligands = action.data ? Object.keys(action.data.ligands) : [];
-
+      const inputs = action.inputs ?
+        action.inputs.map(input => new IoRecord(input)) :
+        [];
       return state.set('run', state.run.merge({
-        uploadPending: false,
-        uploadError: action.err,
-        inputPdbUrl: action.pdbUrl,
-        inputPdb: action.pdb,
-        inputPdbProcessingData: action.data,
+        inputFilePending: false,
+        inputFileError: action.error,
+        inputs,
         selectedLigand: ligands.length === 1 ? ligands[0] : '',
       }));
     }
@@ -116,18 +125,19 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         fetchingPdb: true,
         fetchingPdbError: null,
-        inputPdbUrl: '',
+        inputs: [],
       }));
 
     case actionConstants.FETCHED_PDB_BY_ID: {
       const ligands = action.data ? Object.keys(action.data.ligands) : [];
+      const inputs = action.inputs ?
+        action.inputs.map(input => new IoRecord(input)) :
+        [];
 
       return state.set('run', state.run.merge({
         fetchingPdb: false,
         fetchingPdbError: action.error,
-        inputPdbUrl: action.pdbUrl,
-        inputPdb: action.pdb,
-        inputPdbProcessingData: action.data,
+        inputs,
         selectedLigand: ligands.length === 1 ? ligands[0] : '',
       }));
     }
@@ -150,7 +160,7 @@ function workflow(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('selectedLigand', action.ligandString)
+        state.run.set('selectedLigand', action.ligandString),
       );
 
     default:

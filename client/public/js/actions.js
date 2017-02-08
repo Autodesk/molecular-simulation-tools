@@ -1,6 +1,7 @@
 import { browserHistory } from 'react-router';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
+import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
 export function initializeWorkflow(workflowId) {
@@ -50,8 +51,25 @@ export function initializeRun(workflowId, runId) {
       workflow,
     });
 
-    if (workflow.run.inputPdbUrl) {
-      apiUtils.getPDB(workflow.run.inputPdbUrl).then(modelData =>
+    let inputPdbUrl = null;
+    let i = 0;
+    for (i = 0; i < workflow.run.inputs.length; i++) {
+      if (workflow.run.inputs[i].name === 'prep.pdb') {
+        inputPdbUrl = workflow.run.inputs[i].value;
+        break;
+      }
+    }
+
+    let finalOutputPdbUrl = null;
+    for (i = 0; i < workflow.run.outputs.length; i++) {
+      if (workflow.run.outputs[i].name === 'final_structure.pdb') {
+        finalOutputPdbUrl = workflow.run.outputs[i].value;
+        break;
+      }
+    }
+
+    if (inputPdbUrl) {
+      apiUtils.getPdb(inputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_INPUT_PDB,
           modelData,
@@ -64,8 +82,8 @@ export function initializeRun(workflowId, runId) {
       );
     }
 
-    if (workflow.run.outputPdbUrl) {
-      apiUtils.getPDB(workflow.run.outputPdbUrl).then(modelData =>
+    if (finalOutputPdbUrl) {
+      apiUtils.getPdb(finalOutputPdbUrl).then(modelData =>
         dispatch({
           type: actionConstants.FETCHED_OUTPUT_PDB,
           modelData,
@@ -121,13 +139,13 @@ export function clickWorkflowNodeResults() {
   };
 }
 
-export function clickRun(workflowId, email, inputPdbUrl) {
+export function clickRun(workflowId, email, inputs) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(workflowId, email, inputPdbUrl).then((runId) => {
+    apiUtils.run(workflowId, email, inputs).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId,
@@ -146,54 +164,61 @@ export function clickRun(workflowId, email, inputPdbUrl) {
   };
 }
 
-export function upload(file, workflowId) {
-  return (dispatch) => {
+export function selectInputFile(file, workflowId) {
+  return async function selectInputFileDispatch(dispatch) {
     dispatch({
-      type: actionConstants.UPLOAD,
+      type: actionConstants.INPUT_FILE,
       file,
     });
 
-    const uploadPromise = apiUtils.upload(file, workflowId);
-    const readPromise = workflowUtils.readPdb(file);
-    Promise.all([uploadPromise, readPromise]).then((results) => {
-      if (!results[0] || !results[1]) {
-        throw new Error('Missing result from upload/read');
-      }
+    const extension = file.name.split('.').pop();
+    if (extension !== 'pdb') {
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: 'File must have the .pdb extension',
+      });
+      return;
+    }
+
+    try {
+      const inputPdb = await workflowUtils.readPdb(file);
+      const inputs = await workflowUtils.processInput(workflowId, inputPdb);
 
       dispatch({
-        type: actionConstants.UPLOAD_COMPLETE,
-        pdbUrl: results[0].pdbUrl,
-        data: results[0].data,
-        pdb: results[1],
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        inputs,
       });
-    }).catch(err =>
+    } catch (err) {
+      console.error(err);
       dispatch({
-        type: actionConstants.UPLOAD_COMPLETE,
-        err: err ? (err.message || err) : null,
-      })
-    );
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: err ? (err.message || err) : null,
+      });
+    }
   };
 }
 
 export function submitPdbId(pdbId, workflowId) {
-  return (dispatch) => {
+  return async function submitPdbIdDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
-    apiUtils.getPdbById(pdbId, workflowId).then(({ pdbUrl, pdb, data }) =>
+    try {
+      const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
+      const inputs = await workflowUtils.processInput(workflowId, pdbDownload.pdb);
+
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        pdbUrl,
-        pdb,
-        data,
-      })
-    ).catch(err =>
+        inputs,
+      });
+    } catch (err) {
+      console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        err: err.message,
-      })
-    );
+        error: err.message || err,
+      });
+    }
   };
 }
 

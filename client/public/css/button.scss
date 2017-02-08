@@ -12,7 +12,7 @@
   transition: 0.2s;
 
   &:focus {
-    outline: 0;
+    outline: none;
   }
 
   &:hover {
@@ -56,16 +56,21 @@
     width: 40%;
   }
     
-    &.form:hover, &.small:hover {
+  &.form:hover, &.small:hover {
     color: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.25);
     box-shadow: 0 1px 0px rgba(0, 0, 0, 0.075);
     -webkit-transition: 0.2s; 
     transition: 0.2s;
+
+    &.disabled {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      box-shadow: none;
+    }
+  }
+
+  &.error, &.error:hover {
+    border-color: $error;
+    color: $error;
   }
 }
-
-.button:focus {
-    outline: none;
-}
-

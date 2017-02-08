@@ -3,16 +3,11 @@ const path = require('path');
 const Promise = require('bluebird');
 const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
+const workflowUtils = require('../utils/workflow_utils');
 const ioUtils = require('../utils/io_utils');
 const redis = require('../utils/redis');
-const CCCC = require('cloud-compute-cannon-client');
+const cccUtils = require('../utils/ccc_utils.js');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
-
-/* Docker image vars */
-const WORKFLOW_DOCKER_IMAGE = 'docker.io/avirshup/vde:0.0.7';
-
-/* CCC client */
-const ccc = CCCC.connect(process.env["CCC"]);
 
 const runUtils = {
 
@@ -62,16 +57,19 @@ const runUtils = {
       const run = JSON.parse(runString);
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
-      var outputPdbUrl = `${process.env["CCC"]}/${jobResult.jobId}/outputs/out.pdb`;
-      if (!outputPdbUrl.startsWith('http')) {
-        outputPdbUrl = `http://${outputPdbUrl}`;
+      var outputs = [];
+      for (var i = 0; i < jobResult.outputs.length; i++) {
+        outputs.push({
+          name: jobResult.outputs[i],
+          type: 'url',
+          value: jobResult.outputsBaseUrl + jobResult.outputs[i]
+        });
       }
       const updatedRun = Object.assign({}, run, {
-        outputPdbUrl,
+        outputs,
         status,
         jobResult,
         ended: Date.now(),
-        outputData: {vde: {units: "hartree", value: -0.14949313427840139}}//This is a dummy value for now
       });
       return redis.hset(
         dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
@@ -86,10 +84,17 @@ const runUtils = {
   },
 
   waitOnJob(runId) {
-    return ccc.getJobResult(runId);
+    return cccUtils.promise()
+      .then(ccc => {
+        return ccc.getJobResult(runId);
+      });
   },
 
   monitorRun(runId) {
+    if (!runId) {
+      log.error('Missing runId');
+      throw "Missing runId";
+    }
     log.debug('Monitoring run ' + runId);
     runUtils.waitOnJob(runId)
       .then(result => {
@@ -102,20 +107,23 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
+  executeWorkflow(workflowId, email, inputs) {
+    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
+    var workflowPromise = null;
+    switch(workflowId) {
+      case '0':
+          workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
+          break;
+      case '1':
+          workflowPromise = workflowUtils.executeWorkflow1Step1(inputs);
+          break;
+      default:
+        return Promise.reject({error:`No workflow for workflowId=${workflowId}`});
     }
-    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email, params:paramsToLog});
-    log.info({message: "Running"});
-    /* When we have more than one workflow, we'll switch on the workflow Id */
-    const workflowPromise = runUtils.executeWorkflow0(params);
 
     return workflowPromise
-      .then(jobResult => {
-        log.info({jobResult:jobResult});
-        const runId = jobResult.jobId;
+      .then(runId => {
+        log.info({workflowId, runId});
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
         emailUtils.send(
@@ -125,7 +133,7 @@ const runUtils = {
           { runUrl }
         )
         .catch(err => {
-          log.error({message: 'Failed to send email', error:JSON.stringify(err)});
+          log.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
         });
         //Record the runId with all the other data
         const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, email);
@@ -134,7 +142,6 @@ const runUtils = {
           id: runId,
           workflowId,
           email: email,
-          // params: params,
           created: Date.now(),
         };
         log.debug(JSON.stringify(runPayload).substr(0, 300));
@@ -147,6 +154,9 @@ const runUtils = {
         });
       })
       .then(runId => {
+        if (!runId) {
+          throw 'Missing runId for '
+        }
         runUtils.monitorRun(runId);
         return runId;
       })
@@ -156,67 +166,6 @@ const runUtils = {
         //TODO: Async removal of the entire job
         return Promise.reject(err);
       });
-  },
-
-  /**
-   * Run a conversion of a pdb file.
-   * {
-   *   pdbData: <pdb file as a string>
-   * }
-   * @param  {[type]} params [description]
-   * @return {[type]}        [description]
-   */
-  executeWorkflow0(params) {
-    var paramsToLog = Object.assign({}, params);
-    if (paramsToLog.pdbData) {
-      paramsToLog.pdbData = paramsToLog.pdbData.substr(0, 100);
-    }
-    log.debug({workflow:"executeWorkflow0", params:paramsToLog});
-
-    var cccInput = {
-      name: "input.pdb",
-    };
-    if (params.pdbUrl) {
-      var pdbUrl = params.pdbUrl;
-      if (!pdbUrl.startsWith('http')) {
-        if (!pdbUrl.startsWith('/')) {
-          pdbUrl = `/${pdbUrl}`;
-        }
-        pdbUrl = `http://localhost:${process.env.PORT}${pdbUrl}`;
-      }
-      cccInput.value = pdbUrl;
-      cccInput.type = 'url';
-    }
-
-    if (!params.pdbUrl) {
-      cccInput.value = params.pdbData;
-      cccInput.type = 'inline';
-    }
-
-    if (!cccInput.type) {
-      return Promise.reject('Missing pdbUrl or pdbData field in parameters');
-    }
-
-    const jobJson = {
-      wait: false,
-      appendStdOut: true,
-      appendStdErr: true,
-      // image: WORKFLOW_DOCKER_IMAGE,
-      image: 'docker.io/busybox:latest',
-      /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
-      mountApiServer: process.env["CCC"] == "ccc:9000",
-      inputs: [cccInput],
-      createOptions: {
-        WorkingDir: '/outputs',
-        // Cmd: [params.pdbUrl],
-        Cmd: ["cp", "/inputs/input.pdb", "/outputs/out.pdb"],
-        Env: [
-          `CCC=${process.env["CCC"]}`
-        ]
-      }
-    };
-    // log.info({jobJson:jobJson});
-    return ccc.submitJobJson(jobJson);
   },
 
   /**

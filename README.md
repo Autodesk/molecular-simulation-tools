@@ -26,6 +26,10 @@ See client/README.md
 `SEND_GRID_API_KEY`: Allows the server to send email via SendGrid.
 `URL`: The url that the server can be accessed on publicly
 `FRONTEND_URL`: The url root that we use for links in emails
+`GA_VIEW_ID`: Used to retrieve number of views for each workflow from Google Analytics
+
+#### GA Key File
+Your Google Analytics key file should be placed at server/google_api_key.json.  This will be used to fetch the view count from the Google Analytics API.
 
 #### API
 All routes are prefixed with the current version.  See the mock server in client/test/fixtures/mock_server.js for example responses.
@@ -53,6 +57,23 @@ Returns the pdb data and a url to the pdb file represented by the given pdbId.  
 
 ##### PUT /structure/upload
 Uploads the given pdb file to the server and returns a public URL to it.  Sends formdata with a `workflowId` and a `file`.
+
+#### Test API
+
+These methods are **not** prefixed with the version tag. I.e. they are e.g. http://localhost:4000/test and not http://localhost:4000/v1/test.
+
+##### GET /test
+Checks connectivity to the CCC compute server. Does not test workflows.
+
+##### GET /test/workflow[0,1]
+Tests the workflow with baked in test data
+
+##### GET /test/all
+Tests all workflows
+
+For development:
+
+	curl --max-time 10000 localhost:4000/test/all
 
 #### Seed Data
 Currently, Redis needs to be seeded with at least one workflow for the app to use, which you can create with:

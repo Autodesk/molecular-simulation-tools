@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 import RunRecord from '../../public/js/records/run_record';
+import IoRecord from '../../public/js/records/io_record';
 import WorkflowNodeRecord from '../../public/js/records/workflow_node_record';
 import workflowUtils from '../../public/js/utils/workflow_utils';
 
@@ -10,15 +11,22 @@ describe('workflowUtils', () => {
 
   beforeEach(() => {
     run = new RunRecord({
-      inputPdbUrl: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+      inputs: [
+        new IoRecord({
+          name: 'asdf.pdb',
+          value: 'asdf.pdb',
+          type: 'pdb',
+          fetchedValue: 'impdbdata',
+        }),
+      ],
       email: 'justin.mccandless@autodesk.com',
     });
   });
 
   describe('isRunnable', () => {
-    describe('when no inputPdbUrl', () => {
+    describe('when no inputs', () => {
       beforeEach(() => {
-        run = run.set('inputPdbUrl', '');
+        run = run.set('inputs', new IList());
       });
 
       it('returns false', () => {
@@ -36,7 +44,7 @@ describe('workflowUtils', () => {
       });
     });
 
-    describe('when email and inputPdbUrl', () => {
+    describe('when email and inputs', () => {
       it('returns true', () => {
         expect(workflowUtils.isRunnable(run)).to.equal(true);
       });

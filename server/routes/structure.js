@@ -1,101 +1,70 @@
 const Busboy = require('busboy');
 const Promise = require('bluebird');
-const axios = require('axios');
 const express = require('express');
 const fs = Promise.promisifyAll(require('fs'));
-const ioUtils = require('../utils/io_utils');
 const workflowUtils = require('../utils/workflow_utils');
-const appConstants = require('../constants/app_constants');
 
 const router = new express.Router();
 
-const RCSB_URL = 'https://files.rcsb.org/download';
-
-router.get('/pdb_by_id', (req, res, next) => {
-  if (!req.query.pdbId) {
-    return next(new Error('Needs a valid pdb id.'));
+/**
+ * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+ * Expects:
+ * {
+ *    "inputs": [
+ *       {
+ *         "name": 'input.json',
+ *         "type": "[inline|url]",
+ *         "value": JSON.stringify({"input": "C"})
+ *       }
+ *     ]
+ * }
+ * @return {"success": true, "outputs": {"filename":"url"}, "jobResult": <CCC Job for debugging>}
+ */
+router.post('/executeWorkflow0Step0', (req, res, next) => {
+  var inputs = req.body.inputs;
+  if (!inputs) {
+    return next(new Error('No inputs'));
   }
-  if (!req.query.workflowId) {
-    return next(new Error('Needs a valid workflow id.'));
-  }
 
-  // Fetch the pdb from RCSB
-  const pdbUrl = `${RCSB_URL}/${req.query.pdbId}.pdb`;
-  return axios.get(pdbUrl).then(resRcsb =>
-    workflowUtils.processInput(req.query.workflowId, resRcsb.data).then(
-      ({ pdb, data }) => {
-        // If no processing was done
-        if (!pdb) {
-          return res.send({
-            pdbUrl,
-            pdb: resRcsb.data,
-          });
-        }
-
-        // Otherwise save the processed pdb
-        return ioUtils.stringToHashFile(pdb, 'public/structures').then(
-          filename =>
-            res.send({
-              pdbUrl: `/structures/${filename}`,
-              pdb,
-              data,
-            })
-        ).catch(next);
-      }
-    ).catch(next)
-  ).catch(() =>
-    next(new Error(`Failed to get pdbid ${req.query.pdbId} from RCSB`))
-  );
+  workflowUtils.executeWorkflow0Step0(inputs)
+    .then(jobResult => {
+        res.send(jobResult);
+    })
+    .error(err => {
+      log.error(err);
+      next(err);
+    });
 });
 
-router.put('/upload', (req, res, next) => {
-  let workflowId;
+/**
+ * First step in workflow1: selecting a ligand.
+ * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
+ * Expects an array with input definitions:
+ * {
+ *    "inputs": [
+ *       {
+ *         "name": 'input.json',
+ *         "type": "[inline|url]",
+ *         "value": JSON.stringify({"input": "C"})
+ *       }
+ *     ]
+ * }
+ * @return {"success": true, "outputs": {"filename":"url"}, "jobResult": <CCC Job for debugging>}
+ */
+router.post('/executeWorkflow1Step0', (req, res, next) => {
+  var inputs = req.body.inputs;
+  if (!inputs) {
+    return next(new Error('No inputs'));
+  }
 
-  const busboy = new Busboy({
-    headers: req.headers,
-  });
-
-  busboy.on('field', (fieldname, val) => {
-    log.trace({api:'upload', event:'field', field:fieldname});
-    if (fieldname === 'workflowId') {
-      workflowId = val;
-    }
-  });
-  busboy.on('error', (error) => {
-    log.error({message:'on busboy error', error:error});
-    next(error);
-  });
-  busboy.on('file', (fieldname, file) => {
-    ioUtils.streamToHashFile(file, 'public/structures').then((filename) => {
-      fs.readFileAsync(`public/structures/${filename}`, 'utf8').then((inputPdb) => {
-        if (!workflowId) {
-          return next(new Error('Needs a valid workflow id.'));
-        }
-
-        return workflowUtils.processInput(workflowId, inputPdb).then(
-          ({ pdb, data }) => {
-            if (!pdb) {
-              return res.send({
-                pdbUrl: `/structures/${filename}`,
-                pdb: inputPdb,
-              });
-            }
-
-            return ioUtils.stringToHashFile(pdb, 'public/structures').then(
-              processedFilename =>
-                res.send({
-                  pdbUrl: `/${appConstants.STRUCTURES}/${processedFilename}`,
-                  pdb,
-                  data,
-                })
-            ).catch(next);
-          }
-        ).catch(next);
-      }).catch(next);
-    }).catch(next);
-  });
-
-  return req.pipe(busboy);
+  workflowUtils.executeWorkflow1Step0(inputs)
+    .then(jobResult => {
+        res.send(jobResult);
+    })
+    .error(err => {
+      log.error(err);
+      next(err);
+    });
 });
 
 module.exports = router;

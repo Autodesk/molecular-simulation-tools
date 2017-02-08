@@ -22,7 +22,8 @@ services:
       - ./server/utils:/app/server/utils
       - ./shared:/app/shared
       - ./tmp:/tmp
-      - ./client/dist:/app/client/dist
+      # Uncomment this if you want to do client development
+      # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
       CCC: "ccc:9000"
@@ -30,19 +31,8 @@ services:
       - redis
       - ccc
 
-  clientbuild:
-    working_dir: "/app/client"
-    build:
-      context: .
-    volumes:
-      - ./shared:/app/shared
-      - ./client/dist:/app/client/dist
-      - ./client/public:/app/client/public
-      - ./client/test:/app/client/test
-    command: ["npm", "run", "watch"]
-
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:75509542"
+    image: "quay.io/bionano/cloud-compute-cannon:6ecc24dc"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
@@ -56,6 +46,9 @@ services:
       HOST_PWD: "$PWD"
       #Sets the max log level (bunyan where 10=trace 40=warn)
       LOG_LEVEL: "40"
+      STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      REMOVE_JOBS_ON_STARTUP: 'true'
+      DISABLE_STARTUP_TEST: 'true'
     links:
       - redis
       - fluentd

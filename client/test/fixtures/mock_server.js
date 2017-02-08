@@ -30,13 +30,6 @@ app.get(`${VERSION_PREFIX}/structure/pdb_by_id/:pdbId`, (req, res) => {
   res.send(`http://localhost:${PORT}/simple.pdb`);
 });
 
-app.put(`${VERSION_PREFIX}/structure/upload`, (req, res) => {
-  res.send({
-    path: '/simple.pdb',
-  });
-});
-
-
 /**
  * TODO are we keeping these end points?
 app.get(`${VERSION_PREFIX}/workflow/stdout/:runId`, (req, res) => {

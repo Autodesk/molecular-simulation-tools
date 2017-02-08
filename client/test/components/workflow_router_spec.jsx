@@ -13,7 +13,6 @@ describe('WorkflowRouter', () => {
   let clickWorkflowNode;
   let clickWorkflowNodeLoad;
   let clickWorkflowNodeEmail;
-  let onUpload;
   let runId;
   let selection;
   let submitPdbId;
@@ -29,7 +28,6 @@ describe('WorkflowRouter', () => {
     clickWorkflowNode = () => {};
     clickWorkflowNodeLoad = () => {};
     clickWorkflowNodeEmail = () => {};
-    onUpload = () => {};
     runId = '0';
     selection = new SelectionRecord();
     submitPdbId = () => {};
@@ -55,7 +53,6 @@ describe('WorkflowRouter', () => {
           clickWorkflowNodeEmail={clickWorkflowNodeEmail}
           initializeWorkflow={initializeWorkflowSpy}
           initializeRun={initializeRunSpy}
-          onUpload={onUpload}
           runId={runId}
           selection={selection}
           submitPdbId={submitPdbId}

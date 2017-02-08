@@ -7,14 +7,13 @@ class StatusLoad extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onUpload = this.onUpload.bind(this);
+    this.onSelectInputFile = this.onSelectInputFile.bind(this);
     this.onSubmitPdbId = this.onSubmitPdbId.bind(this);
     this.onChangePdbId = this.onChangePdbId.bind(this);
-    this.onClickFileUpload = this.onClickFileUpload.bind(this);
+    this.onClickInputFile = this.onClickInputFile.bind(this);
 
     this.state = {
       pdbId: '',
-      pdbIdError: '',
     };
   }
 
@@ -24,69 +23,53 @@ class StatusLoad extends React.Component {
     });
   }
 
-  onClickFileUpload() {
+  onClickInputFile() {
     this.fileInput.click();
   }
 
   onSubmitPdbId(e) {
     e.preventDefault();
 
-    if (this.state.pdbId.length !== 4) {
-      return this.setState({
-        pdbIdError: 'Invalid PDB ID',
-      });
-    }
-
-    this.setState({
-      pdbIdError: '',
-    });
-
     return this.props.submitPdbId(this.state.pdbId);
   }
 
-  onUpload(e) {
-    this.props.onUpload(e.target.files[0]);
+  onSelectInputFile(e) {
+    this.props.onSelectInputFile(e.target.files[0]);
+
+    this.setState({
+      pdbId: '',
+    });
   }
 
   render() {
-    let uploadedElement;
-    if (this.props.inputPdbUrl) {
-      uploadedElement = (
-        <div>
-          <a href={this.props.inputPdbUrl}>{this.props.inputPdbUrl}</a>
-        </div>
-      );
-    }
+    const disabled = this.props.inputFilePending || this.props.fetchingPdb;
+    const inputErrorClass = this.props.fetchingPdbError ? 'error' : '';
 
     return (
       <div className="status-info status-load">
-        {uploadedElement}
-        <div className="upload-container">
+        <div className="input-file-container">
           <form
             className="defInput"
             onSubmit={this.onSubmitPdbId}
           >
             <input
-              className="enterMolecule"
+              className={`enterMolecule ${inputErrorClass}`}
               style={{ width: '215px' }}
               type="text"
               placeholder="Enter PDB ID here"
-              disabled={this.props.fetchingPdb}
+              disabled={disabled}
               value={this.state.pdbId}
               onChange={this.onChangePdbId}
             />
           </form>
-          <p className="error">
-            {this.props.fetchingPdbError ? this.props.fetchingPdbError : ''}
-            {this.state.pdbIdError ? this.state.pdbIdError : ''}
-          </p>
           <p className="bodyFont">
             Or, browse custom JSON file.
           </p>
           <Button
             type="form"
-            disabled={this.props.uploadPending}
-            onClick={this.onClickFileUpload}
+            disabled={disabled}
+            error={!!this.props.inputFileError}
+            onClick={this.onClickInputFile}
           >
             <div>
               Browse
@@ -94,28 +77,29 @@ class StatusLoad extends React.Component {
                 ref={(c) => { this.fileInput = c; }}
                 className="file-input"
                 type="file"
-                disabled={this.props.uploadPending}
-                onChange={this.onUpload}
+                disabled={disabled}
+                onChange={this.onSelectInputFile}
               />
             </div>
           </Button>
-          <div className="error">
-            {this.props.uploadError}
-          </div>
         </div>
       </div>
     );
   }
 }
 
+StatusLoad.defaultProps = {
+  fetchingPdbError: null,
+  inputFileError: null,
+};
+
 StatusLoad.propTypes = {
-  fetchingPdb: React.PropTypes.bool,
+  fetchingPdb: React.PropTypes.bool.isRequired,
   fetchingPdbError: React.PropTypes.string,
-  onUpload: React.PropTypes.func.isRequired,
-  inputPdbUrl: React.PropTypes.string,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
-  uploadPending: React.PropTypes.bool,
-  uploadError: React.PropTypes.string,
+  inputFilePending: React.PropTypes.bool.isRequired,
+  inputFileError: React.PropTypes.string,
 };
 
 export default StatusLoad;

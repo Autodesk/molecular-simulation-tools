@@ -3,6 +3,10 @@
 /**
  * Module dependencies.
  */
+const dbConstants = require('../constants/db_constants');
+const dbUtils = require('../utils/db_utils');
+const seedData = require('../utils/seed_data');
+const redis = require('../utils/redis');
 
 if (!('toJSON' in Error.prototype))
   Object.defineProperty(Error.prototype, 'toJSON', {
@@ -20,20 +24,25 @@ if (!('toJSON' in Error.prototype))
 });
 
 require('dotenv').config();
-var bunyan = require('bunyan');
+require('babel-polyfill');
+const bunyan = require('bunyan');
+const bunyanFormat = require('bunyan-format');
+
 const streams = [
   {
     level: bunyan.DEBUG,
-    stream: require('bunyan-format')({outputMode:'short'})
-  }
+    stream: bunyanFormat({ outputMode: 'short' }),
+  },
 ];
-global.log = bunyan.createLogger({name: "mdt", level:bunyan.TRACE, streams: streams});
+global.log = bunyan.createLogger({
+  name: 'mdt',
+  level: bunyan.TRACE,
+  streams,
+});
 
-var app = require('../main/server');
-var debug = require('debug')('express:server');
-var http = require('http');
-
-
+const app = require('../main/server');
+const debug = require('debug')('express:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
@@ -43,26 +52,26 @@ var port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
 process.env.PORT = port;
 
-
-
 /**
   Before we create the server, we'll populate the database
   with workflows
 */
-init()
-  .then((resolve, reject) => {
-    /**
-     * Create HTTP server.
-     */
-    var server = http.createServer(app);
+Promise.all(seedData.map(workflow =>
+  dbUtils.seed(redis, dbConstants.REDIS_WORKFLOWS, workflow)
+)).then(() => {
+  /**
+   * Create HTTP server.
+   */
+  const server = http.createServer(app);
 
-    /**
-     * Listen on provided port, on all network interfaces.
-     */
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening(server.address()));
-  });
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening(server.address()));
+  server.timeout = 8 * 60 * 1000; // 8 minutes
+}).catch(console.error.bind(console));
 
 /**
  * Normalize a port into a number, string, or false.
@@ -122,30 +131,28 @@ function onListening(addr) {
       ? 'pipe ' + addr
       : 'port ' + addr.port;
     log.debug('Listening on ' + bind);
-    var test_utils = require('../test/test_utils');
+    const test_utils = require('../test/test_utils');
+    const retry = require('bluebird-retry');
     //Wait a bit, sometimes docker takes a while
-    setTimeout(() => {
-      test_utils.runAllTests()
-        .catch(err => {
-          log.error({status:'Test failed:', error:JSON.stringify(err)});
-        });
-    }, 1000);
+    retry(
+        function() {
+          return test_utils.runTestCCC();
+        },
+        {max_tries: 20, interval:1000}
+      )
+      .then(status => {
+          log.info({message:'Test CCC connection', success:status.success});
+      })
+      .catch(err => {
+        log.error({status:'Test failed:', error:JSON.stringify(err)});
+      });
   }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function init() {
-    const redis = require('../utils/redis');
-    const dbConstants = require('../constants/db_constants');
-    return redis.hset(dbConstants.REDIS_WORKFLOWS, '0', JSON.stringify({ id: '0', title: 'VDE' }));
 }
 
 /**
  * Proxy requests to port 9000 to the CCC server
  */
-const httpProxy = require('http-proxy');
-httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
-
+if (process.env["CCC"] == 'ccc:9000') {
+  const httpProxy = require('http-proxy');
+  httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+}

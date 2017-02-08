@@ -61,6 +61,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       favicon: './public/img/favicon.png',
       template: './public/index.ejs',
+      gaId: process.env.GA_ID,
+      heapId: process.env.HEAP_ID,
     }),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor', 'manifest'],

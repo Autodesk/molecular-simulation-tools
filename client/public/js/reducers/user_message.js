@@ -43,16 +43,35 @@ function userMessage(state = initialState, action) {
       });
 
     case actionConstants.FETCHED_PDB_BY_ID:
-      if (!action.err) {
+      if (!action.error) {
         return initialState;
       }
       return state.merge({
         autoClose: true,
-        message: 'Couldn\'t find a pdb with that id, please try again.',
+        message: action.error,
+      });
+
+    case actionConstants.INPUT_FILE_COMPLETE:
+      if (!action.error) {
+        return initialState;
+      }
+      return state.merge({
+        autoClose: true,
+        message: action.error,
       });
 
     case actionConstants.MESSAGE_TIMEOUT:
       return initialState;
+
+    case actionConstants.RUN_SUBMITTED:
+      if (!action.err) {
+        return state;
+      }
+
+      return state.merge({
+        autoClose: true,
+        message: 'Failed to submit run, check your connection and try again.',
+      });
 
     default:
       return state;

@@ -45,7 +45,7 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
-      workflowNodeI.id === props.selection.id
+      workflowNodeI.id === props.selection.id,
     );
     const node = workflowNode.node;
 
@@ -63,7 +63,7 @@ function Status(props) {
 
     selection = (
       <div className="status-info">
-        <p>Node in Workflow "{props.workflow.title}"</p>
+        <p>Node in Workflow &#34;{props.workflow.title}&#34;</p>
         <p>{node.title}</p>
         <p>Status: {workflowNode.status}</p>
         {output}
@@ -73,13 +73,12 @@ function Status(props) {
     props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
     selection = (
       <StatusLoad
-        fetchingPdb={props.fetchingPdb}
-        fetchingPdbError={props.fetchingPdbError}
-        onUpload={props.onUpload}
+        fetchingPdb={props.workflow.run.fetchingPdb}
+        fetchingPdbError={props.workflow.run.fetchingPdbError}
+        onSelectInputFile={props.onSelectInputFile}
         submitPdbId={props.submitPdbId}
-        uploadError={props.workflow.run.uploadError}
-        uploadPending={props.workflow.run.uploadPending}
-        inputPdbUrl={props.workflow.run.inputPdbUrl}
+        inputFileError={props.workflow.run.inputFileError}
+        inputFilePending={props.workflow.run.inputFilePending}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
@@ -125,16 +124,22 @@ function Status(props) {
   );
 }
 
+Status.defaultProps = {
+  selectedLigand: '',
+  workflow: null,
+  fetchingPdbError: null,
+};
+
 Status.propTypes = {
-  changeLigandSelection: React.PropTypes.func,
-  fetchingPdb: React.PropTypes.bool,
+  changeLigandSelection: React.PropTypes.func.isRequired,
+  fetchingPdb: React.PropTypes.bool.isRequired,
   fetchingPdbError: React.PropTypes.string,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap),
+  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  onUpload: React.PropTypes.func.isRequired,
   selectedLigand: React.PropTypes.string,
+  onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitPdbId: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
