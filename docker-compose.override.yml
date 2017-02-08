@@ -27,6 +27,7 @@ services:
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
       CCC: "ccc:9000"
+      NODE_ENV: "development"
     links:
       - redis
       - ccc
