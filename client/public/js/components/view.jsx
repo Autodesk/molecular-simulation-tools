@@ -59,6 +59,10 @@ class View extends React.Component {
 
     if (modelData && !this.moleculeViewer) {
       createMoleculeViewerPromise = this.createMoleculeViewer();
+    } else if (!modelData && this.moleculeViewer) {
+      // TODO the molviewer api should provide a better way to destroy itself
+      document.querySelector('.adsk-viewing-viewer').remove();
+      this.moleculeViewer = undefined;
     }
 
     if (modelData && this.moleculeViewer) {
