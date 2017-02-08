@@ -3,6 +3,7 @@ import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
+import ioUtils from '../utils/io_utils';
 
 const initialState = new WorkflowRecord();
 
@@ -79,8 +80,8 @@ function workflow(state = initialState, action) {
       }
 
       return state.set('run', state.run.merge({
-        fetching: false,
-        fetchingError: null,
+        fetchingPdb: false,
+        fetchingPdbError: null,
         inputs: action.outputs,
       }));
     }
@@ -88,15 +89,27 @@ function workflow(state = initialState, action) {
     case actionConstants.FETCHED_OUTPUT_PDB: {
       if (action.err) {
         return state.set('run', state.run.merge({
-          fetchingError: action.err,
-          fetching: false,
+          fetchingPdbError: action.err,
+          fetchingPdb: false,
+        }));
+      }
+
+      const pdbIndex = ioUtils.getPdbIndex(state.run.outputs);
+
+      if (pdbIndex === -1) {
+        return state.set('run', state.run.merge({
+          fetchingPdbError: 'No pdb output found.',
+          fetchingPdb: false,
         }));
       }
 
       return state.set('run', state.run.merge({
-        fetching: false,
-        fetchingError: null,
-        inputs: action.modelData,
+        fetchingPdb: false,
+        fetchingPdbError: null,
+        outputs: state.run.outputs.set(
+          pdbIndex,
+          state.run.outputs.get(pdbIndex).set('fetchedValue', action.modelData),
+        ),
       }));
     }
 

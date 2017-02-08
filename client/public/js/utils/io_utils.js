@@ -6,11 +6,25 @@ const ioUtils = {
    * @returns {String}
    */
   getInputPdb(inputs) {
-    const pdbIo = inputs.find(input =>
-      input.value.lastIndexOf('.pdb') === input.value.length - 4,
-    );
+    const pdbIndex = ioUtils.getPdbIndex(inputs);
 
-    return pdbIo ? pdbIo.fetchedValue : null;
+    if (pdbIndex === -1) {
+      return null;
+    }
+
+    return inputs.get(pdbIndex).fetchedValue;
+  },
+
+  /**
+   * Given a list of inputs or outputs, return the index of the element that
+   * represents a pdb
+   * @param ios {IList}
+   * @returns {String}
+   */
+  getPdbIndex(ios) {
+    return ios.findIndex(io =>
+      io.value.lastIndexOf('.pdb') === io.value.length - 4,
+    );
   },
 
   /**
@@ -20,7 +34,7 @@ const ioUtils = {
    */
   formatInputsForServer(inputs) {
     return inputs.map(input =>
-      input.set('fetchedValue', null)
+      input.set('fetchedValue', null),
     ).toJS();
   },
 };

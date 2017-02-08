@@ -26,7 +26,7 @@ function Workflow(props) {
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     const modelDatas = props.workflow.run.inputs
-      .concat(props.workflow.runs.outputs)
+      .concat(props.workflow.run.outputs)
       .map(input => input.pdb);
 
     selectedModelData = modelDatas.get(props.morph);

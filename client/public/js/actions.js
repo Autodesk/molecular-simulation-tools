@@ -40,10 +40,11 @@ export function initializeRun(workflowId, runId) {
     try {
       workflow = await apiUtils.getRun(runId);
     } catch (error) {
-      return dispatch({
+      dispatch({
         type: actionConstants.FETCHED_RUN,
         error,
       });
+      return;
     }
 
     dispatch({
@@ -53,17 +54,17 @@ export function initializeRun(workflowId, runId) {
 
     let inputPdbUrl = null;
     let i = 0;
-    for (i = 0; i < workflow.run.inputs.length; i++) {
-      if (workflow.run.inputs[i].name === 'prep.pdb') {
-        inputPdbUrl = workflow.run.inputs[i].value;
+    for (i = 0; i < workflow.run.inputs.size; i += 1) {
+      if (workflow.run.inputs.get(i).name === 'prep.pdb') {
+        inputPdbUrl = workflow.run.inputs.get(i).value;
         break;
       }
     }
 
     let finalOutputPdbUrl = null;
-    for (i = 0; i < workflow.run.outputs.length; i++) {
-      if (workflow.run.outputs[i].name === 'final_structure.pdb') {
-        finalOutputPdbUrl = workflow.run.outputs[i].value;
+    for (i = 0; i < workflow.run.outputs.size; i += 1) {
+      if (workflow.run.outputs.get(i).name === 'final_structure.pdb') {
+        finalOutputPdbUrl = workflow.run.outputs.get(i).value;
         break;
       }
     }
@@ -73,13 +74,14 @@ export function initializeRun(workflowId, runId) {
         dispatch({
           type: actionConstants.FETCHED_INPUT_PDB,
           modelData,
-        })
-      ).catch(error =>
+        }),
+      ).catch((error) => {
+        console.error(error);
         dispatch({
           type: actionConstants.FETCHED_INPUT_PDB,
-          err: error,
-        })
-      );
+          err: error.message || error,
+        });
+      });
     }
 
     if (finalOutputPdbUrl) {
@@ -87,16 +89,15 @@ export function initializeRun(workflowId, runId) {
         dispatch({
           type: actionConstants.FETCHED_OUTPUT_PDB,
           modelData,
-        })
-      ).catch(error =>
+        }),
+      ).catch((error) => {
+        console.error(error);
         dispatch({
           type: actionConstants.FETCHED_OUTPUT_PDB,
-          err: error,
-        })
-      );
+          err: error.message || error,
+        });
+      });
     }
-
-    return true;
   };
 }
 
