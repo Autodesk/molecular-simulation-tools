@@ -102,9 +102,7 @@ const workflowUtils = {
     jsonInput.fetchedValue = await apiUtils.getIoData(jsonInput.value);
 
     // Get the processed input pdb
-    const pdbInputIndex = inputs.findIndex(input =>
-      input.value.lastIndexOf('.pdb') === input.value.length - 4,
-    );
+    const pdbInputIndex = ioUtils.getPdbIndex(inputs);
     if (pdbInputIndex === -1) {
       throw new Error('Expected a pdb file in step0 response.');
     }

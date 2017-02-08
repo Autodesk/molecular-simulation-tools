@@ -95,7 +95,8 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
-        outputData={props.workflow.run.outputData}
+        resultValue={80}
+        resultUnit={'TODO I should be from outputs'}
         outputPdbUrl={props.workflow.run.outputPdbUrl}
       />
     );

@@ -20,7 +20,7 @@ class StatusResults extends React.Component {
   }
 
   render() {
-    const value = Math.round(this.props.outputData.vde.value * 10000) / 10000;
+    const value = Math.round(this.props.resultValue * 10000) / 10000;
 
     return (
       <div className="status-results">
@@ -28,7 +28,7 @@ class StatusResults extends React.Component {
           <div className="stat">
             <div className="fontHeader line stat-title">
               <div>OUTPUT ENERGY</div>
-              <div>{this.props.outputData.vde.units}</div>
+              <div>{this.props.resultUnit}</div>
             </div>
             <div className="stat-body">
               <div className="stat-body-item">
@@ -73,13 +73,19 @@ class StatusResults extends React.Component {
   }
 }
 
+StatusResults.defaultProps = {
+  outputPdbUrl: '',
+  resultValue: '',
+  resultUnit: '',
+};
+
 StatusResults.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
-  outputData: React.PropTypes.object,
   outputPdbUrl: React.PropTypes.string,
-  workflowNodesSize: React.PropTypes.number,
+  resultValue: React.PropTypes.string,
+  resultUnit: React.PropTypes.string,
 };
 
 export default StatusResults;
