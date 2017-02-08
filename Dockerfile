@@ -41,9 +41,11 @@ RUN npm install
 
 RUN touch .env
 RUN echo "NODE_ENV=production" >> .env
+# Will gather (at least) .eslintignore, .lslintrc, .env (optional)
+# if .env exists on the host os, it will overwrite the one created above
+ADD ./client/.e*  $APP/client/
 ADD ./client/.babelrc $APP/client/.babelrc
-ADD ./client/.eslintignore $APP/client/.eslintignore
-ADD ./client/.eslintrc $APP/client/.eslintrc
+
 ADD ./client/karma.conf.js $APP/client/karma.conf.js
 ADD ./client/README.md $APP/client/README.md
 ADD ./client/webpack.config.js $APP/client/webpack.config.js
