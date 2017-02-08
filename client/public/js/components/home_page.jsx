@@ -26,7 +26,7 @@ class HomePage extends React.Component {
     // TODO fetch workflows here
     apiUtils.getWorkflows().then(workflows =>
       this.setState({ workflows })
-    ).catch(console.error.bind(console));
+    ).catch(console.error.bind(console)); // eslint-disable-line no-console
   }
 
   render() {
@@ -129,7 +129,7 @@ class HomePage extends React.Component {
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
-                <h4 >Automated simulation pipelines: molecular modeling for the rest of us</h4>
+                <h4 >Automated simulation pipelines: reproducible molecular modeling</h4>
               </div>
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
@@ -137,20 +137,19 @@ class HomePage extends React.Component {
                 <p> Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical
                     simulations the right way. These tools are a growing
                     of chemical simulation pipelines, addressing everything from structural
-                    biology to  small molecule spectroscopy. When you use these tools, you get:
+                    biology to small molecule spectroscopy.
+
+                </p>
+              </div>
+              <div className="col-xs-12 col-sm-4">
+                <p> When you use MST, you get:
                   <ol><li>Simulations backed by powerful, academic modeling tools,</li>
                     <li>easy-to-use graphical interfaces, and</li>
                     <li>automatic, standardized handling of your data.</li>
                   </ol>
+
                     This powerful combination of technologies gives you access to heavy-duty
                     molecular simulations, automated to make sure they're being run the right way.
-                </p>
-              </div>
-              <div className="col-xs-12 col-sm-4">
-                <p>
-                  Instead of developing our own molecular dynamics codes from scratch, MST uses
-                    mature open source modeling tools from the academic community, such as OpenMM,
-                    NWChem, OpenBabel, ParmEd, and many others.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
@@ -168,13 +167,13 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <h3>JOIN US</h3>
+                <h3>MAKE YOUR OWN</h3>
               </div>
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
                 <h4>
-                  Make your science open, sharable and reproducible with MST
+                  Make your science open, sharable and reproducible
                 </h4>
               </div>
               <div className="col-sm-4 col-xs-6 creator-images">
