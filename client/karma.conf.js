@@ -12,6 +12,7 @@ module.exports = function karmaConf(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      './node_modules/babel-polyfill/dist/polyfill.min.js',
       'test/**/*_spec.js',
       'test/**/*_spec.jsx',
     ],

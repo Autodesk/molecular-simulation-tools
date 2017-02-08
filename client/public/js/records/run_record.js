@@ -1,4 +1,4 @@
-import { Record } from 'immutable';
+import { Record, List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 
 const RunRecord = new Record({
@@ -7,8 +7,8 @@ const RunRecord = new Record({
   fetchingPdb: false,
   fetchingPdbError: null,
   id: null,
-  inputs: [],
-  outputs: [],
+  inputs: new IList(),
+  outputs: new IList(),
   status: statusConstants.IDLE,
   inputFileError: null,
   inputFilePending: false,

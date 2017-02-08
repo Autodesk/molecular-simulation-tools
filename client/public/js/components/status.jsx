@@ -44,7 +44,7 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
-      workflowNodeI.id === props.selection.id
+      workflowNodeI.id === props.selection.id,
     );
     const node = workflowNode.node;
 
@@ -110,8 +110,12 @@ function Status(props) {
   );
 }
 
+Status.defaultProps = {
+  workflow: null,
+};
+
 Status.propTypes = {
-  nodes: React.PropTypes.instanceOf(IMap),
+  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onSelectInputFile: React.PropTypes.func.isRequired,

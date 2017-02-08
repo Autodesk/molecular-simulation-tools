@@ -4,6 +4,7 @@ import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
+import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 import workflowUtils from '../utils/workflow_utils';
 
@@ -17,7 +18,7 @@ function WorkflowSteps(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = props.workflow.run.inputPdb ?
+  const loadStatus = ioUtils.getInputPdb(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
