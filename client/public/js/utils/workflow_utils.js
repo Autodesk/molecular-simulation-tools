@@ -103,7 +103,7 @@ const workflowUtils = {
    * Fetch the results json for any of the given ios with a json url.
    * Return new ios with fetchedResult set for the json.
    * @param ios {IList}
-   * @returns {IList}
+   * @returns {Promise that resolves with IList}
    */
   fetchIoResults(ios) {
     let newIos = ios;
@@ -113,10 +113,13 @@ const workflowUtils = {
         return Promise.resolve();
       }
       return apiUtils.getIoData(io.value).then((results) => {
+        // Set newIos to a new list that contains the fetched results data
         newIos = newIos.set(
           newIos.indexOf(io), io.set('fetchedValue', results),
         );
       });
+
+    // Resolve with the new list of ios
     })).then(() => newIos);
   },
 
@@ -124,7 +127,7 @@ const workflowUtils = {
    * Fetch the pdb for any of the given ios with a pdb url.
    * Return new ios with fetchedResult set for the pdb data.
    * @param ios {IList}
-   * @returns {IList}
+   * @returns {Promise that resolves with an IList}
    */
   fetchIoPdbs(ios) {
     let newIos = ios;
@@ -134,10 +137,13 @@ const workflowUtils = {
         return Promise.resolve();
       }
       return apiUtils.getPdb(io.value).then((results) => {
+        // Set newIos to a new list that contains the fetched pdb
         newIos = newIos.set(
           newIos.indexOf(io), io.set('fetchedValue', results),
         );
       });
+
+    // Resolve with the new list of ios
     })).then(() => newIos);
   },
 };
