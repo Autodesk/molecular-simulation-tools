@@ -109,6 +109,7 @@ function Status(props) {
     selection = (
       <StatusResults
         morph={props.morph}
+        numberOfPdbs={props.numberOfPdbs}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
@@ -154,6 +155,7 @@ Status.propTypes = {
   fetchingDataError: React.PropTypes.string,
   morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap).isRequired,
+  numberOfPdbs: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   selectedLigand: React.PropTypes.string,

@@ -42,7 +42,7 @@ class StatusResults extends React.Component {
               id="morph"
               type="range"
               min="0"
-              max="1"
+              max={this.props.numberOfPdbs - 1}
               step="1"
               value={this.props.morph}
               onChange={this.onChangeMorph}
@@ -83,6 +83,7 @@ StatusResults.propTypes = {
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
+  numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
   resultValue: React.PropTypes.number,
   resultUnit: React.PropTypes.string,
