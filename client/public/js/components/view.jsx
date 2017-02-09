@@ -10,13 +10,21 @@ const MOL_VIEW_MODEL_LOADED = 'Nano.ModelEndLoaded';
 
 class View extends React.Component {
   componentDidMount() {
-    this.renderMolecueViewer(this.props.modelData, this.props.selectionStrings);
+    this.renderMoleculeViewer(
+      this.props.modelData,
+      null,
+      this.props.selectionStrings,
+      this.props.loading,
+    );
   }
 
   componentWillReceiveProps(nextProps) {
-    const newModelData = nextProps.modelData !== this.props.modelData ?
-      nextProps.modelData : null;
-    this.renderMolecueViewer(newModelData, nextProps.selectionStrings);
+    this.renderMoleculeViewer(
+      nextProps.modelData,
+      this.props.modelData,
+      nextProps.selectionStrings,
+      nextProps.loading,
+    );
   }
 
   createMoleculeViewer() {
@@ -54,18 +62,20 @@ class View extends React.Component {
     });
   }
 
-  renderMolecueViewer(modelData, selectionStrings) {
+  renderMoleculeViewer(modelData, oldModelData, selectionStrings, loading) {
     let createMoleculeViewerPromise = Promise.resolve();
 
-    if (modelData && !this.moleculeViewer) {
-      createMoleculeViewerPromise = this.createMoleculeViewer();
-    } else if (!modelData && this.moleculeViewer) {
+    // Create or destroy the molviewer when needed
+    if ((loading || !modelData) && this.moleculeViewer) {
       // TODO the molviewer api should provide a better way to destroy itself
       document.querySelector('.adsk-viewing-viewer').remove();
       this.moleculeViewer = undefined;
+    } else if (modelData && !this.moleculeViewer) {
+      createMoleculeViewerPromise = this.createMoleculeViewer();
     }
 
-    if (modelData && this.moleculeViewer) {
+    // Update the model whenever it's different than last render
+    if (modelData && modelData !== oldModelData && this.moleculeViewer) {
       createMoleculeViewerPromise.then(() => {
         this.addModelToMoleculeViewer(modelData).then(() => {
           if (selectionStrings) {
