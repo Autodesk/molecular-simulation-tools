@@ -20,6 +20,7 @@ class StatusResults extends React.Component {
   }
 
   render() {
+    // Round so that the number doesn't overflow the UI
     const value = Math.round(this.props.resultValue * 10000) / 10000;
 
     return (
