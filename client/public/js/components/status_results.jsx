@@ -75,7 +75,7 @@ class StatusResults extends React.Component {
 
 StatusResults.defaultProps = {
   outputPdbUrl: '',
-  resultValue: '',
+  resultValue: 0,
   resultUnit: '',
 };
 
@@ -84,7 +84,7 @@ StatusResults.propTypes = {
   onChangeMorph: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValue: React.PropTypes.string,
+  resultValue: React.PropTypes.number,
   resultUnit: React.PropTypes.string,
 };
 

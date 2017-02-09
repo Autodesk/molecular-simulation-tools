@@ -52,50 +52,25 @@ export function initializeRun(workflowId, runId) {
       workflow,
     });
 
-    let inputPdbUrl = null;
-    let i = 0;
-    for (i = 0; i < workflow.run.inputs.size; i += 1) {
-      if (workflow.run.inputs.get(i).name === 'prep.pdb') {
-        inputPdbUrl = workflow.run.inputs.get(i).value;
-        break;
-      }
-    }
+    try {
+      let inputs = workflow.run.inputs;
+      let outputs = workflow.run.outputs;
 
-    let finalOutputPdbUrl = null;
-    for (i = 0; i < workflow.run.outputs.size; i += 1) {
-      if (workflow.run.outputs.get(i).name === 'final_structure.pdb') {
-        finalOutputPdbUrl = workflow.run.outputs.get(i).value;
-        break;
-      }
-    }
+      inputs = await workflowUtils.fetchIoPdbs(inputs);
+      inputs = await workflowUtils.fetchIoResults(inputs);
+      outputs = await workflowUtils.fetchIoPdbs(outputs);
+      outputs = await workflowUtils.fetchIoResults(outputs);
 
-    if (inputPdbUrl) {
-      apiUtils.getPdb(inputPdbUrl).then(modelData =>
-        dispatch({
-          type: actionConstants.FETCHED_INPUT_PDB,
-          modelData,
-        }),
-      ).catch((error) => {
-        console.error(error);
-        dispatch({
-          type: actionConstants.FETCHED_INPUT_PDB,
-          err: error.message || error,
-        });
+      dispatch({
+        type: actionConstants.FETCHED_RUN_IO,
+        inputs,
+        outputs,
       });
-    }
-
-    if (finalOutputPdbUrl) {
-      apiUtils.getPdb(finalOutputPdbUrl).then(modelData =>
-        dispatch({
-          type: actionConstants.FETCHED_OUTPUT_PDB,
-          modelData,
-        }),
-      ).catch((error) => {
-        console.error(error);
-        dispatch({
-          type: actionConstants.FETCHED_OUTPUT_PDB,
-          err: error.message || error,
-        });
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: actionConstants.FETCHED_RUN_IO,
+        error,
       });
     }
   };

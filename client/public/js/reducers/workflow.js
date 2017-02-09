@@ -3,7 +3,6 @@ import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
-import ioUtils from '../utils/io_utils';
 
 const initialState = new WorkflowRecord();
 
@@ -15,6 +14,9 @@ function workflow(state = initialState, action) {
         return new WorkflowRecord({
           fetching: true,
           fetchingError: null,
+          run: new RunRecord({
+            fetchingData: true,
+          }),
         });
       }
 
@@ -23,13 +25,16 @@ function workflow(state = initialState, action) {
         return state.merge({
           fetching: true,
           fetchingError: null,
-          run: new RunRecord(),
+          run: new RunRecord({
+            fetchingData: true,
+          }),
         });
       }
 
       return state.merge({
         fetching: true,
         fetchingError: null,
+        run: state.run.set('fetchingData', true),
       });
     }
 
@@ -51,6 +56,18 @@ function workflow(state = initialState, action) {
       }
       return action.workflow;
 
+    case actionConstants.FETCHED_RUN_IO:
+      if (action.error) {
+        return state.merge({
+          fetchingDataError: action.error,
+          fetchingData: false,
+        });
+      }
+      return state.set('run', state.run.merge({
+        inputs: action.inputs,
+        outputs: action.outputs,
+      }));
+
     case actionConstants.CLICK_RUN:
       return state.merge({
         fetching: true,
@@ -71,53 +88,11 @@ function workflow(state = initialState, action) {
         fetching: false,
       });
 
-    case actionConstants.FETCHED_INPUT_PDB: {
-      if (action.err) {
-        return state.set('run', state.run.merge({
-          fetchingPdbError: action.err,
-          fetchingPdb: false,
-        }));
-      }
-
-      return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        inputs: action.outputs,
-      }));
-    }
-
-    case actionConstants.FETCHED_OUTPUT_PDB: {
-      if (action.err) {
-        return state.set('run', state.run.merge({
-          fetchingPdbError: action.err,
-          fetchingPdb: false,
-        }));
-      }
-
-      const pdbIndex = ioUtils.getPdbIndex(state.run.outputs);
-
-      if (pdbIndex === -1) {
-        return state.set('run', state.run.merge({
-          fetchingPdbError: 'No pdb output found.',
-          fetchingPdb: false,
-        }));
-      }
-
-      return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: null,
-        outputs: state.run.outputs.set(
-          pdbIndex,
-          state.run.outputs.get(pdbIndex).set('fetchedValue', action.modelData),
-        ),
-      }));
-    }
-
     case actionConstants.INPUT_FILE:
       return state.set('run', state.run.merge({
         inputFileError: null,
         inputFilePending: true,
-        fetchingPdbError: null,
+        fetchingDataError: null,
         inputs: [],
       }));
 
@@ -136,8 +111,8 @@ function workflow(state = initialState, action) {
 
     case actionConstants.SUBMIT_PDB_ID:
       return state.set('run', state.run.merge({
-        fetchingPdb: true,
-        fetchingPdbError: null,
+        fetchingData: true,
+        fetchingDataError: null,
         inputs: [],
       }));
 
@@ -148,8 +123,8 @@ function workflow(state = initialState, action) {
         [];
 
       return state.set('run', state.run.merge({
-        fetchingPdb: false,
-        fetchingPdbError: action.error,
+        fetchingData: false,
+        fetchingDataError: action.error,
         inputs,
         selectedLigand: ligands.length === 1 ? ligands[0] : '',
       }));

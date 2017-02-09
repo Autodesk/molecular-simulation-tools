@@ -62,8 +62,8 @@ function Workflow(props) {
       />
       <Status
         changeLigandSelection={props.changeLigandSelection}
-        fetchingPdb={props.workflow.run.fetchingPdb}
-        fetchingPdbError={props.workflow.run.fetchingPdbError}
+        fetchingData={props.workflow.run.fetchingData}
+        fetchingDataError={props.workflow.run.fetchingDataError}
         morph={props.morph}
         nodes={props.nodes}
         onClickColorize={props.onClickColorize}

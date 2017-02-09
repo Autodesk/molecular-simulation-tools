@@ -78,7 +78,9 @@ const apiUtils = {
           throw error;
         }
 
-        return res.data.outputs;
+        return new IList(res.data.outputs.map(output =>
+          new IoRecord(output),
+        ));
       });
   },
 
@@ -88,13 +90,7 @@ const apiUtils = {
    * @returns {Object}
    */
   getIoData(jsonUrl) {
-    return axios.get(jsonUrl).then((res) => {
-      if (!res.data.success) {
-        throw new Error(res.data.errors);
-      }
-
-      return res.data;
-    });
+    return axios.get(jsonUrl).then(res => res.data);
   },
 
   /**
