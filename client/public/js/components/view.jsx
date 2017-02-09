@@ -1,6 +1,11 @@
 import React from 'react';
 import { List as IList } from 'immutable';
+
+/*
+We use Autodesk Molecule Viewer to display and navigate molecular data. Autodesk Molecule Viewer is not released under an open source license. For more information about the Autodesk Molecule Viewer license please refer to: https://molviewer.com/molviewer/docs/Pre-Release_Product_Testing_Agreement.pdf.
+*/
 import $ADSKMOLVIEW from 'tirrenu';
+
 import loadImg from '../../img/loadAnim.gif';
 
 require('../../css/view.scss');
