@@ -23,10 +23,7 @@ const ioUtils = {
    * @returns {String}
    */
   getIndexByExtension(ios, extension) {
-    return ios.findIndex((io) => {
-      const extensionIndex = io.value.length - extension.length;
-      return io.value.lastIndexOf(extension) === extensionIndex;
-    });
+    return ios.findIndex(io => io.value.endsWith(extension));
   },
 
   /**

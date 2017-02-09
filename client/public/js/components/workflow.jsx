@@ -12,9 +12,7 @@ require('../../css/workflow.scss');
 
 function Workflow(props) {
   const ios = props.workflow.run.inputs.concat(props.workflow.run.outputs);
-  const pdbIos = ios.filter(io =>
-    io.value.lastIndexOf('.pdb') === io.value.length - 4,
-  );
+  const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
 
   let selectedModelData;
   // TODO this will never happen b/c not displaying nodes anymore

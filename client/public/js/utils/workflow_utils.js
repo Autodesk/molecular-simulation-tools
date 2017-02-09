@@ -109,7 +109,7 @@ const workflowUtils = {
     let newIos = ios;
 
     return Promise.all(ios.map((io) => {
-      if (io.value.lastIndexOf('.json') !== io.value.length - 5) {
+      if (io.value.endsWith('.json')) {
         return Promise.resolve();
       }
       return apiUtils.getIoData(io.value).then((results) => {
@@ -130,7 +130,7 @@ const workflowUtils = {
     let newIos = ios;
 
     return Promise.all(ios.map((io) => {
-      if (io.value.lastIndexOf('.pdb') !== io.value.length - 4) {
+      if (io.value.endsWith('.pdb')) {
         return Promise.resolve();
       }
       return apiUtils.getPdb(io.value).then((results) => {
