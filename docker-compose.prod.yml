@@ -9,6 +9,7 @@ services:
     image: "quay.io/bionano/mdtapps_server:${VERSION}"
     environment:
       CCC: "ccc.bionano.autodesk.com:9000"
+      NODE_ENV: "production"
     logging:
       driver: json-file
       options:
