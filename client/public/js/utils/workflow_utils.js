@@ -87,8 +87,8 @@ const workflowUtils = {
    * @param pdb {String}
    * @returns {Array}
    */
-  processInput: async function processInput(workflowId, pdb) {
-    let inputs = await apiUtils.processInputPdb(workflowId, pdb);
+  processInput: async function processInput(workflowId, input, inputTypeIsPdb) {
+    let inputs = await apiUtils.processInputPdb(workflowId, input, inputTypeIsPdb);
 
     // Find the json status input
     inputs = await workflowUtils.fetchIoResults(inputs);

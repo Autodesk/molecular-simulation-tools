@@ -174,15 +174,27 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitPdbId(pdbId, workflowId) {
-  return async function submitPdbIdDispatch(dispatch) {
+export function submitPdbId(input, workflowId) {
+  return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_PDB_ID,
     });
 
+    // If the input is 4 characters, try it as a pdbid
+    let pdbDownload;
+    if (input.length === 4) {
+      try {
+        pdbDownload = await rcsbApiUtils.getPdbById(input);
+      } catch (error) {
+        console.log(`Failed to fetch ${input} as pdbid, will try directly.`);
+      }
+    }
+
     try {
-      const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
-      const inputs = await workflowUtils.processInput(workflowId, pdbDownload.pdb);
+      const newInput = pdbDownload ? pdbDownload.pdb : input;
+      const inputs = await workflowUtils.processInput(
+        workflowId, newInput, !!pdbDownload,
+      );
 
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,

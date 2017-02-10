@@ -60,13 +60,44 @@ const apiUtils = {
     });
   },
 
-  processInputPdb(workflowId, pdb) {
+  /**
+   * Process the input given by the user and return processed input
+   * @param workflowId {String}
+   * @param input {String} PDB, IUPAC, InChi, SMILES
+   * @param inputTypeIsPdb {Boolean}
+   * @returns {Promise}
+   */
+  processInputPdb(workflowId, input, inputTypeIsPdb) {
+    /*
+     * For PDB, a sent input looks like:
+     *   {
+     *     name: 'input.pdb',
+     *     type: 'inline',
+     *     value: 'imapdbstring',
+     *   },
+     * For other formats, sent inputs look like:
+     *   {
+     *     name: 'input.json',
+     *     type: 'inline',
+     *     value: '{"input":"acetylene"}',
+     *   },
+     */
+    let value;
+    let extension;
+    if (inputTypeIsPdb) {
+      value = input;
+      extension = '.pdb';
+    } else {
+      value = { input };
+      extension = '.json';
+    }
+
     const data = {
       inputs: [
         {
-          name: 'input.pdb',
+          name: `input${extension}`,
           type: 'inline',
-          value: pdb,
+          value,
         },
       ],
     };
