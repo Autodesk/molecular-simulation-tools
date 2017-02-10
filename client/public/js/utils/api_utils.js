@@ -64,10 +64,10 @@ const apiUtils = {
    * Process the input given by the user and return processed input
    * @param workflowId {String}
    * @param input {String} PDB, IUPAC, InChi, SMILES
-   * @param inputTypeIsPdb {Boolean}
+   * @param extension {String} Optional
    * @returns {Promise}
    */
-  processInput(workflowId, input, inputTypeIsPdb) {
+  processInput(workflowId, input, extension) {
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -83,19 +83,19 @@ const apiUtils = {
      *   },
      */
     let value;
-    let extension;
-    if (inputTypeIsPdb) {
+    let nameExtension;
+    if (extension) {
       value = input;
-      extension = '.pdb';
+      nameExtension = extension;
     } else {
       value = JSON.stringify({ input });
-      extension = '.json';
+      nameExtension = 'json';
     }
 
     const data = {
       inputs: [
         {
-          name: `input${extension}`,
+          name: `input.${nameExtension}`,
           type: 'inline',
           value,
         },

@@ -86,7 +86,7 @@ class StatusLoad extends React.Component {
             </div>
           </Button>
           <p className="bodyFont">
-            Text: Accepts XYZ, SDF, MOL2, PDB, and mmCIF.
+            Accepts XYZ, SDF, MOL2, and PDB.
           </p>
         </div>
       </div>

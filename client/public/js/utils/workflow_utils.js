@@ -71,7 +71,12 @@ const workflowUtils = {
     return true;
   },
 
-  readPdb(file) {
+  /**
+   * Read the given file and return a promise that resolves with its contents
+   * @param file {File}
+   * @returns {Promise}
+   */
+  readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = e => resolve(e.target.result);
@@ -87,8 +92,8 @@ const workflowUtils = {
    * @param input {String}
    * @returns {Array}
    */
-  processInput: async function processInput(workflowId, input, inputTypeIsPdb) {
-    let inputs = await apiUtils.processInput(workflowId, input, inputTypeIsPdb);
+  processInput: async function processInput(workflowId, input, extension) {
+    let inputs = await apiUtils.processInput(workflowId, input, extension);
 
     // Find the json results
     inputs = await workflowUtils.fetchIoResults(inputs);

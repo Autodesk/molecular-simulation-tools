@@ -4,6 +4,8 @@ import apiUtils from './utils/api_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
+const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
+
 export function initializeWorkflow(workflowId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
@@ -148,17 +150,19 @@ export function selectInputFile(file, workflowId) {
     });
 
     const extension = file.name.split('.').pop();
-    if (extension !== 'pdb') {
+    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        error: 'File must have the .pdb extension',
+        error: 'File has invalid extension.',
       });
       return;
     }
 
     try {
-      const inputPdb = await workflowUtils.readPdb(file);
-      const inputs = await workflowUtils.processInput(workflowId, inputPdb, true);
+      const inputString = await workflowUtils.readFile(file);
+      const inputs = await workflowUtils.processInput(
+        workflowId, inputString, extension,
+      );
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
@@ -192,8 +196,9 @@ export function submitInputString(input, workflowId) {
 
     try {
       const newInput = pdbDownload ? pdbDownload.pdb : input;
+      const extension = pdbDownload ? '.pdb' : '';
       const inputs = await workflowUtils.processInput(
-        workflowId, newInput, !!pdbDownload,
+        workflowId, newInput, extension,
       );
 
       dispatch({
