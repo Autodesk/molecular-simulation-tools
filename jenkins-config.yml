@@ -42,8 +42,8 @@ zip-excludes-input-dirs: .
 # set false to only push a image tagged for the envrionment
 tag-latest: true
 lib-prefix: quay.io/bionano/
-lib-push-config: --config /var/jenkins_home/.docker
-# If this image is to be public, then we should move to 'autodesk-bionano' or 'autodesk' quay.io repo and use the auth config below
+lib-push-config: --config /var/jenkins_home/.docker-config-bionano-org
+# If this image is to be public, then we should move to 'autodesk-bionano' or 'autodesk' quay.io repo (both public) and use the auth config below
 # lib-push-config: --config /var/jenkins_home/.docker-config-autodesk-bionano-org
 
 
