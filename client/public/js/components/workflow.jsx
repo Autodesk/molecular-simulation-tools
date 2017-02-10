@@ -74,7 +74,7 @@ function Workflow(props) {
         onSelectInputFile={props.onSelectInputFile}
         selectedLigand={props.workflow.run.selectedLigand}
         selection={props.selection}
-        submitPdbId={props.submitPdbId}
+        submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}
         workflow={props.workflow}
       />
@@ -109,7 +109,7 @@ Workflow.propTypes = {
   onSelectInputFile: React.PropTypes.func.isRequired,
   runPage: React.PropTypes.bool.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
 };

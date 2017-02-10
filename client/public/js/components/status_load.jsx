@@ -8,7 +8,7 @@ class StatusLoad extends React.Component {
     super(props);
 
     this.onSelectInputFile = this.onSelectInputFile.bind(this);
-    this.onSubmitPdbId = this.onSubmitPdbId.bind(this);
+    this.onSubmitInputString = this.onSubmitInputString.bind(this);
     this.onChangePdbId = this.onChangePdbId.bind(this);
     this.onClickInputFile = this.onClickInputFile.bind(this);
 
@@ -27,10 +27,10 @@ class StatusLoad extends React.Component {
     this.fileInput.click();
   }
 
-  onSubmitPdbId(e) {
+  onSubmitInputString(e) {
     e.preventDefault();
 
-    return this.props.submitPdbId(this.state.pdbId);
+    return this.props.submitInputString(this.state.pdbId);
   }
 
   onSelectInputFile(e) {
@@ -50,20 +50,23 @@ class StatusLoad extends React.Component {
         <div className="input-file-container">
           <form
             className="defInput"
-            onSubmit={this.onSubmitPdbId}
+            onSubmit={this.onSubmitInputString}
           >
             <input
               className={`enterMolecule ${inputErrorClass}`}
               style={{ width: '215px' }}
               type="text"
-              placeholder="Enter PDB ID here"
+              placeholder="Enter molecule here"
               disabled={disabled}
               value={this.state.pdbId}
               onChange={this.onChangePdbId}
             />
           </form>
           <p className="bodyFont">
-            Or, browse custom JSON file.
+            Accepts SMILES, IUPAC, INCHI, and PDB IDs.
+          </p>
+          <p className="bodyFont">
+            Or, upload file.
           </p>
           <Button
             type="form"
@@ -72,7 +75,7 @@ class StatusLoad extends React.Component {
             onClick={this.onClickInputFile}
           >
             <div>
-              Browse
+              Browse File
               <input
                 ref={(c) => { this.fileInput = c; }}
                 className="file-input"
@@ -82,6 +85,9 @@ class StatusLoad extends React.Component {
               />
             </div>
           </Button>
+          <p className="bodyFont">
+            Text: Accepts XYZ, SDF, MOL2, PDB, and mmCIF.
+          </p>
         </div>
       </div>
     );
@@ -97,7 +103,7 @@ StatusLoad.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
   fetchingDataError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   inputFilePending: React.PropTypes.bool.isRequired,
   inputFileError: React.PropTypes.string,
 };

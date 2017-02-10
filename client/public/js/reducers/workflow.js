@@ -109,14 +109,14 @@ function workflow(state = initialState, action) {
       }));
     }
 
-    case actionConstants.SUBMIT_PDB_ID:
+    case actionConstants.SUBMIT_INPUT_STRING:
       return state.set('run', state.run.merge({
         fetchingData: true,
         fetchingDataError: null,
         inputs: [],
       }));
 
-    case actionConstants.FETCHED_PDB_BY_ID: {
+    case actionConstants.PROCESSED_INPUT_STRING: {
       const ligands = action.data ? Object.keys(action.data.ligands) : [];
       const inputs = action.inputs ?
         action.inputs.map(input => new IoRecord(input)) :

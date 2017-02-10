@@ -67,7 +67,7 @@ const apiUtils = {
    * @param inputTypeIsPdb {Boolean}
    * @returns {Promise}
    */
-  processInputPdb(workflowId, input, inputTypeIsPdb) {
+  processInput(workflowId, input, inputTypeIsPdb) {
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -88,7 +88,7 @@ const apiUtils = {
       value = input;
       extension = '.pdb';
     } else {
-      value = { input };
+      value = JSON.stringify({ input });
       extension = '.json';
     }
 

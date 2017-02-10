@@ -9,7 +9,7 @@ const rcsbApiUtils = {
       pdbUrl,
       pdb: res.data,
     })).catch(() => {
-      throw new Error('Couldn\'t find a pdb with that id, please try again.');
+      throw new Error('Couldn\'t find a pdb with that id.');
     });
   },
 };

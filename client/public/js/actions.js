@@ -158,7 +158,7 @@ export function selectInputFile(file, workflowId) {
 
     try {
       const inputPdb = await workflowUtils.readPdb(file);
-      const inputs = await workflowUtils.processInput(workflowId, inputPdb);
+      const inputs = await workflowUtils.processInput(workflowId, inputPdb, true);
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
@@ -174,13 +174,13 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitPdbId(input, workflowId) {
+export function submitInputString(input, workflowId) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
-      type: actionConstants.SUBMIT_PDB_ID,
+      type: actionConstants.SUBMIT_INPUT_STRING,
     });
 
-    // If the input is 4 characters, try it as a pdbid
+    // If the input is 4 characters, try it as a pdbid first
     let pdbDownload;
     if (input.length === 4) {
       try {
@@ -197,13 +197,13 @@ export function submitPdbId(input, workflowId) {
       );
 
       dispatch({
-        type: actionConstants.FETCHED_PDB_BY_ID,
+        type: actionConstants.PROCESSED_INPUT_STRING,
         inputs,
       });
     } catch (err) {
       console.error(err);
       dispatch({
-        type: actionConstants.FETCHED_PDB_BY_ID,
+        type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
       });
     }

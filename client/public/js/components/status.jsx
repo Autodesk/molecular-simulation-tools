@@ -77,7 +77,7 @@ function Status(props) {
         fetchingData={props.workflow.run.fetchingData}
         fetchingDataError={props.workflow.run.fetchingDataError}
         onSelectInputFile={props.onSelectInputFile}
-        submitPdbId={props.submitPdbId}
+        submitInputString={props.submitInputString}
         inputFileError={props.workflow.run.inputFileError}
         inputFilePending={props.workflow.run.inputFilePending}
       />
@@ -161,7 +161,7 @@ Status.propTypes = {
   selectedLigand: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
 };
