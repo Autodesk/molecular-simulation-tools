@@ -35,7 +35,7 @@ const ioUtils = {
    */
   getLigandNames(ios) {
     return ios.reduce((reduction, io) => {
-      if (!io.value.endsWith('.json')) {
+      if (!io.value.endsWith('.json') || !io.fetchedValue || !io.fetchedValue.ligands) {
         return reduction;
       }
       const ligandNames = new IList(Object.keys(io.fetchedValue.ligands));
