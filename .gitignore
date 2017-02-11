@@ -34,3 +34,6 @@ VERSION
 
 #CCC
 ccc_local_storage
+
+# molviewer deploy process
+molecule_viewer/

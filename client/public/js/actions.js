@@ -40,10 +40,11 @@ export function initializeRun(workflowId, runId) {
     try {
       workflow = await apiUtils.getRun(runId);
     } catch (error) {
-      return dispatch({
+      dispatch({
         type: actionConstants.FETCHED_RUN,
         error,
       });
+      return;
     }
 
     dispatch({
@@ -51,52 +52,27 @@ export function initializeRun(workflowId, runId) {
       workflow,
     });
 
-    let inputPdbUrl = null;
-    let i = 0;
-    for (i = 0; i < workflow.run.inputs.length; i++) {
-      if (workflow.run.inputs[i].name === 'prep.pdb') {
-        inputPdbUrl = workflow.run.inputs[i].value;
-        break;
-      }
-    }
+    try {
+      let inputs = workflow.run.inputs;
+      let outputs = workflow.run.outputs;
 
-    let finalOutputPdbUrl = null;
-    for (i = 0; i < workflow.run.outputs.length; i++) {
-      if (workflow.run.outputs[i].name === 'final_structure.pdb') {
-        finalOutputPdbUrl = workflow.run.outputs[i].value;
-        break;
-      }
-    }
+      inputs = await workflowUtils.fetchIoPdbs(inputs);
+      inputs = await workflowUtils.fetchIoResults(inputs);
+      outputs = await workflowUtils.fetchIoPdbs(outputs);
+      outputs = await workflowUtils.fetchIoResults(outputs);
 
-    if (inputPdbUrl) {
-      apiUtils.getPdb(inputPdbUrl).then(modelData =>
-        dispatch({
-          type: actionConstants.FETCHED_INPUT_PDB,
-          modelData,
-        })
-      ).catch(error =>
-        dispatch({
-          type: actionConstants.FETCHED_INPUT_PDB,
-          err: error,
-        })
-      );
+      dispatch({
+        type: actionConstants.FETCHED_RUN_IO,
+        inputs,
+        outputs,
+      });
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: actionConstants.FETCHED_RUN_IO,
+        error,
+      });
     }
-
-    if (finalOutputPdbUrl) {
-      apiUtils.getPdb(finalOutputPdbUrl).then(modelData =>
-        dispatch({
-          type: actionConstants.FETCHED_OUTPUT_PDB,
-          modelData,
-        })
-      ).catch(error =>
-        dispatch({
-          type: actionConstants.FETCHED_OUTPUT_PDB,
-          err: error,
-        })
-      );
-    }
-
-    return true;
   };
 }
 
@@ -112,6 +88,12 @@ export function clickWorkflowNode(workflowNodeId) {
   return {
     type: actionConstants.CLICK_WORKFLOW_NODE,
     workflowNodeId,
+  };
+}
+
+export function clickWorkflowNodeLigandSelection() {
+  return {
+    type: actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION,
   };
 }
 
@@ -169,23 +151,24 @@ export function selectInputFile(file, workflowId) {
     if (extension !== 'pdb') {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        err: 'File must have the .pdb extension',
+        error: 'File must have the .pdb extension',
       });
       return;
     }
 
     try {
       const inputPdb = await workflowUtils.readPdb(file);
-      const outputs = await apiUtils.processInputPdb(workflowId, inputPdb);
+      const inputs = await workflowUtils.processInput(workflowId, inputPdb);
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        outputs,
+        inputs,
       });
     } catch (err) {
+      console.error(err);
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        err: err ? (err.message || err) : null,
+        error: err ? (err.message || err) : null,
       });
     }
   };
@@ -199,15 +182,17 @@ export function submitPdbId(pdbId, workflowId) {
 
     try {
       const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
-      const outputs = await apiUtils.processInputPdb(workflowId, pdbDownload.pdb);
+      const inputs = await workflowUtils.processInput(workflowId, pdbDownload.pdb);
+
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        inputs: outputs,
+        inputs,
       });
     } catch (err) {
+      console.error(err);
       dispatch({
         type: actionConstants.FETCHED_PDB_BY_ID,
-        err: err.message,
+        error: err.message || err,
       });
     }
   };
@@ -254,6 +239,13 @@ export function messageTimeout() {
 export function clickColorize() {
   return {
     type: actionConstants.CLICK_COLORIZE,
+  };
+}
+
+export function changeLigandSelection(ligandString) {
+  return {
+    type: actionConstants.CHANGE_LIGAND_SELECTION,
+    ligandString,
   };
 }
 

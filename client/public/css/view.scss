@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-content: center;
-  height: 100%;
   flex: 1;
 }
 
@@ -24,4 +23,13 @@
     height: 75px;
     padding: 12px;
     margin: 0 auto;
+}
+
+#canvas3D {
+  vertical-align: middle;
+}
+
+/* TODO this should be removed in the molviewer instead of hacked out here */
+#guiviewer3d-toolbar {
+  display: none !important;
 }

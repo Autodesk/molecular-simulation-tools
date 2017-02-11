@@ -7,12 +7,13 @@ const ccc = CCCC.connect(process.env["CCC"]);
 var cccPromise =
   retry(
     function() {
+      log.debug('Attempting ccc.status at ' + process.env["CCC"]);
       return ccc.status()
         .then(status => {
           return status;
         });
     },
-    {max_tries: 50, interval:1000}
+    {max_tries: 50, interval:1000, max_interval:10000}
   )
   .then(() => {
     if (process.env["CCC"] === 'ccc:9000') {

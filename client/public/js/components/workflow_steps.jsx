@@ -4,6 +4,7 @@ import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
+import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 import workflowUtils from '../utils/workflow_utils';
 
@@ -17,7 +18,7 @@ function WorkflowSteps(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = props.workflow.run.inputPdb ?
+  const loadStatus = ioUtils.getInputPdb(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
@@ -42,6 +43,23 @@ function WorkflowSteps(props) {
     );
   }
 
+  let selectLigandsNode;
+  if (props.workflow.selectLigands) {
+    const status = props.workflow.run.selectedLigand ?
+      statusConstants.COMPLETED : statusConstants.IDLE;
+    const ligandSelectionSelected = props.selection.type ===
+      selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION;
+    selectLigandsNode = (
+      <WorkflowStep
+        primaryText={'Ligand Selection'}
+        number={2}
+        onClick={props.clickWorkflowNodeLigandSelection}
+        selected={ligandSelectionSelected}
+        status={status}
+      />
+    );
+  }
+
   let stepsEl;
   if (!props.error) {
     stepsEl = [
@@ -54,9 +72,10 @@ function WorkflowSteps(props) {
             status={loadStatus}
             onClick={props.clickWorkflowNodeLoad}
           />
+          {selectLigandsNode}
           <WorkflowStep
             primaryText={'Enter email'}
-            number={2}
+            number={selectLigandsNode ? 3 : 2}
             onClick={props.clickWorkflowNodeEmail}
             selected={emailSelected}
             status={emailStatus}
@@ -93,6 +112,7 @@ function WorkflowSteps(props) {
 WorkflowSteps.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
+  clickWorkflowNodeLigandSelection: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,

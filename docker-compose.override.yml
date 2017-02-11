@@ -27,12 +27,13 @@ services:
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
       CCC: "ccc:9000"
+      NODE_ENV: "development"
     links:
       - redis
       - ccc
 
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:6ecc24dc"
+    image: "quay.io/bionano/cloud-compute-cannon:10b68482"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
