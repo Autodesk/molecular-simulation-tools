@@ -81,7 +81,7 @@ function Workflow(props) {
       <View
         colorized={props.colorized}
         error={viewError}
-        loading={props.workflow.fetching}
+        loading={props.workflow.fetching || props.workflow.run.fetchingData}
         modelData={selectedModelData}
         selectionStrings={selectionStrings}
       />

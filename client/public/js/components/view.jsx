@@ -127,7 +127,7 @@ class View extends React.Component {
 View.propTypes = {
   colorized: React.PropTypes.bool,
   error: React.PropTypes.string,
-  loading: React.PropTypes.bool,
+  loading: React.PropTypes.bool.isRequired,
   modelData: React.PropTypes.string,
   selectionStrings: React.PropTypes.instanceOf(IList),
 };
