@@ -75,7 +75,7 @@ WorkflowCard.propTypes = {
   bgIndex: React.PropTypes.number,
   color: React.PropTypes.string,
   comingSoon: React.PropTypes.bool,
-  creatorImage: React.PropTypes.string,
+  creatorImage: React.PropTypes.string.isRequired,
   id: React.PropTypes.string.isRequired,
   runCount: React.PropTypes.number,
   title: React.PropTypes.string,
