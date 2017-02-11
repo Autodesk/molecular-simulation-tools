@@ -28,6 +28,7 @@ router.post('/executeWorkflow0Step0', (req, res, next) => {
 
   workflowUtils.executeWorkflow0Step0(inputs)
     .then(jobResult => {
+        log.debug({jobId:jobResult.jobId, f:'executeWorkflow0Step0'});
         res.send(jobResult);
     })
     .error(err => {
@@ -59,6 +60,7 @@ router.post('/executeWorkflow1Step0', (req, res, next) => {
 
   workflowUtils.executeWorkflow1Step0(inputs)
     .then(jobResult => {
+        log.debug({jobId:jobResult.jobId, f:'executeWorkflow1Step0'});
         res.send(jobResult);
     })
     .error(err => {
