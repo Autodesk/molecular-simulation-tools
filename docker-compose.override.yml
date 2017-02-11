@@ -26,67 +26,66 @@ services:
       # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
-      # CCC: "ccc:9000"
-      CCC: "ccc.bionano.autodesk.com:9000"
+      CCC: "ccc:9000"
       NODE_ENV: "development"
     links:
       - redis
-      # - ccc
+      - ccc
 
-  # ccc:
-  #   image: "quay.io/bionano/cloud-compute-cannon:10b68482"
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./ccc_local_storage:/app/ccc_local_storage
-  #   ports:
-  #     - "9000:9000"
-  #   environment:
-  #     PORT: "9000"
-  #     #This is used to get the correct host working directory to pass into the
-  #     #worker containers to map the local file system to /inputs+/outputs within
-  #     #the container. Only used for local docker providers (not cloud)
-  #     HOST_PWD: "$PWD"
-  #     #Sets the max log level (bunyan where 10=trace 40=warn)
-  #     LOG_LEVEL: "40"
-  #     STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
-  #     REMOVE_JOBS_ON_STARTUP: 'true'
-  #     DISABLE_STARTUP_TEST: 'true'
-  #   links:
-  #     - redis
-  #     - fluentd
+  ccc:
+    image: "quay.io/bionano/cloud-compute-cannon:10b68482"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./ccc_local_storage:/app/ccc_local_storage
+    ports:
+      - "9000:9000"
+    environment:
+      PORT: "9000"
+      #This is used to get the correct host working directory to pass into the
+      #worker containers to map the local file system to /inputs+/outputs within
+      #the container. Only used for local docker providers (not cloud)
+      HOST_PWD: "$PWD"
+      #Sets the max log level (bunyan where 10=trace 40=warn)
+      LOG_LEVEL: "40"
+      STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      REMOVE_JOBS_ON_STARTUP: 'true'
+      DISABLE_STARTUP_TEST: 'true'
+    links:
+      - redis
+      - fluentd
 
-  # fluentd:
-  #   build: ./server/etc/log/
-  #   volumes:
-  #     - ./server/etc/log/fluent.dev.conf:/fluentd/etc/fluent.conf
-  #   links:
-  #     - elasticsearch
-  #   logging:
-  #     driver: none
-  #   restart: always
-  #   command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-p", "/fluentd/plugins"]
-  #   ports:
-  #     - "24225:24225"
-  #     - "9881:9881"
+  fluentd:
+    build: ./server/etc/log/
+    volumes:
+      - ./server/etc/log/fluent.dev.conf:/fluentd/etc/fluent.conf
+    links:
+      - elasticsearch
+    logging:
+      driver: none
+    restart: always
+    command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-p", "/fluentd/plugins"]
+    ports:
+      - "24225:24225"
+      - "9881:9881"
 
-  # elasticsearch:
-  #   restart: always
-  #   image: elasticsearch:2.3
-  #   ports:
-  #     - "9200:9200"
-  #     - "9300:9300"
-  #   logging:
-  #     driver: none
+  elasticsearch:
+    restart: always
+    image: elasticsearch:2.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    logging:
+      driver: none
 
-  # kibana:
-  #   restart: always
-  #   image: kibana:4.4.2
-  #   ports:
-  #     - "5601:5601"
-  #   environment:
-  #     ELASTICSEARCH_URL: "http://elasticsearch:9200"
-  #   #Pretty sure I don't care about listening to you ever
-  #   logging:
-  #     driver: none
-  #   links:
-  #     - elasticsearch
+  kibana:
+    restart: always
+    image: kibana:4.4.2
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    #Pretty sure I don't care about listening to you ever
+    logging:
+      driver: none
+    links:
+      - elasticsearch
