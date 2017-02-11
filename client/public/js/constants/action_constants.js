@@ -13,7 +13,6 @@ const actionConstants = keyMirror({
   CLICK_WORKFLOW_NODE_LOAD: null,
   CLICK_WORKFLOW_NODE_EMAIL: null,
   CLICK_WORKFLOW_NODE_RESULTS: null,
-  FETCHED_PDB_BY_ID: null,
   FETCHED_WORKFLOW: null,
   FETCHED_RUN: null,
   FETCHED_RUN_IO: null,
@@ -23,8 +22,9 @@ const actionConstants = keyMirror({
   INITIALIZE: null,
   INITIALIZE_WORKFLOW: null,
   MESSAGE_TIMEOUT: null,
+  PROCESSED_INPUT_STRING: null,
   RUN_SUBMITTED: null,
-  SUBMIT_PDB_ID: null,
+  SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,
 });

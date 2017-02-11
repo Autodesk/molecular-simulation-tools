@@ -15,7 +15,7 @@ import {
   initializeWorkflow,
   messageTimeout,
   submitEmail,
-  submitPdbId,
+  submitInputString,
   selectInputFile,
 } from '../actions';
 
@@ -77,9 +77,9 @@ function mapDispatchToProps(dispatch) {
         dispatch(selectInputFile(file, workflowId));
       };
     },
-    submitPdbId(workflowId) {
-      return (pdbId) => {
-        dispatch(submitPdbId(pdbId, workflowId));
+    submitInputString(workflowId) {
+      return (input) => {
+        dispatch(submitInputString(input, workflowId));
       };
     },
     submitEmail(email) {
@@ -100,7 +100,7 @@ function mergeProps(stateProps, dispatchProps) {
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),
-    submitPdbId: dispatchProps.submitPdbId(stateProps.workflow.id),
+    submitInputString: dispatchProps.submitInputString(stateProps.workflow.id),
   });
 }
 

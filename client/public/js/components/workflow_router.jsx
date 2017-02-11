@@ -95,7 +95,7 @@ class WorkflowRouter extends React.Component {
           onChangeMorph={this.props.onChangeMorph}
           onSelectInputFile={this.props.onSelectInputFile}
           selection={this.props.selection}
-          submitPdbId={this.props.submitPdbId}
+          submitInputString={this.props.submitInputString}
           submitEmail={this.props.submitEmail}
           workflow={this.props.workflow}
           runPage={!!this.props.runId}
@@ -136,7 +136,7 @@ WorkflowRouter.propTypes = {
   onSelectInputFile: React.PropTypes.func.isRequired,
   runId: React.PropTypes.string,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),

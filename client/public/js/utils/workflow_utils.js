@@ -71,7 +71,12 @@ const workflowUtils = {
     return true;
   },
 
-  readPdb(file) {
+  /**
+   * Read the given file and return a promise that resolves with its contents
+   * @param file {File}
+   * @returns {Promise}
+   */
+  readFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = e => resolve(e.target.result);
@@ -84,16 +89,16 @@ const workflowUtils = {
    * Using the api, go through the full step0 input processing flow
    * Calls to this should be surrounded by try/catch!
    * @param workflowId {String}
-   * @param pdb {String}
+   * @param input {String}
    * @returns {Array}
    */
-  processInput: async function processInput(workflowId, pdb) {
-    let inputs = await apiUtils.processInputPdb(workflowId, pdb);
+  processInput: async function processInput(workflowId, input, extension) {
+    let inputs = await apiUtils.processInput(workflowId, input, extension);
 
-    // Find the json status input
+    // Find the json results
     inputs = await workflowUtils.fetchIoResults(inputs);
 
-    // Get the processed input pdb
+    // Get the processed input pdbs
     inputs = await workflowUtils.fetchIoPdbs(inputs);
 
     return inputs;
