@@ -93,7 +93,7 @@ const runUtils = {
   monitorRun(runId) {
     if (!runId) {
       log.error('Missing runId');
-      throw "Missing runId";
+      throw new Error("Missing runId");
     }
     log.debug('Monitoring run ' + runId);
     runUtils.waitOnJob(runId)
@@ -109,8 +109,9 @@ const runUtils = {
 
   executeWorkflow(workflowId, email, inputs) {
     const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
+    log.debug({});
     var workflowPromise = null;
-    switch(workflowId) {
+    switch(workflowId + '') {
       case '0':
           workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
           break;
@@ -118,7 +119,7 @@ const runUtils = {
           workflowPromise = workflowUtils.executeWorkflow1Step1(inputs);
           break;
       default:
-        return Promise.reject({error:`No workflow for workflowId=${workflowId}`});
+        return Promise.reject({error:`No workflow for workflowId=${workflowId} type=${typeof(workflowId)}`});
     }
 
     return workflowPromise
@@ -156,7 +157,7 @@ const runUtils = {
       })
       .then(runId => {
         if (!runId) {
-          throw 'Missing runId for '
+          throw new Error('Missing runId');
         }
         runUtils.monitorRun(runId);
         return runId;
