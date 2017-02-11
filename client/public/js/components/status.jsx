@@ -106,6 +106,11 @@ function Status(props) {
       }
     }
 
+    const pdbIndex = ioUtils.getIndexByExtension(
+      props.workflow.run.outputs, '.pdb',
+    );
+    const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
+
     selection = (
       <StatusResults
         morph={props.morph}
@@ -115,7 +120,7 @@ function Status(props) {
         workflowNodesSize={props.workflow.workflowNodes.size}
         resultValue={resultValue}
         resultUnit={resultUnit}
-        outputPdbUrl={props.workflow.run.outputPdbUrl}
+        outputPdbUrl={outputPdbUrl}
       />
     );
   } else if (

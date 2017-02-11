@@ -16,12 +16,27 @@ class StatusResults extends React.Component {
   }
 
   onClickDownload() {
-    window.location.href = this.props.outputPdbUrl;
+    const link = document.createElement('a');
+    link.download = 'output.pdb';
+    link.href = this.props.outputPdbUrl;
+    link.click();
   }
 
   render() {
     // Round so that the number doesn't overflow the UI
     const value = Math.round(this.props.resultValue * 10000) / 10000;
+
+    let downloadButton;
+    if (this.props.outputPdbUrl) {
+      downloadButton = (
+        <Button
+          type="form"
+          onClick={this.onClickDownload}
+        >
+          Download
+        </Button>
+      );
+    }
 
     return (
       <div className="status-results">
@@ -49,25 +64,9 @@ class StatusResults extends React.Component {
               onChange={this.onChangeMorph}
             />
           </div>
-          <Button
-            type="small"
-            onClick={this.props.onClickColorize}
-          >
-            Colorize
-          </Button>
         </div>
         <div className="actions">
-          <Button
-            type="form"
-            onClick={this.onClickDownload}
-          >
-            Download
-          </Button>
-          <Button
-            type="small"
-          >
-            Share
-          </Button>
+          {downloadButton}
         </div>
       </div>
     );
@@ -81,7 +80,7 @@ StatusResults.defaultProps = {
 };
 
 StatusResults.propTypes = {
-  onClickColorize: React.PropTypes.func.isRequired,
+  // onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,

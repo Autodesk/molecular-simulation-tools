@@ -18,7 +18,7 @@ function WorkflowSteps(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = ioUtils.getInputPdb(props.workflow.run.inputs) ?
+  const loadStatus = ioUtils.getPdb(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;

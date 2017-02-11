@@ -55,7 +55,7 @@ const workflowUtils = {
   },
 
   isRunnable(run) {
-    if (!ioUtils.getInputPdb(run.inputs)) {
+    if (!ioUtils.getPdb(run.inputs)) {
       return false;
     }
     if (!isEmail(run.email)) {

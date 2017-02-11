@@ -25,7 +25,7 @@ function Workflow(props) {
     props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
     props.workflow.run.inputs.size) {
-    selectedModelData = ioUtils.getInputPdb(props.workflow.run.inputs);
+    selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     // Morph is chosen from a list of all input/output pdbs

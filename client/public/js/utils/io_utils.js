@@ -1,18 +1,18 @@
 const ioUtils = {
   /**
-   * Given a list of inputs, find the pdb io and get the pdb data.
+   * Given a list of ios, find the first pdb io and get the pdb data.
    * If not found, returns null.
-   * @param inputs {IList}
+   * @param ios {IList}
    * @returns {String}
    */
-  getInputPdb(inputs) {
-    const pdbIndex = ioUtils.getIndexByExtension(inputs, '.pdb');
+  getPdb(ios) {
+    const pdbIndex = ioUtils.getIndexByExtension(ios, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
     }
 
-    return inputs.get(pdbIndex).fetchedValue;
+    return ios.get(pdbIndex).fetchedValue;
   },
 
   /**
