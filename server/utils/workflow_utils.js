@@ -63,6 +63,7 @@ const workflowUtils = {
     log.debug({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
+        log.debug(jobResult);
         var outputs = [];
         for (var i = 0; i < jobResult.outputs.length; i++) {
           outputs.push({
@@ -111,6 +112,7 @@ const workflowUtils = {
     };
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
+        log.debug({jobId:jobResult.jobId, f:'executeWorkflow0Step1'});
         //Return the jobId as the runId
         return jobResult.jobId;
       });
@@ -148,6 +150,7 @@ const workflowUtils = {
     log.debug({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
+        log.debug(jobResult);
         var outputs = [];
         for (var i = 0; i < jobResult.outputs.length; i++) {
           outputs.push({
@@ -197,6 +200,7 @@ const workflowUtils = {
     };
     return workflowUtils.executeCCCJob(jobJson)
       .then(jobResult => {
+        log.debug({jobId:jobResult.jobId, f:'executeWorkflow1Step1'});
         //Return the jobId as the runId
         return jobResult.jobId;
       });

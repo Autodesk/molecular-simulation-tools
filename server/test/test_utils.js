@@ -87,14 +87,14 @@ const test_utils = {
       })
       .then(runId => {
         if (!runId || runId == "undefined") {
-          throw `runId=${runId}`;
+          throw new Error(`runId=${runId}`);
         }
         const url = `http://localhost:${port}/v1/run/${runId}`;
         return retry(function() {
           return request.get({url:url, json:true})
             .then(body => {
               if (body.status == statusConstants.RUNNING) {
-                throw 'Not yet completed';
+                throw new Error('Not yet completed');
               }
               return body;
             });
@@ -132,7 +132,7 @@ const test_utils = {
     return request.post({url:url, body: formData, json:true})
       .then(body => {
         if (!body.success) {
-            throw {success:false, message: 'exitCode==' + body.jobResult.exitCode, body};
+            throw new Error(JSON.stringify({success:false, message: 'exitCode==' + body.jobResult.exitCode, body}));
         }
         return body;
       })
@@ -168,7 +168,7 @@ const test_utils = {
           return request.get({url:url, json:true})
             .then(body => {
               if (body.status == statusConstants.RUNNING) {
-                throw 'Not yet completed';
+                throw new Error('Not yet completed');
               }
               return body;
             });
