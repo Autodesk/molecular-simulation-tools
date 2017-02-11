@@ -26,7 +26,7 @@ class HomePage extends React.Component {
     // TODO fetch workflows here
     apiUtils.getWorkflows().then(workflows =>
       this.setState({ workflows })
-    ).catch(console.error.bind(console));
+    ).catch(console.error.bind(console)); // eslint-disable-line no-console
   }
 
   render() {
@@ -96,7 +96,7 @@ class HomePage extends React.Component {
           <img className="m1" alt="hero" src={imgM1} />
           <div className="heroText heroTextXS" >
             <h1 className="h1XS colorLight">Molecular Simulation Tools</h1>
-            <h2 className="colorHighlight">Run and share molecular simulations</h2>
+            <h2 className="colorHighlight">Easy, powerful, and opinionated molecular modeling</h2>
             <div>
               <img className="socialIcon" alt="Tweet" src={imgTweet} />
               <img className="socialIcon" alt="Share on Facebook" src={imgFace} />
@@ -112,7 +112,7 @@ class HomePage extends React.Component {
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
-                <h4 className="colorGrey">Molecular simulations running in the cloud</h4>
+                <h4 className="colorGrey">Cloud-based simulation pipelines</h4>
               </div>
             </div>
             <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
@@ -129,44 +129,35 @@ class HomePage extends React.Component {
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
-                <h4 >We are creating a toolbox of powerful modeling tools</h4>
+                <h4 >Automated simulation pipelines: reproducible molecular modeling</h4>
               </div>
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-4" >
-                <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim. Donec
-                  pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-                  In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                  Nullam dictum felis eu pede mollis pretium.
+                <p> Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical
+                    simulations the right way. These tools are a growing
+                    of chemical simulation pipelines, addressing everything from structural
+                    biology to small molecule spectroscopy.
+
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim. Donec
-                  pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-                  In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                  Nullam dictum felis eu pede mollis pretium.
+                <p> When you use MST, you get:
+                  <ol><li>Simulations backed by powerful, academic modeling tools,</li>
+                    <li>easy-to-use graphical interfaces, and</li>
+                    <li>automatic, standardized handling of your data.</li>
+                  </ol>
+
+                    This powerful combination of technologies gives you access to heavy-duty
+                    molecular simulations, automated to make sure they're being run the right way.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim. Donec
-                  pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-                  In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                  Nullam dictum felis eu pede mollis pretium.
+                <p> The Autodesk BioNano group is building a modern, open infrastructure for
+                     computer-aided biological and nanoscale design. To do this, we need
+                     to have reliable, reproducible molecular simulation, so that scientists,
+                     engineers, and designers can understand the properties of their molecular
+                     building materials.
                 </p>
               </div>
             </div>
@@ -176,14 +167,13 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <h3>JOIN US</h3>
+                <h3>MAKE YOUR OWN</h3>
               </div>
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
                 <h4>
-                  Our fantastic developer community is developing powerfull
-                  modeling tools. Come and join us!
+                  Make your science open, sharable and reproducible
                 </h4>
               </div>
               <div className="col-sm-4 col-xs-6 creator-images">
@@ -203,38 +193,30 @@ class HomePage extends React.Component {
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-4">
                 <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim.
-                  Donec pede justo, fringilla vel, aliquet nec, vulputate eget,
-                  arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae,
-                  justo. Nullam dictum felis eu pede mollis pretium.
+                  Experienced computational chemists know that reading the paper isn't the same
+                    as getting the source code. MST gives you the ability to share your
+                    advances in predictive computational modeling without needing to write an
+                    entire, deployable application to support it. With MST, distributing your
+                    simulation methods could be as easy as writing a few lines of Python.
+                    Plus, you get access to components for the stuff you don't want to deal with,
+                    from 3D visualization and interaction to input file processing to force field
+                    assignment.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
                 <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim. Donec
-                  pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-                  In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                  Nullam dictum felis eu pede mollis pretium.
+                  We're working to make it as easy as possible to make computational workflows
+                    sharable, reproducible, and easy to develop. We're developing an infrastructure
+                    of tools that can help you build flexible pipelines that can run from the
+                    command line or a web browser.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
                 <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient montes, nascetur
-                  ridiculus mus. Donec quam felis, ultricies nec, pellentesque
-                  eu, pretium quis, sem. Nulla consequat massa quis enim. Donec
-                  pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-                  In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                  Nullam dictum felis eu pede mollis pretium.
+                  It's still early days and there's lots to be done. If you're interested in
+                    developing your own deployable applications - get in contact with us. We're
+                    looking for good use cases that will have material impact on molecular design,
+                    and can work with you to help give your research impact for a wide audience.
                 </p>
               </div>
             </div>
