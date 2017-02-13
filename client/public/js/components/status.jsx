@@ -77,7 +77,7 @@ function Status(props) {
         fetchingData={props.workflow.run.fetchingData}
         fetchingDataError={props.workflow.run.fetchingDataError}
         onSelectInputFile={props.onSelectInputFile}
-        submitPdbId={props.submitPdbId}
+        submitInputString={props.submitInputString}
         inputFileError={props.workflow.run.inputFileError}
         inputFilePending={props.workflow.run.inputFilePending}
       />
@@ -106,6 +106,11 @@ function Status(props) {
       }
     }
 
+    const pdbIndex = ioUtils.getIndexByExtension(
+      props.workflow.run.outputs, '.pdb',
+    );
+    const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
+
     selection = (
       <StatusResults
         morph={props.morph}
@@ -115,7 +120,7 @@ function Status(props) {
         workflowNodesSize={props.workflow.workflowNodes.size}
         resultValue={resultValue}
         resultUnit={resultUnit}
-        outputPdbUrl={props.workflow.run.outputPdbUrl}
+        outputPdbUrl={outputPdbUrl}
       />
     );
   } else if (
@@ -159,7 +164,7 @@ Status.propTypes = {
   selectedLigand: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
 };

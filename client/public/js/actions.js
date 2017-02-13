@@ -4,6 +4,8 @@ import apiUtils from './utils/api_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
+const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
+
 export function initializeWorkflow(workflowId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
@@ -148,17 +150,19 @@ export function selectInputFile(file, workflowId) {
     });
 
     const extension = file.name.split('.').pop();
-    if (extension !== 'pdb') {
+    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        error: 'File must have the .pdb extension',
+        error: 'File has invalid extension.',
       });
       return;
     }
 
     try {
-      const inputPdb = await workflowUtils.readPdb(file);
-      const inputs = await workflowUtils.processInput(workflowId, inputPdb);
+      const inputString = await workflowUtils.readFile(file);
+      const inputs = await workflowUtils.processInput(
+        workflowId, inputString, extension,
+      );
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
@@ -174,24 +178,37 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitPdbId(pdbId, workflowId) {
-  return async function submitPdbIdDispatch(dispatch) {
+export function submitInputString(input, workflowId) {
+  return async function submitInputStringDispatch(dispatch) {
     dispatch({
-      type: actionConstants.SUBMIT_PDB_ID,
+      type: actionConstants.SUBMIT_INPUT_STRING,
     });
 
+    // If the input is 4 characters, try it as a pdbid first
+    let pdbDownload;
+    if (input.length === 4) {
+      try {
+        pdbDownload = await rcsbApiUtils.getPdbById(input);
+      } catch (error) {
+        console.log(`Failed to fetch ${input} as pdbid, will try directly.`);
+      }
+    }
+
     try {
-      const pdbDownload = await rcsbApiUtils.getPdbById(pdbId);
-      const inputs = await workflowUtils.processInput(workflowId, pdbDownload.pdb);
+      const newInput = pdbDownload ? pdbDownload.pdb : input;
+      const extension = pdbDownload ? '.pdb' : '';
+      const inputs = await workflowUtils.processInput(
+        workflowId, newInput, extension,
+      );
 
       dispatch({
-        type: actionConstants.FETCHED_PDB_BY_ID,
+        type: actionConstants.PROCESSED_INPUT_STRING,
         inputs,
       });
     } catch (err) {
       console.error(err);
       dispatch({
-        type: actionConstants.FETCHED_PDB_BY_ID,
+        type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
       });
     }

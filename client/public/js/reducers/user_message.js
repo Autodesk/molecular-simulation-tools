@@ -42,7 +42,7 @@ function userMessage(state = initialState, action) {
         message: 'Failed to cancel, check your connection and try again.',
       });
 
-    case actionConstants.FETCHED_PDB_BY_ID:
+    case actionConstants.PROCESSED_INPUT_STRING:
       if (!action.error) {
         return initialState;
       }

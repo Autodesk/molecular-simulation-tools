@@ -1,5 +1,6 @@
 import { List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
+import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
@@ -113,20 +114,18 @@ function workflow(state = initialState, action) {
       }));
     }
 
-    case actionConstants.SUBMIT_PDB_ID:
+    case actionConstants.SUBMIT_INPUT_STRING:
       return state.set('run', state.run.merge({
         fetchingData: true,
         fetchingDataError: null,
         inputs: [],
       }));
 
-    case actionConstants.FETCHED_PDB_BY_ID: {
-      let ligands = [];
-      const inputs = action.inputs ? action.inputs : new IList();
-
-      if (inputs.size) {
-        ligands = ioUtils.getLigandNames(inputs);
-      }
+    case actionConstants.PROCESSED_INPUT_STRING: {
+      const ligands = action.data ? Object.keys(action.data.ligands) : [];
+      const inputs = action.inputs ?
+        action.inputs.map(input => new IoRecord(input)) :
+        [];
 
       return state.set('run', state.run.merge({
         fetchingData: false,

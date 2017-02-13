@@ -25,7 +25,7 @@ function Workflow(props) {
     props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
     props.workflow.run.inputs.size) {
-    selectedModelData = ioUtils.getInputPdb(props.workflow.run.inputs);
+    selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     // Morph is chosen from a list of all input/output pdbs
@@ -74,14 +74,14 @@ function Workflow(props) {
         onSelectInputFile={props.onSelectInputFile}
         selectedLigand={props.workflow.run.selectedLigand}
         selection={props.selection}
-        submitPdbId={props.submitPdbId}
+        submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}
         workflow={props.workflow}
       />
       <View
         colorized={props.colorized}
         error={viewError}
-        loading={props.workflow.fetching}
+        loading={props.workflow.fetching || props.workflow.run.fetchingData}
         modelData={selectedModelData}
         selectionStrings={selectionStrings}
       />
@@ -109,7 +109,7 @@ Workflow.propTypes = {
   onSelectInputFile: React.PropTypes.func.isRequired,
   runPage: React.PropTypes.bool.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
-  submitPdbId: React.PropTypes.func.isRequired,
+  submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord),
 };
