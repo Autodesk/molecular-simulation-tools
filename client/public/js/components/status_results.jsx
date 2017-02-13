@@ -32,7 +32,7 @@ class StatusResults extends React.Component {
         <div className="stat">
           <div className="fontHeader line stat-title">
             <div>{resultValue.name.toUpperCase()}</div>
-            <div>{resultValue.unit}</div>
+            <div>{resultValue.units}</div>
           </div>
           <div className="stat-body">
             <div className="stat-body-item">
