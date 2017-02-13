@@ -46,11 +46,11 @@ function WorkflowCard(props) {
           backgroundImage: `url(${bgImage})`,
         }}
       />
-      <img
+{/*      <img
         src={`${process.env.API_URL}${props.creatorImage}`}
         alt="card logo"
         className="cardLogo"
-      />
+      />*/}
       <h5
         className="cardTitle"
         style={{ color: props.color || '#ffffff' }}
@@ -81,7 +81,6 @@ WorkflowCard.propTypes = {
   title: React.PropTypes.string,
   viewCount: React.PropTypes.number,
   description: React.PropTypes.string,
-    
 };
 
 export default WorkflowCard;

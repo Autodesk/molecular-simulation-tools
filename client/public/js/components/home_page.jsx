@@ -9,8 +9,8 @@ import imgM2 from '../../img/m2.png';
 import imgM3 from '../../img/m3.png';
 import imgM4 from '../../img/m4.png';
 import imgLogoResearch from '../../img/logo_research.png';
-import imgTweet from '../../img/tweet.svg';
-import imgFace from '../../img/face.svg';
+/* import imgTweet from '../../img/tweet.svg';
+import imgFace from '../../img/face.svg'; */
 import '../../css/home_page.scss';
 
 class HomePage extends React.Component {
@@ -97,11 +97,13 @@ class HomePage extends React.Component {
           <img className="m1" alt="hero" src={imgM1} />
           <div className="heroText heroTextXS" >
             <h1 className="h1XS colorLight">Molecular Simulation Tools</h1>
-            <h2 className="colorHighlight">Easy, powerful, and opinionated molecular modeling</h2>
-            <div>
+            <h2 className="colorHighlight">
+              Open source, ready-to-run molecular modeling workflows
+            </h2>
+{/*            <div>
               <img className="socialIcon" alt="Tweet" src={imgTweet} />
               <img className="socialIcon" alt="Share on Facebook" src={imgFace} />
-            </div>
+            </div>*/}
           </div>
         </div>
         <div className="toolsCardSection">
@@ -130,33 +132,27 @@ class HomePage extends React.Component {
             </div>
             <div className="row">
               <div className="col-xs-12 col-sm-8">
-                <h4 >Automated simulation pipelines: reproducible molecular modeling</h4>
+                <h4>Reproducible modeling workflows on the cloud</h4>
               </div>
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-4" >
                 <p> Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical
-                    simulations the right way. These tools are a growing
-                    of chemical simulation pipelines, addressing everything from structural
-                    biology to small molecule spectroscopy.
+                    simulations the right way. MST is a growing
+                    of chemical simulation workflows, bringing the powerful tools of
+                    molecular modeling to bear on problems from structural
+                    biology to small molecule spectroscopy. These aren't black boxes;
+                    everything MST offers is free and open source, giving scientists
+                    the power to use, understand, and build reliable simulation protocols.
 
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
-                <p> When you use MST, you get:
-                  <ol><li>Simulations backed by powerful, academic modeling tools,</li>
-                    <li>easy-to-use graphical interfaces, and</li>
-                    <li>automatic, standardized handling of your data.</li>
-                  </ol>
-
-                    This powerful combination of technologies gives you access to heavy-duty
-                    molecular simulations, automated to make sure they're being run the right way.
-                </p>
-              </div>
-              <div className="col-xs-12 col-sm-4">
-                <p> The Autodesk BioNano group is building a modern, open infrastructure for
-                     computer-aided biological and nanoscale design. To do this, we need
-                     to have reliable, reproducible molecular simulation, so that scientists,
+                <p> The Autodesk BioNano group is building MST as part of our mission to
+                     build a modern, open, and accessible software for
+                     computer-aided biological and nanoscale design. Reliable,
+                     reproducible molecular
+                     simulation will allow scientists,
                      engineers, and designers can understand the properties of their molecular
                      building materials.
                 </p>
@@ -168,7 +164,7 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <h3>MAKE YOUR OWN</h3>
+                <h3>DEVELOPERS</h3>
               </div>
             </div>
             <div className="row">
@@ -177,7 +173,7 @@ class HomePage extends React.Component {
                   Make your science open, sharable and reproducible
                 </h4>
               </div>
-              <div className="col-sm-4 col-xs-6 creator-images">
+{/*              <div className="col-sm-4 col-xs-6 creator-images">
                 {
                   this.state.workflows.map((workflow, index) => (
                     <img
@@ -189,7 +185,7 @@ class HomePage extends React.Component {
                     />
                   ))
                 }
-              </div>
+              </div>*/}
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-4">
@@ -211,14 +207,15 @@ class HomePage extends React.Component {
                     of tools that can help you build flexible pipelines that can run from the
                     command line or a web browser.
                 </p>
-              </div>
-              <div className="col-xs-12 col-sm-4">
                 <p>
                   It's still early days and there's lots to be done. If you're interested in
                     developing your own deployable applications - get in contact with us. We're
                     looking for good use cases that will have material impact on molecular design,
                     and can work with you to help give your research impact for a wide audience.
                 </p>
+              </div>
+              <div className="col-xs-12 col-sm-4">
+
               </div>
             </div>
             <div className="row">
