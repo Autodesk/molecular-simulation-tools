@@ -73,7 +73,7 @@ const test_utils = {
       .then(result => {
         var inputs = result.outputs;
         const formData = {
-          email: "dionjw@gmail.com",
+          email: null,
           inputs: inputs,
           workflowId: 0
         };
