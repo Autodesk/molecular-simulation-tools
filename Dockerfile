@@ -66,11 +66,9 @@ ADD ./server/package.json $APP/server/package.json
 WORKDIR $APP/server
 RUN npm install
 
-# ADD ./server $APP/server
 RUN touch .env
-RUN echo "NODE_ENV=production" > .env
-
-# RUN cd $APP/server && npm install
+ADD ./server/.e*  $APP/server/
+RUN echo "NODE_ENV=production" >> .env
 ADD ./server/bin $APP/server/bin
 ADD ./server/constants $APP/server/constants
 ADD ./server/etc $APP/server/etc
