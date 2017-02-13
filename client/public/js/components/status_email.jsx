@@ -1,4 +1,5 @@
 import React from 'react';
+import Input from './input';
 import isEmail from 'validator/lib/isEmail';
 
 require('../../css/status_email.scss');
@@ -52,14 +53,13 @@ class StatusEmail extends React.Component {
         <form
           onSubmit={this.onSubmit}
         >
-          <input
-            className="enterEmail"
-            style={{ width: '100%' }}
+          <Input
             type="email"
             autoComplete="email"
             placeholder="Enter email"
             value={this.state.email}
             onChange={this.onChange}
+            onClick={this.onSubmit}
           />
           <p className="error">
             {this.state.emailError ? this.state.emailError : ''}
