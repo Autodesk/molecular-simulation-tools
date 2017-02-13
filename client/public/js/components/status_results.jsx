@@ -1,3 +1,4 @@
+import { List as IList } from 'immutable';
 import React from 'react';
 import Button from './button';
 
@@ -23,8 +24,24 @@ class StatusResults extends React.Component {
   }
 
   render() {
-    // Round so that the number doesn't overflow the UI
-    const value = Math.round(this.props.resultValue * 10000) / 10000;
+    const stats = this.props.resultValues.map((resultValue) => {
+      // Round so that the number doesn't overflow the UI
+      const value = Math.round(resultValue.value * 10000) / 10000;
+
+      return (
+        <div className="stat">
+          <div className="fontHeader line stat-title">
+            <div>{resultValue.name.toUpperCase()}</div>
+            <div>{resultValue.unit}</div>
+          </div>
+          <div className="stat-body">
+            <div className="stat-body-item">
+              <div className="fontLarge">{value}</div>
+            </div>
+          </div>
+        </div>
+      );
+    });
 
     let downloadButton;
     if (this.props.outputPdbUrl) {
@@ -41,17 +58,7 @@ class StatusResults extends React.Component {
     return (
       <div className="status-results">
         <div className="stats">
-          <div className="stat">
-            <div className="fontHeader line stat-title">
-              <div>{this.props.resultName.toUpperCase()}</div>
-              <div>{this.props.resultUnit}</div>
-            </div>
-            <div className="stat-body">
-              <div className="stat-body-item">
-                <div className="fontLarge">{value}</div>
-              </div>
-            </div>
-          </div>
+          {stats}
           <div>
             <label className="fontHeader morph-label" htmlFor="morph">MORPH</label>
             <input
@@ -75,9 +82,7 @@ class StatusResults extends React.Component {
 
 StatusResults.defaultProps = {
   outputPdbUrl: '',
-  resultName: '',
-  resultUnit: '',
-  resultValue: 0,
+  resultValues: new IList(),
 };
 
 StatusResults.propTypes = {
@@ -86,9 +91,7 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultName: React.PropTypes.string,
-  resultUnit: React.PropTypes.string,
-  resultValue: React.PropTypes.number,
+  resultValues: React.PropTypes.instanceOf(IList),
 };
 
 export default StatusResults;

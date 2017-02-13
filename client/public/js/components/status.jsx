@@ -93,18 +93,14 @@ function Status(props) {
     const outputResultsIndex = ioUtils.getIndexByExtension(
       props.workflow.run.outputs, '.json',
     );
-    let resultName;
-    let resultUnit;
-    let resultValue;
+    let resultValues;
 
     if (outputResultsIndex !== -1) {
       const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
         .fetchedValue;
 
-      if (outputResults.singlet_energy) {
-        resultName = outputResults.singlet_energy.name;
-        resultUnit = outputResults.singlet_energy.units;
-        resultValue = outputResults.singlet_energy.value;
+      if (outputResults.output_values) {
+        resultValues = outputResults.output_values;
       }
     }
 
@@ -120,9 +116,7 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
-        resultName={resultName}
-        resultUnit={resultUnit}
-        resultValue={resultValue}
+        resultValues={resultValues}
         outputPdbUrl={outputPdbUrl}
       />
     );
