@@ -105,7 +105,12 @@ class View extends React.Component {
           <div className="animBack">
             <img src={loadImg} alt="loading" />
           </div>
-          <p className="anim">Loading! Great things ahead...</p>
+          <p className="anim">
+            Preparing your molecule now ...
+          </p>
+          <p className="bodyFont">
+            (This should only take a few seconds, but there may be delays with heavy traffic)
+          </p>
         </div>
       );
     } else if (this.props.error) {
