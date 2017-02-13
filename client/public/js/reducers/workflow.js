@@ -122,10 +122,14 @@ function workflow(state = initialState, action) {
       }));
 
     case actionConstants.PROCESSED_INPUT_STRING: {
-      const ligands = action.data ? Object.keys(action.data.ligands) : [];
+      let ligands = new IList();
       const inputs = action.inputs ?
         action.inputs.map(input => new IoRecord(input)) :
-        [];
+        new IList();
+
+      if (inputs.size) {
+        ligands = ioUtils.getLigandNames(inputs);
+      }
 
       return state.set('run', state.run.merge({
         fetchingData: false,
