@@ -139,19 +139,12 @@ const test_utils = {
       //Step 2
       .then(result => {
         var inputs = result.outputs;
-        // for (outputName in result.outputs) {
-        //   inputs.push({
-        //     name: outputName,
-        //     type: 'url',
-        //     value: result.outputs[outputName]
-        //   });
-        // }
         inputs.push({
           name: 'selection.json',
           value: fs.readFileSync('test/selection.json', {encoding:'utf8'})
         });
         const formData = {
-          email: "dionjw@gmail.com",
+          email: null,
           inputs: inputs,
           workflowId: 1
         };
