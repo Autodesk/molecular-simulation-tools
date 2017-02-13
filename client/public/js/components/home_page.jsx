@@ -42,6 +42,7 @@ class HomePage extends React.Component {
           creatorImage={workflow.creatorImage}
           runCount={workflow.runCount}
           title={workflow.title}
+          description={workflow.description}
           viewCount={workflow.viewCount}
           id={workflow.id}
           key={index}

@@ -58,7 +58,7 @@ function WorkflowCard(props) {
         {props.title}
       </h5>
       <p className="cardInfo">
-        This is the place to put more information regarding this workflow
+          {props.description}
       </p>
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
@@ -80,6 +80,8 @@ WorkflowCard.propTypes = {
   runCount: React.PropTypes.number,
   title: React.PropTypes.string,
   viewCount: React.PropTypes.number,
+  description: React.PropTypes.string,
+    
 };
 
 export default WorkflowCard;
