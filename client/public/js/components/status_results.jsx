@@ -53,7 +53,7 @@ class StatusResults extends React.Component {
             </div>
           </div>
           <div>
-            <label className="fontHeader morph-label" htmlFor="morph">MORPH</label>
+            <label className="fontHeader morph-label" htmlFor="morph">VIEW TRAJECTORY</label>
             <input
               id="morph"
               type="range"
