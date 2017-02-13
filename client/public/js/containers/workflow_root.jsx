@@ -40,9 +40,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(workflowId, email, inputs) {
+    clickRun(workflowId, email, inputs, selectedLigand) {
       return () => {
-        dispatch(clickRun(workflowId, email, inputs));
+        dispatch(clickRun(workflowId, email, inputs, selectedLigand));
       };
     },
     clickWorkflowNodeLigandSelection() {
@@ -96,7 +96,10 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id, stateProps.workflow.run.email, stateProps.workflow.run.inputs,
+      stateProps.workflow.id,
+      stateProps.workflow.run.email,
+      stateProps.workflow.run.inputs,
+      stateProps.workflow.run.selectedLigand,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),

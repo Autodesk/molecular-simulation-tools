@@ -39,9 +39,11 @@ class View extends React.Component {
 
     return new Promise((resolve) => {
       const molViewInitialized = () => {
-        this.moleculeViewer.mv.removeEventListener(
-          MOL_VIEW_INITIALIZED, molViewInitialized,
-        );
+        if (this.moleculeViewer) {
+          this.moleculeViewer.mv.removeEventListener(
+            MOL_VIEW_INITIALIZED, molViewInitialized,
+          );
+        }
         resolve();
       };
 
@@ -54,9 +56,11 @@ class View extends React.Component {
   addModelToMoleculeViewer(modelData) {
     return new Promise((resolve) => {
       const molViewModelLoaded = () => {
-        this.moleculeViewer.mv.removeEventListener(
-          MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
-        );
+        if (this.moleculeViewer) {
+          this.moleculeViewer.mv.removeEventListener(
+            MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
+          );
+        }
         resolve();
       };
 
