@@ -43,7 +43,7 @@ class StatusResults extends React.Component {
         <div className="stats">
           <div className="stat">
             <div className="fontHeader line stat-title">
-              <div>OUTPUT ENERGY</div>
+              <div>{this.props.resultName.toUpperCase()}</div>
               <div>{this.props.resultUnit}</div>
             </div>
             <div className="stat-body">
@@ -75,8 +75,9 @@ class StatusResults extends React.Component {
 
 StatusResults.defaultProps = {
   outputPdbUrl: '',
-  resultValue: 0,
+  resultName: '',
   resultUnit: '',
+  resultValue: 0,
 };
 
 StatusResults.propTypes = {
@@ -85,8 +86,9 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValue: React.PropTypes.number,
+  resultName: React.PropTypes.string,
   resultUnit: React.PropTypes.string,
+  resultValue: React.PropTypes.number,
 };
 
 export default StatusResults;
