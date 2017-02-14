@@ -60,6 +60,7 @@ class AppBar extends React.Component {
               <img className="shareButton" src={shareFacebookImage} alt="facebook" />
             </div>
           </Popover>
+          {/*
           <button
             className="appLink"
             ref={(c) => { this.shareButton = c; }}
@@ -67,6 +68,7 @@ class AppBar extends React.Component {
           >
             Share
           </button>
+          */}
           <Link className="appLink" to="/#join">Join</Link>
           <button className="appLink" >Help</button>
         </div>
