@@ -124,12 +124,10 @@ function Status(props) {
   } else if (
     props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION
   ) {
-    const ligands = props.workflow.run.inputPdbProcessingData ?
-      props.workflow.run.inputPdbProcessingData.get('ligands') : null;
     selection = (
       <StatusLigandSelection
         changeLigandSelection={props.changeLigandSelection}
-        ligands={ligands}
+        ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
         selectedLigand={props.selectedLigand}
       />
     );

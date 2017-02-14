@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map as IMap } from 'immutable';
+import { List as IList } from 'immutable';
 
 import '../../css/status_ligand_selection.scss';
 
@@ -18,20 +18,18 @@ class StatusLigandSelection extends React.Component {
 
   render() {
     let ligands;
-    if (!this.props.ligands) {
+    if (!this.props.ligandNames) {
       ligands = (
         <p>Please select an input with ligands in step 1.</p>
       );
     } else {
-      const ligandNames = this.props.ligands.keySeq();
-
-      if (ligandNames.size <= 0) {
+      if (this.props.ligandNames.size <= 0) {
         throw new Error('Invalid ligands');
       }
-      if (ligandNames.size === 1) {
+      if (this.props.ligandNames.size === 1) {
         ligands = (
           <p>
-            We&#39;ll use the only ligand available, {ligandNames.get(0)}.
+            We&#39;ll use the only ligand available, {this.props.ligandNames.get(0)}.
           </p>
         );
       } else {
@@ -42,7 +40,7 @@ class StatusLigandSelection extends React.Component {
             </p>
             <ul>
               {
-                ligandNames.map((ligandName, index) =>
+                this.props.ligandNames.map((ligandName, index) =>
                   <li className="ligand" key={index}>
                     <input
                       type="radio"
@@ -72,7 +70,7 @@ class StatusLigandSelection extends React.Component {
 
 StatusLigandSelection.propTypes = {
   changeLigandSelection: React.PropTypes.func,
-  ligands: React.PropTypes.instanceOf(IMap),
+  ligandNames: React.PropTypes.instanceOf(IList),
   selectedLigand: React.PropTypes.string,
 };
 

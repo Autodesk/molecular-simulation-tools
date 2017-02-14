@@ -1,8 +1,10 @@
+import { List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
+import ioUtils from '../utils/io_utils';
 
 const initialState = new WorkflowRecord();
 
@@ -98,15 +100,18 @@ function workflow(state = initialState, action) {
       }));
 
     case actionConstants.INPUT_FILE_COMPLETE: {
-      const ligands = action.data ? Object.keys(action.data.ligands) : [];
-      const inputs = action.inputs ?
-        action.inputs.map(input => new IoRecord(input)) :
-        [];
+      let ligands = new IList();
+      const inputs = action.inputs ? action.inputs : new IList();
+
+      if (inputs.size) {
+        ligands = ioUtils.getLigandNames(inputs);
+      }
+
       return state.set('run', state.run.merge({
         inputFilePending: false,
         inputFileError: action.error,
         inputs,
-        selectedLigand: ligands.length === 1 ? ligands[0] : '',
+        selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
       }));
     }
 
@@ -118,16 +123,20 @@ function workflow(state = initialState, action) {
       }));
 
     case actionConstants.PROCESSED_INPUT_STRING: {
-      const ligands = action.data ? Object.keys(action.data.ligands) : [];
+      let ligands = new IList();
       const inputs = action.inputs ?
         action.inputs.map(input => new IoRecord(input)) :
-        [];
+        new IList();
+
+      if (inputs.size) {
+        ligands = ioUtils.getLigandNames(inputs);
+      }
 
       return state.set('run', state.run.merge({
         fetchingData: false,
         fetchingDataError: action.error,
         inputs,
-        selectedLigand: ligands.length === 1 ? ligands[0] : '',
+        selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
       }));
     }
 

@@ -15,11 +15,11 @@ const apiUtils = {
    * @param inputs {IList}
    * @returns {Promise}
    */
-  run(workflowId, email, inputs) {
+  run(workflowId, email, inputs, selectedLigand) {
     return axios.post(`${API_URL}/v1/run`, {
       workflowId,
       email,
-      inputs: ioUtils.formatInputsForServer(inputs),
+      inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
     }).then(res => res.data.runId);
   },
 

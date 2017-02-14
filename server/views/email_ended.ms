@@ -122,7 +122,7 @@
 											<tbody><tr>
 												<td align="left" class="layout-block-column" width="562" style="min-width: 562px; ">
 													<div class="heading" eqid="EQMST-FF9D1092-8E09-4C3D-A01D-6CEF01A34D28" style="font-size: 16px; font-family: 'Lucida Grande'; ">
-														<font face="Arial" style="font-size: 22px; ">Good news! Your results are ready.</font></div>
+														<font face="Arial" style="font-size: 22px; ">Your simulation is done.</font></div>
 												</td>
 											</tr>
 										</tbody></table>
@@ -164,7 +164,7 @@
 											<tbody><tr>
 												<td align="left" class="layout-block-column" width="562" style="min-width: 562px; ">
 													<div class="text" eqid="EQMST-5C203A85-C3B0-4228-8F8A-3601DC7AA248" style="font-size: 16px; font-family: 'Lucida Grande'; line-height: 1.5; text-align: -webkit-left; ">
-														<font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Your workflow just completed.&nbsp;</span></font><span style="font-size: 14px; font-family: Helvetica, Arial, Roboto, 'Droid Sans', sans-serif; ">You can view and download your results here:</span>
+														<font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Your results are ready to view!&nbsp;</span></font><span style="font-size: 14px; font-family: Helvetica, Arial, Roboto, 'Droid Sans', sans-serif; ">View and download them here:</span>
 													</div>
 												</td>
 											</tr>
@@ -250,7 +250,7 @@
 											<tbody><tr>
 												<td align="left" class="layout-block-column" width="572" style="min-width: 572px; ">
 													<div class="text" eqid="EQMST-BDE4385C-6808-49E3-BD27-B25B53F81FA4" style="font-size: 16px; font-family: 'Lucida Grande'; ">
-														<font face="Arial" style="line-height: 1.5; font-size: 14px; ">See you soon.</font><div style="line-height: 1.5; "><font face="Arial" style="font-size: 14px; ">Your friendly MST team</font></div></div>
+														<font face="Arial" style="line-height: 1.5; font-size: 14px; ">Thanks for using MST!</font><div style="line-height: 1.5; "><font face="Arial" style="font-size: 14px; "> - The BioNano Research Group at Autodesk</font></div></div>
 												</td>
 											</tr>
 										</tbody></table>
