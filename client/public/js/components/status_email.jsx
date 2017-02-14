@@ -29,13 +29,13 @@ class StatusEmail extends React.Component {
 
   render() {
     const sendText = this.props.email ?
-      `We'll send you an email at ${this.props.email} when you start this calculation, and another when it's done.` : // eslint-disable-line max-len
-      'We\'ll send you an email at when you start this calculation, and another when it\'s done.';
+      `We'll send you an email at ${this.props.email} when you run this workflow, and another when it's done.` : // eslint-disable-line max-len
+      'We\'ll send you an email when you run this workflow, and another when it\'s done.';
 
     return (
       <div className="status=info status-email">
         <p>
-          This simulation might take about <span className="time">24 hours</span>.
+          This simulation might take about <span className="time">6 hours</span>.
         </p>
         <p>{sendText}</p>
         <form

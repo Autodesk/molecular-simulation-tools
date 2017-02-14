@@ -97,7 +97,7 @@ function WorkflowSteps(props) {
           disabled={runDisabled}
           throb={!runDisabled && !finished}
         >
-            Run
+            Run Workflow
         </Button>
       </div>,
 

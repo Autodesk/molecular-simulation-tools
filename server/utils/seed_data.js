@@ -21,7 +21,7 @@ const workflows = [
     color: '#F1FF66',
     comingSoon: false,
     creatorImage: '/img/logo1.png',
-    description: 'Refine the geometry of a protein/small molecule binding site using QM/MM',
+    description: 'Automatically parameterize and refine a small molecule bound to a protein',
     viewCount: 0,
   },
   {

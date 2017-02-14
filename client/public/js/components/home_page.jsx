@@ -149,11 +149,11 @@ class HomePage extends React.Component {
               </div>
               <div className="col-xs-12 col-sm-6">
                 <p> The Autodesk BioNano group is building MST as part of our mission to
-                     build a modern, open, and accessible software for
+                     build modern, open, and accessible software for
                      computer-aided biological and nanoscale design. Reliable,
                      reproducible molecular
                      simulation will allow scientists,
-                     engineers, and designers can understand the properties of their molecular
+                     engineers, and designers to understand the properties of their molecular
                      building materials.
                 </p>
               </div>
