@@ -16,13 +16,14 @@ function ThankYou(props) {
         </div>
         <p>
           Your simulation us up and running and will be completed within the
-          next 24 hours.
+          next 6 hours.
         </p>
         <p>
-          Be patient. We will send you an email once results are available.
+          Please be patient; we'll send you an with a link to this page as soon as the
+            results are available.
         </p>
         <p>
-          You can safely close your broser now.
+          You can now safely close this page.
         </p>
         <p>
           See you soon!

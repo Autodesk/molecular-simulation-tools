@@ -163,7 +163,7 @@
 											<tbody><tr>
 												<td align="left" class="layout-block-column" width="562" style="min-width: 562px; ">
 													<div class="text" eqid="EQMST-5C203A85-C3B0-4228-8F8A-3601DC7AA248" style="font-size: 16px; font-family: 'Lucida Grande'; line-height: 1.5; text-align: -webkit-left; ">
-														<div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Your simulation is being calculated and will be completed withing the next 24 hours. We will send you an email once results are available.&nbsp;</span></font></div><div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; "><br></span></font></div><div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Use this link to monitor, or cancel your simulation anytime.</span></font></div>
+														<div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Your calculation has been submitted! Results should be available within the next 6 hours. We'll send you an email as soon as they're available.&nbsp;</span></font></div><div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; "><br></span></font></div><div><font face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 14px; ">Use this link to check on or cancel your simulation, and to view the results when it's done:</span></font></div>
 													</div>
 												</td>
 											</tr>
@@ -249,7 +249,7 @@
 											<tbody><tr>
 												<td align="left" class="layout-block-column" width="572" style="min-width: 572px; ">
 													<div class="text" eqid="EQMST-BDE4385C-6808-49E3-BD27-B25B53F81FA4" style="font-size: 16px; font-family: 'Lucida Grande'; ">
-														<font face="Arial" style="line-height: 1.5; font-size: 14px; ">See you soon.</font><div style="line-height: 1.5; "><font face="Arial" style="font-size: 14px; ">Your MST team</font></div></div>
+														<font face="Arial" style="line-height: 1.5; font-size: 14px; ">Thanks for using MST!</font><div style="line-height: 1.5; "><font face="Arial" style="font-size: 14px; "> - The BioNano Research Group at Autodesk</font></div></div>
 												</td>
 											</tr>
 										</tbody></table>
