@@ -49,7 +49,8 @@ function Workflow(props) {
     );
   }
 
-  const loadingOrError = props.workflow.fetching || props.workflow.fetchingError;
+  const loadingOrError =
+    !!(props.workflow.fetching || props.workflow.fetchingError);
 
   return (
     <div className="workflow">
