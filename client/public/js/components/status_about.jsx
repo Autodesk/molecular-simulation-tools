@@ -16,7 +16,7 @@ function StatusAbout() {
       </p>
       <p>
         Quantum calculations are performed using the
-        <a href="http://www.nwchem-sw.org/">NWChem quantum chemistry suite. </a>
+        <a href="http://www.nwchem-sw.org/"> NWChem</a> quantum chemistry suite.
         <a href="https://github.com/avirshup/chemworkflows/blob/master/chemworkflows/apps/vde.py">
             Click here to see this workflow definition.
         </a>
