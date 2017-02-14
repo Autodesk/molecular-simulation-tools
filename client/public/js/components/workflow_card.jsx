@@ -71,15 +71,15 @@ function WorkflowCard(props) {
 }
 
 WorkflowCard.propTypes = {
-  bgColor: React.PropTypes.string,
-  bgIndex: React.PropTypes.number,
-  color: React.PropTypes.string,
-  comingSoon: React.PropTypes.bool,
+  bgColor: React.PropTypes.string.isRequired,
+  bgIndex: React.PropTypes.number.isRequired,
+  color: React.PropTypes.string.isRequired,
+  comingSoon: React.PropTypes.bool.isRequired,
   creatorImage: React.PropTypes.string.isRequired,
   id: React.PropTypes.string.isRequired,
-  runCount: React.PropTypes.number,
-  title: React.PropTypes.string,
-  viewCount: React.PropTypes.number,
+  runCount: React.PropTypes.number.isRequired,
+  title: React.PropTypes.string.isRequired,
+  viewCount: React.PropTypes.number.isRequired,
 };
 
 export default WorkflowCard;
