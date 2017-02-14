@@ -19,8 +19,6 @@
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.6);
-    -webkit-transition: 0.2s; 
-    transition: 0.2s;
 
     .icon-finished {
       display: none;
@@ -45,6 +43,16 @@
       background: transparent;
       color: rgba(255, 255, 255, 0.4);
     }
+  }
+
+  @keyframes throb {
+    0%   { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  &.throb {
+    animation: throb 1s infinite;
   }
 
   .icon-finished {
