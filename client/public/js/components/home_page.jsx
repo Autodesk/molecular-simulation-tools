@@ -27,6 +27,14 @@ class HomePage extends React.Component {
     apiUtils.getWorkflows().then(workflows =>
       this.setState({ workflows }),
     ).catch(console.error.bind(console)); // eslint-disable-line no-console
+
+    // Do initial load hash navigation
+    if (this.props.location.hash) {
+      const node = document.querySelector(this.props.location.hash);
+      if (node) {
+        node.scrollIntoView();
+      }
+    }
   }
 
   render() {
@@ -260,6 +268,7 @@ HomePage.defaultProps = {
 };
 
 HomePage.propTypes = {
+  location: React.PropTypes.object,
   workflows: React.PropTypes.arrayOf(WorkflowRecord),
 };
 

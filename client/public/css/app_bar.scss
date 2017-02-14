@@ -66,6 +66,7 @@ $menu-secondary: #ffffff;
     transition: 0.2s;
 
     &:focus {
+      text-decoration: none;
       outline: 0;
     }
 
@@ -74,6 +75,14 @@ $menu-secondary: #ffffff;
       text-decoration: none;
       -webkit-transition: 0.2s; 
       transition: 0.2s;
+    }
+
+    &:visited {
+      color: $menu-secondary;
+
+      &:hover {
+        color: $menu-primary;
+      }
     }
   }
 
