@@ -87,6 +87,7 @@ function Status(props) {
       <StatusEmail
         submitEmail={props.submitEmail}
         email={props.workflow.run.email}
+        emailError={props.workflow.run.emailError}
       />
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {

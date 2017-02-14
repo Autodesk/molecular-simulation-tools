@@ -4,6 +4,7 @@ import { statusConstants } from 'molecular-design-applications-shared';
 const RunRecord = new Record({
   canceling: false,
   email: '',
+  emailError: '',
   fetchingData: false, // for any pdb or io data
   fetchingDataError: null,
   id: null,
