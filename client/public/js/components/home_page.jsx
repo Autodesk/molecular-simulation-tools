@@ -110,7 +110,8 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <h3>LATEST TOOLS</h3>
+                <h3>LATEST WORKFLOWS</h3>
+                <h5>Use Google Chrome for best results</h5>
               </div>
             </div>
             <div className="row">
@@ -149,11 +150,11 @@ class HomePage extends React.Component {
               </div>
               <div className="col-xs-12 col-sm-6">
                 <p> The Autodesk BioNano group is building MST as part of our mission to
-                     build a modern, open, and accessible software for
+                     build modern, open, and accessible software for
                      computer-aided biological and nanoscale design. Reliable,
                      reproducible molecular
                      simulation will allow scientists,
-                     engineers, and designers can understand the properties of their molecular
+                     engineers, and designers to understand the properties of their molecular
                      building materials.
                 </p>
               </div>
@@ -219,11 +220,6 @@ class HomePage extends React.Component {
 
               </div>
             </div>
-            <div className="row">
-              <div className="col-xs-12 col-sm-4 text-left">
-                <button type="button" className="contactButton">Contact Us</button>
-              </div>
-            </div>
           </div>
         </div>
         <div className="contactSection" id="contact">
@@ -232,8 +228,8 @@ class HomePage extends React.Component {
               <div className="col-sm-4" style={{ paddingBottom: '60px' }}>
                 <div className="line" />
                 <p><b className="footerLink">Contact us</b></p>
-                <a href="mailto:contact.bionano@autodesk.com" className="footerLink">
-                  Contact.BioNano@Autodesk.com
+                <a href="mailto:MolecularDesignToolkit@Autodesk.com" className="footerLink">
+                    MolecularDesignToolkit@Autodesk.com
                 </a>
               </div>
               <div className="col-sm-4" style={{ paddingBottom: '60px' }}>
