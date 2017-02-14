@@ -140,7 +140,13 @@ function workflow(state = initialState, action) {
     }
 
     case actionConstants.SUBMIT_EMAIL:
-      return state.set('run', state.run.set('email', action.email));
+      if (action.error) {
+        return state.set('run', state.run.set('emailError', action.error));
+      }
+      return state.set('run', state.run.merge({
+        email: action.email,
+        emailError: '',
+      }));
 
     case actionConstants.CLICK_CANCEL:
       return state.set('run', state.run.set('canceling', true));

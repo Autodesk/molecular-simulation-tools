@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
@@ -72,7 +73,7 @@ export function initializeRun(workflowId, runId) {
       console.error(error);
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
-        error,
+        error: error ? (error.message || error) : null,
       });
     }
   };
@@ -216,6 +217,13 @@ export function submitInputString(input, workflowId) {
 }
 
 export function submitEmail(email) {
+  if (!isEmail(email)) {
+    return {
+      type: actionConstants.SUBMIT_EMAIL,
+      error: 'Invalid email',
+    };
+  }
+
   return {
     type: actionConstants.SUBMIT_EMAIL,
     email,

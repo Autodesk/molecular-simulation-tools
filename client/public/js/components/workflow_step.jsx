@@ -11,17 +11,20 @@ class WorkflowStep extends React.Component {
   }
 
   onClick() {
-    this.props.onClick(this.props.id);
+    if (!this.props.disabled) {
+      this.props.onClick();
+    }
   }
 
   render() {
     const rightIcon = componentUtils.getIcon(this.props.status);
     const selectedClass = this.props.selected ? 'selected' : '';
     const lastClass = this.props.last ? 'last' : '';
+    const disabledClass = this.props.disabled ? 'disabled' : '';
 
     return (
       <li
-        className={`node ${selectedClass} ${lastClass}`}
+        className={`node ${selectedClass} ${lastClass} ${disabledClass}`}
         onClick={this.onClick}
       >
         <span>{`${this.props.number}. ${this.props.primaryText}`}</span>
@@ -31,14 +34,20 @@ class WorkflowStep extends React.Component {
   }
 }
 
+WorkflowStep.defaultProps = {
+  disabled: false,
+  last: false,
+  selected: false,
+};
+
 WorkflowStep.propTypes = {
+  disabled: React.PropTypes.bool,
   last: React.PropTypes.bool,
   onClick: React.PropTypes.func.isRequired,
   number: React.PropTypes.number.isRequired,
   selected: React.PropTypes.bool,
-  status: React.PropTypes.string,
+  status: React.PropTypes.string.isRequired,
   primaryText: React.PropTypes.string.isRequired,
-  id: React.PropTypes.number,
 };
 
 export default WorkflowStep;

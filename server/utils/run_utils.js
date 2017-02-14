@@ -35,14 +35,18 @@ const runUtils = {
 
       const run = JSON.parse(runString);
 
-      return emailUtils.send(
-        run.email,
-        'Your Workflow Has Ended',
-        './views/email_ended.ms',
-        {
-          runUrl: `${process.env.FRONTEND_URL}/workflow/${run.workflowId}/${run.id}`,
-        }
-      );
+      if (run.email) {
+        return emailUtils.send(
+            run.email,
+            'Your Workflow Has Ended',
+            './views/email_ended.ms',
+            {
+              runUrl: `${process.env.FRONTEND_URL}/workflow/${run.workflowId}/${run.id}`,
+            }
+          );
+      } else {
+        return Promise.resolve(true);
+      }
     }).catch(console.error.bind(console));
   },
 
@@ -127,17 +131,17 @@ const runUtils = {
         log.info({workflowId, runId});
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
-        emailUtils.send(
-          email,
-          'Your Workflow is Running',
-          'views/email_thanks.ms',
-          { runUrl }
-        )
-        .catch(err => {
-          log.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
-        });
-        //Record the runId with all the other data
-        const emailPromise = redis.sadd(dbConstants.REDIS_WORKFLOW_EMAIL_SET, email);
+        if (email) {
+          emailUtils.send(
+            email,
+            'Your Workflow is Running',
+            'views/email_thanks.ms',
+            { runUrl }
+          )
+          .catch(err => {
+            log.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
+          });
+        }
 
         const runPayload = {
           id: runId,
@@ -151,7 +155,7 @@ const runUtils = {
         const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(runPayload));
         const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
 
-        return Promise.all([emailPromise, runPromise, statePromise]).then(() => {
+        return Promise.all([runPromise, statePromise]).then(() => {
           return runId;
         });
       })

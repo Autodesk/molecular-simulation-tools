@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from './button';
+import Input from './input';
 
 require('../../css/status_load.scss');
 
@@ -52,14 +53,14 @@ class StatusLoad extends React.Component {
             className="defInput"
             onSubmit={this.onSubmitInputString}
           >
-            <input
+            <Input
               className={`enterMolecule ${inputErrorClass}`}
-              style={{ width: '215px' }}
               type="text"
               placeholder="Enter molecule here"
               disabled={disabled}
               value={this.state.pdbId}
               onChange={this.onChangePdbId}
+              onClick={this.onSubmitInputString}
             />
           </form>
           <p className="bodyFont">

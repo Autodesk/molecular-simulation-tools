@@ -26,6 +26,12 @@ function WorkflowSteps(props) {
     statusConstants.COMPLETED : statusConstants.IDLE;
   let emailLast = true;
 
+  const loadCompleted = loadStatus === statusConstants.COMPLETED;
+  const ligandStatus = props.workflow.run.selectedLigand ?
+    statusConstants.COMPLETED : statusConstants.IDLE;
+  const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
+    ligandStatus === statusConstants.COMPLETED);
+
   let resultsNode;
   if (props.workflow.run.status === statusConstants.COMPLETED) {
     emailLast = false;
@@ -45,17 +51,16 @@ function WorkflowSteps(props) {
 
   let selectLigandsNode;
   if (props.workflow.selectLigands) {
-    const status = props.workflow.run.selectedLigand ?
-      statusConstants.COMPLETED : statusConstants.IDLE;
     const ligandSelectionSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION;
     selectLigandsNode = (
       <WorkflowStep
+        disabled={!loadCompleted}
         primaryText={'Ligand Selection'}
         number={2}
         onClick={props.clickWorkflowNodeLigandSelection}
         selected={ligandSelectionSelected}
-        status={status}
+        status={ligandStatus}
       />
     );
   }
@@ -74,6 +79,7 @@ function WorkflowSteps(props) {
           />
           {selectLigandsNode}
           <WorkflowStep
+            disabled={!ligandCompleted}
             primaryText={'Enter email'}
             number={selectLigandsNode ? 3 : 2}
             onClick={props.clickWorkflowNodeEmail}
@@ -109,6 +115,10 @@ function WorkflowSteps(props) {
   );
 }
 
+WorkflowSteps.defaultProps = {
+  error: false,
+};
+
 WorkflowSteps.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
@@ -117,7 +127,7 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   error: React.PropTypes.bool,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

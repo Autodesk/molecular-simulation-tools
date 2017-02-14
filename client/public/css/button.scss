@@ -73,4 +73,12 @@
     border-color: $error;
     color: $error;
   }
+
+  &.input {
+    height: 41px;
+    margin: 0;
+    background-color: #5b6278;
+    color: #ffffff;
+    border-radius: 0 4px 4px 0;
+  }
 }
