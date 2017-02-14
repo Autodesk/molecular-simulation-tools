@@ -46,11 +46,11 @@ function WorkflowCard(props) {
           backgroundImage: `url(${bgImage})`,
         }}
       />
-      <img
+{/*      <img
         src={`${process.env.API_URL}${props.creatorImage}`}
         alt="card logo"
         className="cardLogo"
-      />
+      />*/}
       <h5
         className="cardTitle"
         style={{ color: props.color || '#ffffff' }}
@@ -58,7 +58,7 @@ function WorkflowCard(props) {
         {props.title}
       </h5>
       <p className="cardInfo">
-        This is the place to put more information regarding this workflow
+          {props.description}
       </p>
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
@@ -80,6 +80,7 @@ WorkflowCard.propTypes = {
   runCount: React.PropTypes.number.isRequired,
   title: React.PropTypes.string.isRequired,
   viewCount: React.PropTypes.number.isRequired,
+  description: React.PropTypes.string,
 };
 
 export default WorkflowCard;

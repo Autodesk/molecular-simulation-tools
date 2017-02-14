@@ -1,3 +1,6 @@
+import { List as IList } from 'immutable';
+import IoRecord from '../records/io_record';
+
 const ioUtils = {
   /**
    * Given a list of ios, find the first pdb io and get the pdb data.
@@ -27,14 +30,81 @@ const ioUtils = {
   },
 
   /**
-   * Returns new inputs with all client-only fields removed, converted to array
+   * Given a list of ios, find and return a list of all ligands in results data
+   * @param ios {IList}
+   * @returns {IList}
+   */
+  getLigandNames(ios) {
+    return ios.reduce((reduction, io) => {
+      if (!io.value.endsWith('.json') || !io.fetchedValue || !io.fetchedValue.ligands) {
+        return reduction;
+      }
+      const ligandNames = new IList(Object.keys(io.fetchedValue.ligands));
+      return reduction.concat(ligandNames);
+    }, new IList());
+  },
+
+  /**
+   * From the given ios, returns all ligand selection strings found
+   * @param ios {IList}
+   * @param ligandName {String}
+   * @return {Array}
+   */
+  getLigandSelectionStrings(ios, ligandName) {
+    const ioWithLigand = ioUtils.getIoWithLigand(ios, ligandName);
+
+    if (!ioWithLigand) {
+      return new IList();
+    }
+
+    return ioWithLigand.fetchedValue.mv_ligand_strings[ligandName];
+  },
+
+  /**
+   * From the given ios, returns the one that contains the given ligand name in
+   * its json results, or undefined if none
+   * @param ios {IList}
+   * @param ligandName {String}
+   * @returns {IoRecord}
+   */
+  getIoWithLigand(ios, ligandName) {
+    return ios.find((io) => {
+      if (!io.value.endsWith('.json')) {
+        return false;
+      }
+      if (!io.fetchedValue || !io.fetchedValue.mv_ligand_strings) {
+        return false;
+      }
+
+      return io.fetchedValue.mv_ligand_strings[ligandName];
+    });
+  },
+
+  /**
+   * Returns new inputs with all client-only fields removed, and selection.json
+   * added, with everything converted to an array
    * @param inputs {IList}
    * @returns {Array}
    */
-  formatInputsForServer(inputs) {
-    return inputs.map(input =>
+  formatInputsForServer(inputs, selectedLigand) {
+    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, selectedLigand);
+
+    let serverInputs = inputs.map(input =>
       input.set('fetchedValue', null),
-    ).toJS();
+    );
+
+    if (selectedLigandInput) {
+      serverInputs = serverInputs.push(new IoRecord({
+        name: 'selection.json',
+        type: 'inline',
+        value: JSON.stringify({
+          ligandname: selectedLigand,
+          atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
+        }),
+      }));
+    }
+
+    return serverInputs;
   },
 };
 

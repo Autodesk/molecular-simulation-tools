@@ -16,6 +16,7 @@ const WorkflowRecord = new Record({
   title: '',
   viewCount: 0,
   workflowNodes: new IList(),
+  description: 'no description provided',
 });
 
 export default WorkflowRecord;
