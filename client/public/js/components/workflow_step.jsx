@@ -12,7 +12,7 @@ class WorkflowStep extends React.Component {
 
   onClick() {
     if (!this.props.disabled) {
-      this.props.onClick(this.props.id);
+      this.props.onClick();
     }
   }
 
@@ -48,7 +48,6 @@ WorkflowStep.propTypes = {
   selected: React.PropTypes.bool,
   status: React.PropTypes.string.isRequired,
   primaryText: React.PropTypes.string.isRequired,
-  id: React.PropTypes.number.isRequired,
 };
 
 export default WorkflowStep;

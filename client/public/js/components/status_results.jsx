@@ -29,7 +29,7 @@ class StatusResults extends React.Component {
       const value = Math.round(resultValue.value * 10000) / 10000;
 
       return (
-        <div className="stat">
+        <div className="stat" key={resultValue.name}>
           <div className="fontHeader line stat-title">
             <div>{resultValue.name.toUpperCase()}</div>
             <div>{resultValue.units}</div>
@@ -91,7 +91,7 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValues: React.PropTypes.instanceOf(IList),
+  resultValues: React.PropTypes.instanceOf(Array),
 };
 
 export default StatusResults;
