@@ -9,7 +9,7 @@
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
-  -webkit-transition: 0.2s; 
+  -webkit-transition: 0.2s;
   transition: 0.2s;
 
   &.last {
@@ -28,7 +28,7 @@
       display: inline-block;
     }
   }
-    
+
   &.selected {
     background-color: rgba(255, 255, 255, 0.2);
     border-bottom: 1px rgba(255, 255, 255, 0) solid;
@@ -47,11 +47,11 @@
 
   @keyframes throb {
     0% { background-color: rgba(255, 255, 255, 0.18);
-         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) inset; }
+         box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset; }
     50% { background-color: rgba(255, 255, 255, 0.05);
-           box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.02) inset; }
+           box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset; }
     100% { background-color: rgba(255, 255, 255, 0.18);
-          box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) inset; }
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset; }
   }
 
   &.throb {
