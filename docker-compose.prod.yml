@@ -11,6 +11,7 @@ services:
       CCC: "ccc.bionano.autodesk.com:9000"
       NODE_ENV: "production"
       FRONTEND_URL: "http://molsim.bionano.autodesk.com/"
+      URL: "http://molsim.bionano.autodesk.com/"
     logging:
       driver: json-file
       options:
