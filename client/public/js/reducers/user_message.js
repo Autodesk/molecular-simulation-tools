@@ -73,6 +73,15 @@ function userMessage(state = initialState, action) {
         message: 'Failed to submit run, check your connection and try again.',
       });
 
+    case actionConstants.SUBMIT_EMAIL:
+      if (!action.error) {
+        return initialState;
+      }
+      return state.merge({
+        autoClose: true,
+        message: action.error,
+      });
+
     default:
       return state;
   }

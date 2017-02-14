@@ -1,0 +1,29 @@
+@import 'variables';
+
+.input {
+  display: flex;
+
+  input {
+    flex: 1;
+    font-size: 12px;
+    border-radius: 4px 0 0 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+    padding: 11px;
+    outline: none;
+
+    &:focus {
+      outline: none;
+      border: 2px solid #5981FF;
+      padding: 10px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
+    &.error {
+      border-color: $error;
+    }
+  }
+}

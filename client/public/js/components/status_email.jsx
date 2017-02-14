@@ -1,5 +1,5 @@
 import React from 'react';
-import isEmail from 'validator/lib/isEmail';
+import Input from './input';
 
 require('../../css/status_email.scss');
 
@@ -12,7 +12,6 @@ class StatusEmail extends React.Component {
 
     this.state = {
       email: '',
-      emailError: '',
     };
   }
 
@@ -25,17 +24,7 @@ class StatusEmail extends React.Component {
   onSubmit(e) {
     e.preventDefault();
 
-    if (!isEmail(this.state.email)) {
-      return this.setState({
-        emailError: 'Invalid email',
-      });
-    }
-
     this.props.submitEmail(this.state.email);
-
-    return this.setState({
-      emailError: '',
-    });
   }
 
   render() {
@@ -52,18 +41,15 @@ class StatusEmail extends React.Component {
         <form
           onSubmit={this.onSubmit}
         >
-          <input
-            className="enterEmail"
-            style={{ width: '100%' }}
+          <Input
+            className={this.props.emailError ? 'error' : ''}
             type="email"
             autoComplete="email"
             placeholder="Enter email"
             value={this.state.email}
             onChange={this.onChange}
+            onClick={this.onSubmit}
           />
-          <p className="error">
-            {this.state.emailError ? this.state.emailError : ''}
-          </p>
         </form>
       </div>
     );
@@ -72,6 +58,7 @@ class StatusEmail extends React.Component {
 
 StatusEmail.propTypes = {
   email: React.PropTypes.string.isRequired,
+  emailError: React.PropTypes.string.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
 };
 
