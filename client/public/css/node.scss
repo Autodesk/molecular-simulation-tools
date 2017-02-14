@@ -46,12 +46,9 @@
   }
 
   @keyframes throb {
-    0% { background-color: rgba(255, 255, 255, 0.18);
-         box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset; }
-    50% { background-color: rgba(255, 255, 255, 0.05);
-           box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset; }
-    100% { background-color: rgba(255, 255, 255, 0.18);
-          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset; }
+    0% { background-color: rgba(255, 255, 255, 0.18);}
+    50% { background-color: rgba(255, 255, 255, 0.05);}
+    100% { background-color: rgba(255, 255, 255, 0.18);}
   }
 
   &.throb {
