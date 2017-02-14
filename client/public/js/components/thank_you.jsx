@@ -15,14 +15,14 @@ function ThankYou(props) {
           <div className="line" />
         </div>
         <p>
-          Your simulation us up and running and will be completed within the
-          next 6 hours.
+          Your simulation is up and running. It should finish within the next 6 hours.
         </p>
         <p>
-          Please be patient; we'll send you an with a link to this page as soon as the
+          Please be patient; we'll send you an email with a link to this page as soon as the
             results are available.
         </p>
         <p>
+          <br></br>
           You can now safely close this page.
         </p>
         <p>

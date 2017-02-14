@@ -7,10 +7,11 @@ function Button(props) {
   const typeClass = props.type ? props.type : '';
   const activeClass = props.active ? 'active' : '';
   const errorClass = props.error ? 'error' : '';
+  const throbClass = props.throb ? 'throb' : '';
 
   return (
     <button
-      className={`button ${disabledClass} ${typeClass} ${activeClass} ${errorClass}`}
+      className={`button ${disabledClass} ${typeClass} ${activeClass} ${errorClass} ${throbClass}`}
       onClick={props.onClick}
       disabled={props.disabled}
     >
@@ -26,6 +27,7 @@ Button.defaultProps = {
   disabled: false,
   onClick: null,
   type: null,
+  throb: false,
 };
 
 Button.propTypes = {
@@ -38,6 +40,7 @@ Button.propTypes = {
   disabled: React.PropTypes.bool,
   onClick: React.PropTypes.func,
   type: React.PropTypes.string,
+  throb: React.PropTypes.bool,
 };
 
 export default Button;

@@ -12,6 +12,7 @@ require('../../css/workflow_steps.scss');
 
 function WorkflowSteps(props) {
   const running = props.workflow.run.status === statusConstants.RUNNING;
+  const finished = props.workflow.run.status === statusConstants.COMPLETED;
   const runDisabled = running ||
     !workflowUtils.isRunnable(props.workflow.run);
 
@@ -31,6 +32,7 @@ function WorkflowSteps(props) {
     statusConstants.COMPLETED : statusConstants.IDLE;
   const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
     ligandStatus === statusConstants.COMPLETED);
+
 
   let resultsNode;
   if (props.workflow.run.status === statusConstants.COMPLETED) {
@@ -89,20 +91,22 @@ function WorkflowSteps(props) {
           />
           {resultsNode}
         </ol>
+        <Button
+          type="raised"
+          onClick={props.clickRun}
+          disabled={runDisabled}
+          throb={!runDisabled && !finished}
+        >
+            Run Workflow
+        </Button>
       </div>,
+
       <div key={1} className="actions">
         <Button
           onClick={props.clickAbout}
           active={aboutSelected}
         >
           About
-        </Button>
-        <Button
-          type="raised"
-          onClick={props.clickRun}
-          disabled={runDisabled}
-        >
-          Run
         </Button>
       </div>,
     ];

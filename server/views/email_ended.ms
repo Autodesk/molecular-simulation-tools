@@ -279,157 +279,7 @@
 					</tr>
 				</tbody></table>
 			</div>
-			
-			<div eqid="EQMST-BB0AAACE-36D4-41EF-9E19-115682C85E60" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-						<td height="40" background="{{assetsUrl}}/box-bg-10.jpg" class="layout-block-content-cell" bgcolor="#4563ff" width="592" eqid="EQMST-4A750957-7327-469D-8AF2-444120574C90" style="min-width: 592px; "><!--[if gte mso 9]>
-<v:rect style="width:592px;height:40px;" strokecolor="none">
-<v:fill type="tile" color="#4563ff" src="{{assetsUrl}}/box-bg-10.jpg"></v:fill>
-</v:rect><![endif]-->
-							<div class="spacer"></div>
-						<!--[if gte mso 9]>
-</v:rect>
-<![endif]--></td>
-						<td width="24" class="layout-block-padding-right" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-A3FA7818-0B0C-41B5-8F49-F696E923CBA5" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="min-width: 24px; ">&nbsp;</td>
-						<td valign="top" align="left" class="layout-block-content-cell" width="592" style="min-width: 592px; ">
-							<table cellspacing="0" cellpadding="0" align="left" class="layout-block-column" width="592" style="min-width: 592px; ">
-								<tbody><tr>
-									<td width="572" valign="top" align="left" background="{{assetsUrl}}/box-bg-10.jpg" style="padding-left: 10px; padding-right: 10px; min-width: 572px; " bgcolor="#4563ff" eqid="EQMST-3B4ECBC0-97A6-4FE1-9FAE-B0C29EDA0269">
-										<table cellspacing="0" cellpadding="0" class="layout-block-box-padding" width="572" style="min-width: 572px; ">
-											<tbody><tr>
-												<td align="left" class="layout-block-column" width="572" style="min-width: 572px; ">
-													<div class="heading" eqid="EQMST-E93D9D81-C7AC-4100-B0FF-18D069DCD1D4" style="font-size: 30px; font-family: Helvetica, Arial, Roboto, 'Droid Sans', sans-serif; line-height: 34px; text-align: -webkit-left; ">
-														<font color="#ffffff">Join Us</font>
-													</div>
-												</td>
-											</tr>
-										</tbody></table>
-									</td>
-								</tr>
-							</tbody></table>
-						</td>
-						<td width="24" class="layout-block-padding-right" style="min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-9400EE3D-B6F2-4EE5-B55D-A0180A9C39D3" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-						<td height="20" background="{{assetsUrl}}/box-bg-10.jpg" class="layout-block-content-cell" bgcolor="#4563ff" width="592" eqid="EQMST-EBD9D937-A137-4C83-ADFD-BE4CD5F9450F" style="min-width: 592px; "><!--[if gte mso 9]>
-<v:rect style="width:592px;height:20px;" strokecolor="none">
-<v:fill type="tile" color="#4563ff" src="{{assetsUrl}}/box-bg-10.jpg"></v:fill>
-</v:rect><![endif]-->
-							<div class="spacer"></div>
-						<!--[if gte mso 9]>
-</v:rect>
-<![endif]--></td>
-						<td width="24" class="layout-block-padding-right" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-7743A304-B14A-46D5-86D9-4AD86AD3AC83" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="min-width: 24px; ">&nbsp;</td>
-						<td valign="top" align="left" class="layout-block-content-cell" width="592" style="min-width: 592px; ">
-							<table cellspacing="0" cellpadding="0" align="left" class="layout-block-column" width="592" style="min-width: 592px; ">
-								<tbody><tr>
-									<td width="572" valign="top" align="left" background="{{assetsUrl}}/box-bg-10.jpg" style="padding-left: 10px; padding-right: 10px; min-width: 572px; " bgcolor="#4563ff" eqid="EQMST-BA19D71B-A937-4D50-A5EA-4E390C99E199">
-										<table cellspacing="0" cellpadding="0" class="layout-block-box-padding" width="572" style="min-width: 572px; ">
-											<tbody><tr>
-												<td align="left" class="layout-block-column" width="572" style="min-width: 572px; ">
-													<div class="heading" eqid="EQMST-238D32A4-28C5-4B33-ADA4-B6A925202EB3" style="font-size: 16px; font-family: 'Lucida Grande'; line-height: 34px; text-align: -webkit-left; ">
-														<font color="#ffffff" face="Helvetica, Arial, Roboto, Droid Sans, sans-serif"><span style="font-size: 22px; ">Our fantastic developer community is developing powerfull simulation tools.&nbsp;</span></font>
-													</div>
-												</td>
-											</tr>
-										</tbody></table>
-									</td>
-								</tr>
-							</tbody></table>
-						</td>
-						<td width="24" class="layout-block-padding-right" style="min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-9621D361-64F0-470F-A6C1-5AAF398406F8" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-						<td height="20" background="{{assetsUrl}}/box-bg-10.jpg" class="layout-block-content-cell" bgcolor="#4563ff" width="592" eqid="EQMST-BF4DBCE8-44C6-4C1E-A965-0C4B01B8C96F" style="min-width: 592px; "><!--[if gte mso 9]>
-<v:rect style="width:592px;height:20px;" strokecolor="none">
-<v:fill type="tile" color="#4563ff" src="{{assetsUrl}}/box-bg-10.jpg"></v:fill>
-</v:rect><![endif]-->
-							<div class="spacer"></div>
-						<!--[if gte mso 9]>
-</v:rect>
-<![endif]--></td>
-						<td width="24" class="layout-block-padding-right" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-847E2AAE-3501-4926-80DC-7FB0CC6434A2" style="background-image:url({{assetsUrl}}/background-8.jpg); background-position: 0% 0%; " class="desktop-only" width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/background-8.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="min-width: 24px; ">&nbsp;</td>
-						<td valign="top" align="left" background="{{assetsUrl}}/box-bg-15.jpg" class="layout-block-content-cell" bgcolor="#4563ff" width="592" eqid="EQMST-DC3DB3B5-3008-4082-991A-349653BCE5BA" style="min-width: 592px; "><!--[if mso]><table width="592" border="0" cellpadding="0" cellspacing="0" align="center"><tr><![endif]-->
-							<!--[if mso]><td width="284" valign="top"><![endif]--><table width="284" cellspacing="0" cellpadding="0" align="left" style="padding-left: 10px; min-width: 284px; " class="layout-block-box-padding">
-								<tbody><tr>
-									<td class="layout-block-column" width="274" style="min-width: 274px; ">
-										<div class="text" eqid="EQMST-9DABE4A1-5949-4366-8B42-8919FABC1657" style="font-size: 16px; font-family: 'Lucida Grande'; ">
-											<font face="Arial" style="line-height: 1.5; font-size: 14px; " color="#ffffff">Molecular modeling tools is an open source and non-commercial project powered by Autodesk Research.</font><div style="line-height: 1.5; "><font face="Arial" style="font-size: 14px; " color="#ffffff"><br></font></div><div style="line-height: 1.5; "><font style="font-size: 14px; " color="#ffffff" face="Arial">Ready to contribute your ideas?&nbsp;<font color="#ffffff" face="Arial"><a href="mailto:moleculardesigntoolkit@autodesk.com" style="color: rgb(255, 255, 255); ">Contact us</a></font>&nbsp; We are happy to give you a hand.</font></div></div>
-									</td>
-								</tr>
-							</tbody></table>
-							<!--[if mso]></td><td width="24" valign="top"><![endif]--><table width="24" cellspacing="0" cellpadding="0" align="left" class="layout-block-horizontal-spacer" style="min-width: 24px; ">
-								<tbody><tr>
-									<td width="24" class="layout-block-horizontal-spacer" style="min-width: 24px; ">&nbsp;</td>
-								</tr>
-							</tbody></table>
-							<!--[if mso]></td><td width="284" valign="top"><![endif]--><table width="284" cellspacing="0" cellpadding="0" align="left" style="padding-right: 10px; min-width: 284px; " class="layout-block-box-padding">
-								<!--[if !mso]><!-->
-								<tbody><tr class="layout-block-vertical-spacer" style="display:none; height:0px; ">
-									<td width="274" style="min-width: 274px; "><div class="spacer"></div></td>
-								</tr>
-								<!--<![endif]-->
-								<tr>
-									<td valign="top" align="left" class="layout-block-padded-column" width="274" style="min-width: 274px; ">
-										<div class="layout-block-image">
-											<img width="274" height="135" alt="" eqid="EQMST-AD088EAD-486D-4B62-A9D1-245C31AFEEAF" src="{{assetsUrl}}/image-3.png" border="0" style="width: 274px; height: 135px; display: block; ">
-										</div>
-									</td>
-								</tr>
-								<tr class="layout-block-vertical-spacer" style="display:block; height:8px; ">
-									<td width="274"><div class="spacer"></div></td>
-								</tr>
-								<tr>
-									<td class="layout-block-column" width="274" style="min-width: 274px; ">
-										<div class="text" eqid="EQMST-A481C878-CE08-4B03-8385-9AF6C85DE63F" style="font-size: 16px; font-family: 'Lucida Grande'; "><br><!----></div>
-									</td>
-								</tr>
-							</tbody></table>
-						<!--[if mso]></td></tr></table><![endif]--></td>
-						<td width="24" class="layout-block-padding-right" style="min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
-			<div eqid="EQMST-847E2AAE-3501-4926-80DC-7FB0CC6434A2" style="display: none; max-height: 0px; overflow: hidden; " class="mobile-only hide" width="100%" background="{{assetsUrl}}/background-10.jpg">
+						<div eqid="EQMST-847E2AAE-3501-4926-80DC-7FB0CC6434A2" style="display: none; max-height: 0px; overflow: hidden; " class="mobile-only hide" width="100%" background="{{assetsUrl}}/background-10.jpg">
 				<table width="320" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table hide" background="{{assetsUrl}}/background-10.jpg" bgcolor="#5882fb" style="display: none; max-height: 0px; overflow: hidden; min-width: 320px; ">
 					<tbody><tr>
 						<td width="15" class="layout-block-padding-left" style="min-width: 15px; ">&nbsp;</td>
@@ -447,7 +297,7 @@
 								</tr>
 							</tbody></table>
 							<table width="290" cellspacing="0" cellpadding="0" align="left" style="padding-right: 10px; display: none; max-height: 0px; overflow: hidden; min-width: 290px; " class="layout-block-box-padding hide">
-								
+
 								<tbody><tr class="layout-block-vertical-spacer" style="display:none; height:0px; ">
 									<td width="280" style="min-width: 280px; "><div class="spacer"></div></td>
 								</tr>
@@ -473,24 +323,8 @@
 					</tr>
 				</tbody></table>
 			</div>
-			
-			<div eqid="EQMST-466B08C4-B777-433C-B83B-043DD343ABDD" style="background-image:url({{assetsUrl}}/box-bg-10.jpg); background-position: 0% 0%; " width="100%">
-				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/box-bg-10.jpg" bgcolor="#4563ff" style="min-width: 640px; ">
-					<tbody><tr>
-						<td width="24" class="layout-block-padding-left" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-						<td height="80" background="{{assetsUrl}}/box-bg-10.jpg" class="layout-block-content-cell" bgcolor="#4563ff" width="592" eqid="EQMST-95EC85E6-D57B-4DA8-B72F-7D507BCF823E" style="min-width: 592px; "><!--[if gte mso 9]>
-<v:rect style="width:592px;height:80px;" strokecolor="none">
-<v:fill type="tile" color="#4563ff" src="{{assetsUrl}}/box-bg-10.jpg"></v:fill>
-</v:rect><![endif]-->
-							<div class="spacer"></div>
-						<!--[if gte mso 9]>
-</v:rect>
-<![endif]--></td>
-						<td width="24" class="layout-block-padding-right" style="font-size: 1px; min-width: 24px; ">&nbsp;</td>
-					</tr>
-				</tbody></table>
-			</div>
-			
+
+
 			<div eqid="EQMST-1A2F2439-279F-4EA3-8F7E-91405658F5AE" style="background-image:url({{assetsUrl}}/background.jpg); background-position: 0% 0%; " width="100%">
 				<table width="640" cellspacing="0" cellpadding="0" class="layout-block-wrapping-table" background="{{assetsUrl}}/background.jpg" bgcolor="#0d0d12" style="min-width: 640px; ">
 					<tbody><tr>

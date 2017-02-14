@@ -38,7 +38,7 @@ function IncompleteFooter(props) {
             <h5>About us</h5>
             <a href="https://www.autodeskresearch.com">Bionano Research</a>
             <br />
-            <a href="mailto:contact.bionano@autodesk.com">Contact us</a>
+            <a href="mailto:MolecularDesignToolkit@Autodesk.com">Contact us</a>
           </div>
         </div>
       </div>

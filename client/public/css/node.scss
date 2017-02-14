@@ -9,7 +9,7 @@
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
-  -webkit-transition: 0.2s; 
+  -webkit-transition: 0.2s;
   transition: 0.2s;
 
   &.last {
@@ -28,7 +28,7 @@
       display: inline-block;
     }
   }
-    
+
   &.selected {
     background-color: rgba(255, 255, 255, 0.2);
     border-bottom: 1px rgba(255, 255, 255, 0) solid;
@@ -46,13 +46,18 @@
   }
 
   @keyframes throb {
-    0%   { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% { background-color: rgba(255, 255, 255, 0.18);}
+    50% { background-color: rgba(255, 255, 255, 0.05);}
+    100% { background-color: rgba(255, 255, 255, 0.18);}
   }
 
   &.throb {
-    animation: throb 1s infinite;
+    animation: throb 1.75s infinite;
+    color: white;
+    -webkit-animation-timing-function: ease-in-out;
+    -moz-animation-timing-function: ease-in-out;
+    -o-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
   }
 
   .icon-finished {
