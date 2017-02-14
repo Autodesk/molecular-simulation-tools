@@ -49,6 +49,8 @@ function Workflow(props) {
     );
   }
 
+  const loadingOrError = props.workflow.fetching || props.workflow.fetchingError;
+
   return (
     <div className="workflow">
       <WorkflowSteps
@@ -58,9 +60,9 @@ function Workflow(props) {
         clickWorkflowNodeLigandSelection={props.clickWorkflowNodeLigandSelection}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
         clickWorkflowNodeResults={props.clickWorkflowNodeResults}
-        error={!!viewError}
         selection={props.selection}
         workflow={props.workflow}
+        hideSteps={loadingOrError}
       />
       <Status
         changeLigandSelection={props.changeLigandSelection}

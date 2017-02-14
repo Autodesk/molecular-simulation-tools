@@ -15,8 +15,8 @@ function userMessage(state = initialState, action) {
       }
       return state.merge({
         autoClose: false,
-        message: `We're having trouble connecting. Are you connected to the
-          internet?`,
+        message: action.error.message ||
+          'We\'re having trouble connecting. Are you connected to the internet?',
       });
 
     case actionConstants.FETCHED_RUN:

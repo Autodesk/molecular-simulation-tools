@@ -43,6 +43,7 @@ function workflow(state = initialState, action) {
         return state.merge({
           fetching: false,
           fetchingError: action.error,
+          run: state.run.set('fetchingData', false),
         });
       }
       return action.workflow;

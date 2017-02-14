@@ -17,6 +17,10 @@ export function initializeWorkflow(workflowId) {
     let workflow;
     try {
       workflow = await apiUtils.getWorkflow(workflowId);
+
+      if (workflow.comingSoon) {
+        throw new Error('This workflow is not yet available, please try another.');
+      }
     } catch (error) {
       return dispatch({
         type: actionConstants.FETCHED_WORKFLOW,

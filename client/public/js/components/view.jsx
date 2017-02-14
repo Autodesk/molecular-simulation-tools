@@ -99,20 +99,20 @@ class View extends React.Component {
 
   render() {
     let view;
-    if (this.props.loading) {
+    if (this.props.error) {
+      view = (
+        <div>
+          <h3>Error</h3>
+          <p>{this.props.error}</p>
+        </div>
+      );
+    } else if (this.props.loading) {
       view = (
         <div className="loading">
           <div className="animBack">
             <img src={loadImg} alt="loading" />
           </div>
           <p className="anim">Loading! Great things ahead...</p>
-        </div>
-      );
-    } else if (this.props.error) {
-      view = (
-        <div>
-          <h3>Error</h3>
-          <p>{this.props.error}</p>
         </div>
       );
     }
