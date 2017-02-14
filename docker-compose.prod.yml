@@ -11,22 +11,7 @@ services:
       CCC: "ccc.bionano.autodesk.com:9000"
       NODE_ENV: "production"
       FRONTEND_URL: "http://molsim.bionano.autodesk.com/"
-    logging:
-      driver: json-file
-      options:
-        max-size: 50m
-    links:
-      - redis
-
-  redis:
-    restart: always
-    ports:
-      #Don't expose this port to the host, only linked containers.
-      - "6379"
-    volumes:
-      - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
-      # This is the where the db will be writting. It is defined in ./server/etc/redis/redis.conf
-      - redis-data:/data
+      REDIS_HOST: "${prod.mst.redis.host}"
     logging:
       driver: json-file
       options:
