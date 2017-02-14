@@ -136,7 +136,7 @@ class HomePage extends React.Component {
               </div>
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
-              <div className="col-xs-12 col-sm-4" >
+              <div className="col-xs-12 col-sm-6" >
                 <p> Autodesk's Molecular Simulation Tools (MST) make it easy to run chemical
                     simulations the right way. MST is a growing
                     of chemical simulation workflows, bringing the powerful tools of
@@ -147,7 +147,7 @@ class HomePage extends React.Component {
 
                 </p>
               </div>
-              <div className="col-xs-12 col-sm-4">
+              <div className="col-xs-12 col-sm-6">
                 <p> The Autodesk BioNano group is building MST as part of our mission to
                      build a modern, open, and accessible software for
                      computer-aided biological and nanoscale design. Reliable,
@@ -188,7 +188,7 @@ class HomePage extends React.Component {
               </div>*/}
             </div>
             <div className="row" style={{ paddingTop: '40px' }}>
-              <div className="col-xs-12 col-sm-4">
+              <div className="col-xs-12 col-sm-6">
                 <p>
                   Experienced computational chemists know that reading the paper isn't the same
                     as getting the source code. MST gives you the ability to share your
@@ -200,7 +200,7 @@ class HomePage extends React.Component {
                     assignment.
                 </p>
               </div>
-              <div className="col-xs-12 col-sm-4">
+              <div className="col-xs-12 col-sm-6">
                 <p>
                   We're working to make it as easy as possible to make computational workflows
                     sharable, reproducible, and easy to develop. We're developing an infrastructure
