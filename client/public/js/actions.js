@@ -72,7 +72,7 @@ export function initializeRun(workflowId, runId) {
       console.error(error);
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
-        error,
+        error: error ? (error.message || error) : null,
       });
     }
   };

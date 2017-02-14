@@ -58,10 +58,10 @@ function workflow(state = initialState, action) {
 
     case actionConstants.FETCHED_RUN_IO:
       if (action.error) {
-        return state.merge({
+        return state.set('run', state.run.merge({
           fetchingDataError: action.error,
           fetchingData: false,
-        });
+        }));
       }
       return state.set('run', state.run.merge({
         inputs: action.inputs,

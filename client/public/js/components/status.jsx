@@ -91,7 +91,7 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
     const outputResultsIndex = ioUtils.getIndexByExtension(
-      props.workflow.run.outputs, '.json',
+      props.workflow.run.outputs, 'results.json',
     );
     let resultValues;
 
