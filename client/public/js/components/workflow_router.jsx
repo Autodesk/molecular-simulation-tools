@@ -56,7 +56,7 @@ class WorkflowRouter extends React.Component {
 
   render() {
     if (this.props.runId) {
-      document.title = `Workflow - Run of "${this.props.workflow.title}" - Molecular Simulation Tools`;
+      document.title = `Workflow - Run of "${this.props.workflow.title}" - Molecular Simulation Tools`; // eslint-disable-line max-len
     } else {
       document.title = `Workflow - "${this.props.workflow.title}" - Molecular Simulation Tools`;
     }
