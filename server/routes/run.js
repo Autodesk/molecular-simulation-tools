@@ -55,10 +55,7 @@ router.post('/', (req, res, next) => {
   if (workflowId === undefined) {
     return next(new Error('Missing required parameter "workflowId"'));
   }
-  if (!email) {
-    return next(new Error('Missing required parameter "email"'));
-  }
-  if (!isEmail(email)) {
+  if (email && !isEmail(email)) {
     return next(new Error('Invalid email given'));
   }
   if (!inputs) {

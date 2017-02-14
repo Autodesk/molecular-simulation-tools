@@ -91,18 +91,16 @@ function Status(props) {
     );
   } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
     const outputResultsIndex = ioUtils.getIndexByExtension(
-      props.workflow.run.outputs, '.json',
+      props.workflow.run.outputs, 'results.json',
     );
-    let resultValue;
-    let resultUnit;
+    let resultValues;
 
     if (outputResultsIndex !== -1) {
       const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
         .fetchedValue;
 
-      if (outputResults.singlet_energy) {
-        resultValue = outputResults.singlet_energy.value;
-        resultUnit = outputResults.singlet_energy.units;
+      if (outputResults.output_values) {
+        resultValues = outputResults.output_values;
       }
     }
 
@@ -118,8 +116,7 @@ function Status(props) {
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         workflowNodesSize={props.workflow.workflowNodes.size}
-        resultValue={resultValue}
-        resultUnit={resultUnit}
+        resultValues={resultValues}
         outputPdbUrl={outputPdbUrl}
       />
     );
