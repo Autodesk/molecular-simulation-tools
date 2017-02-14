@@ -111,13 +111,10 @@ class HomePage extends React.Component {
             <div className="row">
               <div className="col-xs-12">
                 <h3>LATEST WORKFLOWS</h3>
-                <h5>Use Google Chrome for best results</h5>
+                <h5 className="colorGrey">Use Google Chrome for best results</h5>
               </div>
             </div>
             <div className="row">
-              <div className="col-xs-12 col-sm-8">
-                <h4 className="colorGrey">Cloud-based simulation pipelines</h4>
-              </div>
             </div>
             <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
               {workflowCards}
@@ -243,7 +240,7 @@ class HomePage extends React.Component {
                 <div className="line" />
                 <p><b className="footerLinks">Legal</b></p>
                 <a href="http://www.autodesk.com/company/legal-notices-trademarks/privacy-statement" className="footerLink"><span className="footerLinks">Privacy</span></a>
-                <p className="footerLinks">© 2016 Autodesk Research</p>
+                <p className="footerLinks">© 2017 Autodesk Research</p>
               </div>
             </div>
             <div className="row">
