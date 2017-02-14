@@ -15,126 +15,128 @@ require('../../css/status.scss');
 function Status(props) {
   let selection;
 
-  if (props.selection.type === selectionConstants.NODE) {
-    const node = props.nodes.get(props.selection.id);
-    selection = (
-      <div className="status-info">
-        <p>Node</p>
-        <p>{node.title}</p>
-      </div>
-    );
-  } else if (props.selection.type === selectionConstants.WORKFLOW) {
-    const lastWorkflowNode = props.workflow.workflowNodes.last();
-    let output;
-    if (lastWorkflowNode && lastWorkflowNode.outputs.size) {
-      output = (
-        <p>
-          Output:
-          <a href={lastWorkflowNode.outputs.get(0).get('value')}>
-            {lastWorkflowNode.outputs.get(0).get('value')}
-          </a>
-        </p>
+  if (!props.fetching) {
+    if (props.selection.type === selectionConstants.NODE) {
+      const node = props.nodes.get(props.selection.id);
+      selection = (
+        <div className="status-info">
+          <p>Node</p>
+          <p>{node.title}</p>
+        </div>
       );
-    }
-    selection = (
-      <div className="status-info">
-        <p>Workflow</p>
-        <p>{props.workflow.title}</p>
-        <p>Status: {props.workflow.run.status}</p>
-        {output}
-      </div>
-    );
-  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
-    const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
-      workflowNodeI.id === props.selection.id,
-    );
-    const node = workflowNode.node;
-
-    let output;
-    if (workflowNode.outputs && workflowNode.outputs.size) {
-      output = (
-        <p>
-          Output:
-          <a href={workflowNode.outputs.get(0).get('value')}>
-            {workflowNode.outputs.get(0).get('value')}
-          </a>
-        </p>
-      );
-    }
-
-    selection = (
-      <div className="status-info">
-        <p>Node in Workflow &#34;{props.workflow.title}&#34;</p>
-        <p>{node.title}</p>
-        <p>Status: {workflowNode.status}</p>
-        {output}
-      </div>
-    );
-  } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
-    props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
-    selection = (
-      <StatusLoad
-        fetchingData={props.workflow.run.fetchingData}
-        fetchingDataError={props.workflow.run.fetchingDataError}
-        onSelectInputFile={props.onSelectInputFile}
-        submitInputString={props.submitInputString}
-        inputFileError={props.workflow.run.inputFileError}
-        inputFilePending={props.workflow.run.inputFilePending}
-      />
-    );
-  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
-    selection = (
-      <StatusEmail
-        submitEmail={props.submitEmail}
-        email={props.workflow.run.email}
-        emailError={props.workflow.run.emailError}
-      />
-    );
-  } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
-    const outputResultsIndex = ioUtils.getIndexByExtension(
-      props.workflow.run.outputs, 'results.json',
-    );
-    let resultValues;
-
-    if (outputResultsIndex !== -1) {
-      const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
-        .fetchedValue;
-
-      if (outputResults.output_values) {
-        resultValues = outputResults.output_values;
+    } else if (props.selection.type === selectionConstants.WORKFLOW) {
+      const lastWorkflowNode = props.workflow.workflowNodes.last();
+      let output;
+      if (lastWorkflowNode && lastWorkflowNode.outputs.size) {
+        output = (
+          <p>
+            Output:
+            <a href={lastWorkflowNode.outputs.get(0).get('value')}>
+              {lastWorkflowNode.outputs.get(0).get('value')}
+            </a>
+          </p>
+        );
       }
+      selection = (
+        <div className="status-info">
+          <p>Workflow</p>
+          <p>{props.workflow.title}</p>
+          <p>Status: {props.workflow.run.status}</p>
+          {output}
+        </div>
+      );
+    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
+      const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
+        workflowNodeI.id === props.selection.id,
+      );
+      const node = workflowNode.node;
+
+      let output;
+      if (workflowNode.outputs && workflowNode.outputs.size) {
+        output = (
+          <p>
+            Output:
+            <a href={workflowNode.outputs.get(0).get('value')}>
+              {workflowNode.outputs.get(0).get('value')}
+            </a>
+          </p>
+        );
+      }
+
+      selection = (
+        <div className="status-info">
+          <p>Node in Workflow &#34;{props.workflow.title}&#34;</p>
+          <p>{node.title}</p>
+          <p>Status: {workflowNode.status}</p>
+          {output}
+        </div>
+      );
+    } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
+      props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
+      selection = (
+        <StatusLoad
+          fetchingData={props.workflow.run.fetchingData}
+          fetchingDataError={props.workflow.run.fetchingDataError}
+          onSelectInputFile={props.onSelectInputFile}
+          submitInputString={props.submitInputString}
+          inputFileError={props.workflow.run.inputFileError}
+          inputFilePending={props.workflow.run.inputFilePending}
+        />
+      );
+    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
+      selection = (
+        <StatusEmail
+          submitEmail={props.submitEmail}
+          email={props.workflow.run.email}
+          emailError={props.workflow.run.emailError}
+        />
+      );
+    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
+      const outputResultsIndex = ioUtils.getIndexByExtension(
+        props.workflow.run.outputs, 'results.json',
+      );
+      let resultValues;
+
+      if (outputResultsIndex !== -1) {
+        const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
+          .fetchedValue;
+
+        if (outputResults.output_values) {
+          resultValues = outputResults.output_values;
+        }
+      }
+
+      const pdbIndex = ioUtils.getIndexByExtension(
+        props.workflow.run.outputs, '.pdb',
+      );
+      const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
+
+      selection = (
+        <StatusResults
+          morph={props.morph}
+          numberOfPdbs={props.numberOfPdbs}
+          onClickColorize={props.onClickColorize}
+          onChangeMorph={props.onChangeMorph}
+          workflowNodesSize={props.workflow.workflowNodes.size}
+          resultValues={resultValues}
+          outputPdbUrl={outputPdbUrl}
+        />
+      );
+    } else if (
+      props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION
+    ) {
+      selection = (
+        <StatusLigandSelection
+          changeLigandSelection={props.changeLigandSelection}
+          ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
+          selectedLigand={props.selectedLigand}
+        />
+      );
+    } else if (props.selection.type === selectionConstants.ABOUT) {
+      selection = (
+        <StatusAbout />
+      );
     }
-
-    const pdbIndex = ioUtils.getIndexByExtension(
-      props.workflow.run.outputs, '.pdb',
-    );
-    const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
-
-    selection = (
-      <StatusResults
-        morph={props.morph}
-        numberOfPdbs={props.numberOfPdbs}
-        onClickColorize={props.onClickColorize}
-        onChangeMorph={props.onChangeMorph}
-        workflowNodesSize={props.workflow.workflowNodes.size}
-        resultValues={resultValues}
-        outputPdbUrl={outputPdbUrl}
-      />
-    );
-  } else if (
-    props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION
-  ) {
-    selection = (
-      <StatusLigandSelection
-        changeLigandSelection={props.changeLigandSelection}
-        ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
-        selectedLigand={props.selectedLigand}
-      />
-    );
-  } else if (props.selection.type === selectionConstants.ABOUT) {
-    selection = (
-      <StatusAbout />
-    );
   }
 
   return (
@@ -152,6 +154,7 @@ Status.defaultProps = {
 
 Status.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
+  fetching: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
   fetchingDataError: React.PropTypes.string,
   morph: React.PropTypes.number.isRequired,
