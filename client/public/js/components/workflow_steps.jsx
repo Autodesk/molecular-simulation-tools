@@ -66,7 +66,7 @@ function WorkflowSteps(props) {
   }
 
   let stepsEl;
-  if (!props.error) {
+  if (!props.hideSteps) {
     stepsEl = [
       <div key={0} className="workflow-steps">
         <ol>
@@ -116,7 +116,7 @@ function WorkflowSteps(props) {
 }
 
 WorkflowSteps.defaultProps = {
-  error: false,
+  hideSteps: false,
 };
 
 WorkflowSteps.propTypes = {
@@ -126,7 +126,7 @@ WorkflowSteps.propTypes = {
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
-  error: React.PropTypes.bool,
+  hideSteps: React.PropTypes.bool,
   workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };

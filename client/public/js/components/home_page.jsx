@@ -25,7 +25,7 @@ class HomePage extends React.Component {
   componentDidMount() {
     // TODO fetch workflows here
     apiUtils.getWorkflows().then(workflows =>
-      this.setState({ workflows })
+      this.setState({ workflows }),
     ).catch(console.error.bind(console)); // eslint-disable-line no-console
   }
 
@@ -33,7 +33,7 @@ class HomePage extends React.Component {
     let workflowCards = [];
 
     if (this.state.workflows.length) {
-      workflowCards = this.state.workflows.map((workflow, index) =>
+      workflowCards = this.state.workflows.map(workflow =>
         <WorkflowCard
           bgIndex={workflow.bgIndex}
           bgColor={workflow.bgColor}
@@ -45,8 +45,8 @@ class HomePage extends React.Component {
           description={workflow.description}
           viewCount={workflow.viewCount}
           id={workflow.id}
-          key={index}
-        />
+          key={workflow.id}
+        />,
       );
     } else {
       for (let i = 0; i < 3; i += 1) {
@@ -175,9 +175,9 @@ class HomePage extends React.Component {
               </div>
 {/*              <div className="col-sm-4 col-xs-6 creator-images">
                 {
-                  this.state.workflows.map((workflow, index) => (
+                  this.state.workflows.map(workflow => (
                     <img
-                      key={index}
+                      key={workflow.id}
                       src={`${process.env.API_URL}${workflow.creatorImage}`}
                       alt="creator example"
                       className="creator-image"
@@ -190,28 +190,29 @@ class HomePage extends React.Component {
             <div className="row" style={{ paddingTop: '40px' }}>
               <div className="col-xs-12 col-sm-6">
                 <p>
-                  Experienced computational chemists know that reading the paper isn't the same
-                    as getting the source code. MST gives you the ability to share your
+                  Experienced computational chemists know that reading the paper isn&lsquo;t the
+                    same as getting the source code. MST gives you the ability to share your
                     advances in predictive computational modeling without needing to write an
                     entire, deployable application to support it. With MST, distributing your
                     simulation methods could be as easy as writing a few lines of Python.
-                    Plus, you get access to components for the stuff you don't want to deal with,
-                    from 3D visualization and interaction to input file processing to force field
-                    assignment.
+                    Plus, you get access to components for the stuff you don&lsquo;t want to deal
+                    with, from 3D visualization and interaction to input file processing to force
+                    field assignment.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-6">
                 <p>
-                  We're working to make it as easy as possible to make computational workflows
-                    sharable, reproducible, and easy to develop. We're developing an infrastructure
-                    of tools that can help you build flexible pipelines that can run from the
-                    command line or a web browser.
+                  We&lsquo;re working to make it as easy as possible to make computational workflows
+                    sharable, reproducible, and easy to develop. We&lsquo;re developing an
+                    infrastructure of tools that can help you build flexible pipelines that can run
+                    from the command line or a web browser.
                 </p>
                 <p>
-                  It's still early days and there's lots to be done. If you're interested in
-                    developing your own deployable applications - get in contact with us. We're
-                    looking for good use cases that will have material impact on molecular design,
-                    and can work with you to help give your research impact for a wide audience.
+                  It&lsquo;s still early days and there&lsquo;s lots to be done. If you&lsquo;re
+                  interested in developing your own deployable applications - get in
+                  contact with us. We&lsquo;re looking for good use cases that will
+                  have material impact on molecular design, and can work with you
+                  to help give your research impact for a wide audience.
                 </p>
               </div>
               <div className="col-xs-12 col-sm-4">
@@ -260,6 +261,10 @@ class HomePage extends React.Component {
     );
   }
 }
+
+HomePage.defaultProps = {
+  workflows: [],
+};
 
 HomePage.propTypes = {
   workflows: React.PropTypes.arrayOf(WorkflowRecord),

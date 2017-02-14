@@ -107,7 +107,14 @@ class View extends React.Component {
 
   render() {
     let view;
-    if (this.props.loading) {
+    if (this.props.error) {
+      view = (
+        <div>
+          <h3>Error</h3>
+          <p>{this.props.error}</p>
+        </div>
+      );
+    } else if (this.props.loading) {
       view = (
         <div className="loading">
           <div className="animBack">
@@ -119,13 +126,6 @@ class View extends React.Component {
           <p className="bodyFont">
             (This should only take a few seconds, but there may be delays with heavy traffic)
           </p>
-        </div>
-      );
-    } else if (this.props.error) {
-      view = (
-        <div>
-          <h3>Error</h3>
-          <p>{this.props.error}</p>
         </div>
       );
     }

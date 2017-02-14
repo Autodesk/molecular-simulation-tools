@@ -32,12 +32,14 @@ function WorkflowCard(props) {
     comingSoonEl = <img src={imgSoon} alt="soon" className="soon" />;
   }
 
+  const url = props.comingSoon ? '' : `/workflow/${props.id}`;
+
   const bgColor = props.bgColor || '#3763e9';
 
   return (
     <Link
       className="workflow-card col-md-4 col-sm-6 col-xs-12"
-      to={`/workflow/${props.id}`}
+      to={url}
       style={{ backgroundColor: bgColor }}
     >
       <div
