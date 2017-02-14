@@ -44,8 +44,8 @@ function Workflow(props) {
 
   let selectionStrings = null;
   if (props.workflow.run.selectedLigand) {
-    selectionStrings = props.workflow.run.inputPdbProcessingData.get('ligands').get(
-      props.workflow.run.selectedLigand,
+    selectionStrings = ioUtils.getLigandSelectionStrings(
+      props.workflow.run.inputs, props.workflow.run.selectedLigand,
     );
   }
 
