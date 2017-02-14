@@ -1,9 +1,5 @@
 version: '2'
 
-volumes:
-  redis-data:
-    driver: local
-
 services:
   server:
     image: "quay.io/bionano/mdtapps_server:${VERSION}"
