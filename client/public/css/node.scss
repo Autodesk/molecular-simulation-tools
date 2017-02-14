@@ -46,13 +46,21 @@
   }
 
   @keyframes throb {
-    0%   { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% { background-color: rgba(255, 255, 255, 0.18);
+         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) inset; }
+    50% { background-color: rgba(255, 255, 255, 0.05);
+           box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.02) inset; }
+    100% { background-color: rgba(255, 255, 255, 0.18);
+          box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) inset; }
   }
 
   &.throb {
-    animation: throb 1s infinite;
+    animation: throb 1.75s infinite;
+    color: white;
+    -webkit-animation-timing-function: ease-in-out;
+    -moz-animation-timing-function: ease-in-out;
+    -o-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
   }
 
   .icon-finished {
