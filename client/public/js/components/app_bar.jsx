@@ -69,7 +69,7 @@ class AppBar extends React.Component {
             Share
           </button>
           */}
-          <Link className="appLink" to="/#join">Join</Link>
+          <Link className="appLink" to="/#join" target="_blank">Join</Link>
           <button className="appLink" >Help</button>
         </div>
       </div>
