@@ -109,21 +109,23 @@ const ioUtils = {
 
   /**
    * Inputs should always contain a prep.json with `success: true`.
-   * Returns error string, or empty string if valid.
+   * If they don't, returns an error string.
+   * If they do, returns empty string.
+   * If anything else is wrong, throws an error.
    * @param inputs {IList}
    * @returns {String}
    */
-  validateInputs(inputs) {
+  getInputError(inputs) {
     const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
 
     if (prepIndex === -1) {
-      return 'Inputs did not contain a prep.json file';
+      throw new Error('Inputs did not contain a prep.json file');
     }
 
     const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
 
     if (typeof prepFetchedValue !== 'object') {
-      return 'Inputs prep.json was not fetched properly.';
+      throw new Error('Inputs prep.json was not fetched properly.');
     }
 
     if (!prepFetchedValue.success) {

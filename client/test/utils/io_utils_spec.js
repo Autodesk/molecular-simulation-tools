@@ -4,15 +4,29 @@ import IoRecord from '../../public/js/records/io_record';
 import ioUtils from '../../public/js/utils/io_utils';
 
 describe('ioUtils', () => {
-  describe('validateInputs', () => {
+  describe('getInputError', () => {
     let inputs;
     beforeEach(() => {
       inputs = new IList();
     });
 
     describe('when no prep.json', () => {
-      it('returns false', () => {
-        expect(!!ioUtils.validateInputs(inputs)).to.equal(true);
+      it('throws an error', () => {
+        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
+      });
+    });
+
+    describe('when prep.json with no fetchedValue', () => {
+      beforeEach(() => {
+        inputs = inputs.push(new IoRecord({
+          name: 'prep.json',
+          type: 'url',
+          value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
+        }));
+      });
+
+      it('throws an error', () => {
+        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
       });
     });
 
@@ -28,8 +42,8 @@ describe('ioUtils', () => {
         }));
       });
 
-      it('returns false', () => {
-        expect(!!ioUtils.validateInputs(inputs)).to.equal(true);
+      it('returns error string', () => {
+        expect(!!ioUtils.getInputError(inputs)).to.equal(true);
       });
     });
 
@@ -45,8 +59,8 @@ describe('ioUtils', () => {
         }));
       });
 
-      it('returns true', () => {
-        expect(!!ioUtils.validateInputs(inputs)).to.equal(false);
+      it('returns empty string', () => {
+        expect(ioUtils.getInputError(inputs)).to.equal('');
       });
     });
   });

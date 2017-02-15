@@ -178,6 +178,7 @@ export function selectInputFile(file, workflowId) {
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         error: err ? (err.message || err) : null,
+        inputs: err ? err.inputs : null,
       });
     }
   };
@@ -215,6 +216,7 @@ export function submitInputString(input, workflowId) {
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
+        inputs: err ? err.inputs : null,
       });
     }
   };
