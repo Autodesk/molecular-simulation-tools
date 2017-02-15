@@ -69,7 +69,6 @@ function Workflow(props) {
         changeLigandSelection={props.changeLigandSelection}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
-        fetchingDataError={props.workflow.run.fetchingDataError}
         morph={props.morph}
         nodes={props.nodes}
         numberOfPdbs={pdbIos.size}

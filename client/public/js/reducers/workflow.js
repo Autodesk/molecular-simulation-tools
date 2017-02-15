@@ -93,9 +93,9 @@ function workflow(state = initialState, action) {
 
     case actionConstants.INPUT_FILE:
       return state.set('run', state.run.merge({
+        fetchingData: true,
         inputFileError: null,
-        inputFilePending: true,
-        fetchingDataError: null,
+        inputStringError: null,
         inputs: [],
       }));
 
@@ -108,7 +108,7 @@ function workflow(state = initialState, action) {
       }
 
       return state.set('run', state.run.merge({
-        inputFilePending: false,
+        fetchingData: false,
         inputFileError: action.error,
         inputs,
         selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
@@ -118,7 +118,8 @@ function workflow(state = initialState, action) {
     case actionConstants.SUBMIT_INPUT_STRING:
       return state.set('run', state.run.merge({
         fetchingData: true,
-        fetchingDataError: null,
+        inputFileError: null,
+        inputStringError: null,
         inputs: [],
       }));
 
@@ -134,7 +135,7 @@ function workflow(state = initialState, action) {
 
       return state.set('run', state.run.merge({
         fetchingData: false,
-        fetchingDataError: action.error,
+        inputStringError: action.error,
         inputs,
         selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
       }));
