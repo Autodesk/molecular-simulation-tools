@@ -91,15 +91,15 @@ class View extends React.Component {
         }
 
         addModelPromise.then(() => {
-          if (selectionStrings) {
+          if (this.moleculeViewer && selectionStrings) {
             this.moleculeViewer.clearSelection();
             selectionStrings.forEach(selectionString =>
               this.moleculeViewer.select(selectionString),
             );
             this.moleculeViewer.focusOnSelection();
           }
-        });
-      });
+        }).catch(console.error.bind(console));
+      }).catch(console.error.bind(console));
     }
 
     // TODO colorized like: this.moleculeViewer.setColor('ribbon', 'blue', '1');
