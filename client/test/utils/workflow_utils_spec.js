@@ -11,14 +11,14 @@ describe('workflowUtils', () => {
 
   beforeEach(() => {
     run = new RunRecord({
-      inputs: [
+      inputs: new IList([
         new IoRecord({
           name: 'asdf.pdb',
           value: 'asdf.pdb',
           type: 'pdb',
           fetchedValue: 'impdbdata',
         }),
-      ],
+      ]),
       email: 'justin.mccandless@autodesk.com',
     });
   });

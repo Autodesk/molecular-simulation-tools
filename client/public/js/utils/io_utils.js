@@ -106,6 +106,27 @@ const ioUtils = {
 
     return serverInputs;
   },
+
+  /**
+   * Inputs should always contain a prep.json with `success: true`
+   * @param inputs {IList}
+   * @returns {Bool}
+   */
+  inputsAreValid(inputs) {
+    const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
+
+    if (prepIndex === -1) {
+      return false;
+    }
+
+    const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
+
+    if (typeof prepFetchedValue !== 'object') {
+      return false;
+    }
+
+    return prepFetchedValue.success === true;
+  },
 };
 
 export default ioUtils;
