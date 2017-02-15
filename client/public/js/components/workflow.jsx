@@ -49,8 +49,11 @@ function Workflow(props) {
     );
   }
 
-  const loadingOrError =
-    !!(props.workflow.fetching || props.workflow.fetchingError);
+  const loadingOrError = !!(props.workflow.fetching ||
+    props.workflow.fetchingError ||
+    props.workflow.run.fetchingDataError);
+  const hideStatus = props.workflow.fetching ||
+    props.workflow.run.fetchingDataError;
 
   return (
     <div className="workflow">
@@ -69,6 +72,7 @@ function Workflow(props) {
         changeLigandSelection={props.changeLigandSelection}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
+        hideContent={hideStatus}
         morph={props.morph}
         nodes={props.nodes}
         numberOfPdbs={pdbIos.size}

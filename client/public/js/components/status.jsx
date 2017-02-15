@@ -15,7 +15,7 @@ require('../../css/status.scss');
 function Status(props) {
   let selection;
 
-  if (!props.fetching) {
+  if (!props.hideContent) {
     if (props.selection.type === selectionConstants.NODE) {
       const node = props.nodes.get(props.selection.id);
       selection = (
@@ -146,6 +146,7 @@ function Status(props) {
 }
 
 Status.defaultProps = {
+  hideContent: false,
   selectedLigand: '',
   workflow: null,
 };
@@ -154,6 +155,7 @@ Status.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
   fetching: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
+  hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap).isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
