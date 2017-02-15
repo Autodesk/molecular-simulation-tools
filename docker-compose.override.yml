@@ -30,9 +30,11 @@ services:
       FRONTEND_URL: "http://localhost:4000"
       URL: "http://localhost:4000"
       REDIS_HOST: "redis"
+      FLUENT_PORT: '24225'
     links:
       - redis
       - ccc
+      - fluentd
 
   redis:
     restart: always

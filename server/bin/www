@@ -30,13 +30,47 @@ const bunyanFormat = require('bunyan-format');
 
 const streams = [
   {
-    level: bunyan.DEBUG,
+    level: process.env['NODE_ENV'] == "development" ? bunyan.TRACE : bunyan.DEBUG,
     stream: bunyanFormat({ outputMode: 'short' }),
   },
 ];
+
+console.log('FLUENT_PORT=' + parseInt((process.env['FLUENT_PORT'] || '24226') + ''));
+
+var fluentLogger = require('fluent-logger').createFluentSender('mst', {
+  host: 'fluentd',
+  port: parseInt((process.env['FLUENT_PORT'] || '24226') + ''),
+  timeout: 3.0,
+  reconnectInterval: 600000, // 10 minutes
+});
+
+streams.push({
+  level: bunyan.DEBUG,
+  type: 'raw',// use 'raw' to get raw log record objects
+  stream: {write:(obj, cb) => {
+    switch(typeof(obj)) {
+      case 'object':
+        break;
+      default:
+        obj = {message:toString(obj)};
+    }
+    if (obj['time']) {
+      obj['@timestamp'] = obj['time'].toISOString();
+    }
+    if (!obj['@timestamp']) {
+      obj['@timestamp'] = new Date().toISOString();
+    }
+    delete obj['time'];
+
+    fluentLogger.emit('mst', obj, null, cb);
+  }},
+});
+
+
+
 global.log = bunyan.createLogger({
-  name: 'mdt',
-  level: bunyan.TRACE,
+  name: 'mst',
+  level: process.env['NODE_ENV'] == "development" ? bunyan.TRACE : bunyan.DEBUG,
   streams,
 });
 
