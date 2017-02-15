@@ -19,7 +19,7 @@ router.get('/:runId', (req, res, next) => {
     if (!runString) {
       const error = new Error(`Run "${req.params.runId}" not found`);
       error.status = 404;
-      console.error(error);
+      log.error({error:error, runId:req.params.runId});
       return next(error);
     }
 

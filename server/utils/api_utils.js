@@ -35,7 +35,7 @@ const apiUtils = {
         if (err) {
           return reject(err);
         }
-        console.log(JSON.stringify(response, null, 4));
+        log.debug(JSON.stringify(response, null, 4));
         return resolve(JSON.stringify(response));
       });
     });
