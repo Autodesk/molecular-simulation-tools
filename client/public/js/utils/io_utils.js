@@ -108,24 +108,29 @@ const ioUtils = {
   },
 
   /**
-   * Inputs should always contain a prep.json with `success: true`
+   * Inputs should always contain a prep.json with `success: true`.
+   * Returns error string, or empty string if valid.
    * @param inputs {IList}
-   * @returns {Bool}
+   * @returns {String}
    */
-  inputsAreValid(inputs) {
+  validateInputs(inputs) {
     const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
 
     if (prepIndex === -1) {
-      return false;
+      return 'Inputs did not contain a prep.json file';
     }
 
     const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
 
     if (typeof prepFetchedValue !== 'object') {
-      return false;
+      return 'Inputs prep.json was not fetched properly.';
     }
 
-    return prepFetchedValue.success === true;
+    if (!prepFetchedValue.success) {
+      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+    }
+
+    return '';
   },
 };
 

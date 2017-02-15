@@ -4,7 +4,7 @@ import IoRecord from '../../public/js/records/io_record';
 import ioUtils from '../../public/js/utils/io_utils';
 
 describe('ioUtils', () => {
-  describe('inputsAreValid', () => {
+  describe('validateInputs', () => {
     let inputs;
     beforeEach(() => {
       inputs = new IList();
@@ -12,7 +12,7 @@ describe('ioUtils', () => {
 
     describe('when no prep.json', () => {
       it('returns false', () => {
-        expect(ioUtils.inputsAreValid(inputs)).to.equal(false);
+        expect(!!ioUtils.validateInputs(inputs)).to.equal(true);
       });
     });
 
@@ -29,7 +29,7 @@ describe('ioUtils', () => {
       });
 
       it('returns false', () => {
-        expect(ioUtils.inputsAreValid(inputs)).to.equal(false);
+        expect(!!ioUtils.validateInputs(inputs)).to.equal(true);
       });
     });
 
@@ -46,7 +46,7 @@ describe('ioUtils', () => {
       });
 
       it('returns true', () => {
-        expect(ioUtils.inputsAreValid(inputs)).to.equal(true);
+        expect(!!ioUtils.validateInputs(inputs)).to.equal(false);
       });
     });
   });

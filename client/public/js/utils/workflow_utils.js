@@ -98,8 +98,10 @@ const workflowUtils = {
     // Find the json results
     inputs = await workflowUtils.fetchIoResults(inputs);
 
-    if (!ioUtils.inputsAreValid(inputs)) {
-      throw new Error('Input is invalid for this workflow.');
+    // Make sure the json results are valid and also indicate a success
+    const inputErrorMessage = ioUtils.validateInputs(inputs);
+    if (inputErrorMessage) {
+      throw new Error(inputErrorMessage);
     }
 
     // Get the processed input pdbs
