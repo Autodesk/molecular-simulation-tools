@@ -61,6 +61,16 @@ streams.push({
       obj['@timestamp'] = new Date().toISOString();
     }
     delete obj['time'];
+    if (obj['error'] && typeof(obj['error']) == 'object') {
+      try {
+        obj['error'] = JSON.stringify(obj['error']);
+      } catch(e){}
+    }
+    if (obj['err'] && typeof(obj['err']) == 'object') {
+      try {
+        obj['err'] = JSON.stringify(obj['err']);
+      } catch(e){}
+    }
 
     fluentLogger.emit('mst', obj, null, cb);
   }},
@@ -190,3 +200,41 @@ if (process.env["CCC"] == 'ccc:9000') {
   const httpProxy = require('http-proxy');
   httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
 }
+
+/**
+ * Crash handler
+ */
+
+process.on('uncaughtException', (err) => {
+  var stack = null;
+  try {
+    stack = err.stack;
+  } catch(e){};
+
+  //You can't pass the error object directly, fluent doesn't like it.
+  var errorJson = null;
+  try {
+    errorJson = err.toJSON();
+  } catch(e){};
+
+  var errorString = null;
+  try {
+    errorString = err.toString();
+  } catch(e){};
+
+  const errObj = {
+    stack: stack,
+    errorJson: errorJson,
+    errorString: errorString,
+    message: 'crash',
+  }
+  console.log(JSON.stringify(errObj, null, ''));
+  //Ensure crash is logged to fluent before exiting.
+  try {
+    fluentLogger.emit('mst', errObj, null, () => {
+      process.exit(1);
+    });
+  } catch(e) {
+    process.exit(1);
+  }
+});
