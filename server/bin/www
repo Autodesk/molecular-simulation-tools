@@ -35,8 +35,6 @@ const streams = [
   },
 ];
 
-console.log('FLUENT_PORT=' + parseInt((process.env['FLUENT_PORT'] || '24226') + ''));
-
 var fluentLogger = require('fluent-logger').createFluentSender('mst', {
   host: 'fluentd',
   port: parseInt((process.env['FLUENT_PORT'] || '24226') + ''),
@@ -61,6 +59,16 @@ streams.push({
       obj['@timestamp'] = new Date().toISOString();
     }
     delete obj['time'];
+    if (obj['error'] && typeof(obj['error']) == 'object') {
+      try {
+        obj['error'] = JSON.stringify(obj['error']);
+      } catch(e){}
+    }
+    if (obj['err'] && typeof(obj['err']) == 'object') {
+      try {
+        obj['err'] = JSON.stringify(obj['err']);
+      } catch(e){}
+    }
 
     fluentLogger.emit('mst', obj, null, cb);
   }},
@@ -105,7 +113,9 @@ Promise.all(seedData.map(workflow =>
   server.on('error', onError);
   server.on('listening', onListening(server.address()));
   server.timeout = 8 * 60 * 1000; // 8 minutes
-}).catch(console.error.bind(console));
+}).catch(err => {
+  log.error({error:err});
+});
 
 /**
  * Normalize a port into a number, string, or false.
@@ -190,3 +200,41 @@ if (process.env["CCC"] == 'ccc:9000') {
   const httpProxy = require('http-proxy');
   httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
 }
+
+/**
+ * Crash handler
+ */
+
+process.on('uncaughtException', (err) => {
+  var stack = null;
+  try {
+    stack = err.stack;
+  } catch(e){};
+
+  //You can't pass the error object directly, fluent doesn't like it.
+  var errorJson = null;
+  try {
+    errorJson = err.toJSON();
+  } catch(e){};
+
+  var errorString = null;
+  try {
+    errorString = err.toString();
+  } catch(e){};
+
+  const errObj = {
+    stack: stack,
+    errorJson: errorJson,
+    errorString: errorString,
+    message: 'crash',
+  }
+  console.error(JSON.stringify(errObj, null, ''));
+  //Ensure crash is logged to fluent before exiting.
+  try {
+    fluentLogger.emit('mst', errObj, null, () => {
+      process.exit(1);
+    });
+  } catch(e) {
+    process.exit(1);
+  }
+});
