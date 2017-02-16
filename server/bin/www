@@ -228,7 +228,7 @@ process.on('uncaughtException', (err) => {
     errorString: errorString,
     message: 'crash',
   }
-  console.log(JSON.stringify(errObj, null, ''));
+  console.error(JSON.stringify(errObj, null, ''));
   //Ensure crash is logged to fluent before exiting.
   try {
     fluentLogger.emit('mst', errObj, null, () => {
