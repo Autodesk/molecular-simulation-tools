@@ -184,17 +184,11 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function changeInputString(inputString) {
-  return {
-    type: actionConstants.CHANGE_INPUT_STRING,
-    inputString,
-  };
-}
-
 export function submitInputString(inputString, workflowId) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
+      inputString,
     });
 
     // If the input is 4 characters, try it as a pdbid first
@@ -216,7 +210,6 @@ export function submitInputString(inputString, workflowId) {
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
-        inputString,
         inputs,
       });
     } catch (err) {

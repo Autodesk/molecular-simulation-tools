@@ -81,7 +81,6 @@ class WorkflowRouter extends React.Component {
     } else {
       routeEl = (
         <Workflow
-          changeInputString={this.props.changeInputString}
           changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
@@ -123,7 +122,6 @@ WorkflowRouter.defaultProps = {
 
 WorkflowRouter.propTypes = {
   canceling: React.PropTypes.bool,
-  changeInputString: React.PropTypes.func.isRequired,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,

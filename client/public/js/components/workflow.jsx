@@ -69,7 +69,6 @@ function Workflow(props) {
         hideSteps={loadingOrError}
       />
       <Status
-        changeInputString={props.changeInputString}
         changeLigandSelection={props.changeLigandSelection}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
@@ -102,7 +101,6 @@ Workflow.defaultProps = {
 };
 
 Workflow.propTypes = {
-  changeInputString: React.PropTypes.func.isRequired,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
