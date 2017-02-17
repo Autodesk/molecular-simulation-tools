@@ -101,6 +101,14 @@ const workflowUtils = {
     // Get the processed input pdbs
     inputs = await workflowUtils.fetchIoPdbs(inputs);
 
+    // Make sure the json results are valid and also indicate a success.
+    const inputErrorMessage = ioUtils.getInputError(inputs);
+    if (inputErrorMessage) {
+      const error = new Error(inputErrorMessage);
+      error.inputs = inputs;
+      throw error;
+    }
+
     return inputs;
   },
 

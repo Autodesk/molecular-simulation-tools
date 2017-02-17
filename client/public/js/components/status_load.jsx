@@ -10,17 +10,17 @@ class StatusLoad extends React.Component {
 
     this.onSelectInputFile = this.onSelectInputFile.bind(this);
     this.onSubmitInputString = this.onSubmitInputString.bind(this);
-    this.onChangePdbId = this.onChangePdbId.bind(this);
+    this.onChangeInputString = this.onChangeInputString.bind(this);
     this.onClickInputFile = this.onClickInputFile.bind(this);
 
     this.state = {
-      pdbId: '',
+      inputString: '',
     };
   }
 
-  onChangePdbId(e) {
+  onChangeInputString(e) {
     this.setState({
-      pdbId: e.target.value,
+      inputString: e.target.value,
     });
   }
 
@@ -31,20 +31,22 @@ class StatusLoad extends React.Component {
   onSubmitInputString(e) {
     e.preventDefault();
 
-    return this.props.submitInputString(this.state.pdbId);
+    if (this.state.inputString) {
+      this.props.submitInputString(this.state.inputString);
+    }
   }
 
   onSelectInputFile(e) {
     this.props.onSelectInputFile(e.target.files[0]);
 
     this.setState({
-      pdbId: '',
+      inputString: '',
     });
   }
 
   render() {
-    const disabled = this.props.inputFilePending || this.props.fetchingData;
-    const inputErrorClass = this.props.fetchingDataError ? 'error' : '';
+    const disabled = this.props.fetchingData;
+    const inputErrorClass = this.props.inputStringError ? 'error' : '';
 
     return (
       <div className="status-info status-load">
@@ -58,8 +60,8 @@ class StatusLoad extends React.Component {
               type="text"
               placeholder="Enter molecule here"
               disabled={disabled}
-              value={this.state.pdbId}
-              onChange={this.onChangePdbId}
+              value={this.state.inputString}
+              onChange={this.onChangeInputString}
               onClick={this.onSubmitInputString}
             />
           </form>
@@ -96,17 +98,16 @@ class StatusLoad extends React.Component {
 }
 
 StatusLoad.defaultProps = {
-  fetchingDataError: null,
+  inputStringError: null,
   inputFileError: null,
 };
 
 StatusLoad.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
-  fetchingDataError: React.PropTypes.string,
+  inputStringError: React.PropTypes.string,
+  inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitInputString: React.PropTypes.func.isRequired,
-  inputFilePending: React.PropTypes.bool.isRequired,
-  inputFileError: React.PropTypes.string,
 };
 
 export default StatusLoad;

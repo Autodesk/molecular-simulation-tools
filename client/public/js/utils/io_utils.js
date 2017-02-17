@@ -106,6 +106,34 @@ const ioUtils = {
 
     return serverInputs;
   },
+
+  /**
+   * Inputs should always contain a prep.json with `success: true`.
+   * If they don't, returns an error string.
+   * If they do, returns empty string.
+   * If anything else is wrong, throws an error.
+   * @param inputs {IList}
+   * @returns {String}
+   */
+  getInputError(inputs) {
+    const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
+
+    if (prepIndex === -1) {
+      throw new Error('Inputs did not contain a prep.json file');
+    }
+
+    const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
+
+    if (typeof prepFetchedValue !== 'object') {
+      throw new Error('Inputs prep.json was not fetched properly.');
+    }
+
+    if (!prepFetchedValue.success) {
+      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+    }
+
+    return '';
+  },
 };
 
 export default ioUtils;

@@ -5,12 +5,12 @@ const RunRecord = new Record({
   canceling: false,
   email: '',
   emailError: '',
-  fetchingData: false, // for any pdb or io data
+  fetchingData: false, // for loading anything directly related on the run
   fetchingDataError: null,
   id: null,
   inputs: new IList(),
   inputFileError: null,
-  inputFilePending: false,
+  inputStringError: null,
   outputs: new IList(),
   selectedLigand: '',
   status: statusConstants.IDLE,

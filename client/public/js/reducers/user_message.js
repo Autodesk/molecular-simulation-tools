@@ -82,6 +82,16 @@ function userMessage(state = initialState, action) {
         message: action.error,
       });
 
+    case actionConstants.FETCHED_RUN_IO:
+      if (!action.error) {
+        return initialState;
+      }
+      return state.merge({
+        autoClose: false,
+        message: `Failed to fetch data associated with this run. Please refresh
+        the page, or if the problem persists, try another run.`,
+      });
+
     default:
       return state;
   }

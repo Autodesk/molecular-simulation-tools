@@ -3,7 +3,7 @@ import UserMessageRecord from '../records/user_message_record';
 
 require('../../css/snackbar.scss');
 
-const CLOSE_DELAY = 2000;
+const CLOSE_DELAY = 8000;
 
 class Snackbar extends React.Component {
   componentDidMount() {

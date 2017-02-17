@@ -19,7 +19,10 @@ function WorkflowSteps(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = ioUtils.getPdb(props.workflow.run.inputs) ?
+  const loadCompleted = !props.workflow.run.inputFileError &&
+    !props.workflow.run.inputStringError &&
+    ioUtils.getPdb(props.workflow.run.inputs);
+  const loadStatus = loadCompleted ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
@@ -27,7 +30,6 @@ function WorkflowSteps(props) {
     statusConstants.COMPLETED : statusConstants.IDLE;
   let emailLast = true;
 
-  const loadCompleted = loadStatus === statusConstants.COMPLETED;
   const ligandStatus = props.workflow.run.selectedLigand ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
