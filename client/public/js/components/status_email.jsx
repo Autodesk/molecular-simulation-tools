@@ -15,6 +15,18 @@ class StatusEmail extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.setState({
+      email: this.props.email,
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      email: nextProps.email,
+    });
+  }
+
   onChange(e) {
     this.setState({
       email: e.target.value,
