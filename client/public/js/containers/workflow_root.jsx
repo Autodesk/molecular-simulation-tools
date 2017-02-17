@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import WorkflowRouter from '../components/workflow_router';
 import {
+  changeInputString,
   changeLigandSelection,
   changeMorph,
   clickAbout,
@@ -34,6 +35,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    changeInputString(inputString) {
+      dispatch(changeInputString(inputString));
+    },
     changeLigandSelection(ligandString) {
       dispatch(changeLigandSelection(ligandString));
     },

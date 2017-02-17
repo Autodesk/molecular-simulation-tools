@@ -115,6 +115,9 @@ function workflow(state = initialState, action) {
       }));
     }
 
+    case actionConstants.CHANGE_INPUT_STRING:
+      return state.set('run', state.run.set('inputString', action.inputString));
+
     case actionConstants.SUBMIT_INPUT_STRING:
       return state.set('run', state.run.merge({
         fetchingData: true,
@@ -135,6 +138,7 @@ function workflow(state = initialState, action) {
 
       return state.set('run', state.run.merge({
         fetchingData: false,
+        inputString: action.inputString,
         inputStringError: action.error,
         inputs,
         selectedLigand: ligands.size === 1 ? ligands.get(0) : '',

@@ -75,10 +75,12 @@ function Status(props) {
       props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
       selection = (
         <StatusLoad
+          changeInputString={props.changeInputString}
           fetchingData={props.workflow.run.fetchingData}
           onSelectInputFile={props.onSelectInputFile}
           submitInputString={props.submitInputString}
           inputFileError={props.workflow.run.inputFileError}
+          inputString={props.workflow.run.inputString}
           inputStringError={props.workflow.run.inputStringError}
         />
       );
@@ -152,6 +154,7 @@ Status.defaultProps = {
 };
 
 Status.propTypes = {
+  changeInputString: React.PropTypes.func.isRequired,
   changeLigandSelection: React.PropTypes.func.isRequired,
   fetching: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,

@@ -184,7 +184,14 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitInputString(input, workflowId) {
+export function changeInputString(inputString) {
+  return {
+    type: actionConstants.CHANGE_INPUT_STRING,
+    inputString,
+  };
+}
+
+export function submitInputString(inputString, workflowId) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
@@ -192,16 +199,16 @@ export function submitInputString(input, workflowId) {
 
     // If the input is 4 characters, try it as a pdbid first
     let pdbDownload;
-    if (input.length === 4) {
+    if (inputString.length === 4) {
       try {
-        pdbDownload = await rcsbApiUtils.getPdbById(input);
+        pdbDownload = await rcsbApiUtils.getPdbById(inputString);
       } catch (error) {
-        console.log(`Failed to fetch ${input} as pdbid, will try directly.`);
+        console.log(`Failed to fetch ${inputString} as pdbid, will try directly.`);
       }
     }
 
     try {
-      const newInput = pdbDownload ? pdbDownload.pdb : input;
+      const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
       const inputs = await workflowUtils.processInput(
         workflowId, newInput, extension,
@@ -209,6 +216,7 @@ export function submitInputString(input, workflowId) {
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
+        inputString,
         inputs,
       });
     } catch (err) {

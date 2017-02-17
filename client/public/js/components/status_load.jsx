@@ -12,16 +12,10 @@ class StatusLoad extends React.Component {
     this.onSubmitInputString = this.onSubmitInputString.bind(this);
     this.onChangeInputString = this.onChangeInputString.bind(this);
     this.onClickInputFile = this.onClickInputFile.bind(this);
-
-    this.state = {
-      inputString: '',
-    };
   }
 
   onChangeInputString(e) {
-    this.setState({
-      inputString: e.target.value,
-    });
+    this.props.changeInputString(e.target.value);
   }
 
   onClickInputFile() {
@@ -31,17 +25,20 @@ class StatusLoad extends React.Component {
   onSubmitInputString(e) {
     e.preventDefault();
 
-    if (this.state.inputString) {
-      this.props.submitInputString(this.state.inputString);
+    if (this.props.inputString) {
+      this.props.submitInputString(this.props.inputString);
     }
   }
 
   onSelectInputFile(e) {
     this.props.onSelectInputFile(e.target.files[0]);
 
+      /*
+       * TODO
     this.setState({
       inputString: '',
     });
+    */
   }
 
   render() {
@@ -60,7 +57,7 @@ class StatusLoad extends React.Component {
               type="text"
               placeholder="Enter molecule here"
               disabled={disabled}
-              value={this.state.inputString}
+              value={this.props.inputString}
               onChange={this.onChangeInputString}
               onClick={this.onSubmitInputString}
             />
@@ -103,7 +100,9 @@ StatusLoad.defaultProps = {
 };
 
 StatusLoad.propTypes = {
+  changeInputString: React.PropTypes.func.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
+  inputString: React.PropTypes.string.isRequired,
   inputStringError: React.PropTypes.string,
   inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,

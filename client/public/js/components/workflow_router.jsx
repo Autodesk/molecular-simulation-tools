@@ -81,6 +81,7 @@ class WorkflowRouter extends React.Component {
     } else {
       routeEl = (
         <Workflow
+          changeInputString={this.props.changeInputString}
           changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
@@ -115,9 +116,15 @@ class WorkflowRouter extends React.Component {
   }
 }
 
+WorkflowRouter.defaultProps = {
+  canceling: false,
+  runId: null,
+};
+
 WorkflowRouter.propTypes = {
   canceling: React.PropTypes.bool,
-  changeLigandSelection: React.PropTypes.func,
+  changeInputString: React.PropTypes.func.isRequired,
+  changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
@@ -129,7 +136,7 @@ WorkflowRouter.propTypes = {
   initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap),
+  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onMessageTimeout: React.PropTypes.func.isRequired,
@@ -139,7 +146,7 @@ WorkflowRouter.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   workflowId: React.PropTypes.string.isRequired,
 };
 
