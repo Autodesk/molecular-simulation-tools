@@ -33,7 +33,7 @@ class StatusEmail extends React.Component {
       'We\'ll send you an email when you run this workflow, and another when it\'s done.';
 
     return (
-      <div className="status=info status-email">
+      <div className="status-info status-email">
         <p>
           This simulation might take about <span className="time">6 hours</span>.
         </p>
