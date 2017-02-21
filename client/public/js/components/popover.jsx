@@ -9,11 +9,11 @@ function Popover(props) {
   let translateClass = '';
   if (props.anchor === anchorConstants.BOTTOM_LEFT ||
     props.anchor === anchorConstants.BOTTOM_RIGHT) {
-    translateClass = 'anchor-translate-y';
+    translateClass += ' anchor-translate-y';
   }
   if (props.anchor === anchorConstants.TOP_RIGHT ||
     props.anchor === anchorConstants.BOTTOM_RIGHT) {
-    translateClass = 'anchor-translate-x';
+    translateClass += ' anchor-translate-x';
   }
 
   return (

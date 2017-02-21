@@ -46,7 +46,7 @@ class IncompleteFooter extends React.Component {
       cancelEl = (
         <div>
           <button
-            className={this.props.canceling ? 'disabled' : ''}
+            className={`link-button ${this.props.canceling ? 'disabled' : ''}`}
             onClick={this.onClickCancel}
             disabled={this.props.canceling}
             ref={(el) => { this.cancelButton = el; }}
@@ -68,7 +68,7 @@ class IncompleteFooter extends React.Component {
                 Nevermind
               </Button>
               <Button
-                type="raised"
+                type="raised error"
                 onClick={this.onClickCancelConfirm}
               >
                 Yes, cancel simulation
