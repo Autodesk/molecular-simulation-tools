@@ -62,13 +62,13 @@ class IncompleteFooter extends React.Component {
           >
             <div>
               <Button
-                type="raised"
+                type="filled"
                 onClick={this.onClickCancelAbort}
               >
                 Nevermind
               </Button>
               <Button
-                type="raised error"
+                type="filled error"
                 onClick={this.onClickCancelConfirm}
               >
                 Yes, cancel simulation
