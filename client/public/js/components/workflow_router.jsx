@@ -104,7 +104,10 @@ class WorkflowRouter extends React.Component {
     }
 
     return (
-      <div className="workflow-router" style={{ flex: 1, overflow: 'auto' }}>
+      <div
+        className="workflow-router"
+        style={{ flex: 1, overflow: 'auto', display: 'flex' }}
+      >
         {routeEl}
         <Snackbar
           onMessageTimeout={this.props.onMessageTimeout}
