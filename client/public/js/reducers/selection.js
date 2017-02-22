@@ -54,7 +54,7 @@ function selection(state = initialState, action) {
 
     case actionConstants.FETCHED_RUN:
       if (action.error ||
-        action.workflow.status !== statusConstants.COMPLETED) {
+        action.workflow.run.status !== statusConstants.COMPLETED) {
         return state;
       }
       return state.merge({
