@@ -57,7 +57,7 @@ class StatusLoad extends React.Component {
   }
 
   render() {
-    const disabled = this.props.fetchingData;
+    const disabled = this.props.fetchingData || this.props.runCompleted;
     const inputErrorClass = this.props.inputStringError ? 'error' : '';
 
     return (
@@ -115,6 +115,7 @@ StatusLoad.defaultProps = {
 };
 
 StatusLoad.propTypes = {
+  runCompleted: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
   inputString: React.PropTypes.string.isRequired,
   inputStringError: React.PropTypes.string,

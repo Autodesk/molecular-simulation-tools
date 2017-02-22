@@ -55,6 +55,7 @@ class StatusEmail extends React.Component {
         >
           <Input
             className={this.props.emailError ? 'error' : ''}
+            disabled={this.props.runCompleted}
             type="email"
             autoComplete="email"
             placeholder="Enter email"
@@ -69,6 +70,7 @@ class StatusEmail extends React.Component {
 }
 
 StatusEmail.propTypes = {
+  runCompleted: React.PropTypes.bool.isRequired,
   email: React.PropTypes.string.isRequired,
   emailError: React.PropTypes.string.isRequired,
   submitEmail: React.PropTypes.func.isRequired,

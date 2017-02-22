@@ -9,12 +9,14 @@ import StatusResults from './status_results';
 import WorkflowRecord from '../records/workflow_record';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
+import { statusConstants } from 'molecular-design-applications-shared';
 
 require('../../css/status.scss');
 
 function Status(props) {
-  let selection;
+  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
 
+  let selection;
   if (!props.hideContent) {
     if (props.selection.type === selectionConstants.NODE) {
       const node = props.nodes.get(props.selection.id);
@@ -76,19 +78,21 @@ function Status(props) {
       selection = (
         <StatusLoad
           fetchingData={props.workflow.run.fetchingData}
-          onSelectInputFile={props.onSelectInputFile}
-          submitInputString={props.submitInputString}
           inputFileError={props.workflow.run.inputFileError}
           inputString={props.workflow.run.inputString}
           inputStringError={props.workflow.run.inputStringError}
+          onSelectInputFile={props.onSelectInputFile}
+          runCompleted={runCompleted}
+          submitInputString={props.submitInputString}
         />
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
       selection = (
         <StatusEmail
-          submitEmail={props.submitEmail}
+          runCompleted={runCompleted}
           email={props.workflow.run.email}
           emailError={props.workflow.run.emailError}
+          submitEmail={props.submitEmail}
         />
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
