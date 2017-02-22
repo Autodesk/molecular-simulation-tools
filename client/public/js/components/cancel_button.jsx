@@ -69,7 +69,6 @@ class CancelButton extends React.Component {
             >
               Yes, cancel simulation
             </Button>
-            Hello!
           </div>
         </Popover>
       </div>

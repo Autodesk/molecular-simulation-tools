@@ -1,15 +1,15 @@
 import React from 'react';
-import IncompleteFooter from './incomplete_footer';
+import Incomplete from './incomplete';
 
 import '../../css/incomplete.scss';
 
 function ThankYou(props) {
   return (
-    <div className="thank-you">
-      <div className="image1" />
-      <div className="image2" />
-      <div className="image3" />
-      <div className="container">
+    <Incomplete
+      onClickCancel={props.onClickCancel}
+      canceling={props.canceling}
+    >
+      <div>
         <div>
           <h1>Thanks {props.email}!</h1>
           <div className="line" />
@@ -21,24 +21,20 @@ function ThankYou(props) {
           Please be patient; we'll send you an email with a link to this page as soon as the
             results are available.
         </p>
+        <br />
         <p>
-          <br></br>
           You can now safely close this page.
         </p>
         <p>
           See you soon!
         </p>
       </div>
-      <IncompleteFooter
-        onClickCancel={props.onClickCancel}
-        canceling={props.canceling}
-      />
-    </div>
+    </Incomplete>
   );
 }
 
 ThankYou.propTypes = {
-  canceling: React.PropTypes.bool,
+  canceling: React.PropTypes.bool.isRequired,
   email: React.PropTypes.string.isRequired,
   onClickCancel: React.PropTypes.func.isRequired,
 };
