@@ -64,4 +64,51 @@ describe('ioUtils', () => {
       });
     });
   });
+
+  describe('getSelectedLigand', () => {
+    let ios;
+    beforeEach(() => {
+      ios = new IList();
+    });
+
+    describe('when no selection.json io given', () => {
+      it('returns empty string', () => {
+        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+      });
+    });
+
+    describe('when selection.json has no value property', () => {
+      beforeEach(() => {
+        ios = ios.push(new IoRecord({ name: 'selection.json' }));
+      });
+
+      it('returns empty string', () => {
+        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+      });
+    });
+
+    describe('when selection.json value contains invalid json', () => {
+      beforeEach(() => {
+        ios = ios.push(new IoRecord({ name: 'selection.json', value: 'asdf' }));
+      });
+
+      it('returns empty string', () => {
+        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+      });
+    });
+
+    describe('when selection.json value contains a ligandname', () => {
+      const ligandName = 'MPD513';
+      beforeEach(() => {
+        ios = ios.push(new IoRecord({
+          name: 'selection.json',
+          value: `{"ligandname":"${ligandName}"}`,
+        }));
+      });
+
+      it('returns empty the ligandname', () => {
+        expect(ioUtils.getSelectedLigand(ios)).to.equal(ligandName);
+      });
+    });
+  });
 });

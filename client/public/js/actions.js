@@ -2,6 +2,7 @@ import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
+import ioUtils from './utils/io_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
@@ -68,10 +69,14 @@ export function initializeRun(workflowId, runId) {
       outputs = await workflowUtils.fetchIoPdbs(outputs);
       outputs = await workflowUtils.fetchIoResults(outputs);
 
+      // Find the selected ligand in the inputs, if it exists
+      const selectedLigand = ioUtils.getSelectedLigand(inputs);
+
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
         inputs,
         outputs,
+        selectedLigand,
       });
     } catch (error) {
       console.error(error);

@@ -134,6 +134,7 @@ function Status(props) {
         <StatusLigandSelection
           changeLigandSelection={props.changeLigandSelection}
           ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
+          runCompleted={runCompleted}
           selectedLigand={props.selectedLigand}
         />
       );
