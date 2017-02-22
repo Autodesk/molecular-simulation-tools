@@ -118,7 +118,14 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, inputs) {
+  /**
+   * Execute a full workflow (not input processing)
+   * @param {String} workflowId
+   * @param {String} email
+   * @param {Array} inputs
+   * @param {String} [inputString]
+   */
+  executeWorkflow(workflowId, email, inputs, inputString) {
     const localLog = log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
     localLog.debug({});
     var workflowPromise = null;
@@ -155,6 +162,7 @@ const runUtils = {
           workflowId,
           email: email,
           inputs,
+          inputString,
           created: Date.now(),
         };
         localLog.debug(JSON.stringify(runPayload).substr(0, 300));
