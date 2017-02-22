@@ -78,6 +78,7 @@ function Status(props) {
       selection = (
         <StatusLoad
           fetchingData={props.workflow.run.fetchingData}
+          inputData={ioUtils.getPdb(props.workflow.run.inputs)}
           inputFileError={props.workflow.run.inputFileError}
           inputString={props.workflow.run.inputString}
           inputStringError={props.workflow.run.inputStringError}
