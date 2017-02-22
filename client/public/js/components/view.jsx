@@ -35,6 +35,8 @@ class View extends React.Component {
     this.moleculeViewer = new $ADSKMOLVIEW(this.moleculeViewerContainer, {
       headless: true,
     });
+    this.moleculeViewerHasMolecule = false;
+    window.AdskMolView = this.moleculeViewer;
 
     return new Promise((resolve) => {
       const molViewInitialized = () => {
@@ -53,6 +55,18 @@ class View extends React.Component {
   }
 
   addModelToMoleculeViewer(modelData) {
+    console.log('OMG addmodel');
+    if (this.moleculeViewerHasMolecule) {
+      const pdbId = this.moleculeViewer.getLoadedMoleculeIDs()[0];
+      const origFrame = this.moleculeViewer.getOriginalAnimState(pdbId);
+      this.moleculeViewer.addAnimationFrame(pdbId, origFrame, false);
+
+      const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
+      this.moleculeViewer.addAnimationFrame(pdbId, state, false);
+      console.log('OMG animate');
+      return Promise.resolve();
+    }
+
     return new Promise((resolve) => {
       const molViewModelLoaded = () => {
         if (this.moleculeViewer) {
@@ -67,6 +81,7 @@ class View extends React.Component {
         MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
       );
       this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+      this.moleculeViewerHasMolecule = true;
     });
   }
 
@@ -87,6 +102,9 @@ class View extends React.Component {
       createMoleculeViewerPromise.then(() => {
         let addModelPromise = Promise.resolve();
         if (modelData !== oldModelData) {
+          console.log('omg mds not equal', !!modelData, !!oldModelData);
+          if (modelData) console.log('omg', modelData.length);
+          if (oldModelData) console.log('omg', oldModelData.length);
           addModelPromise = this.addModelToMoleculeViewer(modelData);
         }
 
