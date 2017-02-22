@@ -66,6 +66,13 @@ const runUtils = {
     // Set the final output and status on the run
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       const run = JSON.parse(runString);
+
+      // Don't set results on a canceled run
+      if (run.status === statusConstants.CANCELED) {
+        localLog.debug(`Run ${runId} canceled, so results not written.`);
+        return Promise.resolve();
+      }
+
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
       var outputs = [];
