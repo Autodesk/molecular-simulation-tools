@@ -39,13 +39,13 @@ app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
 app.use('/test', testRoutes);
 app.use('/version', versionRouter);
 
-// Serve index.html to page routes
-app.get(['/', '/workflow/*'], (req, res) => {
+// API 404s
+app.use(new express.Router().get(`${appConstants.VERSION_PREFIX}/*`, routeUtils.notFound));
+
+// Redirect any other routes to index.html (single page app)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
-
-// Everything else gives a 404
-app.use(routeUtils.notFound);
 
 // error handler
 app.use((err, req, res, next) => {
