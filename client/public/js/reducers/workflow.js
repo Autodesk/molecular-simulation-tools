@@ -69,6 +69,7 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputs: action.inputs,
         outputs: action.outputs,
+        selectedLigand: action.selectedLigand,
       }));
 
     case actionConstants.CLICK_RUN:
@@ -96,6 +97,7 @@ function workflow(state = initialState, action) {
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
+        inputString: '',
         inputs: [],
       }));
 
@@ -120,6 +122,7 @@ function workflow(state = initialState, action) {
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
+        inputString: action.inputString,
         inputs: [],
       }));
 

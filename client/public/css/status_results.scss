@@ -2,8 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 215px;
-  margin-top: -60px;
+  width: 100%;
 
   .stat {
     margin-bottom: 32px;
@@ -36,7 +35,6 @@
     font-size: 12px;
     color: rgba(0, 0, 0, 0.7);
     font-weight: 500;
-    margin-top: 60px;
 }
 
 .line {

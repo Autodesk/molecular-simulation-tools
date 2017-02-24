@@ -37,7 +37,8 @@ function WorkflowSteps(props) {
 
 
   let resultsNode;
-  if (props.workflow.run.status === statusConstants.COMPLETED) {
+  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
+  if (runCompleted) {
     emailLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;
@@ -71,6 +72,19 @@ function WorkflowSteps(props) {
 
   let stepsEl;
   if (!props.hideSteps) {
+    let runButton;
+    if (!runCompleted) {
+      runButton = (
+        <Button
+          type="raised"
+          onClick={props.clickRun}
+          disabled={runDisabled}
+          throb={!runDisabled && !finished}
+        >
+            Run Workflow
+        </Button>
+      );
+    }
     stepsEl = [
       <div key={0} className="workflow-steps">
         <ol>
@@ -93,14 +107,7 @@ function WorkflowSteps(props) {
           />
           {resultsNode}
         </ol>
-        <Button
-          type="raised"
-          onClick={props.clickRun}
-          disabled={runDisabled}
-          throb={!runDisabled && !finished}
-        >
-            Run Workflow
-        </Button>
+        {runButton}
       </div>,
 
       <div key={1} className="actions">

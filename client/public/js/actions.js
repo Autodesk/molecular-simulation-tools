@@ -2,6 +2,7 @@ import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
+import ioUtils from './utils/io_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import workflowUtils from './utils/workflow_utils';
 
@@ -68,10 +69,14 @@ export function initializeRun(workflowId, runId) {
       outputs = await workflowUtils.fetchIoPdbs(outputs);
       outputs = await workflowUtils.fetchIoResults(outputs);
 
+      // Find the selected ligand in the inputs, if it exists
+      const selectedLigand = ioUtils.getSelectedLigand(inputs);
+
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
         inputs,
         outputs,
+        selectedLigand,
       });
     } catch (error) {
       console.error(error);
@@ -122,13 +127,21 @@ export function clickWorkflowNodeResults() {
   };
 }
 
-export function clickRun(workflowId, email, inputs, selectedLigand) {
+/**
+ * When the user clicks on the run button
+ * @param {String} workflowId
+ * @param {String} email
+ * @param {IList} inputs
+ * @param {String} [selectedLigand]
+ * @param {String} [inputString]
+ */
+export function clickRun(workflowId, email, inputs, selectedLigand, inputString) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(workflowId, email, inputs, selectedLigand).then((runId) => {
+    apiUtils.run(workflowId, email, inputs, selectedLigand, inputString).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId,
@@ -184,24 +197,25 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitInputString(input, workflowId) {
+export function submitInputString(inputString, workflowId) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
+      inputString,
     });
 
     // If the input is 4 characters, try it as a pdbid first
     let pdbDownload;
-    if (input.length === 4) {
+    if (inputString.length === 4) {
       try {
-        pdbDownload = await rcsbApiUtils.getPdbById(input);
+        pdbDownload = await rcsbApiUtils.getPdbById(inputString);
       } catch (error) {
-        console.log(`Failed to fetch ${input} as pdbid, will try directly.`);
+        console.log(`Failed to fetch ${inputString} as pdbid, will try directly.`);
       }
     }
 
     try {
-      const newInput = pdbDownload ? pdbDownload.pdb : input;
+      const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
       const inputs = await workflowUtils.processInput(
         workflowId, newInput, extension,
