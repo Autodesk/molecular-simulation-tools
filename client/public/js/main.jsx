@@ -13,6 +13,7 @@ import loggingMiddleware from './middlewares/logging_middleware';
 require('../css/normalize.css');
 require('../css/main.css');
 require('../css/main.scss');
+require('../css/molviewer.css');
 require('../browserconfig.xml');
 require('../humans.txt');
 require('../LICENSE.txt');
