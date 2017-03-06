@@ -88,8 +88,9 @@ const workflowUtils = {
   /**
    * Using the api, go through the full step0 input processing flow
    * Calls to this should be surrounded by try/catch!
-   * @param workflowId {String}
-   * @param input {String}
+   * @param {String} workflowId
+   * @param {String} input
+   * @param {String} [extension]
    * @returns {Array}
    */
   processInput: async function processInput(workflowId, input, extension) {

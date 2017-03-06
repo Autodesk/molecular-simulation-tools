@@ -50,6 +50,7 @@ router.post('/', (req, res, next) => {
   let workflowId = req.body.workflowId + '';
   let email = req.body.email;
   let inputs = req.body.inputs;
+  const inputString = req.body.inputString;
   log.info({email:email});
   log.info({workflowId:workflowId});
   if (workflowId === undefined) {
@@ -62,7 +63,7 @@ router.post('/', (req, res, next) => {
     return next(new Error('No inputs'));
   }
 
-  runUtils.executeWorkflow(workflowId, email, inputs)
+  runUtils.executeWorkflow(workflowId, email, inputs, inputString)
     .then(jobId => {
       log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
         res.send({runId:jobId});

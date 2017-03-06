@@ -15,6 +15,18 @@ class StatusEmail extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.setState({
+      email: this.props.email,
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      email: nextProps.email,
+    });
+  }
+
   onChange(e) {
     this.setState({
       email: e.target.value,
@@ -33,7 +45,7 @@ class StatusEmail extends React.Component {
       'We\'ll send you an email when you run this workflow, and another when it\'s done.';
 
     return (
-      <div className="status=info status-email">
+      <div className="status-info status-email">
         <p>
           This simulation might take about <span className="time">6 hours</span>.
         </p>
@@ -43,6 +55,7 @@ class StatusEmail extends React.Component {
         >
           <Input
             className={this.props.emailError ? 'error' : ''}
+            disabled={this.props.runCompleted}
             type="email"
             autoComplete="email"
             placeholder="Enter email"
@@ -57,6 +70,7 @@ class StatusEmail extends React.Component {
 }
 
 StatusEmail.propTypes = {
+  runCompleted: React.PropTypes.bool.isRequired,
   email: React.PropTypes.string.isRequired,
   emailError: React.PropTypes.string.isRequired,
   submitEmail: React.PropTypes.func.isRequired,

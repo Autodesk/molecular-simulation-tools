@@ -40,9 +40,10 @@ class StatusLigandSelection extends React.Component {
             </p>
             <ul>
               {
-                this.props.ligandNames.map((ligandName, index) =>
-                  <li className="ligand" key={index}>
+                this.props.ligandNames.map(ligandName =>
+                  <li className="ligand" key={ligandName}>
                     <input
+                      disabled={this.props.runCompleted}
                       type="radio"
                       id={`ligand-${ligandName}`}
                       name="ligands"
@@ -51,7 +52,7 @@ class StatusLigandSelection extends React.Component {
                       onChange={this.onChangeSelection}
                     />
                     <label htmlFor={`ligand-${ligandName}`}>{ligandName}</label>
-                  </li>
+                  </li>,
                 )
               }
             </ul>
@@ -68,10 +69,15 @@ class StatusLigandSelection extends React.Component {
   }
 }
 
+StatusLigandSelection.defaultProps = {
+  ligandNames: null,
+};
+
 StatusLigandSelection.propTypes = {
-  changeLigandSelection: React.PropTypes.func,
+  changeLigandSelection: React.PropTypes.func.isRequired,
   ligandNames: React.PropTypes.instanceOf(IList),
-  selectedLigand: React.PropTypes.string,
+  runCompleted: React.PropTypes.bool.isRequired,
+  selectedLigand: React.PropTypes.string.isRequired,
 };
 
 export default StatusLigandSelection;

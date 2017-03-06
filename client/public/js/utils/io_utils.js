@@ -61,6 +61,28 @@ const ioUtils = {
   },
 
   /**
+   * From the given ios, look for selection.json and its selected ligand.
+   * @param {IList} ios
+   * @returns {String}
+   */
+  getSelectedLigand(ios) {
+    const selectionInput = ios.find(io => io.name === 'selection.json');
+
+    if (!selectionInput) {
+      return '';
+    }
+
+    let selectionValue;
+    try {
+      selectionValue = JSON.parse(selectionInput.value);
+    } catch (error) {
+      return '';
+    }
+
+    return selectionValue.ligandname;
+  },
+
+  /**
    * From the given ios, returns the one that contains the given ligand name in
    * its json results, or undefined if none
    * @param ios {IList}

@@ -12,10 +12,23 @@ class StatusLoad extends React.Component {
     this.onSubmitInputString = this.onSubmitInputString.bind(this);
     this.onChangeInputString = this.onChangeInputString.bind(this);
     this.onClickInputFile = this.onClickInputFile.bind(this);
+    this.onClickDownload = this.onClickDownload.bind(this);
 
     this.state = {
       inputString: '',
     };
+  }
+
+  componentWillMount() {
+    this.setState({
+      inputString: this.props.inputString,
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      inputString: nextProps.inputString,
+    });
   }
 
   onChangeInputString(e) {
@@ -44,9 +57,29 @@ class StatusLoad extends React.Component {
     });
   }
 
+  onClickDownload() {
+    const encodedData = encodeURIComponent(this.props.inputData);
+    const link = document.createElement('a');
+    link.href = `data:text/plain;charset=utf-8,${encodedData}`;
+    link.download = 'processed_input_structure.pdb';
+    link.click();
+  }
+
   render() {
-    const disabled = this.props.fetchingData;
+    const disabled = this.props.fetchingData || this.props.runCompleted;
     const inputErrorClass = this.props.inputStringError ? 'error' : '';
+
+    let downloadButton;
+    if (this.props.inputData) {
+      downloadButton = (
+        <Button
+          type="form"
+          onClick={this.onClickDownload}
+        >
+          Download Input
+        </Button>
+      );
+    }
 
     return (
       <div className="status-info status-load">
@@ -92,18 +125,23 @@ class StatusLoad extends React.Component {
             Accepts XYZ, SDF, MOL2, and PDB.
           </p>
         </div>
+        {downloadButton}
       </div>
     );
   }
 }
 
 StatusLoad.defaultProps = {
+  inputData: '',
   inputStringError: null,
   inputFileError: null,
 };
 
 StatusLoad.propTypes = {
+  runCompleted: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
+  inputData: React.PropTypes.string,
+  inputString: React.PropTypes.string.isRequired,
   inputStringError: React.PropTypes.string,
   inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,

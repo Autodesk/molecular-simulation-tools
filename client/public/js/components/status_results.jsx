@@ -50,7 +50,7 @@ class StatusResults extends React.Component {
           type="form"
           onClick={this.onClickDownload}
         >
-          Download
+          Download Result
         </Button>
       );
     }
