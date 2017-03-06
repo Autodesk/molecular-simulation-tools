@@ -3,6 +3,12 @@
   justify-content: center;
   align-content: center;
   flex: 1;
+
+  /* Safari fix.  TODO should be in molviewer itself? */
+  .adsk-viewing-viewer {
+    min-height: 100%;
+    height: auto !important;
+  }
 }
 
 .loading {
