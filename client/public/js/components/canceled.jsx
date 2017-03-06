@@ -1,16 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router';
+import Incomplete from './incomplete';
 
-function Canceled() {
+function Canceled(props) {
   return (
-    <div className="thank-you">
-      <div className="container">
+    <Incomplete>
+      <div>
+        <h1>Thanks {props.email}!</h1>
         <h2>Workflow Successfully Canceled!</h2>
+        <Link to="/" className="largeButton">Try different tool</Link>
       </div>
-    </div>
+    </Incomplete>
   );
 }
 
 Canceled.propTypes = {
+  email: React.PropTypes.string.isRequired,
 };
 
 export default Canceled;

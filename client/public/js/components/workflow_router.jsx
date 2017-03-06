@@ -72,7 +72,9 @@ class WorkflowRouter extends React.Component {
       );
     } else if (this.props.workflow.run.status === statusConstants.CANCELED) {
       routeEl = (
-        <Canceled />
+        <Canceled
+          email={this.props.workflow.run.email}
+        />
       );
     } else if (this.props.workflow.run.status === statusConstants.ERROR) {
       routeEl = (
