@@ -6,8 +6,8 @@ services:
     environment:
       CCC: "ccc.bionano.autodesk.com:9000"
       NODE_ENV: "production"
-      FRONTEND_URL: "http://molsim.bionano.autodesk.com"
-      URL: "http://molsim.bionano.autodesk.com"
+      FRONTEND_URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
+      URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
       REDIS_HOST: "redis.${BNR_ENVIRONMENT}.bionano.bio"
       FLUENT_PORT: '24226'
     extra_hosts:
