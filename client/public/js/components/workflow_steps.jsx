@@ -30,7 +30,7 @@ function WorkflowSteps(props) {
     statusConstants.COMPLETED : statusConstants.IDLE;
   let emailLast = true;
 
-  const ligandStatus = props.workflow.run.selectedLigand ?
+  const ligandStatus = ioUtils.getSelectedLigand(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
     ligandStatus === statusConstants.COMPLETED);

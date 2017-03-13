@@ -48,7 +48,7 @@ const ioUtils = {
    * From the given ios, returns all ligand selection strings found
    * @param ios {IList}
    * @param ligandName {String}
-   * @return {Array}
+   * @return {IList}
    */
   getLigandSelectionStrings(ios, ligandName) {
     const ioWithLigand = ioUtils.getIoWithLigand(ios, ligandName);
@@ -57,7 +57,7 @@ const ioUtils = {
       return new IList();
     }
 
-    return ioWithLigand.fetchedValue.mv_ligand_strings[ligandName];
+    return new IList(ioWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
   },
 
   /**
@@ -116,17 +116,77 @@ const ioUtils = {
     );
 
     if (selectedLigandInput) {
-      serverInputs = serverInputs.push(new IoRecord({
-        name: 'selection.json',
-        type: 'inline',
-        value: JSON.stringify({
-          ligandname: selectedLigand,
-          atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
-        }),
-      }));
+      serverInputs = serverInputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
+      );
     }
 
     return serverInputs;
+  },
+
+  /**
+   * Return an input representing the given selectedLigand
+   * @param inputs {IList}
+   * @returns {Array}
+   */
+  createSelectionInput(selectedLigandInput, selectedLigand) {
+    if (!selectedLigand) {
+      throw new Error('selectedLigand required');
+    }
+    if (!selectedLigandInput ||
+      !selectedLigandInput.fetchedValue ||
+      !selectedLigandInput.fetchedValue.ligands ||
+      !selectedLigandInput.fetchedValue.ligands[selectedLigand]) {
+      throw new Error('No atom ids for given ligand in selectedLigandInput');
+    }
+
+    const fetchedValue = {
+      ligandname: selectedLigand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
+    };
+
+    return new IoRecord({
+      name: 'selection.json',
+      type: 'inline',
+      fetchedValue,
+      value: JSON.stringify(fetchedValue),
+    });
+  },
+
+  /**
+   * Return inputs modified to indicate the given ligand is selected.
+   * If no selection input, will be created.
+   * @param {IList} inputs
+   * @param {String} ligand
+   * @returns {IList}
+   */
+  selectLigand(inputs, ligand) {
+    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, ligand);
+
+    if (!selectedLigandInput) {
+      throw new Error('The given inputs do not contain the given ligand.');
+    }
+
+    const selectionInputIndex = inputs.findIndex(input =>
+      input.name === 'selection.json',
+    );
+
+    if (selectionInputIndex === -1) {
+      return inputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, ligand),
+      );
+    }
+
+    const fetchedValue = {
+      ligandname: ligand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[ligand],
+    };
+    const updatedSelectionInput =
+      inputs.get(selectionInputIndex).merge({
+        fetchedValue,
+        value: JSON.stringify(fetchedValue),
+      });
+    return inputs.set(selectionInputIndex, updatedSelectionInput);
   },
 
   /**

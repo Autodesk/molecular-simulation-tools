@@ -69,14 +69,16 @@ export function initializeRun(workflowId, runId) {
       outputs = await workflowUtils.fetchIoPdbs(outputs);
       outputs = await workflowUtils.fetchIoResults(outputs);
 
-      // Find the selected ligand in the inputs, if it exists
-      const selectedLigand = ioUtils.getSelectedLigand(inputs);
+      // If only one ligand, select it
+      const ligands = ioUtils.getLigandNames(inputs);
+      if (ligands.size === 1) {
+        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+      }
 
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
         inputs,
         outputs,
-        selectedLigand,
       });
     } catch (error) {
       console.error(error);
@@ -132,14 +134,15 @@ export function clickWorkflowNodeResults() {
  * @param {String} workflowId
  * @param {String} email
  * @param {IList} inputs
- * @param {String} [selectedLigand]
  * @param {String} [inputString]
  */
-export function clickRun(workflowId, email, inputs, selectedLigand, inputString) {
+export function clickRun(workflowId, email, inputs, inputString) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
+
+    const selectedLigand = ioUtils.getSelectedLigand(inputs);
 
     apiUtils.run(workflowId, email, inputs, selectedLigand, inputString).then((runId) => {
       dispatch({
@@ -178,9 +181,15 @@ export function selectInputFile(file, workflowId) {
 
     try {
       const inputString = await workflowUtils.readFile(file);
-      const inputs = await workflowUtils.processInput(
+      let inputs = await workflowUtils.processInput(
         workflowId, inputString, extension,
       );
+
+      // If only one ligand, select it
+      const ligands = ioUtils.getLigandNames(inputs);
+      if (ligands.size === 1) {
+        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+      }
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
@@ -217,9 +226,15 @@ export function submitInputString(inputString, workflowId) {
     try {
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
-      const inputs = await workflowUtils.processInput(
+      let inputs = await workflowUtils.processInput(
         workflowId, newInput, extension,
       );
+
+      // If only one ligand, select it
+      const ligands = ioUtils.getLigandNames(inputs);
+      if (ligands.size === 1) {
+        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+      }
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
@@ -287,10 +302,10 @@ export function clickColorize() {
   };
 }
 
-export function changeLigandSelection(ligandString) {
+export function changeLigandSelection(inputs, ligand) {
   return {
     type: actionConstants.CHANGE_LIGAND_SELECTION,
-    ligandString,
+    inputs: ioUtils.selectLigand(inputs, ligand),
   };
 }
 
