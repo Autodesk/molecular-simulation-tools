@@ -1,5 +1,5 @@
 const workflows = [
- {
+  {
     id: '0',
     title: 'Calculate electronic vertical detachment energy',
     selectLigands: false,
