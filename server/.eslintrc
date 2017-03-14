@@ -12,6 +12,7 @@
   },
   "rules": {
     "no-param-reassign": 1,
-    "comma-dangle": 1,
+    "comma-dangle": 0,
+    "no-unused-vars": 1,
   },
 }

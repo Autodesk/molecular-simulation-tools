@@ -1,10 +1,8 @@
 const express = require('express');
-const request = require('request');
 const isEmail = require('validator').isEmail;
-const shortId = require('shortid');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 const dbConstants = require('../constants/db_constants');
-const emailUtils = require('../utils/email_utils');
+const log = require('../utils/log');
 const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
 
@@ -14,12 +12,12 @@ const router = new express.Router();
  * Get the status of a run
  */
 router.get('/:runId', (req, res, next) => {
-  log.info({w:'/run/' + req.params.runId});
+  log.info({ w: `/run/${req.params.runId}` });
   redis.hget(dbConstants.REDIS_RUNS, req.params.runId).then((runString) => {
     if (!runString) {
-      const error = new Error(`Run "${req.params.runId}" not found`);
+      const error = new Error(`Run '${req.params.runId}' not found`);
       error.status = 404;
-      log.error({error:error, runId:req.params.runId});
+      log.error({ error, runId: req.params.runId });
       return next(error);
     }
 
@@ -27,7 +25,7 @@ router.get('/:runId', (req, res, next) => {
     if (run.outputPdbUrl && run.outputPdbUrl.indexOf('ccc:9000') > -1) {
       run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
     }
-    run.params = null;//This is too big to send and unnecessary
+    run.params = null; // This is too big to send and unnecessary
     return redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
       (workflowString) => {
         if (!workflowString) {
@@ -47,12 +45,12 @@ router.get('/:runId', (req, res, next) => {
  * Start a run
  */
 router.post('/', (req, res, next) => {
-  let workflowId = req.body.workflowId + '';
-  let email = req.body.email;
-  let inputs = req.body.inputs;
+  const workflowId = req.body.workflowId.toString();
+  const email = req.body.email;
+  const inputs = req.body.inputs;
   const inputString = req.body.inputString;
-  log.info({email:email});
-  log.info({workflowId:workflowId});
+  log.info({ email });
+  log.info({ workflowId });
   if (workflowId === undefined) {
     return next(new Error('Missing required parameter "workflowId"'));
   }
@@ -63,12 +61,12 @@ router.post('/', (req, res, next) => {
     return next(new Error('No inputs'));
   }
 
-  runUtils.executeWorkflow(workflowId, email, inputs, inputString)
-    .then(jobId => {
-      log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
-        res.send({runId:jobId});
+  return runUtils.executeWorkflow(workflowId, email, inputs, inputString)
+    .then((jobId) => {
+      log.info(`SUCCESS \n jobId=${JSON.stringify(jobId)}`);
+      res.send({ runId: jobId });
     })
-    .error(err => {
+    .error((err) => {
       log.error(err);
       next(err);
     });
@@ -85,7 +83,7 @@ router.post('/cancel', (req, res, next) => {
   return redis.hget(dbConstants.REDIS_RUNS, req.body.runId).then(
     (runString) => {
       if (!runString) {
-        return next(new Error(`Run with id "${req.body.runId}" not found`));
+        return next(new Error(`Run with id '${req.body.runId}' not found`));
       }
 
       const run = JSON.parse(runString);

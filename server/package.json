@@ -19,7 +19,6 @@
     "body-parser": "^1.15.2",
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
-    "busboy": "^0.2.13",
     "cloud-compute-cannon-client": "^0.1.52",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",

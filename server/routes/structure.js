@@ -1,7 +1,5 @@
-const Busboy = require('busboy');
-const Promise = require('bluebird');
 const express = require('express');
-const fs = Promise.promisifyAll(require('fs'));
+const log = require('../utils/log');
 const workflowUtils = require('../utils/workflow_utils');
 
 const router = new express.Router();
@@ -14,24 +12,24 @@ const router = new express.Router();
  *       {
  *         "name": 'input.json',
  *         "type": "[inline|url]",
- *         "value": JSON.stringify({"input": "C"})
+ *         "value": JSON.stringify({ "input": "C" })
  *       }
  *     ]
  * }
- * @return {"success": true, "outputs": {"filename":"url"}, "jobResult": <CCC Job for debugging>}
+ * @return { success: true, outputs: { filename: "url" }, jobResult: <CCC Job for debugging> }
  */
 router.post('/executeWorkflow0Step0', (req, res, next) => {
-  var inputs = req.body.inputs;
+  const inputs = req.body.inputs;
   if (!inputs) {
     return next(new Error('No inputs'));
   }
 
-  workflowUtils.executeWorkflow0Step0(inputs)
-    .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeWorkflow0Step0'});
-        res.send(jobResult);
+  return workflowUtils.executeWorkflow0Step0(inputs)
+    .then((jobResult) => {
+      log.debug({ jobId: jobResult.jobId, f: 'executeWorkflow0Step0' });
+      res.send(jobResult);
     })
-    .error(err => {
+    .error((err) => {
       log.error(err);
       next(err);
     });
@@ -46,24 +44,24 @@ router.post('/executeWorkflow0Step0', (req, res, next) => {
  *       {
  *         "name": 'input.json',
  *         "type": "[inline|url]",
- *         "value": JSON.stringify({"input": "C"})
+ *         "value": JSON.stringify({ "input": "C" })
  *       }
  *     ]
  * }
- * @return {"success": true, "outputs": {"filename":"url"}, "jobResult": <CCC Job for debugging>}
+ * @return { success: true, outputs: { filename: "url" }, jobResult: <CCC Job for debugging> }
  */
 router.post('/executeWorkflow1Step0', (req, res, next) => {
-  var inputs = req.body.inputs;
+  const inputs = req.body.inputs;
   if (!inputs) {
     return next(new Error('No inputs'));
   }
 
-  workflowUtils.executeWorkflow1Step0(inputs)
-    .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeWorkflow1Step0'});
-        res.send(jobResult);
+  return workflowUtils.executeWorkflow1Step0(inputs)
+    .then((jobResult) => {
+      log.debug({ jobId: jobResult.jobId, f: 'executeWorkflow1Step0' });
+      res.send(jobResult);
     })
-    .error(err => {
+    .error((err) => {
       log.error(err);
       next(err);
     });

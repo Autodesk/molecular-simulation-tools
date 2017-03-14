@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const fs = require('fs-extended');
 const path = require('path');
 const shortid = require('shortid');
+const log = require('./log');
 
 const ioUtils = {
   readJsonFile(source) {
@@ -60,7 +61,7 @@ const ioUtils = {
       const writeableStream = fs.createWriteStream(saveTo);
 
       writeableStream.on('finish', (err) => {
-        log.trace({f:'streamToHashFile', event:'finish writing temp file'});
+        log.trace({ f: 'streamToHashFile', event: 'finish writing temp file' });
         if (err) {
           return reject(err);
         }
@@ -84,7 +85,7 @@ const ioUtils = {
 
             const writeableStream = fs.createWriteStream(saveTo);
             writeableStream.on('finish', () => {
-              log.trace({f:'streamToHashFile', event:'finish writing file'});
+              log.trace({ f: 'streamToHashFile', event: 'finish writing file' });
               resolve();
             });
             writeableStream.on('error', reject);
