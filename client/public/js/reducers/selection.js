@@ -37,7 +37,7 @@ function selection(state = initialState, action) {
     case actionConstants.CLICK_WORKFLOW_NODE_EMAIL:
       return state.merge({
         id: null,
-        type: selectionConstants.WORKFLOW_NODE_EMAIL,
+        type: selectionConstants.WORKFLOW_NODE_RUN,
       });
 
     case actionConstants.CLICK_WORKFLOW_NODE_RESULTS:

@@ -6,16 +6,11 @@ import WorkflowRecord from '../records/workflow_record';
 import WorkflowStep from './workflow_step';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
-import workflowUtils from '../utils/workflow_utils';
 
 require('../../css/workflow_steps.scss');
 
 function WorkflowSteps(props) {
-  const running = props.workflow.run.status === statusConstants.RUNNING;
-  const finished = props.workflow.run.status === statusConstants.COMPLETED;
-  const runDisabled = running ||
-    !workflowUtils.isRunnable(props.workflow.run);
-
+  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
@@ -24,11 +19,10 @@ function WorkflowSteps(props) {
     ioUtils.getPdb(props.workflow.run.inputs);
   const loadStatus = loadCompleted ?
     statusConstants.COMPLETED : statusConstants.IDLE;
-  const emailSelected = props.selection.type ===
-    selectionConstants.WORKFLOW_NODE_EMAIL;
-  const emailStatus = props.workflow.run.email ?
-    statusConstants.COMPLETED : statusConstants.IDLE;
-  let emailLast = true;
+  const runSelected = props.selection.type ===
+    selectionConstants.WORKFLOW_NODE_RUN;
+  const runStatus = runCompleted ? statusConstants.COMPLETED : statusConstants.IDLE;
+  let runLast = true;
 
   const ligandStatus = ioUtils.getSelectedLigand(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
@@ -37,9 +31,8 @@ function WorkflowSteps(props) {
 
 
   let resultsNode;
-  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
   if (runCompleted) {
-    emailLast = false;
+    runLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;
     resultsNode = (
@@ -72,19 +65,6 @@ function WorkflowSteps(props) {
 
   let stepsEl;
   if (!props.hideSteps) {
-    let runButton;
-    if (!runCompleted) {
-      runButton = (
-        <Button
-          type="raised"
-          onClick={props.clickRun}
-          disabled={runDisabled}
-          throb={!runDisabled && !finished}
-        >
-            Run Workflow
-        </Button>
-      );
-    }
     stepsEl = [
       <div key={0} className="workflow-steps">
         <ol>
@@ -98,16 +78,15 @@ function WorkflowSteps(props) {
           {selectLigandsNode}
           <WorkflowStep
             disabled={!ligandCompleted}
-            primaryText={'Enter email'}
+            primaryText={'Run'}
             number={selectLigandsNode ? 3 : 2}
             onClick={props.clickWorkflowNodeEmail}
-            selected={emailSelected}
-            status={emailStatus}
-            last={emailLast}
+            selected={runSelected}
+            status={runStatus}
+            last={runLast}
           />
           {resultsNode}
         </ol>
-        {runButton}
       </div>,
 
       <div key={1} className="actions">
@@ -134,7 +113,6 @@ WorkflowSteps.defaultProps = {
 
 WorkflowSteps.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
-  clickRun: React.PropTypes.func.isRequired,
   clickWorkflowNodeLigandSelection: React.PropTypes.func.isRequired,
   clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
   clickWorkflowNodeEmail: React.PropTypes.func.isRequired,

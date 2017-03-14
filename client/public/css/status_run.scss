@@ -1,0 +1,23 @@
+@import 'variables';
+
+.status-run {
+  .time {
+    color: #325BDD;;
+  }
+
+  p {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    padding-left: 4px;
+  }
+
+  .button.form {
+    margin-top: 32px;
+    border-color: $accent-active;
+
+    &.disabled {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+  }
+}
