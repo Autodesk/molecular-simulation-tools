@@ -90,7 +90,7 @@ function Status(props) {
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RUN) {
       const running = props.workflow.run.status === statusConstants.RUNNING;
-      const runDisabled = running ||
+      const runDisabled = running || runCompleted ||
         !workflowUtils.isRunnable(props.workflow.run);
       selection = (
         <StatusRun
