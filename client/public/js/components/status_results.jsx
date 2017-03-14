@@ -1,4 +1,3 @@
-import { List as IList } from 'immutable';
 import React from 'react';
 import Button from './button';
 
@@ -82,7 +81,7 @@ class StatusResults extends React.Component {
 
 StatusResults.defaultProps = {
   outputPdbUrl: '',
-  resultValues: new IList(),
+  resultValues: [],
 };
 
 StatusResults.propTypes = {

@@ -52,11 +52,22 @@ function selection(state = initialState, action) {
         type: selectionConstants.ABOUT,
       });
 
+    case actionConstants.FETCHED_WORKFLOW:
+      if (action.error) {
+        return state;
+      }
+      // Reset selection when loading a workflow
+      return state.merge({
+        id: null,
+        type: selectionConstants.WORKFLOW_NODE_LOAD,
+      });
+
     case actionConstants.FETCHED_RUN:
       if (action.error ||
         action.workflow.run.status !== statusConstants.COMPLETED) {
         return state;
       }
+      // Select results when loading a finished run
       return state.merge({
         id: null,
         type: selectionConstants.WORKFLOW_NODE_RESULTS,
