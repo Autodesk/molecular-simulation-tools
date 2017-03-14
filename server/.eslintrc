@@ -12,5 +12,6 @@
   },
   "rules": {
     "no-param-reassign": 1,
+    "comma-dangle": 1,
   },
 }
