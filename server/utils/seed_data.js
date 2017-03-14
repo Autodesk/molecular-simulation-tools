@@ -1,3 +1,5 @@
+const tasksConstants = require('molecular-design-applications-shared').tasksConstants;
+
 const workflows = [
   {
     id: '0',
@@ -10,6 +12,19 @@ const workflows = [
     creatorImage: '/img/logo2.png',
     description: 'Calculate the electron binding energy of an' +
         ' anionic doublet species using DFT',
+    tasks: [
+      {
+        id: tasksConstants.LOAD,
+        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
+      },
+      {
+        id: tasksConstants.RUN,
+        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
+        inputs: {
+          TODO: 'howwouldthiswork?',
+        },
+      },
+    ],
     viewCount: 0,
   },
   {
