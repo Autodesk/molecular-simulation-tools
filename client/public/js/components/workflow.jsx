@@ -22,7 +22,7 @@ function Workflow(props) {
     );
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
-    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL ||
+    props.selection.type === selectionConstants.WORKFLOW_NODE_RUN ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
     props.workflow.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
