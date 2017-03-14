@@ -59,7 +59,6 @@ function Workflow(props) {
     <div className="workflow">
       <WorkflowSteps
         clickAbout={props.clickAbout}
-        clickRun={props.clickRun}
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeLigandSelection={props.clickWorkflowNodeLigandSelection}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
@@ -70,6 +69,7 @@ function Workflow(props) {
       />
       <Status
         changeLigandSelection={props.changeLigandSelection}
+        clickRun={props.clickRun}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
         hideContent={hideStatus}

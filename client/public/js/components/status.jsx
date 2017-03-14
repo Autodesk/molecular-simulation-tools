@@ -1,15 +1,16 @@
 import { Map as IMap } from 'immutable';
+import { statusConstants } from 'molecular-design-applications-shared';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
-import StatusEmail from './status_email';
+import StatusRun from './status_run';
 import StatusResults from './status_results';
 import WorkflowRecord from '../records/workflow_record';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
-import { statusConstants } from 'molecular-design-applications-shared';
+import workflowUtils from '../utils/workflow_utils';
 
 require('../../css/status.scss');
 
@@ -88,11 +89,16 @@ function Status(props) {
         />
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
+      const running = props.workflow.run.status === statusConstants.RUNNING;
+      const runDisabled = running ||
+        !workflowUtils.isRunnable(props.workflow.run);
       selection = (
-        <StatusEmail
-          runCompleted={runCompleted}
+        <StatusRun
+          clickRun={props.clickRun}
           email={props.workflow.run.email}
           emailError={props.workflow.run.emailError}
+          runCompleted={runCompleted}
+          runDisabled={runDisabled}
           submitEmail={props.submitEmail}
         />
       );
@@ -160,6 +166,7 @@ Status.defaultProps = {
 
 Status.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
+  clickRun: React.PropTypes.func.isRequired,
   fetching: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
