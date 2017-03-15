@@ -57,7 +57,7 @@ const runUtils = {
     log.debug({ f: 'processJobFinished', jobResult });
     const runId = jobResult.jobId;
     // Add the job id to all further log calls
-    const localLog = global.log.child({ f: 'processJobFinished', runId });
+    const localLog = log.child({ f: 'processJobFinished', runId });
     localLog.debug({ jobResult });
     // Check for errors in the job result
     // Set the final output and status on the run
