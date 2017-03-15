@@ -23,6 +23,7 @@ export function initializeWorkflow(workflowId) {
         throw new Error('This workflow is not yet available, please try another.');
       }
     } catch (error) {
+      console.error(error);
       return dispatch({
         type: actionConstants.FETCHED_WORKFLOW,
         error,
@@ -111,15 +112,10 @@ export function clickWorkflowNodeLigandSelection() {
   };
 }
 
-export function clickWorkflowNodeLoad() {
+export function clickTask(taskId) {
   return {
-    type: actionConstants.CLICK_WORKFLOW_NODE_LOAD,
-  };
-}
-
-export function clickWorkflowNodeEmail() {
-  return {
-    type: actionConstants.CLICK_WORKFLOW_NODE_EMAIL,
+    type: actionConstants.CLICK_TASK,
+    taskId,
   };
 }
 

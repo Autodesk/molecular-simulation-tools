@@ -22,10 +22,10 @@ function selection(state = initialState, action) {
         type: selectionConstants.WORKFLOW_NODE,
       });
 
-    case actionConstants.CLICK_WORKFLOW_NODE_LOAD:
+    case actionConstants.CLICK_TASK:
       return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_LOAD,
+        id: action.taskId,
+        type: selectionConstants.TASK,
       });
 
     case actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION:

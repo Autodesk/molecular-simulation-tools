@@ -37,6 +37,26 @@ const workflows = [
     comingSoon: false,
     creatorImage: '/img/logo1.png',
     description: 'Automatically parameterize and refine a small molecule bound to a protein',
+    tasks: [
+      {
+        id: tasksConstants.LOAD,
+        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
+      },
+      {
+        id: tasksConstants.SELECTION,
+        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
+        inputs: {
+          TODO: 'howwouldthiswork?',
+        },
+      },
+      {
+        id: tasksConstants.RUN,
+        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
+        inputs: {
+          TODO: 'howwouldthiswork?',
+        },
+      },
+    ],
     viewCount: 0,
   },
   {

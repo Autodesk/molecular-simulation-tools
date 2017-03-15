@@ -60,9 +60,7 @@ function Workflow(props) {
     <div className="workflow">
       <WorkflowSteps
         clickAbout={props.clickAbout}
-        clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
-        clickWorkflowNodeLigandSelection={props.clickWorkflowNodeLigandSelection}
-        clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
+        clickTask={props.clickTask}
         clickWorkflowNodeResults={props.clickWorkflowNodeResults}
         selection={props.selection}
         workflow={props.workflow}
@@ -105,9 +103,7 @@ Workflow.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickWorkflowNodeLigandSelection: React.PropTypes.func.isRequired,
-  clickWorkflowNodeLoad: React.PropTypes.func.isRequired,
-  clickWorkflowNodeEmail: React.PropTypes.func.isRequired,
+  clickTask: React.PropTypes.func.isRequired,
   clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,

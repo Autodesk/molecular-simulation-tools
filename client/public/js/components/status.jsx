@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList, Map as IMap } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
+import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLigandSelection from './status_ligand_selection';
@@ -75,33 +75,55 @@ function Status(props) {
         </div>
       );
     } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
-      props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD) {
-      selection = (
-        <StatusLoad
-          fetchingData={props.workflow.run.fetchingData}
-          inputData={ioUtils.getPdb(props.workflow.run.inputs)}
-          inputFileError={props.workflow.run.inputFileError}
-          inputString={props.workflow.run.inputString}
-          inputStringError={props.workflow.run.inputStringError}
-          onSelectInputFile={props.onSelectInputFile}
-          runCompleted={runCompleted}
-          submitInputString={props.submitInputString}
-        />
-      );
-    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RUN) {
-      const running = props.workflow.run.status === statusConstants.RUNNING;
-      const runDisabled = running || runCompleted ||
-        !workflowUtils.isRunnable(props.workflow.run);
-      selection = (
-        <StatusRun
-          clickRun={props.clickRun}
-          email={props.workflow.run.email}
-          emailError={props.workflow.run.emailError}
-          runCompleted={runCompleted}
-          runDisabled={runDisabled}
-          submitEmail={props.submitEmail}
-        />
-      );
+      props.selection.type === selectionConstants.TASK) {
+      switch (props.selection.id) {
+        case tasksConstants.LOAD:
+          selection = (
+            <StatusLoad
+              fetchingData={props.workflow.run.fetchingData}
+              inputData={ioUtils.getPdb(props.workflow.run.inputs)}
+              inputFileError={props.workflow.run.inputFileError}
+              inputString={props.workflow.run.inputString}
+              inputStringError={props.workflow.run.inputStringError}
+              onSelectInputFile={props.onSelectInputFile}
+              runCompleted={runCompleted}
+              submitInputString={props.submitInputString}
+            />
+          );
+          break;
+
+        case tasksConstants.RUN: {
+          const running = props.workflow.run.status === statusConstants.RUNNING;
+          const runDisabled = running || runCompleted ||
+            !workflowUtils.isRunnable(props.workflow.run);
+          selection = (
+            <StatusRun
+              clickRun={props.clickRun}
+              email={props.workflow.run.email}
+              emailError={props.workflow.run.emailError}
+              runCompleted={runCompleted}
+              runDisabled={runDisabled}
+              submitEmail={props.submitEmail}
+            />
+          );
+          break;
+        }
+
+        case tasksConstants.SELECTION: {
+          selection = (
+            <StatusLigandSelection
+              changeLigandSelection={props.changeLigandSelection}
+              ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
+              runCompleted={runCompleted}
+              selectedLigand={props.selectedLigand}
+            />
+          );
+          break;
+        }
+
+        default:
+          selection = null;
+      }
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.workflow.run.outputs, 'results.json',
@@ -131,17 +153,6 @@ function Status(props) {
           workflowNodesSize={props.workflow.workflowNodes.size}
           resultValues={resultValues}
           outputPdbUrl={outputPdbUrl}
-        />
-      );
-    } else if (
-      props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION
-    ) {
-      selection = (
-        <StatusLigandSelection
-          changeLigandSelection={props.changeLigandSelection}
-          ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
-          runCompleted={runCompleted}
-          selectedLigand={props.selectedLigand}
         />
       );
     } else if (props.selection.type === selectionConstants.ABOUT) {

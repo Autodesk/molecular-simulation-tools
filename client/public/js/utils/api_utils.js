@@ -2,6 +2,7 @@ import { List as IList } from 'immutable';
 import axios from 'axios';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
+import TaskRecord from '../records/task_record';
 import WorkflowRecord from '../records/workflow_record';
 import ioUtils from './io_utils';
 
@@ -28,7 +29,9 @@ const apiUtils = {
 
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
-      new WorkflowRecord(res.data),
+      new WorkflowRecord(Object.assign({}, res.data, {
+        tasks: res.data.tasks.map(taskData => new TaskRecord(taskData)),
+      })),
     );
   },
 

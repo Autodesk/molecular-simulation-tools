@@ -7,9 +7,7 @@ import {
   clickCancel,
   clickColorize,
   clickRun,
-  clickWorkflowNodeLigandSelection,
-  clickWorkflowNodeLoad,
-  clickWorkflowNodeEmail,
+  clickTask,
   clickWorkflowNodeResults,
   initializeRun,
   initializeWorkflow,
@@ -47,14 +45,8 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickRun(workflowId, email, inputs, inputString));
       };
     },
-    clickWorkflowNodeLigandSelection() {
-      dispatch(clickWorkflowNodeLigandSelection());
-    },
-    clickWorkflowNodeLoad() {
-      dispatch(clickWorkflowNodeLoad());
-    },
-    clickWorkflowNodeEmail() {
-      dispatch(clickWorkflowNodeEmail());
+    clickTask(taskId) {
+      dispatch(clickTask(taskId));
     },
     clickWorkflowNodeResults() {
       dispatch(clickWorkflowNodeResults());

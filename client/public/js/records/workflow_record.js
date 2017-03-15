@@ -13,6 +13,7 @@ const WorkflowRecord = new Record({
   selectLigands: false,
   run: new RunRecord(),
   runCount: 0,
+  tasks: new IList(),
   title: '',
   viewCount: 0,
   workflowNodes: new IList(),

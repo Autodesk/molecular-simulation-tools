@@ -1,5 +1,6 @@
 import React from 'react';
 import { statusConstants } from 'molecular-design-applications-shared';
+import TaskReacord from '../records/task_record';
 import componentUtils from '../utils/component_utils';
 
 require('../../css/node.scss');
@@ -13,7 +14,7 @@ class WorkflowStep extends React.Component {
 
   onClick() {
     if (!this.props.disabled) {
-      this.props.onClick();
+      this.props.onClick(this.props.task.id);
     }
   }
 
@@ -52,6 +53,7 @@ WorkflowStep.propTypes = {
   number: React.PropTypes.number.isRequired,
   selected: React.PropTypes.bool,
   status: React.PropTypes.string.isRequired,
+  task: React.PropTypes.instanceOf(TaskReacord),
   primaryText: React.PropTypes.string.isRequired,
 };
 
