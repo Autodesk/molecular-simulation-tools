@@ -91,7 +91,7 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValues: React.PropTypes.instanceOf(Array),
+  resultValues: React.PropTypes.instanceOf(IList),
 };
 
 export default StatusResults;

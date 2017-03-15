@@ -1,10 +1,8 @@
 import { List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
-import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WorkflowRecord from '../records/workflow_record';
 import actionConstants from '../constants/action_constants';
-import ioUtils from '../utils/io_utils';
 
 const initialState = new WorkflowRecord();
 
@@ -69,7 +67,6 @@ function workflow(state = initialState, action) {
       return state.set('run', state.run.merge({
         inputs: action.inputs,
         outputs: action.outputs,
-        selectedLigand: action.selectedLigand,
       }));
 
     case actionConstants.CLICK_RUN:
@@ -101,21 +98,12 @@ function workflow(state = initialState, action) {
         inputs: [],
       }));
 
-    case actionConstants.INPUT_FILE_COMPLETE: {
-      let ligands = new IList();
-      const inputs = action.inputs ? action.inputs : new IList();
-
-      if (inputs.size) {
-        ligands = ioUtils.getLigandNames(inputs);
-      }
-
+    case actionConstants.INPUT_FILE_COMPLETE:
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputFileError: action.error,
-        inputs,
-        selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
+        inputs: action.inputs || new IList(),
       }));
-    }
 
     case actionConstants.SUBMIT_INPUT_STRING:
       return state.set('run', state.run.merge({
@@ -127,20 +115,10 @@ function workflow(state = initialState, action) {
       }));
 
     case actionConstants.PROCESSED_INPUT_STRING: {
-      let ligands = new IList();
-      const inputs = action.inputs ?
-        action.inputs.map(input => new IoRecord(input)) :
-        new IList();
-
-      if (inputs.size) {
-        ligands = ioUtils.getLigandNames(inputs);
-      }
-
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        inputs,
-        selectedLigand: ligands.size === 1 ? ligands.get(0) : '',
+        inputs: action.inputs || new IList(),
       }));
     }
 
@@ -168,7 +146,7 @@ function workflow(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('selectedLigand', action.ligandString),
+        state.run.set('inputs', action.inputs),
       );
 
     default:
