@@ -111,4 +111,110 @@ describe('ioUtils', () => {
       });
     });
   });
+
+  describe('createSelectionInput', () => {
+    let selectedLigand;
+    let selectedLigandInput;
+    beforeEach(() => {
+      selectedLigand = 'ARQ401';
+      selectedLigandInput = new IoRecord({
+        name: 'prep.json',
+        fetchedValue: {
+          ligands: {
+            ARQ401: [1, 2, 3],
+          },
+        },
+      });
+    });
+
+    describe('when invalid selectedLigand given', () => {
+      it('throws an error', () => {
+        expect(
+          ioUtils.createSelectionInput.bind(null, selectedLigandInput, null),
+        ).to.throw();
+      });
+    });
+
+    describe('when invalid selectedLigandInput given', () => {
+      it('throws an error', () => {
+        expect(
+          ioUtils.createSelectionInput.bind(null, null, selectedLigand),
+        ).to.throw();
+        expect(
+          ioUtils.createSelectionInput.bind(
+            null,
+            {
+              fethedValue: { ligands: { ARQ401: null } },
+            },
+            selectedLigandInput,
+          ),
+        ).to.throw();
+      });
+    });
+
+    describe('when inputs are valid', () => {
+      it('returns an io record', () => {
+        expect(
+          ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
+        ).to.be.an.instanceof(IoRecord);
+      });
+    });
+  });
+
+  describe('selectLigand', () => {
+    let ligand;
+    let inputs;
+    beforeEach(() => {
+      ligand = 'ARQ401';
+      inputs = new IList([
+        new IoRecord({
+          name: 'prep.json',
+          value: 'http://example.com/prep.json',
+          type: 'url',
+          fetchedValue: {
+            ligands: {
+              ARQ401: [1, 2, 3],
+            },
+            mv_ligand_strings: {
+              ARQ401: ['1.A.A-401'],
+            },
+          },
+        }),
+      ]);
+    });
+
+    describe('when no selection.json input is given', () => {
+      it('creates one with the given ligand selected', () => {
+        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
+        expect(updatedInputs.size).to.equal(2);
+
+        const selectionInput = updatedInputs.find(input =>
+          input.name === 'selection.json',
+        );
+        expect(selectionInput.fetchedValue.ligandname).to.equal(ligand);
+      });
+    });
+
+    describe('when selection.json already exists', () => {
+      beforeEach(() => {
+        const fetchedValue = { ligandname: 'BBQ401', atom_ids: [1] };
+        inputs = inputs.push(new IoRecord({
+          name: 'selection.json',
+          type: 'inline',
+          fetchedValue,
+          value: JSON.stringify(fetchedValue),
+        }));
+      });
+
+      it('updates selection.json to select the new ligand', () => {
+        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
+        expect(updatedInputs.size).to.equal(2);
+
+        const selectionInput = updatedInputs.find(input =>
+          input.name === 'selection.json',
+        );
+        expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);
+      });
+    });
+  });
 });

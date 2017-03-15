@@ -13,7 +13,6 @@ const RunRecord = new Record({
   inputString: '',
   inputStringError: null,
   outputs: new IList(),
-  selectedLigand: '',
   status: statusConstants.IDLE,
 });
 

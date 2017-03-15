@@ -1,6 +1,6 @@
-import { Map as IMap } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
 import React from 'react';
+import { List as IList, Map as IMap } from 'immutable';
+import { statusConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLigandSelection from './status_ligand_selection';
@@ -113,7 +113,7 @@ function Status(props) {
           .fetchedValue;
 
         if (outputResults.output_values) {
-          resultValues = outputResults.output_values;
+          resultValues = new IList(outputResults.output_values);
         }
       }
 

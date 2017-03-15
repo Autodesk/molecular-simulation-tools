@@ -1,4 +1,5 @@
 import React from 'react';
+import { List as IList } from 'immutable';
 
 /*
 We use Autodesk Molecule Viewer to display and navigate molecular data. Autodesk Molecule Viewer is not released under an open source license. For more information about the Autodesk Molecule Viewer license please refer to: https://molviewer.com/molviewer/docs/Pre-Release_Product_Testing_Agreement.pdf.
@@ -91,7 +92,7 @@ class View extends React.Component {
         }
 
         addModelPromise.then(() => {
-          if (selectionStrings) {
+          if (selectionStrings && this.moleculeViewer) {
             this.moleculeViewer.clearSelection();
             selectionStrings.forEach(selectionString =>
               this.moleculeViewer.select(selectionString),
@@ -138,7 +139,7 @@ class View extends React.Component {
 }
 
 View.defaultProps = {
-  selectionStrings: [],
+  selectionStrings: new IList(),
   modelData: '',
   error: '',
   colorized: false,
@@ -149,7 +150,7 @@ View.propTypes = {
   error: React.PropTypes.string,
   loading: React.PropTypes.bool.isRequired,
   modelData: React.PropTypes.string,
-  selectionStrings: React.PropTypes.instanceOf(Array),
+  selectionStrings: React.PropTypes.instanceOf(IList),
 };
 
 export default View;

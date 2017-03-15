@@ -24,7 +24,7 @@ function WorkflowSteps(props) {
   const runStatus = runCompleted ? statusConstants.COMPLETED : statusConstants.IDLE;
   let runLast = true;
 
-  const ligandStatus = props.workflow.run.selectedLigand ?
+  const ligandStatus = ioUtils.getSelectedLigand(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
     ligandStatus === statusConstants.COMPLETED);
