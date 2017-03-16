@@ -52,6 +52,15 @@ function selection(state = initialState, action) {
         type: selectionConstants.ABOUT,
       });
 
+    case actionConstants.FETCHED_WORKFLOW:
+      if (action.error || !action.workflow.tasks.size) {
+        return state;
+      }
+      return state.merge({
+        id: action.workflow.tasks.get(0).id,
+        type: selectionConstants.TASK,
+      });
+
     case actionConstants.FETCHED_RUN:
       if (action.error ||
         action.workflow.run.status !== statusConstants.COMPLETED) {

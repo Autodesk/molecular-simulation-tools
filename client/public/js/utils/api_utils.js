@@ -30,7 +30,7 @@ const apiUtils = {
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
       new WorkflowRecord(Object.assign({}, res.data, {
-        tasks: res.data.tasks.map(taskData => new TaskRecord(taskData)),
+        tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
       })),
     );
   },
