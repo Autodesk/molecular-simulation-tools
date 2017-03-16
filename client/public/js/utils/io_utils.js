@@ -1,6 +1,8 @@
 import { List as IList } from 'immutable';
 import IoRecord from '../records/io_record';
 
+const OUTPUT_ANIMATION_FRAMES = 'minstep_frames.json';
+
 const ioUtils = {
   /**
    * Given a list of ios, find the first pdb io and get the pdb data.
@@ -16,6 +18,44 @@ const ioUtils = {
     }
 
     return ios.get(pdbIndex).fetchedValue;
+  },
+
+  /**
+   * Given a list of outputs, returns a list of pdb strings to be animated.
+   * Returns an empty list when none, or when data is missing.
+   * @param {IList} outputs
+   * @returns {IList}
+   */
+  getAnimationPdbs(outputs) {
+    // If there are no outputs yet, return empty list
+    if (!outputs.size) {
+      return new IList();
+    }
+
+    const framesOutputIndex = ioUtils.getIndexByExtension(
+      outputs, OUTPUT_ANIMATION_FRAMES,
+    );
+    if (framesOutputIndex === -1) {
+      throw new Error('Invalid outputs data; missing minstep_frames.json');
+    }
+
+    const framesOutput = outputs.get(framesOutputIndex);
+    // If frames output exists but has no fetched value yet, return empty list
+    if (!framesOutput.fetchedValue) {
+      return new IList();
+    }
+
+    // Find outputs corresponding to each frame in framesOutput
+    let pdbOutputs = new IList();
+    framesOutput.fetchedValue.forEach((filename) => {
+      const matchedOutput = outputs.find(output => output.name === filename);
+      if (!matchedOutput) {
+        throw new Error('Invalid outputs data; minsteps_frames mismatch');
+      }
+      pdbOutputs = pdbOutputs.push(matchedOutput);
+    });
+
+    return pdbOutputs.map(output => output.fetchedValue);
   },
 
   /**
