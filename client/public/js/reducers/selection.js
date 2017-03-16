@@ -3,9 +3,7 @@ import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
 
-const initialState = new SelectionRecord({
-  type: selectionConstants.WORKFLOW_NODE_LOAD,
-});
+const initialState = new SelectionRecord();
 
 function selection(state = initialState, action) {
   switch (action.type) {

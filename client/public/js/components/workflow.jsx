@@ -21,9 +21,7 @@ function Workflow(props) {
       workflowNode => workflowNode.id === props.selection.id,
     );
     selectedModelData = selectedWorkflowNode.modelData;
-  } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
-    props.selection.type === selectionConstants.WORKFLOW_NODE_RUN ||
-    props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
+  } else if (props.selection.type === selectionConstants.TASK &&
     props.workflow.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
   } else if (props.selection.type ===
