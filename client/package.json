@@ -18,7 +18,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
-    "tirrenu": "../molecule_viewer/tirrenu-1.3.2.tgz",
+    "tirrenu": "../molecule_viewer/tirrenu-1.3.3.tgz",
     "validator": "^6.2.0"
   },
   "devDependencies": {

@@ -68,7 +68,7 @@ class MoleculeViewerWrapper {
         this.moleculeViewer.mv.addEventListener(
           MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
         );
-        this.moleculeViewer.createMoleculeFromFile(modelData, 'pdb');
+        this.moleculeViewer.createMoleculeFromData(modelData, 'pdb', true);
       });
     });
   }
