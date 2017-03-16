@@ -121,7 +121,7 @@ const apiUtils = {
   /**
    * Fetch and parse the json file that is returned from step0 input processing
    * @param jsonUrl {String}
-   * @returns {Object}
+   * @returns {Promise}
    */
   getIoData(jsonUrl) {
     return axios.get(jsonUrl).then(res => res.data);

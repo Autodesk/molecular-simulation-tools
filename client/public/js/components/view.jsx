@@ -1,4 +1,5 @@
 import React from 'react';
+import { List as IList } from 'immutable';
 import MoleculeViewerWrapper from '../utils/molecule_viewer_wrapper';
 import loadImg from '../../img/loadAnim.gif';
 import '../../css/view.scss';
@@ -81,7 +82,7 @@ class View extends React.Component {
 }
 
 View.defaultProps = {
-  selectionStrings: [],
+  selectionStrings: new IList(),
   modelData: '',
   error: '',
   colorized: false,
@@ -92,7 +93,7 @@ View.propTypes = {
   error: React.PropTypes.string,
   loading: React.PropTypes.bool.isRequired,
   modelData: React.PropTypes.string,
-  selectionStrings: React.PropTypes.instanceOf(Array),
+  selectionStrings: React.PropTypes.instanceOf(IList),
 };
 
 export default View;
