@@ -56,6 +56,9 @@ const apiUtils = {
           inputs,
           outputs,
         })),
+        tasks: new IList(runData.workflow.tasks.map(taskData =>
+          new TaskRecord(taskData))
+        ),
       }));
     });
   },
