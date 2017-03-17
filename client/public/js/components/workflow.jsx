@@ -3,7 +3,7 @@ import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowSteps from '../components/workflow_steps';
+import Tasks from '../components/tasks';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
@@ -49,12 +49,11 @@ function Workflow(props) {
     <div className="workflow">
       {
         loadingOrError ? null : (
-          <WorkflowSteps
+          <Tasks
             clickAbout={props.clickAbout}
             clickTask={props.clickTask}
             selection={props.selection}
             workflow={props.workflow}
-            hideSteps={loadingOrError}
           />
         )
       }

@@ -2,9 +2,9 @@ import React from 'react';
 import { statusConstants } from 'molecular-design-applications-shared';
 import componentUtils from '../utils/component_utils';
 
-require('../../css/node.scss');
+require('../../css/task.scss');
 
-class WorkflowStep extends React.Component {
+class Task extends React.Component {
   constructor(props) {
     super(props);
 
@@ -29,7 +29,7 @@ class WorkflowStep extends React.Component {
 
     return (
       <li
-        className={`node ${selectedClass} ${lastClass} ${disabledClass} ${throbClass}`}
+        className={`task ${selectedClass} ${lastClass} ${disabledClass} ${throbClass}`}
         onClick={this.onClick}
       >
         <span>{`${this.props.number}. ${this.props.primaryText}`}</span>
@@ -39,13 +39,13 @@ class WorkflowStep extends React.Component {
   }
 }
 
-WorkflowStep.defaultProps = {
+Task.defaultProps = {
   disabled: false,
   last: false,
   selected: false,
 };
 
-WorkflowStep.propTypes = {
+Task.propTypes = {
   disabled: React.PropTypes.bool,
   last: React.PropTypes.bool,
   onClick: React.PropTypes.func.isRequired,
@@ -56,4 +56,4 @@ WorkflowStep.propTypes = {
   primaryText: React.PropTypes.string.isRequired,
 };
 
-export default WorkflowStep;
+export default Task;

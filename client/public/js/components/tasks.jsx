@@ -3,38 +3,22 @@ import { statusConstants, tasksConstants } from 'molecular-design-applications-s
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import WorkflowRecord from '../records/workflow_record';
-import WorkflowStep from './workflow_step';
+import Task from './task';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
-require('../../css/workflow_steps.scss');
+require('../../css/tasks.scss');
 
-function WorkflowSteps(props) {
+function Tasks(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
   const loadCompleted = !props.workflow.run.inputFileError &&
     !props.workflow.run.inputStringError &&
     ioUtils.getPdb(props.workflow.run.inputs);
 
-  let resultsNode;
-  if (runCompleted) {
-    const resultsSelected = props.selection.taskIndex === props.workflow.tasks.size;
-    resultsNode = (
-      <WorkflowStep
-        primaryText={'Results'}
-        number={props.workflow.tasks.size}
-        onClick={props.clickTask}
-        selected={resultsSelected}
-        status={statusConstants.COMPLETED}
-        taskIndex={props.workflow.tasks.size}
-        last
-      />
-    );
-  }
-
   return (
-    <div className="workflow-steps-pane">
-      <div key={0} className="workflow-steps">
+    <div className="tasks-pane">
+      <div key={0} className="tasks">
         <ol>
           {
             props.workflow.tasks.map((task, index) => {
@@ -44,7 +28,7 @@ function WorkflowSteps(props) {
                   const loadStatus = loadCompleted ?
                     statusConstants.COMPLETED : statusConstants.IDLE;
                   return (
-                    <WorkflowStep
+                    <Task
                       key={task.id}
                       number={number}
                       onClick={props.clickTask}
@@ -68,7 +52,7 @@ function WorkflowSteps(props) {
                   const runStatus = runCompleted ?
                     statusConstants.COMPLETED : statusConstants.IDLE;
                   return (
-                    <WorkflowStep
+                    <Task
                       disabled={!ligandCompleted}
                       key={task.id}
                       last={!runCompleted}
@@ -86,7 +70,7 @@ function WorkflowSteps(props) {
                   const ligandStatus = ioUtils.getSelectedLigand(props.workflow.run.inputs) ?
                     statusConstants.COMPLETED : statusConstants.IDLE;
                   return (
-                    <WorkflowStep
+                    <Task
                       disabled={!loadCompleted}
                       key={task.id}
                       number={2}
@@ -104,7 +88,19 @@ function WorkflowSteps(props) {
               }
             })
           }
-          {resultsNode}
+          {
+            runCompleted ? (
+              <Task
+                primaryText={'Results'}
+                number={props.workflow.tasks.size}
+                onClick={props.clickTask}
+                selected={props.selection.taskIndex === props.workflow.tasks.size}
+                status={statusConstants.COMPLETED}
+                taskIndex={props.workflow.tasks.size}
+                last
+              />
+            ) : null
+          }
         </ol>
       </div>
       <div className="actions">
@@ -119,11 +115,11 @@ function WorkflowSteps(props) {
   );
 }
 
-WorkflowSteps.propTypes = {
+Tasks.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
   workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 
-export default WorkflowSteps;
+export default Tasks;

@@ -1,11 +1,11 @@
-.workflow-steps-pane {
+.tasks-pane {
   display: flex;
   flex-direction: column;
   width: 200px;
   background-color: #3A3D79;
   padding-top: 44px;
 
-  .workflow-steps {
+  .tasks {
     flex: 1;
 
     .workflow-title {
