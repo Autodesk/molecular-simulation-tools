@@ -20,7 +20,7 @@ function Status(props) {
   let selection;
   if (!props.hideContent) {
     if (props.selection.type === selectionConstants.NODE) {
-      const node = props.nodes.get(props.selection.id);
+      const node = props.nodes.get(props.selection.taskIndex);
       selection = (
         <div className="status-info">
           <p>Node</p>
@@ -50,7 +50,7 @@ function Status(props) {
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
       const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
-        workflowNodeI.id === props.selection.id,
+        workflowNodeI.id === props.selection.taskIndex,
       );
       const node = workflowNode.node;
 
@@ -74,7 +74,7 @@ function Status(props) {
           {output}
         </div>
       );
-    } else if (props.selection.id === tasksConstants.RESULTS) {
+    } else if (props.selection.taskIndex === props.workflow.tasks.size) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.workflow.run.outputs, 'results.json',
       );
@@ -107,7 +107,7 @@ function Status(props) {
       );
     } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
       props.selection.type === selectionConstants.TASK) {
-      switch (props.selection.id) {
+      switch (props.workflow.tasks.get(props.selection.taskIndex).id) {
         case tasksConstants.LOAD:
           selection = (
             <StatusLoad

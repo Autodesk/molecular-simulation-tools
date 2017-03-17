@@ -44,8 +44,8 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickRun(workflowId, email, inputs, inputString));
       };
     },
-    clickTask(taskId) {
-      dispatch(clickTask(taskId));
+    clickTask(taskIndex) {
+      dispatch(clickTask(taskIndex));
     },
     initializeRun(workflowId, runId) {
       dispatch(initializeRun(workflowId, runId));

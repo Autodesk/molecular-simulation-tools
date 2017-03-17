@@ -18,8 +18,7 @@ function WorkflowSteps(props) {
 
   let resultsNode;
   if (runCompleted) {
-    const resultsSelected = props.selection.id ===
-      tasksConstants.RESULTS;
+    const resultsSelected = props.selection.taskIndex === props.workflow.tasks.size;
     resultsNode = (
       <WorkflowStep
         primaryText={'Results'}
@@ -27,7 +26,7 @@ function WorkflowSteps(props) {
         onClick={props.clickTask}
         selected={resultsSelected}
         status={statusConstants.COMPLETED}
-        taskId={tasksConstants.RESULTS}
+        taskIndex={props.workflow.tasks.size}
         last
       />
     );
@@ -50,9 +49,9 @@ function WorkflowSteps(props) {
                       number={number}
                       onClick={props.clickTask}
                       primaryText={'Load Molecule'}
-                      selected={props.selection.id === task.id}
+                      selected={props.selection.taskIndex === index}
                       status={loadStatus}
-                      taskId={task.id}
+                      taskIndex={index}
                     />
                   );
                 }
@@ -76,9 +75,9 @@ function WorkflowSteps(props) {
                       number={number}
                       onClick={props.clickTask}
                       primaryText={'Run'}
-                      selected={props.selection.id === task.id}
+                      selected={props.selection.taskIndex === index}
                       status={runStatus}
-                      taskId={task.id}
+                      taskIndex={index}
                     />
                   );
                 }
@@ -93,9 +92,9 @@ function WorkflowSteps(props) {
                       number={2}
                       onClick={props.clickTask}
                       primaryText={'Ligand Selection'}
-                      selected={props.selection.id === task.id}
+                      selected={props.selection.taskIndex === index}
                       status={ligandStatus}
-                      taskId={task.id}
+                      taskIndex={index}
                     />
                   );
                 }

@@ -112,10 +112,10 @@ export function clickWorkflowNodeLigandSelection() {
   };
 }
 
-export function clickTask(taskId) {
+export function clickTask(taskIndex) {
   return {
     type: actionConstants.CLICK_TASK,
-    taskId,
+    taskIndex,
   };
 }
 

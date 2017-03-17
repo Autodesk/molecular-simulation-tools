@@ -1,6 +1,5 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
-import { tasksConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
@@ -19,10 +18,10 @@ function Workflow(props) {
   // TODO this will never happen b/c not displaying nodes anymore
   if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
     const selectedWorkflowNode = props.workflow.workflowNodes.find(
-      workflowNode => workflowNode.id === props.selection.id,
+      workflowNode => workflowNode.id === props.selection.taskIndex,
     );
     selectedModelData = selectedWorkflowNode.modelData;
-  } else if (props.selection.id === tasksConstants.RESULTS) {
+  } else if (props.selection.taskIndex === props.workflow.tasks.size) {
     // Morph is chosen from a list of all input/output pdbs
     const modelDatas = pdbIos.map(io => io.fetchedValue);
     selectedModelData = modelDatas.get(props.morph);
