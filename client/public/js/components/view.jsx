@@ -55,15 +55,20 @@ class View extends React.Component {
   }
 
   addModelToMoleculeViewer(modelData) {
-    console.log('OMG addmodel');
-    if (this.moleculeViewerHasMolecule) {
+    if (!this.moleculeViewerHasMolecule) {
       const pdbId = this.moleculeViewer.getLoadedMoleculeIDs()[0];
-      const origFrame = this.moleculeViewer.getOriginalAnimState(pdbId);
-      this.moleculeViewer.addAnimationFrame(pdbId, origFrame, false);
-
       const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
       this.moleculeViewer.addAnimationFrame(pdbId, state, false);
-      console.log('OMG animate');
+      this.moleculeViewer.setAnimateOn(true, 'RT');
+      this.moleculeViewer.setPausedOn(true);
+    } else {
+      const pdbId = this.moleculeViewer.getLoadedMoleculeIDs()[0];
+      const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
+      const originalState = this.moleculeViewer.getOriginalAnimState(pdbId);
+      // TODO why is this bonds hack needed?
+      state.bonds = originalState.bonds;
+      this.moleculeViewer.addAnimationFrame(pdbId, state, false);
+      this.moleculeViewer.playFrame(this.moleculeViewer.getNumFrames() - 1);
       return Promise.resolve();
     }
 
@@ -74,6 +79,8 @@ class View extends React.Component {
             MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
           );
         }
+        this.moleculeViewer.setRepresentation('ribbon', false, undefined);
+        this.moleculeViewer.setRepresentation('stick', true, undefined);
         resolve();
       };
 
@@ -102,9 +109,6 @@ class View extends React.Component {
       createMoleculeViewerPromise.then(() => {
         let addModelPromise = Promise.resolve();
         if (modelData !== oldModelData) {
-          console.log('omg mds not equal', !!modelData, !!oldModelData);
-          if (modelData) console.log('omg', modelData.length);
-          if (oldModelData) console.log('omg', oldModelData.length);
           addModelPromise = this.addModelToMoleculeViewer(modelData);
         }
 
