@@ -23,6 +23,7 @@ function selection(state = initialState, action) {
       if (action.error) {
         return state;
       }
+      // Reset selection when loading a workflow
       return state.merge({
         taskIndex: 0,
         type: selectionConstants.TASK,
@@ -33,6 +34,7 @@ function selection(state = initialState, action) {
         action.workflow.run.status !== statusConstants.COMPLETED) {
         return state;
       }
+      // Select results when loading a finished run
       return state.merge({
         taskIndex: action.workflow.tasks.size, // Results
         type: selectionConstants.TASK,

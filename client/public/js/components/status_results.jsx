@@ -1,5 +1,5 @@
-import { List as IList } from 'immutable';
 import React from 'react';
+import { List as IList } from 'immutable';
 import Button from './button';
 
 import '../../css/status_results.scss';
