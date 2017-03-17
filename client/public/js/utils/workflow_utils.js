@@ -88,8 +88,9 @@ const workflowUtils = {
   /**
    * Using the api, go through the full step0 input processing flow
    * Calls to this should be surrounded by try/catch!
-   * @param workflowId {String}
-   * @param input {String}
+   * @param {String} workflowId
+   * @param {String} input
+   * @param {String} [extension]
    * @returns {Array}
    */
   processInput: async function processInput(workflowId, input, extension) {
@@ -100,6 +101,14 @@ const workflowUtils = {
 
     // Get the processed input pdbs
     inputs = await workflowUtils.fetchIoPdbs(inputs);
+
+    // Make sure the json results are valid and also indicate a success.
+    const inputErrorMessage = ioUtils.getInputError(inputs);
+    if (inputErrorMessage) {
+      const error = new Error(inputErrorMessage);
+      error.inputs = inputs;
+      throw error;
+    }
 
     return inputs;
   },

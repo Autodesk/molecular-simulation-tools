@@ -28,14 +28,17 @@ const runUtils = {
   },
 
   sendEmailsWorkflowEnded(runId) {
+    log.debug({f:'sendEmailsWorkflowEnded', runId});
     redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       if (!runString) {
-        return console.error(runString);
+        log.error({f:'sendEmailsWorkflowEnded', runString});
+        return;
       }
 
       const run = JSON.parse(runString);
 
       if (run.email) {
+        log.debug({f:'sendEmailsWorkflowEnded', run, email:run.email});
         return emailUtils.send(
             run.email,
             'Your Workflow Has Ended',
@@ -45,20 +48,31 @@ const runUtils = {
             }
           );
       } else {
+        log.warn({f:'sendEmailsWorkflowEnded', run, message:'There was no email in the run'});
         return Promise.resolve(true);
       }
-    }).catch(console.error.bind(console));
+    }).catch(err => {
+      log.error({error:err, f:'sendEmailsWorkflowEnded', runId});
+    });
   },
 
   processJobFinished(jobResult) {
+    log.debug({f:'processJobFinished', jobResult});
     const runId = jobResult.jobId;
     //Add the job id to all further log calls
-    const log = global.log.child({f:'processJobFinished', runId:runId});
-    log.debug({jobResult});
+    const localLog = global.log.child({f:'processJobFinished', runId:runId});
+    localLog.debug({jobResult});
     // Check for errors in the job result
     // Set the final output and status on the run
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       const run = JSON.parse(runString);
+
+      // Don't set results on a canceled run
+      if (run.status === statusConstants.CANCELED) {
+        localLog.debug(`Run ${runId} canceled, so results not written.`);
+        return Promise.resolve();
+      }
+
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
       var outputs = [];
@@ -80,7 +94,7 @@ const runUtils = {
       );
     })
     .catch(err => {
-      return log.error({error:JSON.stringify(err)});
+      return localLog.error({error:JSON.stringify(err)});
     })
     .then(ignored => {
       runUtils.sendEmailsWorkflowEnded(runId);
@@ -111,9 +125,16 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, inputs) {
-    const log = global.log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
-    log.debug({});
+  /**
+   * Execute a full workflow (not input processing)
+   * @param {String} workflowId
+   * @param {String} email
+   * @param {Array} inputs
+   * @param {String} [inputString]
+   */
+  executeWorkflow(workflowId, email, inputs, inputString) {
+    const localLog = log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
+    localLog.debug({});
     var workflowPromise = null;
     switch(workflowId + '') {
       case '0':
@@ -128,7 +149,7 @@ const runUtils = {
 
     return workflowPromise
       .then(runId => {
-        log.info({workflowId, runId});
+        localLog.info({workflowId, runId});
 
         const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
         if (email) {
@@ -139,7 +160,7 @@ const runUtils = {
             { runUrl }
           )
           .catch(err => {
-            log.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
+            localLog.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
           });
         }
 
@@ -148,9 +169,10 @@ const runUtils = {
           workflowId,
           email: email,
           inputs,
+          inputString,
           created: Date.now(),
         };
-        log.debug(JSON.stringify(runPayload).substr(0, 300));
+        localLog.debug(JSON.stringify(runPayload).substr(0, 300));
 
         const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(runPayload));
         const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
@@ -167,7 +189,7 @@ const runUtils = {
         return runId;
       })
       .error(err => {
-        log.error(err);
+        localLog.error(err);
         runUtils.setRunStatus(runId, statusConstants.ERROR);
         //TODO: Async removal of the entire job
         return Promise.reject(err);
@@ -184,26 +206,29 @@ const runUtils = {
         normalizedStatus = statusConstants.IDLE;
       }
       return normalizedStatus;
-    }).catch(console.error.bind(console));
+    }).catch(err => {
+      log.error({f:'getRunStatus', runId, error:err});
+    });
   },
 
   // In case of crashes, check all running workflows and attach listeners
   // to the CCC jobs
   addMonitorsToRunningWorkflow() {
     redis.hkeys(dbConstants.REDIS_RUNS).then((keys) => {
+      // log.warn({message:'On startup, resuming monitoring runs', runIds:keys});
       keys.forEach((runId) => {
         runUtils.getRunStatus(runId)
           .then((state) => {
             if (state === statusConstants.RUNNING) {
-              console.log(`runId=${runId} running, reattaching listener to CCC job`);
+              log.debug(`runId=${runId} running, reattaching listener to CCC job`);
               runUtils.monitorRun(runId);
             }
           }, (err) => {
-            console.log(err);
+            log.error(err);
           });
       });
     }).catch((err) => {
-      console.error(err);
+      log.error(err);
     });
   }
 };

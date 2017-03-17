@@ -1,4 +1,5 @@
 import React from 'react';
+import { List as IList } from 'immutable';
 import Button from './button';
 
 import '../../css/status_results.scss';
@@ -49,7 +50,7 @@ class StatusResults extends React.Component {
           type="form"
           onClick={this.onClickDownload}
         >
-          Download
+          Download Result
         </Button>
       );
     }
@@ -81,7 +82,7 @@ class StatusResults extends React.Component {
 
 StatusResults.defaultProps = {
   outputPdbUrl: '',
-  resultValues: [],
+  resultValues: new IList(),
 };
 
 StatusResults.propTypes = {
@@ -90,7 +91,7 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValues: React.PropTypes.instanceOf(Array),
+  resultValues: React.PropTypes.instanceOf(IList),
 };
 
 export default StatusResults;

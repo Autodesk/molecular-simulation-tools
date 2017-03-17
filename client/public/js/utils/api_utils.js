@@ -10,16 +10,19 @@ const API_URL = process.env.API_URL || '';
 const apiUtils = {
   /**
    * Start a run
-   * @param workflowId {String}
-   * @param email {String}
-   * @param inputs {IList}
+   * @param {String} workflowId
+   * @param {String} email
+   * @param {IList} inputs
+   * @param {String} selectedLigand
+   * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(workflowId, email, inputs, selectedLigand) {
+  run(workflowId, email, inputs, selectedLigand, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
       workflowId,
       email,
       inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
+      inputString,
     }).then(res => res.data.runId);
   },
 
@@ -118,7 +121,7 @@ const apiUtils = {
   /**
    * Fetch and parse the json file that is returned from step0 input processing
    * @param jsonUrl {String}
-   * @returns {Object}
+   * @returns {Promise}
    */
   getIoData(jsonUrl) {
     return axios.get(jsonUrl).then(res => res.data);

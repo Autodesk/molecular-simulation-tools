@@ -40,14 +40,18 @@ function Workflow(props) {
   }
 
   let selectionStrings = null;
-  if (props.workflow.run.selectedLigand) {
+  const selectedLigand = ioUtils.getSelectedLigand(props.workflow.run.inputs);
+  if (selectedLigand) {
     selectionStrings = ioUtils.getLigandSelectionStrings(
-      props.workflow.run.inputs, props.workflow.run.selectedLigand,
+      props.workflow.run.inputs, selectedLigand,
     );
   }
 
-  const loadingOrError =
-    !!(props.workflow.fetching || props.workflow.fetchingError);
+  const loadingOrError = !!(props.workflow.fetching ||
+    props.workflow.fetchingError ||
+    props.workflow.run.fetchingDataError);
+  const hideStatus = props.workflow.fetching ||
+    props.workflow.run.fetchingDataError;
 
   return (
     <div className="workflow">
@@ -66,14 +70,14 @@ function Workflow(props) {
         changeLigandSelection={props.changeLigandSelection}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
-        fetchingDataError={props.workflow.run.fetchingDataError}
+        hideContent={hideStatus}
         morph={props.morph}
         nodes={props.nodes}
         numberOfPdbs={outputPdbs.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onSelectInputFile={props.onSelectInputFile}
-        selectedLigand={props.workflow.run.selectedLigand}
+        selectedLigand={selectedLigand}
         selection={props.selection}
         submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}

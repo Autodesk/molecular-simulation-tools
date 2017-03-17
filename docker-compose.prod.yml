@@ -4,11 +4,14 @@ services:
   server:
     image: "quay.io/bionano/mdtapps_server:${VERSION}"
     environment:
-      CCC: "ccc.bionano.autodesk.com:9000"
+      CCC: "ccc-internal.${BNR_ENVIRONMENT}.bionano.autodesk.com"
       NODE_ENV: "production"
-      FRONTEND_URL: "http://molsim.bionano.autodesk.com"
-      URL: "http://molsim.bionano.autodesk.com"
-      REDIS_HOST: "redis.${BNR_ENVIRONMENT}.bionano.bio"
+      FRONTEND_URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
+      URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
+      REDIS_HOST: "redis-mst.${BNR_ENVIRONMENT}.bionano.bio"
+      FLUENT_PORT: '24226'
+    extra_hosts:
+      - "fluentd:172.17.0.1"
     logging:
       driver: json-file
       options:

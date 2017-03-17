@@ -88,7 +88,7 @@ const ioUtils = {
    * From the given ios, returns all ligand selection strings found
    * @param ios {IList}
    * @param ligandName {String}
-   * @return {Array}
+   * @return {IList}
    */
   getLigandSelectionStrings(ios, ligandName) {
     const ioWithLigand = ioUtils.getIoWithLigand(ios, ligandName);
@@ -97,7 +97,29 @@ const ioUtils = {
       return new IList();
     }
 
-    return ioWithLigand.fetchedValue.mv_ligand_strings[ligandName];
+    return new IList(ioWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
+  },
+
+  /**
+   * From the given ios, look for selection.json and its selected ligand.
+   * @param {IList} ios
+   * @returns {String}
+   */
+  getSelectedLigand(ios) {
+    const selectionInput = ios.find(io => io.name === 'selection.json');
+
+    if (!selectionInput) {
+      return '';
+    }
+
+    let selectionValue;
+    try {
+      selectionValue = JSON.parse(selectionInput.value);
+    } catch (error) {
+      return '';
+    }
+
+    return selectionValue.ligandname;
   },
 
   /**
@@ -134,17 +156,105 @@ const ioUtils = {
     );
 
     if (selectedLigandInput) {
-      serverInputs = serverInputs.push(new IoRecord({
-        name: 'selection.json',
-        type: 'inline',
-        value: JSON.stringify({
-          ligandname: selectedLigand,
-          atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
-        }),
-      }));
+      serverInputs = serverInputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
+      );
     }
 
     return serverInputs;
+  },
+
+  /**
+   * Return an input representing the given selectedLigand
+   * @param inputs {IList}
+   * @returns {Array}
+   */
+  createSelectionInput(selectedLigandInput, selectedLigand) {
+    if (!selectedLigand) {
+      throw new Error('selectedLigand required');
+    }
+    if (!selectedLigandInput ||
+      !selectedLigandInput.fetchedValue ||
+      !selectedLigandInput.fetchedValue.ligands ||
+      !selectedLigandInput.fetchedValue.ligands[selectedLigand]) {
+      throw new Error('No atom ids for given ligand in selectedLigandInput');
+    }
+
+    const fetchedValue = {
+      ligandname: selectedLigand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
+    };
+
+    return new IoRecord({
+      name: 'selection.json',
+      type: 'inline',
+      fetchedValue,
+      value: JSON.stringify(fetchedValue),
+    });
+  },
+
+  /**
+   * Return inputs modified to indicate the given ligand is selected.
+   * If no selection input, will be created.
+   * @param {IList} inputs
+   * @param {String} ligand
+   * @returns {IList}
+   */
+  selectLigand(inputs, ligand) {
+    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, ligand);
+
+    if (!selectedLigandInput) {
+      throw new Error('The given inputs do not contain the given ligand.');
+    }
+
+    const selectionInputIndex = inputs.findIndex(input =>
+      input.name === 'selection.json',
+    );
+
+    if (selectionInputIndex === -1) {
+      return inputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, ligand),
+      );
+    }
+
+    const fetchedValue = {
+      ligandname: ligand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[ligand],
+    };
+    const updatedSelectionInput =
+      inputs.get(selectionInputIndex).merge({
+        fetchedValue,
+        value: JSON.stringify(fetchedValue),
+      });
+    return inputs.set(selectionInputIndex, updatedSelectionInput);
+  },
+
+  /**
+   * Inputs should always contain a prep.json with `success: true`.
+   * If they don't, returns an error string.
+   * If they do, returns empty string.
+   * If anything else is wrong, throws an error.
+   * @param inputs {IList}
+   * @returns {String}
+   */
+  getInputError(inputs) {
+    const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
+
+    if (prepIndex === -1) {
+      throw new Error('Inputs did not contain a prep.json file');
+    }
+
+    const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
+
+    if (typeof prepFetchedValue !== 'object') {
+      throw new Error('Inputs prep.json was not fetched properly.');
+    }
+
+    if (!prepFetchedValue.success) {
+      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+    }
+
+    return '';
   },
 };
 

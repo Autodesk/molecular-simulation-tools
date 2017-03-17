@@ -19,7 +19,10 @@ function WorkflowSteps(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const loadSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_LOAD;
-  const loadStatus = ioUtils.getPdb(props.workflow.run.inputs) ?
+  const loadCompleted = !props.workflow.run.inputFileError &&
+    !props.workflow.run.inputStringError &&
+    ioUtils.getPdb(props.workflow.run.inputs);
+  const loadStatus = loadCompleted ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const emailSelected = props.selection.type ===
     selectionConstants.WORKFLOW_NODE_EMAIL;
@@ -27,15 +30,15 @@ function WorkflowSteps(props) {
     statusConstants.COMPLETED : statusConstants.IDLE;
   let emailLast = true;
 
-  const loadCompleted = loadStatus === statusConstants.COMPLETED;
-  const ligandStatus = props.workflow.run.selectedLigand ?
+  const ligandStatus = ioUtils.getSelectedLigand(props.workflow.run.inputs) ?
     statusConstants.COMPLETED : statusConstants.IDLE;
   const ligandCompleted = loadCompleted && (!props.workflow.selectLigands ||
     ligandStatus === statusConstants.COMPLETED);
 
 
   let resultsNode;
-  if (props.workflow.run.status === statusConstants.COMPLETED) {
+  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
+  if (runCompleted) {
     emailLast = false;
     const resultsSelected = props.selection.type ===
       selectionConstants.WORKFLOW_NODE_RESULTS;
@@ -69,6 +72,19 @@ function WorkflowSteps(props) {
 
   let stepsEl;
   if (!props.hideSteps) {
+    let runButton;
+    if (!runCompleted) {
+      runButton = (
+        <Button
+          type="raised"
+          onClick={props.clickRun}
+          disabled={runDisabled}
+          throb={!runDisabled && !finished}
+        >
+            Run Workflow
+        </Button>
+      );
+    }
     stepsEl = [
       <div key={0} className="workflow-steps">
         <ol>
@@ -91,14 +107,7 @@ function WorkflowSteps(props) {
           />
           {resultsNode}
         </ol>
-        <Button
-          type="raised"
-          onClick={props.clickRun}
-          disabled={runDisabled}
-          throb={!runDisabled && !finished}
-        >
-            Run Workflow
-        </Button>
+        {runButton}
       </div>,
 
       <div key={1} className="actions">
