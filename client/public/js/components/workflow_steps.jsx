@@ -18,15 +18,16 @@ function WorkflowSteps(props) {
 
   let resultsNode;
   if (runCompleted) {
-    const resultsSelected = props.selection.type ===
-      selectionConstants.WORKFLOW_NODE_RESULTS;
+    const resultsSelected = props.selection.id ===
+      tasksConstants.RESULTS;
     resultsNode = (
       <WorkflowStep
         primaryText={'Results'}
         number={props.workflow.tasks.size}
-        onClick={props.clickWorkflowNodeResults}
+        onClick={props.clickTask}
         selected={resultsSelected}
         status={statusConstants.COMPLETED}
+        taskId={tasksConstants.RESULTS}
         last
       />
     );
@@ -51,7 +52,7 @@ function WorkflowSteps(props) {
                       primaryText={'Load Molecule'}
                       selected={props.selection.id === task.id}
                       status={loadStatus}
-                      task={task}
+                      taskId={task.id}
                     />
                   );
                 }
@@ -77,7 +78,7 @@ function WorkflowSteps(props) {
                       primaryText={'Run'}
                       selected={props.selection.id === task.id}
                       status={runStatus}
-                      task={task}
+                      taskId={task.id}
                     />
                   );
                 }
@@ -94,7 +95,7 @@ function WorkflowSteps(props) {
                       primaryText={'Ligand Selection'}
                       selected={props.selection.id === task.id}
                       status={ligandStatus}
-                      task={task}
+                      taskId={task.id}
                     />
                   );
                 }
@@ -226,7 +227,6 @@ WorkflowSteps.defaultProps = {
 WorkflowSteps.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
-  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   hideSteps: React.PropTypes.bool,
   workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,

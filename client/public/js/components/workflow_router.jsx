@@ -87,7 +87,6 @@ class WorkflowRouter extends React.Component {
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
           clickTask={this.props.clickTask}
-          clickWorkflowNodeResults={this.props.clickWorkflowNodeResults}
           colorized={this.props.colorized}
           morph={this.props.morph}
           nodes={this.props.nodes}
@@ -130,7 +129,6 @@ WorkflowRouter.propTypes = {
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
-  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,

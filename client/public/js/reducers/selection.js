@@ -1,4 +1,4 @@
-import { statusConstants } from 'molecular-design-applications-shared';
+import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
 import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
@@ -38,12 +38,6 @@ function selection(state = initialState, action) {
         type: selectionConstants.WORKFLOW_NODE_RUN,
       });
 
-    case actionConstants.CLICK_WORKFLOW_NODE_RESULTS:
-      return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_RESULTS,
-      });
-
     case actionConstants.CLICK_ABOUT:
       return state.merge({
         id: null,
@@ -65,8 +59,8 @@ function selection(state = initialState, action) {
         return state;
       }
       return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_RESULTS,
+        id: tasksConstants.RESULTS,
+        type: selectionConstants.TASK,
       });
 
     default:

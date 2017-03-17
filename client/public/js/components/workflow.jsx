@@ -1,5 +1,6 @@
 import { Map as IMap } from 'immutable';
 import React from 'react';
+import { tasksConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
@@ -21,15 +22,13 @@ function Workflow(props) {
       workflowNode => workflowNode.id === props.selection.id,
     );
     selectedModelData = selectedWorkflowNode.modelData;
+  } else if (props.selection.id === tasksConstants.RESULTS) {
+    // Morph is chosen from a list of all input/output pdbs
+    const modelDatas = pdbIos.map(io => io.fetchedValue);
+    selectedModelData = modelDatas.get(props.morph);
   } else if (props.selection.type === selectionConstants.TASK &&
     props.workflow.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
-  } else if (props.selection.type ===
-    selectionConstants.WORKFLOW_NODE_RESULTS) {
-    // Morph is chosen from a list of all input/output pdbs
-    const modelDatas = pdbIos.map(io => io.fetchedValue);
-
-    selectedModelData = modelDatas.get(props.morph);
   }
 
   let viewError;
@@ -59,7 +58,6 @@ function Workflow(props) {
       <WorkflowSteps
         clickAbout={props.clickAbout}
         clickTask={props.clickTask}
-        clickWorkflowNodeResults={props.clickWorkflowNodeResults}
         selection={props.selection}
         workflow={props.workflow}
         hideSteps={loadingOrError}
@@ -102,7 +100,6 @@ Workflow.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
-  clickWorkflowNodeResults: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,
   nodes: React.PropTypes.instanceOf(IMap).isRequired,

@@ -119,12 +119,6 @@ export function clickTask(taskId) {
   };
 }
 
-export function clickWorkflowNodeResults() {
-  return {
-    type: actionConstants.CLICK_WORKFLOW_NODE_RESULTS,
-  };
-}
-
 /**
  * When the user clicks on the run button
  * @param {String} workflowId

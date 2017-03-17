@@ -74,6 +74,37 @@ function Status(props) {
           {output}
         </div>
       );
+    } else if (props.selection.id === tasksConstants.RESULTS) {
+      const outputResultsIndex = ioUtils.getIndexByExtension(
+        props.workflow.run.outputs, 'results.json',
+      );
+      let resultValues;
+
+      if (outputResultsIndex !== -1) {
+        const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
+          .fetchedValue;
+
+        if (outputResults.output_values) {
+          resultValues = new IList(outputResults.output_values);
+        }
+      }
+
+      const pdbIndex = ioUtils.getIndexByExtension(
+        props.workflow.run.outputs, '.pdb',
+      );
+      const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
+
+      selection = (
+        <StatusResults
+          morph={props.morph}
+          numberOfPdbs={props.numberOfPdbs}
+          onClickColorize={props.onClickColorize}
+          onChangeMorph={props.onChangeMorph}
+          workflowNodesSize={props.workflow.workflowNodes.size}
+          resultValues={resultValues}
+          outputPdbUrl={outputPdbUrl}
+        />
+      );
     } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
       props.selection.type === selectionConstants.TASK) {
       switch (props.selection.id) {
@@ -124,37 +155,6 @@ function Status(props) {
         default:
           selection = null;
       }
-    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
-      const outputResultsIndex = ioUtils.getIndexByExtension(
-        props.workflow.run.outputs, 'results.json',
-      );
-      let resultValues;
-
-      if (outputResultsIndex !== -1) {
-        const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
-          .fetchedValue;
-
-        if (outputResults.output_values) {
-          resultValues = new IList(outputResults.output_values);
-        }
-      }
-
-      const pdbIndex = ioUtils.getIndexByExtension(
-        props.workflow.run.outputs, '.pdb',
-      );
-      const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
-
-      selection = (
-        <StatusResults
-          morph={props.morph}
-          numberOfPdbs={props.numberOfPdbs}
-          onClickColorize={props.onClickColorize}
-          onChangeMorph={props.onChangeMorph}
-          workflowNodesSize={props.workflow.workflowNodes.size}
-          resultValues={resultValues}
-          outputPdbUrl={outputPdbUrl}
-        />
-      );
     } else if (props.selection.type === selectionConstants.ABOUT) {
       selection = (
         <StatusAbout />

@@ -8,7 +8,6 @@ import {
   clickColorize,
   clickRun,
   clickTask,
-  clickWorkflowNodeResults,
   initializeRun,
   initializeWorkflow,
   messageTimeout,
@@ -47,9 +46,6 @@ function mapDispatchToProps(dispatch) {
     },
     clickTask(taskId) {
       dispatch(clickTask(taskId));
-    },
-    clickWorkflowNodeResults() {
-      dispatch(clickWorkflowNodeResults());
     },
     initializeRun(workflowId, runId) {
       dispatch(initializeRun(workflowId, runId));

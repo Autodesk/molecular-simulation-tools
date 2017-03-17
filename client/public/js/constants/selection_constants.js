@@ -5,7 +5,6 @@ const selectionConstants = keyMirror({
   NODE: null,
   TASK: null,
   WORKFLOW_NODE: null,
-  WORKFLOW_NODE_RESULTS: null,
   WORKFLOW: null,
 });
 
