@@ -91,27 +91,6 @@ export function initializeRun(workflowId, runId) {
   };
 }
 
-export function clickNode(nodeId) {
-  return {
-    type: actionConstants.CLICK_NODE,
-    nodeId,
-  };
-}
-
-// TODO this is unused now that we don't show workflow nodes, but in future?
-export function clickWorkflowNode(workflowNodeId) {
-  return {
-    type: actionConstants.CLICK_WORKFLOW_NODE,
-    workflowNodeId,
-  };
-}
-
-export function clickWorkflowNodeLigandSelection() {
-  return {
-    type: actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION,
-  };
-}
-
 export function clickTask(taskIndex) {
   return {
     type: actionConstants.CLICK_TASK,

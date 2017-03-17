@@ -13,18 +13,6 @@ function selection(state = initialState, action) {
         type: selectionConstants.TASK,
       });
 
-    case actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION:
-      return state.merge({
-        taskIndex: null,
-        type: selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION,
-      });
-
-    case actionConstants.CLICK_WORKFLOW_NODE_EMAIL:
-      return state.merge({
-        taskIndex: null,
-        type: selectionConstants.WORKFLOW_NODE_RUN,
-      });
-
     case actionConstants.CLICK_ABOUT:
       return state.merge({
         taskIndex: null,

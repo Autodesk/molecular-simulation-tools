@@ -1,5 +1,4 @@
 import React from 'react';
-import { Map as IMap } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 import Canceled from './canceled';
 import Errored from './errored';
@@ -89,7 +88,6 @@ class WorkflowRouter extends React.Component {
           clickTask={this.props.clickTask}
           colorized={this.props.colorized}
           morph={this.props.morph}
-          nodes={this.props.nodes}
           onClickColorize={this.props.onClickColorize}
           onChangeMorph={this.props.onChangeMorph}
           onSelectInputFile={this.props.onSelectInputFile}
@@ -133,7 +131,6 @@ WorkflowRouter.propTypes = {
   initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onMessageTimeout: React.PropTypes.func.isRequired,

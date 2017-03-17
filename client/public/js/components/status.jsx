@@ -1,5 +1,5 @@
 import React from 'react';
-import { List as IList, Map as IMap } from 'immutable';
+import { List as IList } from 'immutable';
 import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
@@ -19,62 +19,7 @@ function Status(props) {
 
   let selection;
   if (!props.hideContent) {
-    if (props.selection.type === selectionConstants.NODE) {
-      const node = props.nodes.get(props.selection.taskIndex);
-      selection = (
-        <div className="status-info">
-          <p>Node</p>
-          <p>{node.title}</p>
-        </div>
-      );
-    } else if (props.selection.type === selectionConstants.WORKFLOW) {
-      const lastWorkflowNode = props.workflow.workflowNodes.last();
-      let output;
-      if (lastWorkflowNode && lastWorkflowNode.outputs.size) {
-        output = (
-          <p>
-            Output:
-            <a href={lastWorkflowNode.outputs.get(0).get('value')}>
-              {lastWorkflowNode.outputs.get(0).get('value')}
-            </a>
-          </p>
-        );
-      }
-      selection = (
-        <div className="status-info">
-          <p>Workflow</p>
-          <p>{props.workflow.title}</p>
-          <p>Status: {props.workflow.run.status}</p>
-          {output}
-        </div>
-      );
-    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
-      const workflowNode = props.workflow.workflowNodes.find(workflowNodeI =>
-        workflowNodeI.id === props.selection.taskIndex,
-      );
-      const node = workflowNode.node;
-
-      let output;
-      if (workflowNode.outputs && workflowNode.outputs.size) {
-        output = (
-          <p>
-            Output:
-            <a href={workflowNode.outputs.get(0).get('value')}>
-              {workflowNode.outputs.get(0).get('value')}
-            </a>
-          </p>
-        );
-      }
-
-      selection = (
-        <div className="status-info">
-          <p>Node in Workflow &#34;{props.workflow.title}&#34;</p>
-          <p>{node.title}</p>
-          <p>Status: {workflowNode.status}</p>
-          {output}
-        </div>
-      );
-    } else if (props.selection.taskIndex === props.workflow.tasks.size) {
+    if (props.selection.taskIndex === props.workflow.tasks.size) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.workflow.run.outputs, 'results.json',
       );
@@ -100,7 +45,6 @@ function Status(props) {
           numberOfPdbs={props.numberOfPdbs}
           onClickColorize={props.onClickColorize}
           onChangeMorph={props.onChangeMorph}
-          workflowNodesSize={props.workflow.workflowNodes.size}
           resultValues={resultValues}
           outputPdbUrl={outputPdbUrl}
         />
@@ -182,7 +126,6 @@ Status.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,

@@ -1,4 +1,3 @@
-import { Map as IMap } from 'immutable';
 import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
@@ -15,13 +14,7 @@ function Workflow(props) {
   const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
 
   let selectedModelData;
-  // TODO this will never happen b/c not displaying nodes anymore
-  if (props.selection.type === selectionConstants.WORKFLOW_NODE) {
-    const selectedWorkflowNode = props.workflow.workflowNodes.find(
-      workflowNode => workflowNode.id === props.selection.taskIndex,
-    );
-    selectedModelData = selectedWorkflowNode.modelData;
-  } else if (props.selection.taskIndex === props.workflow.tasks.size) {
+  if (props.selection.taskIndex === props.workflow.tasks.size) {
     // Morph is chosen from a list of all input/output pdbs
     const modelDatas = pdbIos.map(io => io.fetchedValue);
     selectedModelData = modelDatas.get(props.morph);
@@ -54,13 +47,17 @@ function Workflow(props) {
 
   return (
     <div className="workflow">
-      <WorkflowSteps
-        clickAbout={props.clickAbout}
-        clickTask={props.clickTask}
-        selection={props.selection}
-        workflow={props.workflow}
-        hideSteps={loadingOrError}
-      />
+      {
+        loadingOrError ? null : (
+          <WorkflowSteps
+            clickAbout={props.clickAbout}
+            clickTask={props.clickTask}
+            selection={props.selection}
+            workflow={props.workflow}
+            hideSteps={loadingOrError}
+          />
+        )
+      }
       <Status
         changeLigandSelection={props.changeLigandSelection}
         clickRun={props.clickRun}
@@ -68,7 +65,6 @@ function Workflow(props) {
         fetchingData={props.workflow.run.fetchingData}
         hideContent={hideStatus}
         morph={props.morph}
-        nodes={props.nodes}
         numberOfPdbs={pdbIos.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
@@ -101,7 +97,6 @@ Workflow.propTypes = {
   clickTask: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onSelectInputFile: React.PropTypes.func.isRequired,

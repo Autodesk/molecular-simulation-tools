@@ -79,9 +79,6 @@ function workflow(state = initialState, action) {
       if (action.err) {
         return state.merge({
           fetching: false,
-          workflowNodes: state.workflowNodes.map(
-            workflowNode => workflowNode.set('status', statusConstants.IDLE),
-          ),
         });
       }
 
