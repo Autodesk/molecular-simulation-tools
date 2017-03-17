@@ -58,7 +58,7 @@ class View extends React.Component {
     if (!this.moleculeViewerHasMolecule) {
       const pdbId = this.moleculeViewer.getLoadedMoleculeIDs()[0];
       const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
-      this.moleculeViewer.addAnimationFrame(pdbId, state, false);
+      this.moleculeViewer.addAnimationFrame(pdbId, state, true);
       this.moleculeViewer.setAnimateOn(true, 'RT');
       this.moleculeViewer.setPausedOn(true);
     } else {
@@ -67,7 +67,7 @@ class View extends React.Component {
       const originalState = this.moleculeViewer.getOriginalAnimState(pdbId);
       // TODO why is this bonds hack needed?
       state.bonds = originalState.bonds;
-      this.moleculeViewer.addAnimationFrame(pdbId, state, false);
+      this.moleculeViewer.addAnimationFrame(pdbId, state, true);
       this.moleculeViewer.playFrame(this.moleculeViewer.getNumFrames() - 1);
       return Promise.resolve();
     }
