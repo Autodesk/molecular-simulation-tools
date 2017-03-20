@@ -1,11 +1,15 @@
 @import 'variables';
 
 .task {
+  width: 100%;
   text-align: left;
+  border: none;
   border-bottom: 1px rgba(255, 255, 255, 0.2) solid;
+  background-color: transparent;
   color: rgba(255, 255, 255, 0.4);
   list-style-type: none;
   padding: 30px;
+  outline: none;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;

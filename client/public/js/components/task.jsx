@@ -30,13 +30,13 @@ class Task extends React.Component {
       'throb' : '';
 
     return (
-      <li
+      <button
         className={`task ${selectedClass} ${lastClass} ${disabledClass} ${throbClass}`}
         onClick={this.onClick}
       >
         <span>{`${this.props.number}. ${this.props.primaryText}`}</span>
         <span>{rightIcon}</span>
-      </li>
+      </button>
     );
   }
 }
