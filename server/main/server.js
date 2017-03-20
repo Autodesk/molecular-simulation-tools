@@ -39,8 +39,14 @@ app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
 app.use('/test', testRoutes);
 app.use('/version', versionRouter);
 
+// Redirect for URL changes
+app.get('/workflow/*', (req, res) => {
+  const wildcard = req.originalUrl.substr(10, req.originalUrl.length - 10);
+  return res.redirect(`/app/${wildcard}`);
+});
+
 // Serve index.html to page routes
-app.get(['/', '/workflow/*'], (req, res) => {
+app.get(['/', '/app/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 

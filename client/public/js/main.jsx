@@ -43,7 +43,7 @@ render((
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" getComponent={codeSplitHomePage} />
-      <Route path="/workflow" component={RunnerRoot}>
+      <Route path="/app" component={RunnerRoot}>
         <IndexRoute component={NotFound} />
         <Route path=":workflowId" getComponent={codeSplitWorkflowRoot} />
         <Route path=":workflowId/:runId" getComponent={codeSplitWorkflowRoot} />
