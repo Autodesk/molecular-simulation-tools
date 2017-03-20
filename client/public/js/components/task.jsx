@@ -1,6 +1,7 @@
 import React from 'react';
 import { statusConstants } from 'molecular-design-applications-shared';
 import componentUtils from '../utils/component_utils';
+import taskStatusConstants from '../constants/task_status_constants';
 
 require('../../css/task.scss');
 
@@ -12,7 +13,7 @@ class Task extends React.Component {
   }
 
   onClick() {
-    if (!this.props.disabled) {
+    if (this.props.status !== statusConstants.DISABLED) {
       this.props.onClick(this.props.taskIndex);
     }
   }
@@ -20,11 +21,12 @@ class Task extends React.Component {
   render() {
     const rightIcon = componentUtils.getIcon(this.props.status);
     const selectedClass = this.props.selected ? 'selected' : '';
-    const lastClass = this.props.last ? 'last' : '';
-    const disabledClass = this.props.disabled ? 'disabled' : '';
+    const lastClass = this.props.number === this.props.totalNumber ? 'last' : '';
+    const disabled = this.props.status === taskStatusConstants.DISABLED;
+    const disabledClass = disabled ? 'disabled' : '';
 
     const completed = this.props.status === statusConstants.COMPLETED;
-    const throbClass = !completed && !this.props.selected && !this.props.disabled ?
+    const throbClass = !completed && !this.props.selected && !disabled ?
       'throb' : '';
 
     return (
@@ -40,16 +42,13 @@ class Task extends React.Component {
 }
 
 Task.defaultProps = {
-  disabled: false,
-  last: false,
   selected: false,
 };
 
 Task.propTypes = {
-  disabled: React.PropTypes.bool,
-  last: React.PropTypes.bool,
   onClick: React.PropTypes.func.isRequired,
   number: React.PropTypes.number.isRequired,
+  totalNumber: React.PropTypes.number.isRequired,
   selected: React.PropTypes.bool,
   status: React.PropTypes.string.isRequired,
   taskIndex: React.PropTypes.number.isRequired,
