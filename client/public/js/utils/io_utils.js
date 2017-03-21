@@ -35,8 +35,15 @@ const ioUtils = {
     const framesOutputIndex = ioUtils.getIndexByExtension(
       outputs, OUTPUT_ANIMATION_FRAMES,
     );
+
+    // If we don't have an output file to tell which animation frames to use,
+    // just return the first output pdb
     if (framesOutputIndex === -1) {
-      throw new Error('Invalid outputs data; missing minstep_frames.json');
+      const pdbOutputIndex = ioUtils.getIndexByExtension(outputs, '.pdb');
+      if (pdbOutputIndex === -1) {
+        throw new Error('No output pdb found');
+      }
+      return new IList([outputs.get(pdbOutputIndex).fetchedValue]);
     }
 
     const framesOutput = outputs.get(framesOutputIndex);
@@ -251,7 +258,7 @@ const ioUtils = {
     }
 
     if (!prepFetchedValue.success) {
-      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+      return prepFetchedValue.errors || 'Input is invalid for this app.';
     }
 
     return '';

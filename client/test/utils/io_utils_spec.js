@@ -35,11 +35,41 @@ describe('ioUtils', () => {
 
     describe('when minstep_frames doesnt exist', () => {
       beforeEach(() => {
-        outputs = new IList([outputs.get(0)]);
+        outputs = outputs.delete(0);
       });
 
-      it('throws an error', () => {
-        expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+      it('returns the first pdb', () => {
+        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        expect(pdbs.size).to.equal(1);
+        expect(pdbs.get(0)).to.equal(outputs.get(0).fetchedValue);
+      });
+
+      describe('when no pdbs exist', () => {
+        beforeEach(() => {
+          outputs = new IList([
+            new IoRecord({
+              fetchedValue: 'whatami',
+              name: 'somethingweird.exe',
+              type: 'crazy',
+              value: 'http://example.com',
+            }),
+          ]);
+        });
+
+        it('throws an error', () => {
+          expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+        });
+      });
+    });
+
+    describe('when given an empty list of outputs', () => {
+      beforeEach(() => {
+        outputs = new IList();
+      });
+
+      it('returns an empty list', () => {
+        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        expect(pdbs.size).to.equal(0);
       });
     });
 

@@ -59,18 +59,22 @@ class StatusResults extends React.Component {
       <div className="status-results">
         <div className="stats">
           {stats}
-          <div>
-            <label className="fontHeader morph-label" htmlFor="morph">VIEW TRAJECTORY</label>
-            <input
-              id="morph"
-              type="range"
-              min="0"
-              max={this.props.numberOfPdbs - 1}
-              step="1"
-              value={this.props.morph}
-              onChange={this.onChangeMorph}
-            />
-          </div>
+          {
+            this.props.numberOfPdbs <= 1 ? null : (
+              <div>
+                <label className="fontHeader morph-label" htmlFor="morph">VIEW TRAJECTORY</label>
+                <input
+                  id="morph"
+                  type="range"
+                  min="0"
+                  max={this.props.numberOfPdbs - 1}
+                  step="1"
+                  value={this.props.morph}
+                  onChange={this.onChangeMorph}
+                />
+              </div>
+            )
+          }
         </div>
         <div className="actions">
           {downloadButton}
