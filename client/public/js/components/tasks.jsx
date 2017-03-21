@@ -11,9 +11,9 @@ require('../../css/tasks.scss');
 
 function Tasks(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
-  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
+  const runCompleted = props.app.run.status === statusConstants.COMPLETED;
   const taskStatuses = taskUtils.getStatuses(
-    props.workflow.tasks, props.workflow.run,
+    props.app.tasks, props.app.run,
   );
 
   return (
@@ -21,7 +21,7 @@ function Tasks(props) {
       <div key={0} className="tasks">
         <ol>
           {
-            props.workflow.tasks.map((task, index) => {
+            props.app.tasks.map((task, index) => {
               const number = index + 1;
 
               switch (task.id) {
@@ -35,7 +35,7 @@ function Tasks(props) {
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}
-                      totalNumber={props.workflow.tasks.size}
+                      totalNumber={props.app.tasks.size}
                     />
                   );
                 }
@@ -50,7 +50,7 @@ function Tasks(props) {
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}
-                      totalNumber={props.workflow.tasks.size}
+                      totalNumber={props.app.tasks.size}
                     />
                   );
                 }
@@ -65,7 +65,7 @@ function Tasks(props) {
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}
-                      totalNumber={props.workflow.tasks.size}
+                      totalNumber={props.app.tasks.size}
                     />
                   );
                 }
@@ -79,12 +79,12 @@ function Tasks(props) {
             runCompleted ? (
               <Task
                 primaryText={'Results'}
-                number={props.workflow.tasks.size}
+                number={props.app.tasks.size}
                 onClick={props.clickTask}
-                selected={props.selection.taskIndex === props.workflow.tasks.size}
+                selected={props.selection.taskIndex === props.app.tasks.size}
                 status={statusConstants.COMPLETED}
-                taskIndex={props.workflow.tasks.size}
-                totalNumber={props.workflow.tasks.size}
+                taskIndex={props.app.tasks.size}
+                totalNumber={props.app.tasks.size}
               />
             ) : null
           }
@@ -105,7 +105,7 @@ function Tasks(props) {
 Tasks.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

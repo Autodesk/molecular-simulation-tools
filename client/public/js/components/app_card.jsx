@@ -5,9 +5,9 @@ import imgBack2 from '../../img/back2.png';
 import imgBack3 from '../../img/back3.png';
 import imgBack4 from '../../img/back4.png';
 import imgSoon from '../../img/soon.svg';
-import '../../css/workflow_card.scss';
+import '../../css/app_card.scss';
 
-function WorkflowCard(props) {
+function AppCard(props) {
   let bgImage;
 
   switch (props.bgIndex) {
@@ -32,13 +32,13 @@ function WorkflowCard(props) {
     comingSoonEl = <img src={imgSoon} alt="soon" className="soon" />;
   }
 
-  const url = props.comingSoon ? '' : `/workflow/${props.id}`;
+  const url = props.comingSoon ? '' : `/app/${props.id}`;
 
   const bgColor = props.bgColor || '#3763e9';
 
   return (
     <Link
-      className="workflow-card col-md-4 col-sm-6 col-xs-12"
+      className="app-card col-md-4 col-sm-6 col-xs-12"
       to={url}
       style={{ backgroundColor: bgColor }}
     >
@@ -48,11 +48,13 @@ function WorkflowCard(props) {
           backgroundImage: `url(${bgImage})`,
         }}
       />
-{/*      <img
-        src={`${process.env.API_URL}${props.creatorImage}`}
-        alt="card logo"
-        className="cardLogo"
-      />*/}
+      {/*
+        <img
+          src={`${process.env.API_URL}${props.creatorImage}`}
+          alt="card logo"
+          className="cardLogo"
+          />*/
+      }
       <h5
         className="cardTitle"
         style={{ color: props.color || '#ffffff' }}
@@ -60,7 +62,7 @@ function WorkflowCard(props) {
         {props.title}
       </h5>
       <p className="cardInfo">
-          {props.description}
+        {props.description}
       </p>
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
@@ -72,17 +74,17 @@ function WorkflowCard(props) {
   );
 }
 
-WorkflowCard.propTypes = {
+AppCard.propTypes = {
   bgColor: React.PropTypes.string.isRequired,
   bgIndex: React.PropTypes.number.isRequired,
   color: React.PropTypes.string.isRequired,
   comingSoon: React.PropTypes.bool.isRequired,
-  creatorImage: React.PropTypes.string.isRequired,
+  // creatorImage: React.PropTypes.string.isRequired,
   id: React.PropTypes.string.isRequired,
   runCount: React.PropTypes.number.isRequired,
   title: React.PropTypes.string.isRequired,
   viewCount: React.PropTypes.number.isRequired,
-  description: React.PropTypes.string,
+  description: React.PropTypes.string.isRequired,
 };
 
-export default WorkflowCard;
+export default AppCard;

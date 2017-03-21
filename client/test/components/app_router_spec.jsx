@@ -1,13 +1,13 @@
 import React from 'react';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { setProps, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import { statusConstants } from 'molecular-design-applications-shared';
-import WorkflowRouter from '../../public/js/components/workflow_router';
+import AppRouter from '../../public/js/components/app_router';
 import SelectionRecord from '../../public/js/records/selection_record';
 import WorkflowRecord from '../../public/js/records/workflow_record';
 
-describe('WorkflowRouter', () => {
+describe('AppRouter', () => {
   let clickAbout;
   let clickRun;
   let clickWorkflowNode;
@@ -17,8 +17,8 @@ describe('WorkflowRouter', () => {
   let selection;
   let submitPdbId;
   let submitEmail;
-  let workflow;
-  let workflowId;
+  let app;
+  let appId;
   let workflowStatus;
   let wrapper;
 
@@ -32,9 +32,9 @@ describe('WorkflowRouter', () => {
     selection = new SelectionRecord();
     submitPdbId = () => {};
     submitEmail = () => {};
-    workflowId = 'imaworkflowid';
+    appId = 'imanappid';
     workflowStatus = statusConstants.IDLE;
-    workflow = new WorkflowRecord({ id: workflowId });
+    app = new WorkflowRecord({ id: appId });
   });
 
   describe('componentWillReceiveProps', () => {
@@ -45,7 +45,7 @@ describe('WorkflowRouter', () => {
       initializeWorkflowSpy = sinon.spy();
       initializeRunSpy = sinon.spy();
       wrapper = shallow(
-        <WorkflowRouter
+        <AppRouter
           clickAbout={clickAbout}
           clickRun={clickRun}
           clickWorkflowNode={clickWorkflowNode}
@@ -57,15 +57,16 @@ describe('WorkflowRouter', () => {
           selection={selection}
           submitPdbId={submitPdbId}
           submitEmail={submitEmail}
-          workflow={workflow}
-          workflowId={workflowId} workflowStatus={workflowStatus}
-        />
+          app={app}
+          appId={appId}
+          workflowStatus={workflowStatus}
+        />,
       );
     });
 
-    describe('when the workflowId changes (and we have a runid)', () => {
+    describe('when the appId changes (and we have a runid)', () => {
       it('calls initializeRun', () => {
-        wrapper.setProps({ workflowId: 'newworkflowid' });
+        wrapper.setProps({ appId: 'newappid' });
 
         expect(initializeRunSpy.called).to.equal(true);
       });
@@ -79,9 +80,9 @@ describe('WorkflowRouter', () => {
       });
     });
 
-    describe('when the workflowId doesnt change', () => {
+    describe('when the appId doesnt change', () => {
       it('doesnt call initializeWorkflow', () => {
-        wrapper.setProps({ workflowId });
+        wrapper.setProps({ appId });
 
         expect(initializeWorkflowSpy.called).to.equal(false);
       });
@@ -100,8 +101,8 @@ describe('WorkflowRouter', () => {
         const newRunId = 'newrunid';
         wrapper.setProps({
           runId: newRunId,
-          workflow: new WorkflowRecord({
-            id: workflowId,
+          app: new WorkflowRecord({
+            id: appId,
             runId: newRunId,
           }),
         });

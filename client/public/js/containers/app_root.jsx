@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import WorkflowRouter from '../components/workflow_router';
+import AppRouter from '../components/app_router';
 import {
   changeLigandSelection,
   changeMorph,
@@ -23,8 +23,8 @@ function mapStateToProps(state, ownProps) {
     runId: ownProps.params.runId,
     selection: state.selection,
     userMessage: state.userMessage,
-    workflow: state.workflow,
-    workflowId: ownProps.params.workflowId,
+    app: state.workflow,
+    appId: ownProps.params.appId,
   };
 }
 
@@ -38,19 +38,19 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(workflowId, email, inputs, inputString) {
+    clickRun(appId, email, inputs, inputString) {
       return () => {
-        dispatch(clickRun(workflowId, email, inputs, inputString));
+        dispatch(clickRun(appId, email, inputs, inputString));
       };
     },
     clickTask(taskIndex) {
       dispatch(clickTask(taskIndex));
     },
-    initializeRun(workflowId, runId) {
-      dispatch(initializeRun(workflowId, runId));
+    initializeRun(appId, runId) {
+      dispatch(initializeRun(appId, runId));
     },
-    initializeWorkflow(workflowId, runId) {
-      dispatch(initializeWorkflow(workflowId, runId));
+    initializeWorkflow(appId, runId) {
+      dispatch(initializeWorkflow(appId, runId));
     },
     onClickColorize() {
       dispatch(clickColorize());
@@ -61,14 +61,14 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onSelectInputFile(workflowId) {
+    onSelectInputFile(appId) {
       return (file) => {
-        dispatch(selectInputFile(file, workflowId));
+        dispatch(selectInputFile(file, appId));
       };
     },
-    submitInputString(workflowId) {
+    submitInputString(appId) {
       return (input) => {
-        dispatch(submitInputString(input, workflowId));
+        dispatch(submitInputString(input, appId));
       };
     },
     submitEmail(email) {
@@ -85,24 +85,24 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.workflow.id,
-      stateProps.workflow.run.email,
-      stateProps.workflow.run.inputs,
-      stateProps.workflow.run.inputString,
+      stateProps.app.id,
+      stateProps.app.run.email,
+      stateProps.app.run.inputs,
+      stateProps.app.run.inputString,
     ),
-    clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
-    onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),
-    submitInputString: dispatchProps.submitInputString(stateProps.workflow.id),
+    clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
+    onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.app.id),
+    submitInputString: dispatchProps.submitInputString(stateProps.app.id),
     changeLigandSelection: dispatchProps.changeLigandSelection(
-      stateProps.workflow.run.inputs,
+      stateProps.app.run.inputs,
     ),
   });
 }
 
-const WorkflowRoot = connect(
+const AppRoot = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(WorkflowRouter);
+)(AppRouter);
 
-export default WorkflowRoot;
+export default AppRoot;

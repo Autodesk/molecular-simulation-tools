@@ -7,61 +7,61 @@ import Tasks from '../components/tasks';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
-require('../../css/workflow.scss');
+require('../../css/app.scss');
 
-function Workflow(props) {
-  const ios = props.workflow.run.inputs.concat(props.workflow.run.outputs);
+function App(props) {
+  const ios = props.app.run.inputs.concat(props.app.run.outputs);
   const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
 
   let selectedModelData;
-  if (props.selection.taskIndex === props.workflow.tasks.size) {
+  if (props.selection.taskIndex === props.app.tasks.size) {
     // Morph is chosen from a list of all input/output pdbs
     const modelDatas = pdbIos.map(io => io.fetchedValue);
     selectedModelData = modelDatas.get(props.morph);
   } else if (props.selection.type === selectionConstants.TASK &&
-    props.workflow.run.inputs.size) {
-    selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
+    props.app.run.inputs.size) {
+    selectedModelData = ioUtils.getPdb(props.app.run.inputs);
   }
 
   let viewError;
-  const fetchingError = props.workflow.fetchingError;
+  const fetchingError = props.app.fetchingError;
   if (fetchingError && fetchingError.response &&
     fetchingError.response.status === 404) {
-    const lookingFor = props.runPage ? 'run' : 'workflow';
+    const lookingFor = props.runPage ? 'run' : 'app';
     viewError = `This ${lookingFor} does not exist!`;
   }
 
   let selectionStrings = null;
-  const selectedLigand = ioUtils.getSelectedLigand(props.workflow.run.inputs);
+  const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
   if (selectedLigand) {
     selectionStrings = ioUtils.getLigandSelectionStrings(
-      props.workflow.run.inputs, selectedLigand,
+      props.app.run.inputs, selectedLigand,
     );
   }
 
-  const loadingOrError = !!(props.workflow.fetching ||
-    props.workflow.fetchingError ||
-    props.workflow.run.fetchingDataError);
-  const hideStatus = props.workflow.fetching ||
-    props.workflow.run.fetchingDataError;
+  const loadingOrError = !!(props.app.fetching ||
+    props.app.fetchingError ||
+    props.app.run.fetchingDataError);
+  const hideStatus = props.app.fetching ||
+    props.app.run.fetchingDataError;
 
   return (
-    <div className="workflow">
+    <div className="app">
       {
         loadingOrError ? null : (
           <Tasks
             clickAbout={props.clickAbout}
             clickTask={props.clickTask}
             selection={props.selection}
-            workflow={props.workflow}
+            app={props.app}
           />
         )
       }
       <Status
         changeLigandSelection={props.changeLigandSelection}
         clickRun={props.clickRun}
-        fetching={props.workflow.fetching}
-        fetchingData={props.workflow.run.fetchingData}
+        fetching={props.app.fetching}
+        fetchingData={props.app.run.fetchingData}
         hideContent={hideStatus}
         morph={props.morph}
         numberOfPdbs={pdbIos.size}
@@ -72,12 +72,12 @@ function Workflow(props) {
         selection={props.selection}
         submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}
-        workflow={props.workflow}
+        app={props.app}
       />
       <View
         colorized={props.colorized}
         error={viewError}
-        loading={props.workflow.fetching || props.workflow.run.fetchingData}
+        loading={props.app.fetching || props.app.run.fetchingData}
         modelData={selectedModelData}
         selectionStrings={selectionStrings}
       />
@@ -85,11 +85,7 @@ function Workflow(props) {
   );
 }
 
-Workflow.defaultProps = {
-  workflow: null,
-};
-
-Workflow.propTypes = {
+App.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
@@ -103,7 +99,7 @@ Workflow.propTypes = {
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
 };
 
-export default Workflow;
+export default App;

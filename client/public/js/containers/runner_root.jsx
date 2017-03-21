@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import Runner from '../components/runner';
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
     title: state.workflow.title,
-    workflowId: state.workflow.id,
+    appId: ownProps.params.appId,
   };
 }
 

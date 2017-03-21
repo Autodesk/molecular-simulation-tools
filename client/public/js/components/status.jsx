@@ -15,18 +15,18 @@ import workflowUtils from '../utils/workflow_utils';
 require('../../css/status.scss');
 
 function Status(props) {
-  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
+  const runCompleted = props.app.run.status === statusConstants.COMPLETED;
 
   let selection;
   if (!props.hideContent) {
-    if (props.selection.taskIndex === props.workflow.tasks.size) {
+    if (props.selection.taskIndex === props.app.tasks.size) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
-        props.workflow.run.outputs, 'results.json',
+        props.app.run.outputs, 'results.json',
       );
       let resultValues;
 
       if (outputResultsIndex !== -1) {
-        const outputResults = props.workflow.run.outputs.get(outputResultsIndex)
+        const outputResults = props.app.run.outputs.get(outputResultsIndex)
           .fetchedValue;
 
         if (outputResults.output_values) {
@@ -35,9 +35,9 @@ function Status(props) {
       }
 
       const pdbIndex = ioUtils.getIndexByExtension(
-        props.workflow.run.outputs, '.pdb',
+        props.app.run.outputs, '.pdb',
       );
-      const outputPdbUrl = props.workflow.run.outputs.get(pdbIndex).value;
+      const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
 
       selection = (
         <StatusResults
@@ -49,17 +49,17 @@ function Status(props) {
           outputPdbUrl={outputPdbUrl}
         />
       );
-    } else if (!props.workflow.fetching && !props.workflow.fetchingError &&
+    } else if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.TASK) {
-      switch (props.workflow.tasks.get(props.selection.taskIndex).id) {
+      switch (props.app.tasks.get(props.selection.taskIndex).id) {
         case tasksConstants.LOAD:
           selection = (
             <StatusLoad
-              fetchingData={props.workflow.run.fetchingData}
-              inputData={ioUtils.getPdb(props.workflow.run.inputs)}
-              inputFileError={props.workflow.run.inputFileError}
-              inputString={props.workflow.run.inputString}
-              inputStringError={props.workflow.run.inputStringError}
+              fetchingData={props.app.run.fetchingData}
+              inputData={ioUtils.getPdb(props.app.run.inputs)}
+              inputFileError={props.app.run.inputFileError}
+              inputString={props.app.run.inputString}
+              inputStringError={props.app.run.inputStringError}
               onSelectInputFile={props.onSelectInputFile}
               runCompleted={runCompleted}
               submitInputString={props.submitInputString}
@@ -68,14 +68,14 @@ function Status(props) {
           break;
 
         case tasksConstants.RUN: {
-          const running = props.workflow.run.status === statusConstants.RUNNING;
+          const running = props.app.run.status === statusConstants.RUNNING;
           const runDisabled = running || runCompleted ||
-            !workflowUtils.isRunnable(props.workflow.run);
+            !workflowUtils.isRunnable(props.app.run);
           selection = (
             <StatusRun
               clickRun={props.clickRun}
-              email={props.workflow.run.email}
-              emailError={props.workflow.run.emailError}
+              email={props.app.run.email}
+              emailError={props.app.run.emailError}
               runCompleted={runCompleted}
               runDisabled={runDisabled}
               submitEmail={props.submitEmail}
@@ -88,7 +88,7 @@ function Status(props) {
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
+              ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
               runCompleted={runCompleted}
               selectedLigand={props.selectedLigand}
             />
@@ -116,7 +116,6 @@ function Status(props) {
 Status.defaultProps = {
   hideContent: false,
   selectedLigand: '',
-  workflow: null,
 };
 
 Status.propTypes = {
@@ -134,7 +133,7 @@ Status.propTypes = {
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
 };
 
 export default Status;

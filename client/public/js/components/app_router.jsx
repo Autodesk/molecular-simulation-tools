@@ -7,11 +7,11 @@ import ThankYou from './thank_you';
 import SelectionRecord from '../records/selection_record';
 import UserMessageRecord from '../records/user_message_record';
 import WorkflowRecord from '../records/workflow_record';
-import Workflow from './workflow';
+import App from './app';
 
-class WorkflowRouter extends React.Component {
+class AppRouter extends React.Component {
   componentDidMount() {
-    this.initialize(this.props.workflowId, this.props.runId);
+    this.initialize(this.props.appId, this.props.runId);
 
     this.state = {
       snackbarClosed: true,
@@ -21,17 +21,17 @@ class WorkflowRouter extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const fetching = nextProps.workflow.fetching;
-    const changingWorkflowId = nextProps.workflowId &&
-      this.props.workflowId !== nextProps.workflowId;
+    const fetching = nextProps.app.fetching;
+    const changingAppId = nextProps.appId &&
+      this.props.appId !== nextProps.appId;
     const changingRunId = nextProps.runId !== this.props.runId;
 
-    if (!fetching && (changingWorkflowId || changingRunId)) {
-      this.initialize(nextProps.workflowId, nextProps.runId);
+    if (!fetching && (changingAppId || changingRunId)) {
+      this.initialize(nextProps.appId, nextProps.runId);
     }
 
-    if (!this.props.workflow.fetchingError &&
-      nextProps.workflow.fetchingError) {
+    if (!this.props.app.fetchingError &&
+      nextProps.app.fetchingError) {
       this.setState({
         snackbarClosed: false,
       });
@@ -44,44 +44,44 @@ class WorkflowRouter extends React.Component {
     });
   }
 
-  // Set up page for workflow/run distinction
-  initialize(workflowId, runId) {
+  // Set up page for app/run distinction
+  initialize(appId, runId) {
     if (runId) {
-      return this.props.initializeRun(workflowId, runId);
+      return this.props.initializeRun(appId, runId);
     }
 
-    return this.props.initializeWorkflow(workflowId);
+    return this.props.initializeWorkflow(appId);
   }
 
   render() {
     if (this.props.runId) {
-      document.title = `Workflow - Run of "${this.props.workflow.title}" - Molecular Simulation Tools`; // eslint-disable-line max-len
+      document.title = `App - Run of "${this.props.app.title}" - Molecular Simulation Tools`; // eslint-disable-line max-len
     } else {
-      document.title = `Workflow - "${this.props.workflow.title}" - Molecular Simulation Tools`;
+      document.title = `App - "${this.props.app.title}" - Molecular Simulation Tools`;
     }
 
     let routeEl;
-    if (this.props.workflow.run.status === statusConstants.RUNNING) {
+    if (this.props.app.run.status === statusConstants.RUNNING) {
       routeEl = (
         <ThankYou
-          canceling={this.props.workflow.run.canceling}
-          email={this.props.workflow.run.email}
+          canceling={this.props.app.run.canceling}
+          email={this.props.app.run.email}
           onClickCancel={this.props.clickCancel}
         />
       );
-    } else if (this.props.workflow.run.status === statusConstants.CANCELED) {
+    } else if (this.props.app.run.status === statusConstants.CANCELED) {
       routeEl = (
         <Canceled
-          email={this.props.workflow.run.email}
+          email={this.props.app.run.email}
         />
       );
-    } else if (this.props.workflow.run.status === statusConstants.ERROR) {
+    } else if (this.props.app.run.status === statusConstants.ERROR) {
       routeEl = (
         <Errored />
       );
     } else {
       routeEl = (
-        <Workflow
+        <App
           changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
@@ -94,7 +94,7 @@ class WorkflowRouter extends React.Component {
           selection={this.props.selection}
           submitInputString={this.props.submitInputString}
           submitEmail={this.props.submitEmail}
-          workflow={this.props.workflow}
+          app={this.props.app}
           runPage={!!this.props.runId}
         />
       );
@@ -102,7 +102,7 @@ class WorkflowRouter extends React.Component {
 
     return (
       <div
-        className="workflow-router"
+        className="app-router"
         style={{ flex: 1, overflow: 'auto', display: 'flex' }}
       >
         {routeEl}
@@ -115,12 +115,12 @@ class WorkflowRouter extends React.Component {
   }
 }
 
-WorkflowRouter.defaultProps = {
+AppRouter.defaultProps = {
   canceling: false,
   runId: null,
 };
 
-WorkflowRouter.propTypes = {
+AppRouter.propTypes = {
   canceling: React.PropTypes.bool,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
@@ -140,8 +140,8 @@ WorkflowRouter.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
-  workflowId: React.PropTypes.string.isRequired,
+  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  appId: React.PropTypes.string.isRequired,
 };
 
-export default WorkflowRouter;
+export default AppRouter;

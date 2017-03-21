@@ -1,7 +1,6 @@
 import React from 'react';
-import WorkflowCard from './workflow_card';
-import WorkflowCardLoading from './workflow_card_loading';
-import WorkflowRecord from '../records/workflow_record';
+import AppCard from './app_card';
+import AppCardLoading from './app_card_loading';
 import apiUtils from '../utils/api_utils';
 import imgLogo from '../../img/logo.png';
 import imgM1 from '../../img/m1.png';
@@ -18,14 +17,14 @@ class HomePage extends React.Component {
     super(props);
 
     this.state = {
-      workflows: [],
+      apps: [],
     };
   }
 
   componentDidMount() {
-    // TODO fetch workflows here
-    apiUtils.getWorkflows().then(workflows =>
-      this.setState({ workflows }),
+    // TODO fetch apps here
+    apiUtils.getWorkflows().then(apps =>
+      this.setState({ apps }),
     ).catch(console.error.bind(console)); // eslint-disable-line no-console
 
     // Do initial load hash navigation
@@ -38,27 +37,27 @@ class HomePage extends React.Component {
   }
 
   render() {
-    let workflowCards = [];
+    let appCards = [];
 
-    if (this.state.workflows.length) {
-      workflowCards = this.state.workflows.map(workflow =>
-        <WorkflowCard
-          bgIndex={workflow.bgIndex}
-          bgColor={workflow.bgColor}
-          color={workflow.color}
-          comingSoon={workflow.comingSoon}
-          creatorImage={workflow.creatorImage}
-          runCount={workflow.runCount}
-          title={workflow.title}
-          description={workflow.description}
-          viewCount={workflow.viewCount}
-          id={workflow.id}
-          key={workflow.id}
+    if (this.state.apps.length) {
+      appCards = this.state.apps.map(app =>
+        <AppCard
+          bgIndex={app.bgIndex}
+          bgColor={app.bgColor}
+          color={app.color}
+          comingSoon={app.comingSoon}
+          creatorImage={app.creatorImage}
+          runCount={app.runCount}
+          title={app.title}
+          description={app.description}
+          viewCount={app.viewCount}
+          id={app.id}
+          key={app.id}
         />,
       );
     } else {
       for (let i = 0; i < 3; i += 1) {
-        workflowCards.push(<WorkflowCardLoading key={i} />);
+        appCards.push(<AppCardLoading key={i} />);
       }
     }
 
@@ -118,14 +117,14 @@ class HomePage extends React.Component {
           <div className="container">
             <div className="row">
               <div className="col-xs-12">
-                <h3>LATEST WORKFLOWS</h3>
+                <h3>LATEST APPS</h3>
                 <h5 className="colorGrey">Use Google Chrome for best results</h5>
               </div>
             </div>
             <div className="row">
             </div>
             <div className="row" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
-              {workflowCards}
+              {appCards}
             </div>
           </div>
         </div>
@@ -181,10 +180,10 @@ class HomePage extends React.Component {
               </div>
 {/*              <div className="col-sm-4 col-xs-6 creator-images">
                 {
-                  this.state.workflows.map(workflow => (
+                  this.state.apps.map(app => (
                     <img
-                      key={workflow.id}
-                      src={`${process.env.API_URL}${workflow.creatorImage}`}
+                      key={app.id}
+                      src={`${process.env.API_URL}${app.creatorImage}`}
                       alt="creator example"
                       className="creator-image"
                       style={{ paddingTop: '20px' }}
@@ -221,9 +220,7 @@ class HomePage extends React.Component {
                   to help give your research impact for a wide audience.
                 </p>
               </div>
-              <div className="col-xs-12 col-sm-4">
-
-              </div>
+              <div className="col-xs-12 col-sm-4" />
             </div>
           </div>
         </div>
@@ -264,12 +261,11 @@ class HomePage extends React.Component {
 }
 
 HomePage.defaultProps = {
-  workflows: [],
+  apps: [],
 };
 
 HomePage.propTypes = {
   location: React.PropTypes.object,
-  workflows: React.PropTypes.arrayOf(WorkflowRecord),
 };
 
 export default HomePage;

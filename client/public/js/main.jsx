@@ -25,17 +25,17 @@ require('../tile-wide.png');
 injectTapEventPlugin();
 
 const store = createStore(
-  index, applyMiddleware(thunkMiddleware, loggingMiddleware)
+  index, applyMiddleware(thunkMiddleware, loggingMiddleware),
 );
 
 function codeSplitHomePage(location, callback) {
   System.import('./components/home_page').then(module =>
-    callback(null, module.default)
+    callback(null, module.default),
   );
 }
-function codeSplitWorkflowRoot(location, callback) {
-  System.import('./containers/workflow_root').then(module =>
-    callback(null, module.default)
+function codeSplitAppRoot(location, callback) {
+  System.import('./containers/app_root').then(module =>
+    callback(null, module.default),
   );
 }
 
@@ -45,13 +45,13 @@ render((
       <Route path="/" getComponent={codeSplitHomePage} />
       <Route path="/app" component={RunnerRoot}>
         <IndexRoute component={NotFound} />
-        <Route path=":workflowId" getComponent={codeSplitWorkflowRoot} />
-        <Route path=":workflowId/:runId" getComponent={codeSplitWorkflowRoot} />
+        <Route path=":appId" getComponent={codeSplitAppRoot} />
+        <Route path=":appId/:runId" getComponent={codeSplitAppRoot} />
         <Route path="*" component={NotFound} />
       </Route>
       <Route path="*" component={NotFound} />
     </Router>
   </Provider>
 ),
-  document.querySelector('.app')
+  document.querySelector('.main'),
 );
