@@ -6,7 +6,7 @@ import actionConstants from '../constants/action_constants';
 
 const initialState = new WorkflowRecord();
 
-function workflow(state = initialState, action) {
+function app(state = initialState, action) {
   switch (action.type) {
     case actionConstants.INITIALIZE_WORKFLOW: {
       const workflowsDifferent = action.workflowId !== state.id;
@@ -151,4 +151,4 @@ function workflow(state = initialState, action) {
   }
 }
 
-export default workflow;
+export default app;

@@ -23,7 +23,7 @@ function mapStateToProps(state, ownProps) {
     runId: ownProps.params.runId,
     selection: state.selection,
     userMessage: state.userMessage,
-    app: state.workflow,
+    app: state.app,
     appId: ownProps.params.appId,
   };
 }

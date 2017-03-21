@@ -3,7 +3,7 @@ import Runner from '../components/runner';
 
 function mapStateToProps(state, ownProps) {
   return {
-    title: state.workflow.title,
+    title: state.app.title,
     appId: ownProps.params.appId,
   };
 }
