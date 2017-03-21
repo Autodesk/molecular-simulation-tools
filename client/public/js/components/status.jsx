@@ -10,7 +10,7 @@ import StatusResults from './status_results';
 import AppRecord from '../records/app_record';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
-import workflowUtils from '../utils/workflow_utils';
+import appUtils from '../utils/app_utils';
 
 require('../../css/status.scss');
 
@@ -70,7 +70,7 @@ function Status(props) {
         case tasksConstants.RUN: {
           const running = props.app.run.status === statusConstants.RUNNING;
           const runDisabled = running || runCompleted ||
-            !workflowUtils.isRunnable(props.app.run);
+            !appUtils.isRunnable(props.app.run);
           selection = (
             <StatusRun
               clickRun={props.clickRun}

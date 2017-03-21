@@ -4,7 +4,7 @@ import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import ioUtils from './utils/io_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
-import workflowUtils from './utils/workflow_utils';
+import appUtils from './utils/app_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
@@ -65,10 +65,10 @@ export function initializeRun(appId, runId) {
       let inputs = app.run.inputs;
       let outputs = app.run.outputs;
 
-      inputs = await workflowUtils.fetchIoPdbs(inputs);
-      inputs = await workflowUtils.fetchIoResults(inputs);
-      outputs = await workflowUtils.fetchIoPdbs(outputs);
-      outputs = await workflowUtils.fetchIoResults(outputs);
+      inputs = await appUtils.fetchIoPdbs(inputs);
+      inputs = await appUtils.fetchIoResults(inputs);
+      outputs = await appUtils.fetchIoPdbs(outputs);
+      outputs = await appUtils.fetchIoResults(outputs);
 
       // If only one ligand, select it
       const ligands = ioUtils.getLigandNames(inputs);
@@ -149,8 +149,8 @@ export function selectInputFile(file, appId) {
     }
 
     try {
-      const inputString = await workflowUtils.readFile(file);
-      let inputs = await workflowUtils.processInput(
+      const inputString = await appUtils.readFile(file);
+      let inputs = await appUtils.processInput(
         appId, inputString, extension,
       );
 
@@ -195,7 +195,7 @@ export function submitInputString(inputString, appId) {
     try {
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
-      let inputs = await workflowUtils.processInput(
+      let inputs = await appUtils.processInput(
         appId, newInput, extension,
       );
 

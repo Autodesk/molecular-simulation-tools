@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import { List as IList } from 'immutable';
 import RunRecord from '../../public/js/records/run_record';
 import IoRecord from '../../public/js/records/io_record';
-import workflowUtils from '../../public/js/utils/workflow_utils';
+import appUtils from '../../public/js/utils/app_utils';
 
-describe('workflowUtils', () => {
+describe('appUtils', () => {
   let run;
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('workflowUtils', () => {
       });
 
       it('returns false', () => {
-        expect(workflowUtils.isRunnable(run)).to.equal(false);
+        expect(appUtils.isRunnable(run)).to.equal(false);
       });
     });
 
@@ -38,13 +38,13 @@ describe('workflowUtils', () => {
       });
 
       it('returns false', () => {
-        expect(workflowUtils.isRunnable(run)).to.equal(false);
+        expect(appUtils.isRunnable(run)).to.equal(false);
       });
     });
 
     describe('when email and inputs', () => {
       it('returns true', () => {
-        expect(workflowUtils.isRunnable(run)).to.equal(true);
+        expect(appUtils.isRunnable(run)).to.equal(true);
       });
     });
   });
