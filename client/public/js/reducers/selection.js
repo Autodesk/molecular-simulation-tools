@@ -19,11 +19,11 @@ function selection(state = initialState, action) {
         type: selectionConstants.ABOUT,
       });
 
-    case actionConstants.FETCHED_WORKFLOW:
+    case actionConstants.FETCHED_APP:
       if (action.error) {
         return state;
       }
-      // Reset selection when loading a workflow
+      // Reset selection when loading a app
       return state.merge({
         taskIndex: 0,
         type: selectionConstants.TASK,
@@ -31,12 +31,12 @@ function selection(state = initialState, action) {
 
     case actionConstants.FETCHED_RUN:
       if (action.error ||
-        action.workflow.run.status !== statusConstants.COMPLETED) {
+        action.app.run.status !== statusConstants.COMPLETED) {
         return state;
       }
       // Select results when loading a finished run
       return state.merge({
-        taskIndex: action.workflow.tasks.size, // Results
+        taskIndex: action.app.tasks.size, // Results
         type: selectionConstants.TASK,
       });
 

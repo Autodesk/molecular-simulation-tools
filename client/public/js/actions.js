@@ -8,46 +8,46 @@ import workflowUtils from './utils/workflow_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
-export function initializeWorkflow(workflowId) {
+export function initializeWorkflow(appId) {
   return async function initializeWorkflowDispatch(dispatch) {
     dispatch({
-      type: actionConstants.INITIALIZE_WORKFLOW,
-      workflowId,
+      type: actionConstants.INITIALIZE_APP,
+      appId,
     });
 
-    let workflow;
+    let app;
     try {
-      workflow = await apiUtils.getWorkflow(workflowId);
+      app = await apiUtils.getWorkflow(appId);
 
-      if (workflow.comingSoon) {
-        throw new Error('This workflow is not yet available, please try another.');
+      if (app.comingSoon) {
+        throw new Error('This app is not yet available, please try another.');
       }
     } catch (error) {
       console.error(error);
       return dispatch({
-        type: actionConstants.FETCHED_WORKFLOW,
+        type: actionConstants.FETCHED_APP,
         error,
       });
     }
 
     return dispatch({
-      type: actionConstants.FETCHED_WORKFLOW,
-      workflow,
+      type: actionConstants.FETCHED_APP,
+      app,
     });
   };
 }
 
-export function initializeRun(workflowId, runId) {
+export function initializeRun(appId, runId) {
   return async function initializeRunDispatch(dispatch) {
     dispatch({
-      type: actionConstants.INITIALIZE_WORKFLOW,
+      type: actionConstants.INITIALIZE_APP,
       runId,
-      workflowId,
+      appId,
     });
 
-    let workflow;
+    let app;
     try {
-      workflow = await apiUtils.getRun(runId);
+      app = await apiUtils.getRun(runId);
     } catch (error) {
       dispatch({
         type: actionConstants.FETCHED_RUN,
@@ -58,12 +58,12 @@ export function initializeRun(workflowId, runId) {
 
     dispatch({
       type: actionConstants.FETCHED_RUN,
-      workflow,
+      app,
     });
 
     try {
-      let inputs = workflow.run.inputs;
-      let outputs = workflow.run.outputs;
+      let inputs = app.run.inputs;
+      let outputs = app.run.outputs;
 
       inputs = await workflowUtils.fetchIoPdbs(inputs);
       inputs = await workflowUtils.fetchIoResults(inputs);
@@ -100,12 +100,12 @@ export function clickTask(taskIndex) {
 
 /**
  * When the user clicks on the run button
- * @param {String} workflowId
+ * @param {String} appId
  * @param {String} email
  * @param {IList} inputs
  * @param {String} [inputString]
  */
-export function clickRun(workflowId, email, inputs, inputString) {
+export function clickRun(appId, email, inputs, inputString) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
@@ -113,14 +113,14 @@ export function clickRun(workflowId, email, inputs, inputString) {
 
     const selectedLigand = ioUtils.getSelectedLigand(inputs);
 
-    apiUtils.run(workflowId, email, inputs, selectedLigand, inputString).then((runId) => {
+    apiUtils.run(appId, email, inputs, selectedLigand, inputString).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId,
       });
 
-      browserHistory.push(`/workflow/${workflowId}/${runId}`);
-      dispatch(initializeRun(workflowId, runId));
+      browserHistory.push(`/app/${appId}/${runId}`);
+      dispatch(initializeRun(appId, runId));
     }).catch((err) => {
       console.error(err);
 
@@ -132,7 +132,7 @@ export function clickRun(workflowId, email, inputs, inputString) {
   };
 }
 
-export function selectInputFile(file, workflowId) {
+export function selectInputFile(file, appId) {
   return async function selectInputFileDispatch(dispatch) {
     dispatch({
       type: actionConstants.INPUT_FILE,
@@ -151,7 +151,7 @@ export function selectInputFile(file, workflowId) {
     try {
       const inputString = await workflowUtils.readFile(file);
       let inputs = await workflowUtils.processInput(
-        workflowId, inputString, extension,
+        appId, inputString, extension,
       );
 
       // If only one ligand, select it
@@ -175,7 +175,7 @@ export function selectInputFile(file, workflowId) {
   };
 }
 
-export function submitInputString(inputString, workflowId) {
+export function submitInputString(inputString, appId) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
@@ -196,7 +196,7 @@ export function submitInputString(inputString, workflowId) {
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
       let inputs = await workflowUtils.processInput(
-        workflowId, newInput, extension,
+        appId, newInput, extension,
       );
 
       // If only one ligand, select it

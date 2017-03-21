@@ -8,9 +8,9 @@ const initialState = new AppRecord();
 
 function app(state = initialState, action) {
   switch (action.type) {
-    case actionConstants.INITIALIZE_WORKFLOW: {
-      const workflowsDifferent = action.workflowId !== state.id;
-      if (workflowsDifferent) {
+    case actionConstants.INITIALIZE_APP: {
+      const appsDifferent = action.appId !== state.id;
+      if (appsDifferent) {
         return new AppRecord({
           fetching: true,
           fetchingError: null,
@@ -38,7 +38,7 @@ function app(state = initialState, action) {
       });
     }
 
-    case actionConstants.FETCHED_WORKFLOW:
+    case actionConstants.FETCHED_APP:
       if (action.error) {
         return state.merge({
           fetching: false,
@@ -46,7 +46,7 @@ function app(state = initialState, action) {
           run: state.run.set('fetchingData', false),
         });
       }
-      return action.workflow;
+      return action.app;
 
     case actionConstants.FETCHED_RUN:
       if (action.error) {
@@ -55,7 +55,7 @@ function app(state = initialState, action) {
           fetchingError: action.error,
         });
       }
-      return action.workflow;
+      return action.app;
 
     case actionConstants.FETCHED_RUN_IO:
       if (action.error) {
