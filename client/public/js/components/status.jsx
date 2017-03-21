@@ -96,7 +96,10 @@ function Status(props) {
           submitEmail={props.submitEmail}
         />
       );
-    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
+    } else if (
+      props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS &&
+      props.workflow.run.outputs.size
+    ) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.workflow.run.outputs, 'results.json',
       );
