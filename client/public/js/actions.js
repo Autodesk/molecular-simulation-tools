@@ -8,8 +8,8 @@ import appUtils from './utils/app_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
-export function initializeWorkflow(appId) {
-  return async function initializeWorkflowDispatch(dispatch) {
+export function initializeApp(appId) {
+  return async function initializeAppDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_APP,
       appId,
@@ -17,7 +17,7 @@ export function initializeWorkflow(appId) {
 
     let app;
     try {
-      app = await apiUtils.getWorkflow(appId);
+      app = await apiUtils.getApp(appId);
 
       if (app.comingSoon) {
         throw new Error('This app is not yet available, please try another.');

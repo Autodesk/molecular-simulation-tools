@@ -50,7 +50,7 @@ class AppRouter extends React.Component {
       return this.props.initializeRun(appId, runId);
     }
 
-    return this.props.initializeWorkflow(appId);
+    return this.props.initializeApp(appId);
   }
 
   render() {
@@ -129,7 +129,7 @@ AppRouter.propTypes = {
   clickTask: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   initializeRun: React.PropTypes.func.isRequired,
-  initializeWorkflow: React.PropTypes.func.isRequired,
+  initializeApp: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,

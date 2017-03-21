@@ -9,7 +9,7 @@ import {
   clickRun,
   clickTask,
   initializeRun,
-  initializeWorkflow,
+  initializeApp,
   messageTimeout,
   submitEmail,
   submitInputString,
@@ -49,8 +49,8 @@ function mapDispatchToProps(dispatch) {
     initializeRun(appId, runId) {
       dispatch(initializeRun(appId, runId));
     },
-    initializeWorkflow(appId, runId) {
-      dispatch(initializeWorkflow(appId, runId));
+    initializeApp(appId, runId) {
+      dispatch(initializeApp(appId, runId));
     },
     onClickColorize() {
       dispatch(clickColorize());

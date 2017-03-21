@@ -27,8 +27,8 @@ const apiUtils = {
     }).then(res => res.data.runId);
   },
 
-  getWorkflow(workflowId) {
-    return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
+  getApp(appId) {
+    return axios.get(`${API_URL}/v1/workflow/${appId}`).then(res =>
       new AppRecord(Object.assign({}, res.data, {
         tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
       })),
