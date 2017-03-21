@@ -2,7 +2,6 @@ import React from 'react';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { statusConstants } from 'molecular-design-applications-shared';
 import AppRouter from '../../public/js/components/app_router';
 import SelectionRecord from '../../public/js/records/selection_record';
 import AppRecord from '../../public/js/records/app_record';
@@ -10,48 +9,37 @@ import AppRecord from '../../public/js/records/app_record';
 describe('AppRouter', () => {
   let clickAbout;
   let clickRun;
-  let clickWorkflowNode;
-  let clickWorkflowNodeLoad;
-  let clickWorkflowNodeEmail;
   let runId;
   let selection;
   let submitPdbId;
   let submitEmail;
   let app;
   let appId;
-  let workflowStatus;
   let wrapper;
 
   beforeEach(() => {
     clickAbout = () => {};
     clickRun = () => {};
-    clickWorkflowNode = () => {};
-    clickWorkflowNodeLoad = () => {};
-    clickWorkflowNodeEmail = () => {};
     runId = '0';
     selection = new SelectionRecord();
     submitPdbId = () => {};
     submitEmail = () => {};
     appId = 'imanappid';
-    workflowStatus = statusConstants.IDLE;
     app = new AppRecord({ id: appId });
   });
 
   describe('componentWillReceiveProps', () => {
-    let initializeWorkflowSpy;
+    let initializeAppSpy;
     let initializeRunSpy;
 
     beforeEach(() => {
-      initializeWorkflowSpy = sinon.spy();
+      initializeAppSpy = sinon.spy();
       initializeRunSpy = sinon.spy();
       wrapper = shallow(
         <AppRouter
           clickAbout={clickAbout}
           clickRun={clickRun}
-          clickWorkflowNode={clickWorkflowNode}
-          clickWorkflowNodeLoad={clickWorkflowNodeLoad}
-          clickWorkflowNodeEmail={clickWorkflowNodeEmail}
-          initializeWorkflow={initializeWorkflowSpy}
+          initializeApp={initializeAppSpy}
           initializeRun={initializeRunSpy}
           runId={runId}
           selection={selection}
@@ -59,7 +47,6 @@ describe('AppRouter', () => {
           submitEmail={submitEmail}
           app={app}
           appId={appId}
-          workflowStatus={workflowStatus}
         />,
       );
     });
@@ -81,10 +68,10 @@ describe('AppRouter', () => {
     });
 
     describe('when the appId doesnt change', () => {
-      it('doesnt call initializeWorkflow', () => {
+      it('doesnt call initializeApp', () => {
         wrapper.setProps({ appId });
 
-        expect(initializeWorkflowSpy.called).to.equal(false);
+        expect(initializeAppSpy.called).to.equal(false);
       });
     });
 
@@ -97,7 +84,7 @@ describe('AppRouter', () => {
     });
 
     describe('when the runId changes but we already have that run', () => {
-      it('doesnt call initializeWorkflow', () => {
+      it('doesnt call initializeApp', () => {
         const newRunId = 'newrunid';
         wrapper.setProps({
           runId: newRunId,
@@ -107,7 +94,7 @@ describe('AppRouter', () => {
           }),
         });
 
-        expect(initializeWorkflowSpy.called).to.equal(false);
+        expect(initializeAppSpy.called).to.equal(false);
       });
     });
   });

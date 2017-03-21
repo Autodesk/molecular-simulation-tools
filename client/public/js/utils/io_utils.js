@@ -211,7 +211,7 @@ const ioUtils = {
     }
 
     if (!prepFetchedValue.success) {
-      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+      return prepFetchedValue.errors || 'Input is invalid for this app.';
     }
 
     return '';
