@@ -23,7 +23,7 @@ class HomePage extends React.Component {
 
   componentDidMount() {
     // TODO fetch apps here
-    apiUtils.getWorkflows().then(apps =>
+    apiUtils.getApps().then(apps =>
       this.setState({ apps }),
     ).catch(console.error.bind(console)); // eslint-disable-line no-console
 

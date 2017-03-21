@@ -11,16 +11,16 @@ const API_URL = process.env.API_URL || '';
 const apiUtils = {
   /**
    * Start a run
-   * @param {String} workflowId
+   * @param {String} appId
    * @param {String} email
    * @param {IList} inputs
    * @param {String} selectedLigand
    * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(workflowId, email, inputs, selectedLigand, inputString) {
+  run(appId, email, inputs, selectedLigand, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
-      workflowId,
+      workflowId: appId,
       email,
       inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
       inputString,
@@ -35,9 +35,9 @@ const apiUtils = {
     );
   },
 
-  getWorkflows() {
+  getApps() {
     return axios.get(`${API_URL}/v1/workflow`).then(res =>
-      res.data.map(workflowData => new AppRecord(workflowData)),
+      res.data.map(appData => new AppRecord(appData)),
     );
   },
 
@@ -71,12 +71,12 @@ const apiUtils = {
 
   /**
    * Process the input given by the user and return processed input
-   * @param workflowId {String}
+   * @param appId {String}
    * @param input {String} PDB, IUPAC, InChi, SMILES
    * @param extension {String} Optional
    * @returns {Promise}
    */
-  processInput(workflowId, input, extension) {
+  processInput(appId, input, extension) {
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -110,7 +110,7 @@ const apiUtils = {
         },
       ],
     };
-    return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
+    return axios.post(`${API_URL}/v1/structure/executeWorkflow${appId}Step0`, data)
       .then((res) => {
         if (!res.data.success) {
           const error = new Error('Failed to process this input, please try again.');
