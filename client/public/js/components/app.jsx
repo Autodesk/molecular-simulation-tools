@@ -2,7 +2,7 @@ import React from 'react';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import Tasks from '../components/tasks';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
@@ -99,7 +99,7 @@ App.propTypes = {
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
 };
 
 export default App;

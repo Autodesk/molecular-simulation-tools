@@ -3,7 +3,7 @@ import axios from 'axios';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import TaskRecord from '../records/task_record';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import ioUtils from './io_utils';
 
 const API_URL = process.env.API_URL || '';
@@ -29,7 +29,7 @@ const apiUtils = {
 
   getWorkflow(workflowId) {
     return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
-      new WorkflowRecord(Object.assign({}, res.data, {
+      new AppRecord(Object.assign({}, res.data, {
         tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
       })),
     );
@@ -37,7 +37,7 @@ const apiUtils = {
 
   getWorkflows() {
     return axios.get(`${API_URL}/v1/workflow`).then(res =>
-      res.data.map(workflowData => new WorkflowRecord(workflowData)),
+      res.data.map(workflowData => new AppRecord(workflowData)),
     );
   },
 
@@ -51,13 +51,13 @@ const apiUtils = {
       const outputs = runData.outputs ?
         new IList(runData.outputs.map(output => new IoRecord(output))) :
         new IList();
-      return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
+      return new AppRecord(Object.assign({}, runData, runData.workflow, {
         run: new RunRecord(Object.assign({}, runData, {
           inputs,
           outputs,
         })),
         tasks: new IList(runData.workflow.tasks.map(taskData =>
-          new TaskRecord(taskData))
+          new TaskRecord(taskData)),
         ),
       }));
     });

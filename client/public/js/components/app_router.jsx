@@ -6,7 +6,7 @@ import Snackbar from './snackbar';
 import ThankYou from './thank_you';
 import SelectionRecord from '../records/selection_record';
 import UserMessageRecord from '../records/user_message_record';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import App from './app';
 
 class AppRouter extends React.Component {
@@ -140,7 +140,7 @@ AppRouter.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
-  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
   appId: React.PropTypes.string.isRequired,
 };
 

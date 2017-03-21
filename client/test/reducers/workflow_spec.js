@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import RunRecord from '../../public/js/records/run_record';
-import WorkflowRecord from '../../public/js/records/workflow_record';
+import AppRecord from '../../public/js/records/app_record';
 import actionConstants from '../../public/js/constants/action_constants';
-import workflow from '../../public/js/reducers/workflow';
+import workflow from '../../public/js/reducers/app';
 
 describe('workflow', () => {
   describe('INITIALIZE_WORKFLOW', () => {
@@ -18,7 +18,7 @@ describe('workflow', () => {
       let state;
 
       beforeEach(() => {
-        state = new WorkflowRecord({
+        state = new AppRecord({
           id: '0',
           run: new RunRecord({}),
         });
@@ -68,7 +68,7 @@ describe('workflow', () => {
       let state;
 
       beforeEach(() => {
-        state = new WorkflowRecord({
+        state = new AppRecord({
           id: '0',
           run: new RunRecord({ id: '0' }),
         });

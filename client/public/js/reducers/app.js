@@ -1,17 +1,17 @@
 import { List as IList } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 import RunRecord from '../records/run_record';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import actionConstants from '../constants/action_constants';
 
-const initialState = new WorkflowRecord();
+const initialState = new AppRecord();
 
 function app(state = initialState, action) {
   switch (action.type) {
     case actionConstants.INITIALIZE_WORKFLOW: {
       const workflowsDifferent = action.workflowId !== state.id;
       if (workflowsDifferent) {
-        return new WorkflowRecord({
+        return new AppRecord({
           fetching: true,
           fetchingError: null,
           run: new RunRecord({

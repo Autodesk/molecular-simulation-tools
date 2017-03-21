@@ -5,7 +5,7 @@ import { shallow } from 'enzyme';
 import { statusConstants } from 'molecular-design-applications-shared';
 import AppRouter from '../../public/js/components/app_router';
 import SelectionRecord from '../../public/js/records/selection_record';
-import WorkflowRecord from '../../public/js/records/workflow_record';
+import AppRecord from '../../public/js/records/app_record';
 
 describe('AppRouter', () => {
   let clickAbout;
@@ -34,7 +34,7 @@ describe('AppRouter', () => {
     submitEmail = () => {};
     appId = 'imanappid';
     workflowStatus = statusConstants.IDLE;
-    app = new WorkflowRecord({ id: appId });
+    app = new AppRecord({ id: appId });
   });
 
   describe('componentWillReceiveProps', () => {
@@ -101,7 +101,7 @@ describe('AppRouter', () => {
         const newRunId = 'newrunid';
         wrapper.setProps({
           runId: newRunId,
-          app: new WorkflowRecord({
+          app: new AppRecord({
             id: appId,
             runId: newRunId,
           }),

@@ -2,7 +2,7 @@ import React from 'react';
 import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import Task from './task';
 import selectionConstants from '../constants/selection_constants';
 import taskUtils from '../utils/task_utils';
@@ -105,7 +105,7 @@ function Tasks(props) {
 Tasks.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickTask: React.PropTypes.func.isRequired,
-  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
 };
 

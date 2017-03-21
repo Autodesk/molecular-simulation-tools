@@ -7,7 +7,7 @@ import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import WorkflowRecord from '../records/workflow_record';
+import AppRecord from '../records/app_record';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 import workflowUtils from '../utils/workflow_utils';
@@ -133,7 +133,7 @@ Status.propTypes = {
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  app: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
 };
 
 export default Status;
