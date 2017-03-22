@@ -8,6 +8,7 @@ const MOL_VIEW_MODEL_LOADED = 'Nano.ModelEndLoaded';
 
 class MoleculeViewerWrapper {
   container = null
+  hasMolecule = false
   moleculeViewer = null
   createPromise = null
   addModelPromise = Promise.resolve()
@@ -50,9 +51,21 @@ class MoleculeViewerWrapper {
    * @param {String} modelData
    */
   addModel(modelData) {
-    const lastAddModelPromise = this.addModelPromise || Promise.resolve();
+    // Add subsequent animation frames
+    if (this.hasMolecule) {
+      const pdbId = this.moleculeViewer.getModelIDs()[0];
+      const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
+      const originalState = this.moleculeViewer.getOriginalAnimState(pdbId);
+      // TODO why is this bonds hack needed?
+      state.bonds = originalState.bonds;
+      this.moleculeViewer.addAnimationFrame(pdbId, state, true);
+      this.moleculeViewer.playFrame(this.moleculeViewer.getNumFrames() - 1);
+      this.addModelPromise = Promise.resolve();
+      return;
+    }
 
     // Can't do anything after adding a model until an event fires
+    const lastAddModelPromise = this.addModelPromise || Promise.resolve();
     this.addModelPromise = new Promise((resolve) => {
       // Must wait for create and any previous addModel
       Promise.all([this.createPromise, lastAddModelPromise]).then(() => {
@@ -62,6 +75,18 @@ class MoleculeViewerWrapper {
               MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
             );
           }
+
+          // Models must be stick in order to animate
+          const pdbId = this.moleculeViewer.getModelIDs()[0];
+          this.moleculeViewer.setModelRepresentation(pdbId, 'ribbon', false);
+          this.moleculeViewer.setModelRepresentation(pdbId, 'stick', true);
+
+          // Add initial animation frame
+          const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
+          this.moleculeViewer.addAnimationFrame(pdbId, state, true);
+          this.moleculeViewer.setAnimateOn(true, 'RT');
+          this.moleculeViewer.setPausedOn(true);
+
           resolve();
         };
 
@@ -69,6 +94,7 @@ class MoleculeViewerWrapper {
           MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
         );
         this.moleculeViewer.createMoleculeFromData(modelData, 'pdb', true);
+        this.hasMolecule = true;
       });
     });
   }

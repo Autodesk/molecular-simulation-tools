@@ -10,14 +10,12 @@ import selectionConstants from '../constants/selection_constants';
 require('../../css/app.scss');
 
 function App(props) {
-  const ios = props.app.run.inputs.concat(props.app.run.outputs);
-  const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
+  const outputPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs);
 
   let selectedModelData;
   if (props.selection.taskIndex === props.app.tasks.size) {
     // Morph is chosen from a list of all input/output pdbs
-    const modelDatas = pdbIos.map(io => io.fetchedValue);
-    selectedModelData = modelDatas.get(props.morph);
+    selectedModelData = outputPdbs.get(props.morph);
   } else if (props.selection.type === selectionConstants.TASK &&
     props.app.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.app.run.inputs);
@@ -64,7 +62,7 @@ function App(props) {
         fetchingData={props.app.run.fetchingData}
         hideContent={hideStatus}
         morph={props.morph}
-        numberOfPdbs={pdbIos.size}
+        numberOfPdbs={outputPdbs.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onSelectInputFile={props.onSelectInputFile}
