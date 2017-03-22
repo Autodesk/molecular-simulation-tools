@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { setProps, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import { statusConstants } from 'molecular-design-applications-shared';
 import WorkflowRouter from '../../public/js/components/workflow_router';
 import SelectionRecord from '../../public/js/records/selection_record';

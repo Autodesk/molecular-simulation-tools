@@ -11,8 +11,7 @@ import selectionConstants from '../constants/selection_constants';
 require('../../css/workflow.scss');
 
 function Workflow(props) {
-  const ios = props.workflow.run.inputs.concat(props.workflow.run.outputs);
-  const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
+  const outputPdbs = ioUtils.getAnimationPdbs(props.workflow.run.outputs);
 
   let selectedModelData;
   // TODO this will never happen b/c not displaying nodes anymore
@@ -29,9 +28,7 @@ function Workflow(props) {
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     // Morph is chosen from a list of all input/output pdbs
-    const modelDatas = pdbIos.map(io => io.fetchedValue);
-
-    selectedModelData = modelDatas.get(props.morph);
+    selectedModelData = outputPdbs.get(props.morph);
   }
 
   let viewError;
@@ -76,7 +73,7 @@ function Workflow(props) {
         hideContent={hideStatus}
         morph={props.morph}
         nodes={props.nodes}
-        numberOfPdbs={pdbIos.size}
+        numberOfPdbs={outputPdbs.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onSelectInputFile={props.onSelectInputFile}
