@@ -20,7 +20,7 @@ const apiUtils = {
    */
   run(appId, email, inputs, selectedLigand, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
-      workflowId: appId,
+      appId,
       email,
       inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
       inputString,
@@ -28,7 +28,7 @@ const apiUtils = {
   },
 
   getApp(appId) {
-    return axios.get(`${API_URL}/v1/workflow/${appId}`).then(res =>
+    return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
       new AppRecord(Object.assign({}, res.data, {
         tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
       })),
@@ -36,7 +36,7 @@ const apiUtils = {
   },
 
   getApps() {
-    return axios.get(`${API_URL}/v1/workflow`).then(res =>
+    return axios.get(`${API_URL}/v1/app`).then(res =>
       res.data.map(appData => new AppRecord(appData)),
     );
   },
@@ -51,12 +51,12 @@ const apiUtils = {
       const outputs = runData.outputs ?
         new IList(runData.outputs.map(output => new IoRecord(output))) :
         new IList();
-      return new AppRecord(Object.assign({}, runData, runData.workflow, {
+      return new AppRecord(Object.assign({}, runData, runData.app, {
         run: new RunRecord(Object.assign({}, runData, {
           inputs,
           outputs,
         })),
-        tasks: new IList(runData.workflow.tasks.map(taskData =>
+        tasks: new IList(runData.app.tasks.map(taskData =>
           new TaskRecord(taskData)),
         ),
       }));
@@ -110,7 +110,7 @@ const apiUtils = {
         },
       ],
     };
-    return axios.post(`${API_URL}/v1/structure/executeWorkflow${appId}Step0`, data)
+    return axios.post(`${API_URL}/v1/structure/executeApp${appId}Step0`, data)
       .then((res) => {
         if (!res.data.success) {
           const error = new Error('Failed to process this input, please try again.');

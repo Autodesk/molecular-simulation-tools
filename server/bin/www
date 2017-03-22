@@ -5,7 +5,6 @@
  */
 const dbConstants = require('../constants/db_constants');
 const dbUtils = require('../utils/db_utils');
-const seedData = require('../utils/seed_data');
 const redis = require('../utils/redis');
 
 if (!('toJSON' in Error.prototype))
@@ -95,12 +94,9 @@ app.set('port', port);
 process.env.PORT = port;
 
 /**
-  Before we create the server, we'll populate the database
-  with workflows
+  Before we create the server, initialize the database (seeds, migrations)
 */
-Promise.all(seedData.map(workflow =>
-  dbUtils.seed(redis, dbConstants.REDIS_WORKFLOWS, workflow)
-)).then(() => {
+dbUtils.initialize(redis).then(() => {
   /**
    * Create HTTP server.
    */

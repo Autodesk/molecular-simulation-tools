@@ -2,14 +2,13 @@ const fs = require('fs-extended');
 const path = require('path');
 const retry = require('bluebird-retry');
 const request = require('request-promise');
-const workflowUtils = require('../utils/workflow_utils');
 const cccUtils = require('../utils/ccc_utils');
 
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const test_utils = {
   runAllTests() {
-    return Promise.all([test_utils.runTestWorkflowVDE(), test_utils.runTestWorkflowQMMM()])
+    return Promise.all([test_utils.runTestAppVDE(), test_utils.runTestAppQMMM()])
       .then(results => {
         var successCount = 0;
         var totalCount = 0;
@@ -45,7 +44,7 @@ const test_utils = {
       });
   },
 
-  runTestWorkflowVDE() {
+  runTestAppVDE() {
     const formData = {
       inputs: [
         {
@@ -60,7 +59,7 @@ const test_utils = {
     return Promise.resolve(true)
       //Step 1
       .then(ignored => {
-        const url = `http://localhost:${port}/v1/structure/executeWorkflow0Step0`;
+        const url = `http://localhost:${port}/v1/structure/executeApp0Step0`;
         return request.post({url:url, body: formData, json:true})
           .then(body => {
             if (!body.success) {
@@ -75,7 +74,7 @@ const test_utils = {
         const formData = {
           email: null,
           inputs: inputs,
-          workflowId: 0
+          appId: 0
         };
 
         const url = `http://localhost:${port}/v1/run`;
@@ -116,7 +115,7 @@ const test_utils = {
       });
   },
 
-  runTestWorkflowQMMM() {
+  runTestAppQMMM() {
     const formData = {
       inputs: [
         {
@@ -127,7 +126,7 @@ const test_utils = {
     };
 
     var port = process.env.PORT;
-    const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
+    const url = `http://localhost:${port}/v1/structure/executeApp1Step0`;
     //Step 1
     return request.post({url:url, body: formData, json:true})
       .then(body => {
@@ -146,7 +145,7 @@ const test_utils = {
         const formData = {
           email: null,
           inputs: inputs,
-          workflowId: 1
+          appId: 1
         };
 
         const url = `http://localhost:${port}/v1/run`;

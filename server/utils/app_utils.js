@@ -2,7 +2,7 @@ const cccUtils = require('../utils/ccc_utils');
 
 const WORKFLOW_IMAGE = 'avirshup/mst:workflows-0.0.1b6';
 
-const workflowUtils = {
+const appUtils = {
   /**
    * Performs a CCC job.
    * @param  {BasicBatchProcessRequest} jobJson https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx typedef BasicBatchProcessRequest
@@ -47,7 +47,7 @@ const workflowUtils = {
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
-  executeWorkflow0Step0(inputs) {
+  executeApp0Step0(inputs) {
 
     const jobJson = {
       wait: true,
@@ -60,8 +60,8 @@ const workflowUtils = {
         ]
       }
     };
-    log.debug({execute:'executeWorkflow0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
-    return workflowUtils.executeCCCJob(jobJson)
+    log.debug({execute:'executeApp0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return appUtils.executeCCCJob(jobJson)
       .then(jobResult => {
         log.debug(jobResult);
         var outputs = [];
@@ -98,7 +98,7 @@ const workflowUtils = {
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
-  executeWorkflow0Step1(inputs) {
+  executeApp0Step1(inputs) {
     const jobJson = {
       wait: false,
       image: WORKFLOW_IMAGE,
@@ -110,9 +110,9 @@ const workflowUtils = {
           '--outputdir', '/outputs/']
       }
     };
-    return workflowUtils.executeCCCJob(jobJson)
+    return appUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeWorkflow0Step1'});
+        log.debug({jobId:jobResult.jobId, f:'executeApp0Step1'});
         //Return the jobId as the runId
         return jobResult.jobId;
       });
@@ -135,7 +135,7 @@ const workflowUtils = {
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
-  executeWorkflow1Step0(inputs) {
+  executeApp1Step0(inputs) {
     const jobJson = {
       wait: true,
       image: WORKFLOW_IMAGE,
@@ -147,8 +147,8 @@ const workflowUtils = {
       }
     };
 
-    log.debug({execute:'executeWorkflow1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
-    return workflowUtils.executeCCCJob(jobJson)
+    log.debug({execute:'executeApp1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    return appUtils.executeCCCJob(jobJson)
       .then(jobResult => {
         log.debug(jobResult);
         var outputs = [];
@@ -185,8 +185,8 @@ const workflowUtils = {
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
-  executeWorkflow1Step1(inputs) {
-    log.debug({f:'executeWorkflow1Step1', inputs});
+  executeApp1Step1(inputs) {
+    log.debug({f:'executeApp1Step1', inputs});
     const jobJson = {
       wait: false,
       image: WORKFLOW_IMAGE,
@@ -198,35 +198,35 @@ const workflowUtils = {
           '--outputdir', '/outputs/']
       }
     };
-    return workflowUtils.executeCCCJob(jobJson)
+    return appUtils.executeCCCJob(jobJson)
       .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeWorkflow1Step1'});
-        //Return the jobId as the runId
+        log.debug({jobId:jobResult.jobId, f:'executeApp1Step1'});
+        // Return the jobId as the runId
         return jobResult.jobId;
       });
   },
 
   /**
-   * Gets the total number of runs per workflow and returns the results in a
+   * Gets the total number of runs per app and returns the results in a
    * hash, given the runStrings in the db
    * @param runHash {Array of Strings}
    * @returns {Map}
    */
-  getRunCountsByWorkflows(runHash) {
+  getRunCountsByApps(runHash) {
     const runCounts = new Map();
 
     Object.values(runHash).forEach((runString) => {
       const run = JSON.parse(runString);
 
-      if (!runCounts.has(run.workflowId)) {
-        runCounts.set(run.workflowId, 0);
+      if (!runCounts.has(run.appId)) {
+        runCounts.set(run.appId, 0);
       }
 
-      runCounts.set(run.workflowId, runCounts.get(run.workflowId) + 1);
+      runCounts.set(run.appId, runCounts.get(run.appId) + 1);
     });
 
     return runCounts;
   },
 };
 
-module.exports = workflowUtils;
+module.exports = appUtils;

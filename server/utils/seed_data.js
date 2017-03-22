@@ -1,6 +1,6 @@
 const tasksConstants = require('molecular-design-applications-shared').tasksConstants;
 
-const workflows = [
+const apps = [
   {
     id: '0',
     title: 'Calculate electronic vertical detachment energy',
@@ -15,14 +15,9 @@ const workflows = [
     tasks: [
       {
         id: tasksConstants.LOAD,
-        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
       },
       {
         id: tasksConstants.RUN,
-        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
-        inputs: {
-          TODO: 'howwouldthiswork?',
-        },
       },
     ],
     viewCount: 0,
@@ -40,21 +35,12 @@ const workflows = [
     tasks: [
       {
         id: tasksConstants.LOAD,
-        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
       },
       {
         id: tasksConstants.SELECTION,
-        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
-        inputs: {
-          TODO: 'howwouldthiswork?',
-        },
       },
       {
         id: tasksConstants.RUN,
-        url: 'TODOmodifyworkflowutils.executeWorkflow0Step0',
-        inputs: {
-          TODO: 'howwouldthiswork?',
-        },
       },
     ],
     viewCount: 0,
@@ -85,4 +71,4 @@ const workflows = [
   },
 ];
 
-module.exports = workflows;
+module.exports = apps;
