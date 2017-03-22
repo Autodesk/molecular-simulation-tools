@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./",
-    "dev": "nodemon ./bin/www --exec 'npm run lint'",
+    "dev": "nodemon ./bin/www",
+    "dev-lint": "nodemon ./bin/www --exec 'npm run lint'",
     "start": "node ./bin/www"
   },
   "author": "",
