@@ -21,7 +21,7 @@ function Workflow(props) {
     );
     selectedModelData = selectedWorkflowNode.modelData;
   } else if ((props.selection.type === selectionConstants.WORKFLOW_NODE_LOAD ||
-    props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL ||
+    props.selection.type === selectionConstants.WORKFLOW_NODE_RUN ||
     props.selection.type === selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION) &&
     props.workflow.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.workflow.run.inputs);
@@ -57,7 +57,6 @@ function Workflow(props) {
     <div className="workflow">
       <WorkflowSteps
         clickAbout={props.clickAbout}
-        clickRun={props.clickRun}
         clickWorkflowNodeLoad={props.clickWorkflowNodeLoad}
         clickWorkflowNodeLigandSelection={props.clickWorkflowNodeLigandSelection}
         clickWorkflowNodeEmail={props.clickWorkflowNodeEmail}
@@ -68,6 +67,7 @@ function Workflow(props) {
       />
       <Status
         changeLigandSelection={props.changeLigandSelection}
+        clickRun={props.clickRun}
         fetching={props.workflow.fetching}
         fetchingData={props.workflow.run.fetchingData}
         hideContent={hideStatus}

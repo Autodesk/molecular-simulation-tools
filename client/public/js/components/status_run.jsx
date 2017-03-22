@@ -1,7 +1,8 @@
 import React from 'react';
+import Button from './button';
 import Input from './input';
 
-require('../../css/status_email.scss');
+require('../../css/status_run.scss');
 
 class StatusEmail extends React.Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class StatusEmail extends React.Component {
       'We\'ll send you an email when you run this workflow, and another when it\'s done.';
 
     return (
-      <div className="status-info status-email">
+      <div className="status-info status-run">
         <p>
           This simulation might take about <span className="time">6 hours</span>.
         </p>
@@ -64,15 +65,24 @@ class StatusEmail extends React.Component {
             onClick={this.onSubmit}
           />
         </form>
+        <Button
+          type="form"
+          onClick={this.props.clickRun}
+          disabled={this.props.runDisabled}
+        >
+          Run Workflow
+        </Button>
       </div>
     );
   }
 }
 
 StatusEmail.propTypes = {
-  runCompleted: React.PropTypes.bool.isRequired,
+  clickRun: React.PropTypes.func.isRequired,
   email: React.PropTypes.string.isRequired,
   emailError: React.PropTypes.string.isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
+  runDisabled: React.PropTypes.bool.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
 };
 
