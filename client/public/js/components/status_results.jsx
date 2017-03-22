@@ -1,5 +1,5 @@
-import { List as IList } from 'immutable';
 import React from 'react';
+import { List as IList } from 'immutable';
 import Button from './button';
 
 import '../../css/status_results.scss';
@@ -50,7 +50,7 @@ class StatusResults extends React.Component {
           type="form"
           onClick={this.onClickDownload}
         >
-          Download
+          Download Result
         </Button>
       );
     }
@@ -59,18 +59,22 @@ class StatusResults extends React.Component {
       <div className="status-results">
         <div className="stats">
           {stats}
-          <div>
-            <label className="fontHeader morph-label" htmlFor="morph">VIEW TRAJECTORY</label>
-            <input
-              id="morph"
-              type="range"
-              min="0"
-              max={this.props.numberOfPdbs - 1}
-              step="1"
-              value={this.props.morph}
-              onChange={this.onChangeMorph}
-            />
-          </div>
+          {
+            this.props.numberOfPdbs <= 1 ? null : (
+              <div>
+                <label className="fontHeader morph-label" htmlFor="morph">VIEW TRAJECTORY</label>
+                <input
+                  id="morph"
+                  type="range"
+                  min="0"
+                  max={this.props.numberOfPdbs - 1}
+                  step="1"
+                  value={this.props.morph}
+                  onChange={this.onChangeMorph}
+                />
+              </div>
+            )
+          }
         </div>
         <div className="actions">
           {downloadButton}
@@ -91,7 +95,7 @@ StatusResults.propTypes = {
   morph: React.PropTypes.number.isRequired,
   numberOfPdbs: React.PropTypes.number.isRequired,
   outputPdbUrl: React.PropTypes.string,
-  resultValues: React.PropTypes.instanceOf(Array),
+  resultValues: React.PropTypes.instanceOf(IList),
 };
 
 export default StatusResults;

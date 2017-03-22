@@ -3,6 +3,12 @@
   justify-content: center;
   align-content: center;
   flex: 1;
+
+  /* Safari fix.  TODO should be in molviewer itself? */
+  .adsk-viewing-viewer {
+    min-height: 100%;
+    height: auto !important;
+  }
 }
 
 .loading {
@@ -27,4 +33,9 @@
 
 #canvas3D {
   vertical-align: middle;
+}
+
+/* TODO this should be removed in the molviewer instead of hacked out here */
+#qrCode {
+  display: none;
 }

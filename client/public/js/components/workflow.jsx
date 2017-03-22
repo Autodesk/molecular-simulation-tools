@@ -11,8 +11,7 @@ import selectionConstants from '../constants/selection_constants';
 require('../../css/workflow.scss');
 
 function Workflow(props) {
-  const ios = props.workflow.run.inputs.concat(props.workflow.run.outputs);
-  const pdbIos = ios.filter(io => io.value.endsWith('.pdb'));
+  const outputPdbs = ioUtils.getAnimationPdbs(props.workflow.run.outputs);
 
   let selectedModelData;
   // TODO this will never happen b/c not displaying nodes anymore
@@ -29,9 +28,7 @@ function Workflow(props) {
   } else if (props.selection.type ===
     selectionConstants.WORKFLOW_NODE_RESULTS) {
     // Morph is chosen from a list of all input/output pdbs
-    const modelDatas = pdbIos.map(io => io.fetchedValue);
-
-    selectedModelData = modelDatas.get(props.morph);
+    selectedModelData = outputPdbs.get(props.morph);
   }
 
   let viewError;
@@ -43,9 +40,10 @@ function Workflow(props) {
   }
 
   let selectionStrings = null;
-  if (props.workflow.run.selectedLigand) {
+  const selectedLigand = ioUtils.getSelectedLigand(props.workflow.run.inputs);
+  if (selectedLigand) {
     selectionStrings = ioUtils.getLigandSelectionStrings(
-      props.workflow.run.inputs, props.workflow.run.selectedLigand,
+      props.workflow.run.inputs, selectedLigand,
     );
   }
 
@@ -75,11 +73,11 @@ function Workflow(props) {
         hideContent={hideStatus}
         morph={props.morph}
         nodes={props.nodes}
-        numberOfPdbs={pdbIos.size}
+        numberOfPdbs={outputPdbs.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onSelectInputFile={props.onSelectInputFile}
-        selectedLigand={props.workflow.run.selectedLigand}
+        selectedLigand={selectedLigand}
         selection={props.selection}
         submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}

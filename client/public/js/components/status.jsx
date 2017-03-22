@@ -1,5 +1,6 @@
-import { Map as IMap } from 'immutable';
+import { List as IList, Map as IMap } from 'immutable';
 import React from 'react';
+import { statusConstants } from 'molecular-design-applications-shared';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLigandSelection from './status_ligand_selection';
@@ -13,8 +14,9 @@ import selectionConstants from '../constants/selection_constants';
 require('../../css/status.scss');
 
 function Status(props) {
-  let selection;
+  const runCompleted = props.workflow.run.status === statusConstants.COMPLETED;
 
+  let selection;
   if (!props.hideContent) {
     if (props.selection.type === selectionConstants.NODE) {
       const node = props.nodes.get(props.selection.id);
@@ -76,21 +78,28 @@ function Status(props) {
       selection = (
         <StatusLoad
           fetchingData={props.workflow.run.fetchingData}
-          onSelectInputFile={props.onSelectInputFile}
-          submitInputString={props.submitInputString}
+          inputData={ioUtils.getPdb(props.workflow.run.inputs)}
           inputFileError={props.workflow.run.inputFileError}
+          inputString={props.workflow.run.inputString}
           inputStringError={props.workflow.run.inputStringError}
+          onSelectInputFile={props.onSelectInputFile}
+          runCompleted={runCompleted}
+          submitInputString={props.submitInputString}
         />
       );
     } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_EMAIL) {
       selection = (
         <StatusEmail
-          submitEmail={props.submitEmail}
+          runCompleted={runCompleted}
           email={props.workflow.run.email}
           emailError={props.workflow.run.emailError}
+          submitEmail={props.submitEmail}
         />
       );
-    } else if (props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS) {
+    } else if (
+      props.selection.type === selectionConstants.WORKFLOW_NODE_RESULTS &&
+      props.workflow.run.outputs.size
+    ) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.workflow.run.outputs, 'results.json',
       );
@@ -101,7 +110,7 @@ function Status(props) {
           .fetchedValue;
 
         if (outputResults.output_values) {
-          resultValues = outputResults.output_values;
+          resultValues = new IList(outputResults.output_values);
         }
       }
 
@@ -128,6 +137,7 @@ function Status(props) {
         <StatusLigandSelection
           changeLigandSelection={props.changeLigandSelection}
           ligandNames={ioUtils.getLigandNames(props.workflow.run.inputs)}
+          runCompleted={runCompleted}
           selectedLigand={props.selectedLigand}
         />
       );

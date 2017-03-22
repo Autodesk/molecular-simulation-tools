@@ -10,9 +10,9 @@ const RunRecord = new Record({
   id: null,
   inputs: new IList(),
   inputFileError: null,
+  inputString: '',
   inputStringError: null,
   outputs: new IList(),
-  selectedLigand: '',
   status: statusConstants.IDLE,
 });
 

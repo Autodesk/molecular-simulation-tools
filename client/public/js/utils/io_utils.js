@@ -1,6 +1,8 @@
 import { List as IList } from 'immutable';
 import IoRecord from '../records/io_record';
 
+const OUTPUT_ANIMATION_FRAMES = 'minstep_frames.json';
+
 const ioUtils = {
   /**
    * Given a list of ios, find the first pdb io and get the pdb data.
@@ -16,6 +18,51 @@ const ioUtils = {
     }
 
     return ios.get(pdbIndex).fetchedValue;
+  },
+
+  /**
+   * Given a list of outputs, returns a list of pdb strings to be animated.
+   * Returns an empty list when none, or when data is missing.
+   * @param {IList} outputs
+   * @returns {IList}
+   */
+  getAnimationPdbs(outputs) {
+    // If there are no outputs yet, return empty list
+    if (!outputs.size) {
+      return new IList();
+    }
+
+    const framesOutputIndex = ioUtils.getIndexByExtension(
+      outputs, OUTPUT_ANIMATION_FRAMES,
+    );
+
+    // If we don't have an output file to tell which animation frames to use,
+    // just return the first output pdb
+    if (framesOutputIndex === -1) {
+      const pdbOutputIndex = ioUtils.getIndexByExtension(outputs, '.pdb');
+      if (pdbOutputIndex === -1) {
+        throw new Error('No output pdb found');
+      }
+      return new IList([outputs.get(pdbOutputIndex).fetchedValue]);
+    }
+
+    const framesOutput = outputs.get(framesOutputIndex);
+    // If frames output exists but has no fetched value yet, return empty list
+    if (!framesOutput.fetchedValue) {
+      return new IList();
+    }
+
+    // Find outputs corresponding to each frame in framesOutput
+    let pdbOutputs = new IList();
+    framesOutput.fetchedValue.forEach((filename) => {
+      const matchedOutput = outputs.find(output => output.name === filename);
+      if (!matchedOutput) {
+        throw new Error('Invalid outputs data; minsteps_frames mismatch');
+      }
+      pdbOutputs = pdbOutputs.push(matchedOutput);
+    });
+
+    return pdbOutputs.map(output => output.fetchedValue);
   },
 
   /**
@@ -48,7 +95,7 @@ const ioUtils = {
    * From the given ios, returns all ligand selection strings found
    * @param ios {IList}
    * @param ligandName {String}
-   * @return {Array}
+   * @return {IList}
    */
   getLigandSelectionStrings(ios, ligandName) {
     const ioWithLigand = ioUtils.getIoWithLigand(ios, ligandName);
@@ -57,7 +104,29 @@ const ioUtils = {
       return new IList();
     }
 
-    return ioWithLigand.fetchedValue.mv_ligand_strings[ligandName];
+    return new IList(ioWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
+  },
+
+  /**
+   * From the given ios, look for selection.json and its selected ligand.
+   * @param {IList} ios
+   * @returns {String}
+   */
+  getSelectedLigand(ios) {
+    const selectionInput = ios.find(io => io.name === 'selection.json');
+
+    if (!selectionInput) {
+      return '';
+    }
+
+    let selectionValue;
+    try {
+      selectionValue = JSON.parse(selectionInput.value);
+    } catch (error) {
+      return '';
+    }
+
+    return selectionValue.ligandname;
   },
 
   /**
@@ -94,17 +163,77 @@ const ioUtils = {
     );
 
     if (selectedLigandInput) {
-      serverInputs = serverInputs.push(new IoRecord({
-        name: 'selection.json',
-        type: 'inline',
-        value: JSON.stringify({
-          ligandname: selectedLigand,
-          atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
-        }),
-      }));
+      serverInputs = serverInputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
+      );
     }
 
     return serverInputs;
+  },
+
+  /**
+   * Return an input representing the given selectedLigand
+   * @param inputs {IList}
+   * @returns {Array}
+   */
+  createSelectionInput(selectedLigandInput, selectedLigand) {
+    if (!selectedLigand) {
+      throw new Error('selectedLigand required');
+    }
+    if (!selectedLigandInput ||
+      !selectedLigandInput.fetchedValue ||
+      !selectedLigandInput.fetchedValue.ligands ||
+      !selectedLigandInput.fetchedValue.ligands[selectedLigand]) {
+      throw new Error('No atom ids for given ligand in selectedLigandInput');
+    }
+
+    const fetchedValue = {
+      ligandname: selectedLigand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
+    };
+
+    return new IoRecord({
+      name: 'selection.json',
+      type: 'inline',
+      fetchedValue,
+      value: JSON.stringify(fetchedValue),
+    });
+  },
+
+  /**
+   * Return inputs modified to indicate the given ligand is selected.
+   * If no selection input, will be created.
+   * @param {IList} inputs
+   * @param {String} ligand
+   * @returns {IList}
+   */
+  selectLigand(inputs, ligand) {
+    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, ligand);
+
+    if (!selectedLigandInput) {
+      throw new Error('The given inputs do not contain the given ligand.');
+    }
+
+    const selectionInputIndex = inputs.findIndex(input =>
+      input.name === 'selection.json',
+    );
+
+    if (selectionInputIndex === -1) {
+      return inputs.push(
+        ioUtils.createSelectionInput(selectedLigandInput, ligand),
+      );
+    }
+
+    const fetchedValue = {
+      ligandname: ligand,
+      atom_ids: selectedLigandInput.fetchedValue.ligands[ligand],
+    };
+    const updatedSelectionInput =
+      inputs.get(selectionInputIndex).merge({
+        fetchedValue,
+        value: JSON.stringify(fetchedValue),
+      });
+    return inputs.set(selectionInputIndex, updatedSelectionInput);
   },
 
   /**
@@ -129,7 +258,7 @@ const ioUtils = {
     }
 
     if (!prepFetchedValue.success) {
-      return prepFetchedValue.errors || 'Input is invalid for this workflow.';
+      return prepFetchedValue.errors || 'Input is invalid for this app.';
     }
 
     return '';

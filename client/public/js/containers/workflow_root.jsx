@@ -34,15 +34,17 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLigandSelection(ligandString) {
-      dispatch(changeLigandSelection(ligandString));
+    changeLigandSelection(inputs) {
+      return (ligand) => {
+        dispatch(changeLigandSelection(inputs, ligand));
+      };
     },
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(workflowId, email, inputs, selectedLigand) {
+    clickRun(workflowId, email, inputs, inputString) {
       return () => {
-        dispatch(clickRun(workflowId, email, inputs, selectedLigand));
+        dispatch(clickRun(workflowId, email, inputs, inputString));
       };
     },
     clickWorkflowNodeLigandSelection() {
@@ -99,11 +101,14 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.workflow.id,
       stateProps.workflow.run.email,
       stateProps.workflow.run.inputs,
-      stateProps.workflow.run.selectedLigand,
+      stateProps.workflow.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.workflow.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.workflow.id),
     submitInputString: dispatchProps.submitInputString(stateProps.workflow.id),
+    changeLigandSelection: dispatchProps.changeLigandSelection(
+      stateProps.workflow.run.inputs,
+    ),
   });
 }
 

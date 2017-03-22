@@ -1,12 +1,16 @@
-.errored, .thank-you {
+.incomplete {
   position: relative;
   overflow: hidden;
-  height: 100%;
+  min-height: 100%;
+  width: 100%;
   background: linear-gradient(to bottom left, #1F2136, #2B2E4B 80%);
   color: white;
+  display: flex;
+  flex-direction: column;
 
   .container {
     position: relative;
+    flex: 1;
     width: auto;
     max-width: 980px;
     padding: 0 15px;

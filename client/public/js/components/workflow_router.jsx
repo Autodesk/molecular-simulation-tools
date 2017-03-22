@@ -72,7 +72,9 @@ class WorkflowRouter extends React.Component {
       );
     } else if (this.props.workflow.run.status === statusConstants.CANCELED) {
       routeEl = (
-        <Canceled />
+        <Canceled
+          email={this.props.workflow.run.email}
+        />
       );
     } else if (this.props.workflow.run.status === statusConstants.ERROR) {
       routeEl = (
@@ -104,7 +106,10 @@ class WorkflowRouter extends React.Component {
     }
 
     return (
-      <div className="workflow-router" style={{ flex: 1, overflow: 'auto' }}>
+      <div
+        className="workflow-router"
+        style={{ flex: 1, overflow: 'auto', display: 'flex' }}
+      >
         {routeEl}
         <Snackbar
           onMessageTimeout={this.props.onMessageTimeout}
@@ -115,9 +120,14 @@ class WorkflowRouter extends React.Component {
   }
 }
 
+WorkflowRouter.defaultProps = {
+  canceling: false,
+  runId: null,
+};
+
 WorkflowRouter.propTypes = {
   canceling: React.PropTypes.bool,
-  changeLigandSelection: React.PropTypes.func,
+  changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
@@ -129,7 +139,7 @@ WorkflowRouter.propTypes = {
   initializeRun: React.PropTypes.func.isRequired,
   initializeWorkflow: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
-  nodes: React.PropTypes.instanceOf(IMap),
+  nodes: React.PropTypes.instanceOf(IMap).isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onMessageTimeout: React.PropTypes.func.isRequired,
@@ -139,7 +149,7 @@ WorkflowRouter.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
-  workflow: React.PropTypes.instanceOf(WorkflowRecord),
+  workflow: React.PropTypes.instanceOf(WorkflowRecord).isRequired,
   workflowId: React.PropTypes.string.isRequired,
 };
 

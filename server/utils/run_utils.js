@@ -66,6 +66,13 @@ const runUtils = {
     // Set the final output and status on the run
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       const run = JSON.parse(runString);
+
+      // Don't set results on a canceled run
+      if (run.status === statusConstants.CANCELED) {
+        localLog.debug(`Run ${runId} canceled, so results not written.`);
+        return Promise.resolve();
+      }
+
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
       var outputs = [];
@@ -118,7 +125,14 @@ const runUtils = {
       });
   },
 
-  executeWorkflow(workflowId, email, inputs) {
+  /**
+   * Execute a full workflow (not input processing)
+   * @param {String} workflowId
+   * @param {String} email
+   * @param {Array} inputs
+   * @param {String} [inputString]
+   */
+  executeWorkflow(workflowId, email, inputs, inputString) {
     const localLog = log.child({f:'executeWorkflow', workflowId:workflowId, email:email});
     localLog.debug({});
     var workflowPromise = null;
@@ -155,6 +169,7 @@ const runUtils = {
           workflowId,
           email: email,
           inputs,
+          inputString,
           created: Date.now(),
         };
         localLog.debug(JSON.stringify(runPayload).substr(0, 300));

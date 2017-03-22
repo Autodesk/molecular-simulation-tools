@@ -1,19 +1,30 @@
 .custom-popover {
-  position: absolute;
+  position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   overflow: hidden;
   z-index: 1000;
+  display: none;
 
   &.open {
+    display: block;
     height: 100%;
   }
 
-  .container {
+  .custom-popover-container {
     position: absolute;
     background-color: #ffffff;
     padding: 16px 30px 16px 30px;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.4);
     border-radius: 10px;
+
+    &.anchor-translate-y {
+      transform: translateY(-100%);
+    }
+
+    &.anchor-translate-x {
+      transform: translateX(-100%);
+    }
   }
 }

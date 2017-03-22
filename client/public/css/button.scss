@@ -51,6 +51,25 @@
     width: 160px;
   }
 
+  &.filled {
+    border: 2px #2FE695 solid;
+    border-radius: 20px;
+    background-color: #2FE695;
+    color: #000000;
+    margin: 20px;
+    width: 160px;
+
+    &.error {
+      border-color: $error;
+      background-color: $error;
+      color: #000000;
+
+      &:hover {
+        color: #000000;
+      }
+    }
+  }
+
   &.form {
     border:1px solid rgba(0, 0, 0, 0.15);
     background-color: white;
