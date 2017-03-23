@@ -86,7 +86,7 @@ function onListening(addr) {
     log.debug(`Listening on ${bind}`);
     // Wait a bit, sometimes docker takes a while
     retry(
-      () => testUtils.runTestCCC(),
+      testUtils.runTestCCC,
       { max_tries: 20, interval: 1000 }
     ).then((status) => {
       log.info({ message: 'Test CCC connection', success: status.success });
