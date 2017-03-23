@@ -3,96 +3,98 @@
 /**
  * Module dependencies.
  */
+require('dotenv').config();
+const http = require('http');
+const httpProxy = require('http-proxy');
+const retry = require('bluebird-retry');
+const app = require('../main/server');
 const dbConstants = require('../constants/db_constants');
 const dbUtils = require('../utils/db_utils');
-const seedData = require('../utils/seed_data');
+const errorUtils = require('../utils/error_utils');
+const log = require('../utils/log');
+const fluentSender = require('../utils/fluent_sender');
 const redis = require('../utils/redis');
+const seedData = require('../utils/seed_data');
+const testUtils = require('../test/test_utils');
 
-if (!('toJSON' in Error.prototype))
-  Object.defineProperty(Error.prototype, 'toJSON', {
-    value: function () {
-    var alt = {};
+/**
+ * Normalize a port into a number, string, or false.
+ */
+function normalizePort(val) {
+  const port = parseInt(val, 10);
 
-    Object.getOwnPropertyNames(this).forEach(function (key) {
-      alt[key] = this[key];
-    }, this);
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
 
-    return alt;
-  },
-  configurable: true,
-  writable: true
-});
+  if (port >= 0) {
+    // port number
+    return port;
+  }
 
-require('dotenv').config();
-require('babel-polyfill');
-const bunyan = require('bunyan');
-const bunyanFormat = require('bunyan-format');
-
-const streams = [
-  {
-    level: process.env['NODE_ENV'] == "development" ? bunyan.TRACE : bunyan.DEBUG,
-    stream: bunyanFormat({ outputMode: 'short' }),
-  },
-];
-
-var fluentLogger = require('fluent-logger').createFluentSender('mst', {
-  host: 'fluentd',
-  port: parseInt((process.env['FLUENT_PORT'] || '24226') + ''),
-  timeout: 3.0,
-  reconnectInterval: 600000, // 10 minutes
-});
-
-streams.push({
-  level: bunyan.DEBUG,
-  type: 'raw',// use 'raw' to get raw log record objects
-  stream: {write:(obj, cb) => {
-    switch(typeof(obj)) {
-      case 'object':
-        break;
-      default:
-        obj = {message:toString(obj)};
-    }
-    if (obj['time']) {
-      obj['@timestamp'] = obj['time'].toISOString();
-    }
-    if (!obj['@timestamp']) {
-      obj['@timestamp'] = new Date().toISOString();
-    }
-    delete obj['time'];
-    if (obj['error'] && typeof(obj['error']) == 'object') {
-      try {
-        obj['error'] = JSON.stringify(obj['error']);
-      } catch(e){}
-    }
-    if (obj['err'] && typeof(obj['err']) == 'object') {
-      try {
-        obj['err'] = JSON.stringify(obj['err']);
-      } catch(e){}
-    }
-
-    fluentLogger.emit('mst', obj, null, cb);
-  }},
-});
-
-
-
-global.log = bunyan.createLogger({
-  name: 'mst',
-  level: process.env['NODE_ENV'] == "development" ? bunyan.TRACE : bunyan.DEBUG,
-  streams,
-});
-
-const app = require('../main/server');
-const debug = require('debug')('express:server');
-const http = require('http');
+  return false;
+}
 
 /**
  * Get port from environment and store in Express.
  */
-
-var port = normalizePort(process.env.PORT || '4000');
+const DEFAULT_PORT = 4000;
+let port = parseInt(process.env.PORT, 10);
+if (isNaN(port) || port < 0) {
+  port = DEFAULT_PORT;
+}
 app.set('port', port);
 process.env.PORT = port;
+
+/**
+ * Event listener for HTTP server 'error' event.
+ */
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  const bind = typeof port === 'string'
+    ? `Pipe ${port}`
+    : `Port ${port}`;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      // This should never happen when running in docker
+      log.error(`${bind} requires elevated privileges`);
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      log.error(`${bind} is already in use`);
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server 'listening' event.
+ */
+function onListening(addr) {
+  return () => {
+    const bind = typeof addr === 'string'
+      ? `pipe ${addr}`
+      : `port ${addr.port}`;
+    log.debug(`Listening on ${bind}`);
+    // Wait a bit, sometimes docker takes a while
+    retry(
+      testUtils.runTestCCC,
+      { max_tries: 20, interval: 1000 }
+    ).then((status) => {
+      log.info({ message: 'Test CCC connection', success: status.success });
+    }).catch((err) => {
+      log.error({ status: 'Test failed:', error: JSON.stringify(err) });
+    });
+  };
+}
 
 /**
   Before we create the server, we'll populate the database
@@ -113,128 +115,56 @@ Promise.all(seedData.map(workflow =>
   server.on('error', onError);
   server.on('listening', onListening(server.address()));
   server.timeout = 8 * 60 * 1000; // 8 minutes
-}).catch(err => {
-  log.error({error:err});
+}).catch((err) => {
+  log.error({ error: err });
 });
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      log.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      log.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening(addr) {
-  return () => {
-    var bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-    log.debug('Listening on ' + bind);
-    const test_utils = require('../test/test_utils');
-    const retry = require('bluebird-retry');
-    //Wait a bit, sometimes docker takes a while
-    retry(
-        function() {
-          return test_utils.runTestCCC();
-        },
-        {max_tries: 20, interval:1000}
-      )
-      .then(status => {
-          log.info({message:'Test CCC connection', success:status.success});
-      })
-      .catch(err => {
-        log.error({status:'Test failed:', error:JSON.stringify(err)});
-      });
-  }
-}
 
 /**
  * Proxy requests to port 9000 to the CCC server
  */
-if (process.env["CCC"] == 'ccc:9000') {
-  const httpProxy = require('http-proxy');
-  httpProxy.createProxyServer({target:'http://ccc:9000'}).listen(9000);
+if (process.env.CCC === 'ccc:9000') {
+  httpProxy.createProxyServer({ target: 'http://ccc:9000' }).listen(9000);
 }
 
 /**
  * Crash handler
  */
-
 process.on('uncaughtException', (err) => {
-  var stack = null;
+  let stack = null;
   try {
     stack = err.stack;
-  } catch(e){};
+  } catch (e) {
+    console.error(e);
+  }
 
-  //You can't pass the error object directly, fluent doesn't like it.
-  var errorJson = null;
+  // You can't pass the error object directly, fluent doesn't like it.
+  let errorJson = null;
   try {
-    errorJson = err.toJSON();
-  } catch(e){};
+    errorJson = errorUtils.toJson(err.toJSON());
+  } catch (e) {
+    console.error(e);
+  }
 
-  var errorString = null;
+  let errorString = null;
   try {
     errorString = err.toString();
-  } catch(e){};
+  } catch (e) {
+    console.error(e);
+  }
 
   const errObj = {
-    stack: stack,
-    errorJson: errorJson,
-    errorString: errorString,
+    stack,
+    errorJson,
+    errorString,
     message: 'crash',
-  }
+  };
   console.error(JSON.stringify(errObj, null, ''));
-  //Ensure crash is logged to fluent before exiting.
+  // Ensure crash is logged to fluent before exiting.
   try {
-    fluentLogger.emit('mst', errObj, null, () => {
+    fluentSender.emit('mst', errObj, null, () => {
       process.exit(1);
     });
-  } catch(e) {
+  } catch (e) {
     process.exit(1);
   }
 });

@@ -9,10 +9,10 @@ const router = new express.Router();
 router.get('/', (req, res) => {
   testUtils.runTestCCC()
     .then((result) => {
-      res.send({success:true, result});
+      res.send({ success: true, result });
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:err}));
+      res.status(500).send(JSON.stringify({ success: false, error: err }));
     });
 });
 
@@ -26,7 +26,7 @@ router.get('/workflow0', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:err}));
+      res.status(500).send(JSON.stringify({ success: false, error: err }));
     });
 });
 
@@ -40,7 +40,7 @@ router.get('/workflow1', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:err}));
+      res.status(500).send(JSON.stringify({ success: false, error: err }));
     });
 });
 
@@ -54,7 +54,7 @@ router.get('/all', (req, res) => {
       res.send({success:true, result});
     })
     .catch((err) => {
-      res.status(500).send(JSON.stringify({success:false, error:err}));
+      res.status(500).send(JSON.stringify({ success: false, error: err }));
     });
   // testUtils.runAllTests()
   //   .then((result) => {
