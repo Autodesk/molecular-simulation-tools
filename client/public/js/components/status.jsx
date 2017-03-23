@@ -1,16 +1,16 @@
 import React from 'react';
 import { List as IList } from 'immutable';
 import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
+import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
 import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import AppRecord from '../records/app_record';
+import appUtils from '../utils/app_utils';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
-import appUtils from '../utils/app_utils';
 
 require('../../css/status.scss');
 
