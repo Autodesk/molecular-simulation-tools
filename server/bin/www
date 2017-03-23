@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 require('dotenv').config();
-require('babel-polyfill');
 require('debug')('express:server');
 const http = require('http');
 const httpProxy = require('http-proxy');
