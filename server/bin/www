@@ -62,6 +62,7 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
+      // This should never happen when running in docker
       log.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
