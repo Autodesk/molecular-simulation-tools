@@ -39,7 +39,11 @@ function normalizePort(val) {
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '4000');
+const DEFAULT_PORT = 4000;
+let port = parseInt(process.env.PORT, 10);
+if (isNaN(port) || port < 0) {
+  port = DEFAULT_PORT;
+}
 app.set('port', port);
 process.env.PORT = port;
 
