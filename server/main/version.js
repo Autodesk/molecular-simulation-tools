@@ -5,6 +5,7 @@
 const express = require('express');
 const fs = require('fs');
 const log = require('../utils/log');
+const EOL = require('os').EOL;
 
 const router = express.Router();
 
@@ -13,8 +14,6 @@ const router = express.Router();
 // In a typcial container, this usually means '/app/server'
 const packageJSON = JSON.parse(fs.readFileSync('package.json', { encoding: 'utf8' }));
 const versionFilePath = 'VERSION';
-
-const newLine = /\n/g;
 
 function getVersion() {
   let version = packageJSON.version;
@@ -28,7 +27,7 @@ function getVersion() {
       encoding: 'utf8',
     });
     if (version && (version !== '')) {
-      version = version.replace(newLine, '');
+      version = version.replace(EOL, '');
     }
   } catch (e) {
     if (e.code && e.code === 'ENOENT') {
