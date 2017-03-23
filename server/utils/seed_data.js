@@ -1,5 +1,20 @@
 const tasksConstants = require('molecular-design-applications-shared').tasksConstants;
 
+const seedData = {
+  steps: [
+    {
+      id: '0',
+      image: 'avirshup/mst:workflows-0.0.1b6',
+      cmd: [
+        'vde',
+        '--restart',
+        '/inputs/workflow_state.dill',
+        '--outputdir',
+        '/outputs/',
+      ],
+    },
+  ],
+};
 const apps = [
   {
     id: '0',
@@ -18,6 +33,16 @@ const apps = [
       },
       {
         id: tasksConstants.RUN,
+        task: {
+          image: 'avirshup/mst:workflows-0.0.1b6',
+          cmd: [
+            'vde',
+            '--restart',
+            '/inputs/workflow_state.dill',
+            '--outputdir',
+            '/outputs/',
+          ],
+        },
       },
     ],
     viewCount: 0,
@@ -41,6 +66,18 @@ const apps = [
       },
       {
         id: tasksConstants.RUN,
+        task: {
+          image: 'avirshup/mst:workflows-0.0.1b6',
+          cmd: [
+            'minimize',
+            '--restart',
+            '/inputs/workflow_state.dill',
+            '--setoutput',
+            'user_atom_selection=/inputs/selection.json',
+            '--outputdir',
+            '/outputs/',
+          ],
+        },
       },
     ],
     viewCount: 0,

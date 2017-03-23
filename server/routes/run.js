@@ -63,15 +63,27 @@ router.post('/', (req, res, next) => {
     return next(new Error('No inputs'));
   }
 
-  runUtils.executeApp(appId, email, inputs, inputString)
-    .then(jobId => {
-      log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
-        res.send({runId:jobId});
-    })
-    .error(err => {
-      log.error(err);
-      next(err);
-    });
+  redis.hget(dbConstants.REDIS_APPS, appId).then((appString) => {
+    if (!appString) {
+      return next(new Error('Couldn\'t find app for given appId'));
+    }
+
+    const app = JSON.parse(appString);
+
+    runUtils.executeApp(app, email, inputs, inputString)
+      .then(jobId => {
+        log.info("SUCCESS \n jobId=" + JSON.stringify(jobId));
+          res.send({runId:jobId});
+      })
+      .error(err => {
+        log.error(err);
+        next(err);
+      });
+
+  }).catch((err) => {
+    log.error(err);
+    next(err);
+  });
 });
 
 /**

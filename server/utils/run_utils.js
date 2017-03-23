@@ -127,31 +127,33 @@ const runUtils = {
 
   /**
    * Execute a full app (not input processing)
-   * @param {String} appId
+   * @param {Object} app
    * @param {String} email
    * @param {Array} inputs
    * @param {String} [inputString]
    */
-  executeApp(appId, email, inputs, inputString) {
-    const localLog = log.child({ f:'executeApp', appId, email, });
+  executeApp(app, email, inputs, inputString) {
+    const localLog = log.child({ f:'executeApp', appId: app.id, email, });
     localLog.debug({});
     var appPromise = null;
-    switch(appId + '') {
+    const task = app.tasks[app.tasks.length - 1].task;
+
+    switch(app.id + '') {
       case '0':
-          appPromise = appUtils.executeApp0Step1(inputs);
+          appPromise = appUtils.executeStep(inputs, task);
           break;
       case '1':
           appPromise = appUtils.executeApp1Step1(inputs);
           break;
       default:
-        return Promise.reject({error:`No app for appId=${appId} type=${typeof(appId)}`});
+        return Promise.reject({error:`No app for appId=${app.id} type=${typeof(app.id)}`});
     }
 
     return appPromise
       .then(runId => {
-        localLog.info({appId, runId});
+        localLog.info({ appId: app.id, runId });
 
-        const runUrl = `${process.env.FRONTEND_URL}/app/${appId}/${runId}`;
+        const runUrl = `${process.env.FRONTEND_URL}/app/${app.id}/${runId}`;
         if (email) {
           emailUtils.send(
             email,
@@ -166,7 +168,7 @@ const runUtils = {
 
         const runPayload = {
           id: runId,
-          appId,
+          appId: app.id,
           email: email,
           inputs,
           inputString,

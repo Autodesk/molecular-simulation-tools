@@ -119,6 +119,27 @@ const appUtils = {
   },
 
   /**
+   * Execute a step.
+   * TODO possible to work for both step0 and step1?
+   */
+  executeStep(inputs, task) {
+    const jobJson = {
+      wait: false,
+      image: task.image,
+      inputs,
+      createOptions: {
+        WorkingDir: '/outputs',
+        Cmd: task.cmd,
+      },
+    };
+    console.log('lexecute', jobJson);
+    return appUtils.executeCCCJob(jobJson).then(jobResult => {
+      log.debug({ jobId: jobResult.jobId, f: 'executeStep' });
+      return jobResult.jobId;
+    });
+  },
+
+  /**
    * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
    *         e.g. inputs: [
