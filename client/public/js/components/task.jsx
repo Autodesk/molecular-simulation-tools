@@ -1,5 +1,4 @@
 import React from 'react';
-import { statusConstants } from 'molecular-design-applications-shared';
 import componentUtils from '../utils/component_utils';
 import taskStatusConstants from '../constants/task_status_constants';
 
@@ -13,7 +12,7 @@ class Task extends React.Component {
   }
 
   onClick() {
-    if (this.props.status !== statusConstants.DISABLED) {
+    if (this.props.status !== taskStatusConstants.DISABLED) {
       this.props.onClick(this.props.taskIndex);
     }
   }
@@ -25,7 +24,7 @@ class Task extends React.Component {
     const disabled = this.props.status === taskStatusConstants.DISABLED;
     const disabledClass = disabled ? 'disabled' : '';
 
-    const completed = this.props.status === statusConstants.COMPLETED;
+    const completed = this.props.status === taskStatusConstants.COMPLETED;
     const throbClass = !completed && !this.props.selected && !disabled ?
       'throb' : '';
 
