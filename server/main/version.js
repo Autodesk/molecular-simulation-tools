@@ -1,25 +1,25 @@
-"use strict";
-/****************************************
+/**
  * /version routes
  * Used by deployment and loadbalancing
- ****************************************/
-var express = require('express');
-var router  = express.Router();
-var fs      = require('fs');
+ */
+const express = require('express');
+const fs = require('fs');
+const log = require('../utils/log');
+const EOL = require('os').EOL;
 
-// Path to package.json and VERSION files are same - at root of this node application. 
+const router = express.Router();
+
+// Path to package.json and VERSION files are same - at root of this node application.
 // Use the same logic to find both files.
-// In a typcial container, this usually means '/app/server' 
-const packageJSON = JSON.parse(fs.readFileSync('package.json', {encoding:'utf8'}));
+// In a typcial container, this usually means '/app/server'
+const packageJSON = JSON.parse(fs.readFileSync('package.json', { encoding: 'utf8' }));
 const versionFilePath = 'VERSION';
 
-var newLine = /\n/g;
-
 function getVersion() {
-  var version = packageJSON.version;
+  let version = packageJSON.version;
   try {
-    if(!fs.existsSync(versionFilePath)) {
-      log.warn("VERSION file not found: " + versionFilePath + " (cwd=" + process.cwd() + ")");
+    if (!fs.existsSync(versionFilePath)) {
+      log.warn(`VERSION file not found: ${versionFilePath} (cwd=${process.cwd()})`);
       return version;
     }
 
@@ -27,28 +27,26 @@ function getVersion() {
       encoding: 'utf8',
     });
     if (version && (version !== '')) {
-      version = version.replace(newLine, '');
+      version = version.replace(EOL, '');
     }
   } catch (e) {
     if (e.code && e.code === 'ENOENT') {
       // do nothing
     } else {
-      log.error("unexpected error loading version from", versionFilePath);
-      log.error({error:e});
+      log.error('unexpected error loading version from', versionFilePath);
+      log.error({ error: e });
     }
   }
 
   return version;
 }
 
-var VERSION = getVersion();
+const VERSION = getVersion();
 
-function version(req, res) {
+router.get('/', (req, res) => {
   res.statusCode = 200;
   res.send(VERSION);
   return res.end();
-}
+});
 
-router.get('/', version);
 module.exports = router;
-

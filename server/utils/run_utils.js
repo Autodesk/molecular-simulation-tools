@@ -1,13 +1,11 @@
-const fs = require('fs-extended');
-const path = require('path');
 const Promise = require('bluebird');
+const statusConstants = require('molecular-design-applications-shared').statusConstants;
+const cccUtils = require('../utils/ccc_utils.js');
 const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
 const appUtils = require('../utils/app_utils');
-const ioUtils = require('../utils/io_utils');
+const log = require('./log');
 const redis = require('../utils/redis');
-const cccUtils = require('../utils/ccc_utils.js');
-const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
 const runUtils = {
 
@@ -28,40 +26,40 @@ const runUtils = {
   },
 
   sendEmailsAppEnded(runId) {
-    log.debug({f:'sendEmailsAppEnded', runId});
+    log.debug({ f: 'sendEmailsAppEnded', runId });
     redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       if (!runString) {
-        log.error({f:'sendEmailsAppEnded', runString});
+        log.error({ f: 'sendEmailsAppEnded', runString });
         return;
       }
 
       const run = JSON.parse(runString);
 
       if (run.email) {
-        log.debug({f:'sendEmailsAppEnded', run, email:run.email});
-        return emailUtils.send(
-            run.email,
-            'Your App Has Ended',
-            './views/email_ended.ms',
-            {
-              runUrl: `${process.env.FRONTEND_URL}/app/${run.appId}/${run.id}`,
-            }
-          );
-      } else {
-        log.warn({f:'sendEmailsAppEnded', run, message:'There was no email in the run'});
-        return Promise.resolve(true);
+        log.debug({ f: 'sendEmailsAppEnded', run, email: run.email });
+        emailUtils.send(
+          run.email,
+          'Your App Has Ended',
+          './views/email_ended.ms',
+          {
+            runUrl: `${process.env.FRONTEND_URL}/app/${run.appId}/${run.id}`,
+          }
+        );
+        return;
       }
-    }).catch(err => {
-      log.error({error:err, f:'sendEmailsAppEnded', runId});
+
+      log.warn({ f: 'sendEmailsWorkflowEnded', run, message: 'There was no email in the run' });
+    }).catch((err) => {
+      log.error({ error: err, f: 'sendEmailsAppEnded', runId });
     });
   },
 
   processJobFinished(jobResult) {
-    log.debug({f:'processJobFinished', jobResult});
+    log.debug({ f: 'processJobFinished', jobResult });
     const runId = jobResult.jobId;
-    //Add the job id to all further log calls
-    const localLog = global.log.child({f:'processJobFinished', runId:runId});
-    localLog.debug({jobResult});
+    // Add the job id to all further log calls
+    const localLog = log.child({ f: 'processJobFinished', runId });
+    localLog.debug({ jobResult });
     // Check for errors in the job result
     // Set the final output and status on the run
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
@@ -75,8 +73,8 @@ const runUtils = {
 
       const status = jobResult.exitCode === 0 ?
         statusConstants.COMPLETED : statusConstants.ERROR;
-      var outputs = [];
-      for (var i = 0; i < jobResult.outputs.length; i++) {
+      const outputs = [];
+      for (let i = 0; i < jobResult.outputs.length; i += 1) {
         outputs.push({
           name: jobResult.outputs[i],
           type: 'url',
@@ -93,35 +91,35 @@ const runUtils = {
         dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
       );
     })
-    .catch(err => {
-      return localLog.error({error:JSON.stringify(err)});
-    })
-    .then(ignored => {
+    .catch(err =>
+      localLog.error({ error: JSON.stringify(err) })
+    )
+    .then(() => {
       runUtils.sendEmailsAppEnded(runId);
     });
   },
 
   waitOnJob(runId) {
     return cccUtils.promise()
-      .then(ccc => {
-        return ccc.getJobResult(runId);
-      });
+      .then(ccc =>
+        ccc.getJobResult(runId)
+      );
   },
 
   monitorRun(runId) {
     if (!runId) {
       log.error('Missing runId');
-      throw new Error("Missing runId");
+      throw new Error('Missing runId');
     }
-    log.debug('Monitoring run ' + runId);
+    log.debug(`Monitoring run ${runId}`);
     runUtils.waitOnJob(runId)
-      .then(result => {
-        //Get the job result, act on the result, send email, etc.
-        return runUtils.processJobFinished(result);
-      })
-      .error(err => {
-        log.error({message: `Failed to get job result runId=${runId}`});
-        //Remove the job result
+      .then(result =>
+        // Get the job result, act on the result, send email, etc.
+        runUtils.processJobFinished(result)
+      )
+      .error(() => {
+        log.error({ message: `Failed to get job result runId=${runId}` });
+        // Remove the job result
       });
   },
 
@@ -133,23 +131,23 @@ const runUtils = {
    * @param {String} [inputString]
    */
   executeApp(appId, email, inputs, inputString) {
-    const localLog = log.child({ f:'executeApp', appId, email, });
+    const localLog = log.child({ f: 'executeApp', appId, email, });
     localLog.debug({});
-    var appPromise = null;
-    switch(appId + '') {
+    let appPromise = null;
+    switch (appId.toString()) {
       case '0':
-          appPromise = appUtils.executeApp0Step1(inputs);
-          break;
+        appPromise = appUtils.executeApp0Step1(inputs);
+        break;
       case '1':
-          appPromise = appUtils.executeApp1Step1(inputs);
-          break;
+        appPromise = appUtils.executeApp1Step1(inputs);
+        break;
       default:
-        return Promise.reject({error:`No app for appId=${appId} type=${typeof(appId)}`});
+        return Promise.reject({ error: `No app for appId=${appId} type=${typeof appId}` });
     }
 
     return appPromise
-      .then(runId => {
-        localLog.info({appId, runId});
+      .then((runId) => {
+        localLog.info({ appId, runId });
 
         const runUrl = `${process.env.FRONTEND_URL}/app/${appId}/${runId}`;
         if (email) {
@@ -159,15 +157,15 @@ const runUtils = {
             'views/email_thanks.ms',
             { runUrl }
           )
-          .catch(err => {
-            localLog.error({message: 'Failed to send email', error:JSON.stringify(err).substr(0, 1000)});
+          .catch((err) => {
+            localLog.error({ message: 'Failed to send email', error: JSON.stringify(err).substr(0, 1000) });
           });
         }
 
         const runPayload = {
           id: runId,
           appId,
-          email: email,
+          email,
           inputs,
           inputString,
           created: Date.now(),
@@ -177,21 +175,19 @@ const runUtils = {
         const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(runPayload));
         const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
 
-        return Promise.all([runPromise, statePromise]).then(() => {
-          return runId;
-        });
+        return Promise.all([runPromise, statePromise]).then(() => runId);
       })
-      .then(runId => {
+      .then((runId) => {
         if (!runId) {
           throw new Error('Missing runId');
         }
         runUtils.monitorRun(runId);
         return runId;
       })
-      .error(err => {
+      .error((err) => {
         localLog.error(err);
-        runUtils.setRunStatus(runId, statusConstants.ERROR);
-        //TODO: Async removal of the entire job
+        runUtils.setRunStatus(null, statusConstants.ERROR);
+        // TODO: Async removal of the entire job
         return Promise.reject(err);
       });
   },
@@ -206,8 +202,8 @@ const runUtils = {
         normalizedStatus = statusConstants.IDLE;
       }
       return normalizedStatus;
-    }).catch(err => {
-      log.error({f:'getRunStatus', runId, error:err});
+    }).catch((err) => {
+      log.error({ f: 'getRunStatus', runId, error: err });
     });
   },
 
@@ -215,7 +211,7 @@ const runUtils = {
   // to the CCC jobs
   addMonitorsToRunningApp() {
     redis.hkeys(dbConstants.REDIS_RUNS).then((keys) => {
-      // log.warn({message:'On startup, resuming monitoring runs', runIds:keys});
+      // log.warn({ message: 'On startup, resuming monitoring runs', runIds: keys });
       keys.forEach((runId) => {
         runUtils.getRunStatus(runId)
           .then((state) => {

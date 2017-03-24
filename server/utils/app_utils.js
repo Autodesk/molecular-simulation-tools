@@ -1,4 +1,5 @@
 const cccUtils = require('../utils/ccc_utils');
+const log = require('../utils/log');
 
 const WORKFLOW_IMAGE = 'avirshup/mst:workflows-0.0.1b6';
 
@@ -9,8 +10,9 @@ const appUtils = {
    * @return {JobResult} https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx typedef JobResult
    */
   executeCCCJob(jobJson) {
-    /* If this is a local dev docker-compose setup, mount the local ccc server to the workflow container */
-    jobJson['mountApiServer'] = process.env["CCC"] == "ccc:9000";
+    // If this is a local dev docker-compose setup, mount the local ccc server
+    // to the workflow container
+    jobJson.mountApiServer = process.env.CCC === 'ccc:9000';
 
     if (!jobJson.createOptions) {
       jobJson.createOptions = {};
@@ -22,12 +24,12 @@ const appUtils = {
     jobJson.appendStdOut = true;
     jobJson.appendStdErr = true;
 
-    jobJson.createOptions.Env.push(`CCC=${process.env["CCC"]}`);
+    jobJson.createOptions.Env.push(`CCC=${process.env.CCC}`);
 
     return cccUtils.promise()
-      .then(ccc => {
-        return ccc.submitJobJson(jobJson);
-      });
+      .then(ccc =>
+        ccc.submitJobJson(jobJson)
+      );
   },
 
   /**
@@ -35,37 +37,36 @@ const appUtils = {
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
    *         e.g. inputs: [
    *           {
-   *             name: "input.pdb",
-   *             type: "url",
-   *             value: "http://s3.location.input.pdb"
+   *             name: 'input.pdb',
+   *             type: 'url',
+   *             value: 'http://s3.location.input.pdb'
    *           },
    *           {
-   *             name: "other.file",
-   *             type: "inline",
-   *             value: "Actual file content string"
+   *             name: 'other.file',
+   *             type: 'inline',
+   *             value: 'Actual file content string'
    *           }
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeApp0Step0(inputs) {
-
     const jobJson = {
       wait: true,
       image: WORKFLOW_IMAGE,
-      inputs: inputs,
+      inputs,
       createOptions: {
         Cmd: ['vde',
           '--preprocess', `/inputs/${inputs[0].name}`,
-          '--outputdir', '/outputs/'
-        ]
-      }
+          '--outputdir', '/outputs/',
+        ],
+      },
     };
-    log.debug({execute:'executeApp0Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    log.debug({ execute: 'executeApp0Step0', job: JSON.stringify(jobJson).substr(0, 100) });
     return appUtils.executeCCCJob(jobJson)
-      .then(jobResult => {
+      .then((jobResult) => {
         log.debug(jobResult);
-        var outputs = [];
-        for (var i = 0; i < jobResult.outputs.length; i++) {
+        const outputs = [];
+        for (let i = 0; i < jobResult.outputs.length; i += 1) {
           outputs.push({
             name: jobResult.outputs[i],
             type: 'url',
@@ -74,10 +75,10 @@ const appUtils = {
         }
 
         return {
-          success: jobResult.exitCode == 0,
-          outputs: outputs,
-          jobResult: jobResult
-        }
+          success: jobResult.exitCode === 0,
+          outputs,
+          jobResult,
+        };
       });
   },
 
@@ -86,14 +87,14 @@ const appUtils = {
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
    *         e.g. inputs: [
    *           {
-   *             name: "input.pdb",
-   *             type: "url",
-   *             value: "http://s3.location.input.pdb"
+   *             name: 'input.pdb',
+   *             type: 'url',
+   *             value: 'http://s3.location.input.pdb'
    *           },
    *           {
-   *             name: "other.file",
-   *             type: "inline",
-   *             value: "Actual file content string"
+   *             name: 'other.file',
+   *             type: 'inline',
+   *             value: 'Actual file content string'
    *           }
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
@@ -102,18 +103,18 @@ const appUtils = {
     const jobJson = {
       wait: false,
       image: WORKFLOW_IMAGE,
-      inputs: inputs,
+      inputs,
       createOptions: {
         WorkingDir: '/outputs',
         Cmd: ['vde',
           '--restart', '/inputs/workflow_state.dill',
-          '--outputdir', '/outputs/']
-      }
+          '--outputdir', '/outputs/'],
+      },
     };
     return appUtils.executeCCCJob(jobJson)
-      .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeApp0Step1'});
-        //Return the jobId as the runId
+      .then((jobResult) => {
+        log.debug({ jobId: jobResult.jobId, f: 'executeApp0Step1' });
+        // Return the jobId as the runId
         return jobResult.jobId;
       });
   },
@@ -123,14 +124,14 @@ const appUtils = {
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
    *         e.g. inputs: [
    *           {
-   *             name: "input.pdb",
-   *             type: "url",
-   *             value: "http://s3.location.input.pdb"
+   *             name: 'input.pdb',
+   *             type: 'url',
+   *             value: 'http://s3.location.input.pdb'
    *           },
    *           {
-   *             name: "other.file",
-   *             type: "inline",
-   *             value: "Actual file content string"
+   *             name: 'other.file',
+   *             type: 'inline',
+   *             value: 'Actual file content string'
    *           }
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
@@ -139,20 +140,20 @@ const appUtils = {
     const jobJson = {
       wait: true,
       image: WORKFLOW_IMAGE,
-      inputs: inputs,
+      inputs,
       createOptions: {
         Cmd: ['minimize',
           '--preprocess', `/inputs/${inputs[0].name}`,
-          '--outputdir', '/outputs/']
-      }
+          '--outputdir', '/outputs/'],
+      },
     };
 
-    log.debug({execute:'executeApp1Step0', job:JSON.stringify(jobJson).substr(0, 100)});
+    log.debug({ execute: 'executeApp1Step0', job: JSON.stringify(jobJson).substr(0, 100) });
     return appUtils.executeCCCJob(jobJson)
-      .then(jobResult => {
+      .then((jobResult) => {
         log.debug(jobResult);
-        var outputs = [];
-        for (var i = 0; i < jobResult.outputs.length; i++) {
+        const outputs = [];
+        for (let i = 0; i < jobResult.outputs.length; i += 1) {
           outputs.push({
             name: jobResult.outputs[i],
             type: 'url',
@@ -160,10 +161,10 @@ const appUtils = {
           });
         }
         return {
-          success: jobResult.exitCode == 0,
-          outputs: outputs,
-          jobResult: jobResult
-        }
+          success: jobResult.exitCode === 0,
+          outputs,
+          jobResult,
+        };
       });
   },
 
@@ -173,34 +174,34 @@ const appUtils = {
    * @param  {Array<ComputeInputSource>} inputs https://github.com/dionjwa/cloud-compute-cannon/blob/master/src/haxe/ccc/compute/shared/Definitions.hx
    *         e.g. inputs: [
    *           {
-   *             name: "input.pdb",
-   *             type: "url",
-   *             value: "http://s3.location.input.pdb"
+   *             name: 'input.pdb',
+   *             type: 'url',
+   *             value: 'http://s3.location.input.pdb'
    *           },
    *           {
-   *             name: "other.file",
-   *             type: "inline",
-   *             value: "Actual file content string"
+   *             name: 'other.file',
+   *             type: 'inline',
+   *             value: 'Actual file content string'
    *           }
    *         ]
    * @return {success:Bool, outputs:Object[filename] = <URL to file>, jobResult:JobResult
    */
   executeApp1Step1(inputs) {
-    log.debug({f:'executeApp1Step1', inputs});
+    log.debug({ f: 'executeApp1Step1', inputs });
     const jobJson = {
       wait: false,
       image: WORKFLOW_IMAGE,
-      inputs: inputs,
+      inputs,
       createOptions: {
         Cmd: ['minimize',
           '--restart', '/inputs/workflow_state.dill',
           '--setoutput', 'user_atom_selection=/inputs/selection.json',
-          '--outputdir', '/outputs/']
-      }
+          '--outputdir', '/outputs/'],
+      },
     };
     return appUtils.executeCCCJob(jobJson)
-      .then(jobResult => {
-        log.debug({jobId:jobResult.jobId, f:'executeApp1Step1'});
+      .then((jobResult) => {
+        log.debug({ jobId: jobResult.jobId, f: 'executeApp1Step1' });
         // Return the jobId as the runId
         return jobResult.jobId;
       });
