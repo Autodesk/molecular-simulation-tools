@@ -1,5 +1,6 @@
 const google = require('googleapis');
 const googleApiKey = require('../google_api_key.json');
+const log = require('./log');
 
 const apiUtils = {
   fetchViews() {
@@ -35,7 +36,7 @@ const apiUtils = {
         if (err) {
           return reject(err);
         }
-        log.debug({queryDataResponse:response});
+        log.debug({ queryDataResponse: response });
         return resolve(JSON.stringify(response));
       });
     });

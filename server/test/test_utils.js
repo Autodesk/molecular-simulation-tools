@@ -1,47 +1,47 @@
 const fs = require('fs-extended');
-const path = require('path');
 const retry = require('bluebird-retry');
 const request = require('request-promise');
 const cccUtils = require('../utils/ccc_utils');
+const log = require('../utils/log');
 
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
-const test_utils = {
+const testUtils = {
   runAllTests() {
-    return Promise.all([test_utils.runTestAppVDE(), test_utils.runTestAppQMMM()])
-      .then(results => {
-        var successCount = 0;
-        var totalCount = 0;
-        var problems = [];
-        results.forEach(r => {
-            totalCount++;
-            successCount += r.success == true ? 1 : 0;
-            if (!r.success) {
-              problems.push(r);
-            }
+    return Promise.all([testUtils.runTestAppVDE(), testUtils.runTestAppQMMM()])
+      .then((results) => {
+        let successCount = 0;
+        let totalCount = 0;
+        const problems = [];
+        results.forEach((r) => {
+          totalCount += 1;
+          successCount += r.success === true ? 1 : 0;
+          if (!r.success) {
+            problems.push(r);
+          }
         });
-        if (successCount == totalCount && totalCount > 0) {
+        if (successCount === totalCount && totalCount > 0) {
           log.info(`Success: ${successCount} / ${totalCount} tests passed`);
         } else {
-          log.error({problems});
+          log.error({ problems });
           log.error(`Failure: ${successCount} / ${totalCount} tests passed`);
         }
-        return {success: (successCount == totalCount && totalCount > 0), results:results};
+        return { success: (successCount === totalCount && totalCount > 0), results };
       })
-      .catch(err => {
+      .catch((err) => {
         log.error(err);
-        return {success:false, error:JSON.stringify(err)};
+        return { success: false, error: JSON.stringify(err) };
       });
   },
 
   runTestCCC() {
     return cccUtils.promise()
-      .then(ccc => {
-        return ccc.status()
-          .then(status => {
-            return {success:true, ccc_status:status};
-          });
-      });
+      .then(ccc =>
+        ccc.status()
+          .then(status => (
+            { success: true, ccc_status: status }
+          ))
+      );
   },
 
   runTestAppVDE() {
@@ -49,69 +49,69 @@ const test_utils = {
       inputs: [
         {
           name: 'input.json',
-          value: JSON.stringify({"input": "C"})
+          value: JSON.stringify({ input: 'C' }),
         }
       ]
     };
 
-    var port = process.env.PORT;
+    const port = process.env.PORT;
 
     return Promise.resolve(true)
-      //Step 1
-      .then(ignored => {
+      // Step 1
+      .then(() => {
         const url = `http://localhost:${port}/v1/structure/executeApp0Step0`;
-        return request.post({url:url, body: formData, json:true})
-          .then(body => {
+        return request.post({ url, body: formData, json: true })
+          .then((body) => {
             if (!body.success) {
-                throw {success:false, body};
+              throw new Error({ success: false, body });
             }
             return body;
           });
       })
-      //Step 2
-      .then(result => {
-        var inputs = result.outputs;
-        const formData = {
+      // Step 2
+      .then((result) => {
+        const inputs = result.outputs;
+        const formDataStep2 = {
           email: null,
-          inputs: inputs,
+          inputs,
           appId: 0
         };
 
         const url = `http://localhost:${port}/v1/run`;
-        return request.post({url:url, body: formData, json:true});
+        return request.post({ url, body: formDataStep2, json: true });
       })
-      .then(jobResult => {
-        log.warn({message:"test post w0s1", jobResult});
+      .then((jobResult) => {
+        log.warn({ message: 'test post w0s1', jobResult });
         return jobResult.runId;
       })
-      .then(runId => {
-        if (!runId || runId == "undefined") {
+      .then((runId) => {
+        if (!runId || runId === 'undefined') {
           throw new Error(`runId=${runId}`);
         }
         const url = `http://localhost:${port}/v1/run/${runId}`;
-        return retry(function() {
-          return request.get({url:url, json:true})
-            .then(body => {
-              if (body.status == statusConstants.RUNNING) {
+        return retry(() =>
+          request.get({ url, json: true })
+            .then((body) => {
+              if (body.status === statusConstants.RUNNING) {
                 throw new Error('Not yet completed');
               }
               return body;
-            });
-        }, {max_tries: 200, interval:2000});
+            }),
+          { max_tries: 200, interval: 2000 });
       })
-      .then(finalResult => {
+      .then((finalResult) => {
         let foundFinalStucture = false;
-        finalResult.outputs.forEach(output => {
+        finalResult.outputs.forEach((output) => {
           if (output.name === 'final_structure.pdb') {
             foundFinalStucture = true;
           }
         });
-        const success = finalResult.status == statusConstants.COMPLETED && foundFinalStucture;
-        return {success:success, job:finalResult};
+        const success = finalResult.status === statusConstants.COMPLETED && foundFinalStucture;
+        return { success, job: finalResult };
       })
-      .catch(err =>  {
+      .catch((err) => {
         log.error(err);
-        return {success:false, error:JSON.stringify(err).substr(0, 500)};
+        return { success: false, error: JSON.stringify(err).substr(0, 500) };
       });
   },
 
@@ -120,67 +120,67 @@ const test_utils = {
       inputs: [
         {
           name: 'input.pdb',
-          value: fs.readFileSync('test/3aid.pdb', {encoding:'utf8'})
+          value: fs.readFileSync('test/3aid.pdb', { encoding: 'utf8' })
         }
       ]
     };
 
-    var port = process.env.PORT;
+    const port = process.env.PORT;
     const url = `http://localhost:${port}/v1/structure/executeApp1Step0`;
-    //Step 1
-    return request.post({url:url, body: formData, json:true})
-      .then(body => {
+    // Step 1
+    return request.post({ url, body: formData, json: true })
+      .then((body) => {
         if (!body.success) {
-            throw new Error(JSON.stringify({success:false, message: 'exitCode==' + body.jobResult.exitCode, body}));
+          throw new Error(JSON.stringify({ success: false, message: `exitCode==${body.jobResult.exitCode}`, body }));
         }
         return body;
       })
-      //Step 2
-      .then(result => {
-        var inputs = result.outputs;
+      // Step 2
+      .then((result) => {
+        const inputs = result.outputs;
         inputs.push({
           name: 'selection.json',
-          value: fs.readFileSync('test/selection.json', {encoding:'utf8'})
+          value: fs.readFileSync('test/selection.json', { encoding: 'utf8' })
         });
-        const formData = {
+        const formDataStep2 = {
           email: null,
-          inputs: inputs,
+          inputs,
           appId: 1
         };
 
-        const url = `http://localhost:${port}/v1/run`;
-        return request.post({url:url, body: formData, json:true});
+        const urlStep2 = `http://localhost:${port}/v1/run`;
+        return request.post({ url: urlStep2, body: formDataStep2, json: true });
       })
-      .then(jobResult => {
-        return jobResult.runId;
-      })
-      .then(runId => {
-        const url = `http://localhost:${port}/v1/run/${runId}`;
-        return retry(function() {
-          return request.get({url:url, json:true})
-            .then(body => {
-              if (body.status == statusConstants.RUNNING) {
+      .then(jobResult =>
+        jobResult.runId
+      )
+      .then((runId) => {
+        const urlLocal = `http://localhost:${port}/v1/run/${runId}`;
+        return retry(() =>
+          request.get({ url: urlLocal, json: true })
+            .then((body) => {
+              if (body.status === statusConstants.RUNNING) {
                 throw new Error('Not yet completed');
               }
               return body;
-            });
-        }, {max_tries: 200, interval:2000});
+            }),
+          { max_tries: 200, interval: 2000 });
       })
-      .then(finalResult => {
+      .then((finalResult) => {
         let foundFinalStucture = false;
-        finalResult.outputs.forEach(output => {
+        finalResult.outputs.forEach((output) => {
           if (output.name === 'final_structure.pdb') {
             foundFinalStucture = true;
           }
         });
-        const success = finalResult.status == statusConstants.COMPLETED && foundFinalStucture;
-        return {success:success, job:finalResult};
+        const success = finalResult.status === statusConstants.COMPLETED && foundFinalStucture;
+        return { success, job: finalResult };
       })
-      .catch(err =>  {
+      .catch((err) => {
         log.error(err);
-        return {success:false, error:JSON.stringify(err).substr(0, 500)};
+        return { success: false, error: JSON.stringify(err).substr(0, 500) };
       });
   }
 };
 
-module.exports = test_utils;
+module.exports = testUtils;
