@@ -4,3 +4,5 @@ npm-debug.log
 .env
 stats.json
 .DS_Store
+reports/
+selenium-debug.log
