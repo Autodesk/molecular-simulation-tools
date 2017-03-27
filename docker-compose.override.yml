@@ -21,9 +21,11 @@ services:
       - ./server/utils:/app/server/utils
       - ./shared:/app/shared
       - ./tmp:/tmp
-      # Uncomment this if you want to do client development
-      # - ./client/dist:/app/client/dist
-    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
+      - ./client:/app/client
+    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www", "&", "cd", "../client", "&&", "npm", "run", "dev"]
+    ports:
+      - "4000:4000"
+      - "4001:4001"
     environment:
       CCC: "ccc:9000"
       NODE_ENV: "development"
