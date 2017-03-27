@@ -1,4 +1,4 @@
-const tasksConstants = require('molecular-design-applications-shared').tasksConstants;
+const widgetsConstants = require('molecular-design-applications-shared').widgetsConstants;
 
 const apps = [
   {
@@ -12,15 +12,15 @@ const apps = [
     creatorImage: '/img/logo2.png',
     description: 'Calculate the electron binding energy of an' +
         ' anionic doublet species using DFT',
-    tasks: [
+    widgets: [
       {
-        id: tasksConstants.LOAD,
+        id: widgetsConstants.LOAD,
         meta: {
           title: 'Load Molecule',
         },
       },
       {
-        id: tasksConstants.RUN,
+        id: widgetsConstants.RUN,
         meta: {
           title: 'Run',
         },
@@ -38,21 +38,21 @@ const apps = [
     comingSoon: false,
     creatorImage: '/img/logo1.png',
     description: 'Automatically parameterize and refine a small molecule bound to a protein',
-    tasks: [
+    widgets: [
       {
-        id: tasksConstants.LOAD,
+        id: widgetsConstants.LOAD,
         meta: {
           title: 'Load Molecule',
         },
       },
       {
-        id: tasksConstants.SELECTION,
+        id: widgetsConstants.SELECTION,
         meta: {
           title: 'Ligand Selection',
         },
       },
       {
-        id: tasksConstants.RUN,
+        id: widgetsConstants.RUN,
         meta: {
           title: 'Run',
         },

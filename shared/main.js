@@ -1,4 +1,4 @@
 import statusConstants from './constants/status_constants';
-import tasksConstants from './constants/tasks_constants';
+import widgetsConstants from './constants/widgets_constants';
 
-export { tasksConstants, statusConstants };
+export { widgetsConstants, statusConstants };

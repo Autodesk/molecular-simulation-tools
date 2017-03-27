@@ -1,10 +1,10 @@
 import React from 'react';
 import componentUtils from '../utils/component_utils';
-import taskStatusConstants from '../constants/task_status_constants';
+import widgetStatusConstants from '../constants/widget_status_constants';
 
-require('../../css/task.scss');
+require('../../css/widget_list_button.scss');
 
-class Task extends React.Component {
+class WidgetListButton extends React.Component {
   constructor(props) {
     super(props);
 
@@ -12,8 +12,8 @@ class Task extends React.Component {
   }
 
   onClick() {
-    if (this.props.status !== taskStatusConstants.DISABLED) {
-      this.props.onClick(this.props.taskIndex);
+    if (this.props.status !== widgetStatusConstants.DISABLED) {
+      this.props.onClick(this.props.index);
     }
   }
 
@@ -21,16 +21,18 @@ class Task extends React.Component {
     const rightIcon = componentUtils.getIcon(this.props.status);
     const selectedClass = this.props.selected ? 'selected' : '';
     const lastClass = this.props.number === this.props.totalNumber ? 'last' : '';
-    const disabled = this.props.status === taskStatusConstants.DISABLED;
+    const disabled = this.props.status === widgetStatusConstants.DISABLED;
     const disabledClass = disabled ? 'disabled' : '';
 
-    const completed = this.props.status === taskStatusConstants.COMPLETED;
+    const completed = this.props.status === widgetStatusConstants.COMPLETED;
     const throbClass = !completed && !this.props.selected && !disabled ?
       'throb' : '';
 
     return (
       <button
-        className={`task ${selectedClass} ${lastClass} ${disabledClass} ${throbClass}`}
+        className={
+          `widget-list-button ${selectedClass} ${lastClass} ${disabledClass} ${throbClass}`
+        }
         onClick={this.onClick}
       >
         <span>{`${this.props.number}. ${this.props.primaryText}`}</span>
@@ -40,18 +42,18 @@ class Task extends React.Component {
   }
 }
 
-Task.defaultProps = {
+WidgetListButton.defaultProps = {
   selected: false,
 };
 
-Task.propTypes = {
+WidgetListButton.propTypes = {
   onClick: React.PropTypes.func.isRequired,
   number: React.PropTypes.number.isRequired,
   totalNumber: React.PropTypes.number.isRequired,
   selected: React.PropTypes.bool,
   status: React.PropTypes.string.isRequired,
-  taskIndex: React.PropTypes.number.isRequired,
+  index: React.PropTypes.number.isRequired,
   primaryText: React.PropTypes.string.isRequired,
 };
 
-export default Task;
+export default WidgetListButton;

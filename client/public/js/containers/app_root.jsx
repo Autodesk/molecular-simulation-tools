@@ -7,7 +7,7 @@ import {
   clickCancel,
   clickColorize,
   clickRun,
-  clickTask,
+  clickWidget,
   initializeRun,
   initializeApp,
   messageTimeout,
@@ -43,8 +43,8 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickRun(appId, email, inputs, inputString));
       };
     },
-    clickTask(taskIndex) {
-      dispatch(clickTask(taskIndex));
+    clickWidget(widgetIndex) {
+      dispatch(clickWidget(widgetIndex));
     },
     initializeRun(appId, runId) {
       dispatch(initializeRun(appId, runId));

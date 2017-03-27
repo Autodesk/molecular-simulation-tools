@@ -3,7 +3,7 @@ import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
 import AppRecord from '../records/app_record';
-import Tasks from '../components/tasks';
+import WidgetList from '../components/widget_list';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
@@ -13,10 +13,10 @@ function App(props) {
   const outputPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs);
 
   let selectedModelData;
-  if (props.selection.taskIndex === props.app.tasks.size) {
+  if (props.selection.widgetIndex === props.app.widgets.size) {
     // Morph is chosen from a list of all input/output pdbs
     selectedModelData = outputPdbs.get(props.morph);
-  } else if (props.selection.type === selectionConstants.TASK &&
+  } else if (props.selection.type === selectionConstants.WIDGET &&
     props.app.run.inputs.size) {
     selectedModelData = ioUtils.getPdb(props.app.run.inputs);
   }
@@ -47,9 +47,9 @@ function App(props) {
     <div className="app">
       {
         loadingOrError ? null : (
-          <Tasks
+          <WidgetList
             clickAbout={props.clickAbout}
-            clickTask={props.clickTask}
+            clickWidget={props.clickWidget}
             selection={props.selection}
             app={props.app}
           />
@@ -87,7 +87,7 @@ App.propTypes = {
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickTask: React.PropTypes.func.isRequired,
+  clickWidget: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,

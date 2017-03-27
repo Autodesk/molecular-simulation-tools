@@ -13,7 +13,7 @@ const AppRecord = new Record({
   selectLigands: false,
   run: new RunRecord(),
   runCount: 0,
-  tasks: new IList(),
+  widgets: new IList(),
   title: '',
   viewCount: 0,
   description: 'no description provided',

@@ -91,10 +91,10 @@ export function initializeRun(appId, runId) {
   };
 }
 
-export function clickTask(taskIndex) {
+export function clickWidget(widgetIndex) {
   return {
-    type: actionConstants.CLICK_TASK,
-    taskIndex,
+    type: actionConstants.CLICK_WIDGET,
+    widgetIndex,
   };
 }
 

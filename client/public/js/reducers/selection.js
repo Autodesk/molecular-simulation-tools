@@ -7,15 +7,15 @@ const initialState = new SelectionRecord();
 
 function selection(state = initialState, action) {
   switch (action.type) {
-    case actionConstants.CLICK_TASK:
+    case actionConstants.CLICK_WIDGET:
       return state.merge({
-        taskIndex: action.taskIndex,
-        type: selectionConstants.TASK,
+        widgetIndex: action.widgetIndex,
+        type: selectionConstants.WIDGET,
       });
 
     case actionConstants.CLICK_ABOUT:
       return state.merge({
-        taskIndex: null,
+        widgetIndex: null,
         type: selectionConstants.ABOUT,
       });
 
@@ -25,8 +25,8 @@ function selection(state = initialState, action) {
       }
       // Reset selection when loading a app
       return state.merge({
-        taskIndex: 0,
-        type: selectionConstants.TASK,
+        widgetIndex: 0,
+        type: selectionConstants.WIDGET,
       });
 
     case actionConstants.FETCHED_RUN:
@@ -36,8 +36,8 @@ function selection(state = initialState, action) {
       }
       // Select results when loading a finished run
       return state.merge({
-        taskIndex: action.app.tasks.size, // Results
-        type: selectionConstants.TASK,
+        widgetIndex: action.app.widgets.size, // Results
+        type: selectionConstants.WIDGET,
       });
 
     default:

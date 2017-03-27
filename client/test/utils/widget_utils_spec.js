@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { List as IList } from 'immutable';
-import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
+import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import IoRecord from '../../public/js/records/io_record';
 import RunRecord from '../../public/js/records/run_record';
-import TaskRecord from '../../public/js/records/task_record';
-import taskStatusConstants from '../../public/js/constants/task_status_constants';
-import taskUtils from '../../public/js/utils/task_utils';
+import WidgetRecord from '../../public/js/records/widget_record';
+import widgetStatusConstants from '../../public/js/constants/widget_status_constants';
+import widgetUtils from '../../public/js/utils/widget_utils';
 
-describe('taskUtils', () => {
+describe('widgetUtils', () => {
   describe('isCompleted', () => {
-    let task;
+    let widget;
     let run;
 
     beforeEach(() => {
@@ -31,10 +31,10 @@ describe('taskUtils', () => {
       });
     });
 
-    describe('when given a LOAD task', () => {
+    describe('when given a LOAD widget', () => {
       beforeEach(() => {
-        task = new TaskRecord({
-          id: tasksConstants.LOAD,
+        widget = new WidgetRecord({
+          id: widgetsConstants.LOAD,
         });
       });
 
@@ -44,7 +44,7 @@ describe('taskUtils', () => {
         });
 
         it('returns false', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(false);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
         });
       });
 
@@ -54,7 +54,7 @@ describe('taskUtils', () => {
         });
 
         it('returns false', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(false);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
         });
       });
 
@@ -64,21 +64,21 @@ describe('taskUtils', () => {
         });
 
         it('returns false', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(false);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
         });
       });
 
       describe('when there are no errors and there is pdb data', () => {
         it('returns true', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(true);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(true);
         });
       });
     });
 
-    describe('when given a SELECTION task', () => {
+    describe('when given a SELECTION widget', () => {
       beforeEach(() => {
-        task = new TaskRecord({
-          id: tasksConstants.SELECTION,
+        widget = new WidgetRecord({
+          id: widgetsConstants.SELECTION,
         });
       });
 
@@ -88,21 +88,21 @@ describe('taskUtils', () => {
         });
 
         it('returns false', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(false);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
         });
       });
 
       describe('when there is a selected ligand', () => {
         it('returns true', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(true);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(true);
         });
       });
     });
 
-    describe('when given a RUN task', () => {
+    describe('when given a RUN widget', () => {
       beforeEach(() => {
-        task = new TaskRecord({
-          id: tasksConstants.RUN,
+        widget = new WidgetRecord({
+          id: widgetsConstants.RUN,
         });
       });
 
@@ -112,13 +112,13 @@ describe('taskUtils', () => {
         });
 
         it('returns true', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(true);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(true);
         });
       });
 
       describe('when the run status is anything besides completed', () => {
         it('returns false', () => {
-          expect(taskUtils.isCompleted(task, run)).to.equal(false);
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
         });
       });
     });
@@ -126,13 +126,13 @@ describe('taskUtils', () => {
 
   describe('getStatuses', () => {
     let run;
-    let tasks;
-    const COMPLETED_TASK_ID = 'imacompletedtask';
+    let widgets;
+    const COMPLETED_WIDGET_ID = 'imacompletedwidget';
 
     beforeEach(() => {
-      // Stub isCompleted so we can tell it which tasks are completed or not
-      sinon.stub(taskUtils, 'isCompleted', task =>
-        task.id === COMPLETED_TASK_ID,
+      // Stub isCompleted so we can tell it which widgets are completed or not
+      sinon.stub(widgetUtils, 'isCompleted', widget =>
+        widget.id === COMPLETED_WIDGET_ID,
       );
 
       // Run has load data but not selection data
@@ -140,25 +140,25 @@ describe('taskUtils', () => {
     });
 
     afterEach(() => {
-      taskUtils.isCompleted.restore();
+      widgetUtils.isCompleted.restore();
     });
 
-    describe('when a task in the middle is not completed', () => {
+    describe('when a widget in the middle is not completed', () => {
       beforeEach(() => {
-        tasks = IList([
-          new TaskRecord({
-            id: COMPLETED_TASK_ID,
+        widgets = IList([
+          new WidgetRecord({
+            id: COMPLETED_WIDGET_ID,
           }),
-          new TaskRecord({}),
-          new TaskRecord({}),
+          new WidgetRecord({}),
+          new WidgetRecord({}),
         ]);
       });
 
-      it('it is active and all following tasks are disabled', () => {
-        const statuses = taskUtils.getStatuses(tasks, run);
-        expect(statuses.get(0)).to.equal(taskStatusConstants.COMPLETED);
-        expect(statuses.get(1)).to.equal(taskStatusConstants.ACTIVE);
-        expect(statuses.get(2)).to.equal(taskStatusConstants.DISABLED);
+      it('it is active and all following widgets are disabled', () => {
+        const statuses = widgetUtils.getStatuses(widgets, run);
+        expect(statuses.get(0)).to.equal(widgetStatusConstants.COMPLETED);
+        expect(statuses.get(1)).to.equal(widgetStatusConstants.ACTIVE);
+        expect(statuses.get(2)).to.equal(widgetStatusConstants.DISABLED);
       });
     });
   });

@@ -1,7 +1,7 @@
 import { Record } from 'immutable';
 
 const SelectionRecord = new Record({
-  taskIndex: null,
+  widgetIndex: null,
   type: null,
 });
 

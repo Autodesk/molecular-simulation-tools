@@ -1,10 +1,10 @@
 import keyMirror from 'keymirror';
 
-const tasksConstants = keyMirror({
+const widgetsConstants = keyMirror({
   LOAD: null,
   SELECTION: null,
   RUN: null,
   RESULTS: null, // automatically inserted on results page
 });
 
-export default tasksConstants;
+export default widgetsConstants;

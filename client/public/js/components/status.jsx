@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList } from 'immutable';
-import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
+import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
@@ -19,7 +19,7 @@ function Status(props) {
 
   let selection;
   if (!props.hideContent) {
-    if (props.selection.taskIndex === props.app.tasks.size) {
+    if (props.selection.widgetIndex === props.app.widgets.size) {
       const outputResultsIndex = ioUtils.getIndexByExtension(
         props.app.run.outputs, 'results.json',
       );
@@ -50,9 +50,9 @@ function Status(props) {
         />
       );
     } else if (!props.app.fetching && !props.app.fetchingError &&
-      props.selection.type === selectionConstants.TASK) {
-      switch (props.app.tasks.get(props.selection.taskIndex).id) {
-        case tasksConstants.LOAD:
+      props.selection.type === selectionConstants.WIDGET) {
+      switch (props.app.widgets.get(props.selection.widgetIndex).id) {
+        case widgetsConstants.LOAD:
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
@@ -67,7 +67,7 @@ function Status(props) {
           );
           break;
 
-        case tasksConstants.RUN: {
+        case widgetsConstants.RUN: {
           const running = props.app.run.status === statusConstants.RUNNING;
           const runDisabled = running || runCompleted ||
             !appUtils.isRunnable(props.app.run);
@@ -84,7 +84,7 @@ function Status(props) {
           break;
         }
 
-        case tasksConstants.SELECTION: {
+        case widgetsConstants.SELECTION: {
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
