@@ -31,7 +31,7 @@ function Tasks(props) {
                       key={task.id}
                       number={number}
                       onClick={props.clickTask}
-                      primaryText={'Load Molecule'}
+                      primaryText={task.meta.title}
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}
@@ -46,7 +46,7 @@ function Tasks(props) {
                       key={task.id}
                       number={number}
                       onClick={props.clickTask}
-                      primaryText={'Run'}
+                      primaryText={task.meta.title}
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}
@@ -61,7 +61,7 @@ function Tasks(props) {
                       key={task.id}
                       number={2}
                       onClick={props.clickTask}
-                      primaryText={'Ligand Selection'}
+                      primaryText={task.meta.title}
                       selected={props.selection.taskIndex === index}
                       status={taskStatuses.get(index)}
                       taskIndex={index}

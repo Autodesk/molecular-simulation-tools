@@ -15,9 +15,15 @@ const apps = [
     tasks: [
       {
         id: tasksConstants.LOAD,
+        meta: {
+          title: 'Load Molecule',
+        },
       },
       {
         id: tasksConstants.RUN,
+        meta: {
+          title: 'Run',
+        },
       },
     ],
     viewCount: 0,
@@ -35,12 +41,21 @@ const apps = [
     tasks: [
       {
         id: tasksConstants.LOAD,
+        meta: {
+          title: 'Load Molecule',
+        },
       },
       {
         id: tasksConstants.SELECTION,
+        meta: {
+          title: 'Ligand Selection',
+        },
       },
       {
         id: tasksConstants.RUN,
+        meta: {
+          title: 'Run',
+        },
       },
     ],
     viewCount: 0,
