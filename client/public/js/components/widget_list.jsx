@@ -1,5 +1,5 @@
 import React from 'react';
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
+import { statusConstants } from 'molecular-design-applications-shared';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import AppRecord from '../records/app_record';
@@ -21,59 +21,18 @@ function WidgetList(props) {
       <div key={0} className="widget-list-buttons">
         <ol>
           {
-            props.app.widgets.map((widget, index) => {
-              const number = index + 1;
-
-              switch (widget.id) {
-                case widgetsConstants.LOAD: {
-                  return (
-                    <WidgetListButton
-                      key={widget.id}
-                      number={number}
-                      onClick={props.clickWidget}
-                      primaryText={widget.meta.title}
-                      selected={props.selection.widgetIndex === index}
-                      status={widgetStatuses.get(index)}
-                      index={index}
-                      totalNumber={props.app.widgets.size}
-                    />
-                  );
-                }
-
-                case widgetsConstants.RUN: {
-                  return (
-                    <WidgetListButton
-                      key={widget.id}
-                      number={number}
-                      onClick={props.clickWidget}
-                      primaryText={widget.meta.title}
-                      selected={props.selection.widgetIndex === index}
-                      status={widgetStatuses.get(index)}
-                      index={index}
-                      totalNumber={props.app.widgets.size}
-                    />
-                  );
-                }
-
-                case widgetsConstants.SELECTION: {
-                  return (
-                    <WidgetListButton
-                      key={widget.id}
-                      number={2}
-                      onClick={props.clickWidget}
-                      primaryText={widget.meta.title}
-                      selected={props.selection.widgetIndex === index}
-                      status={widgetStatuses.get(index)}
-                      index={index}
-                      totalNumber={props.app.widgets.size}
-                    />
-                  );
-                }
-
-                default:
-                  return null;
-              }
-            })
+            props.app.widgets.map((widget, index) => (
+              <WidgetListButton
+                key={widget.id}
+                number={index + 1}
+                onClick={props.clickWidget}
+                primaryText={widget.meta.title}
+                selected={props.selection.widgetIndex === index}
+                status={widgetStatuses.get(index)}
+                index={index}
+                totalNumber={props.app.widgets.size}
+              />
+            ))
           }
           {
             runCompleted ? (
