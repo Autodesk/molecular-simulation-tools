@@ -16,7 +16,7 @@ RUN apt-get update \
 
 RUN apt-get update && \
     apt-get install -y g++ g++-multilib libgc-dev git python build-essential && \
-    curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_7.x | bash - && \
     apt-get -y install nodejs && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
