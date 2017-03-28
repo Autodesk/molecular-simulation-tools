@@ -43,7 +43,8 @@ const ioUtils = {
       if (pdbOutputIndex === -1) {
         throw new Error('No output pdb found');
       }
-      return new IList([outputs.get(pdbOutputIndex).fetchedValue]);
+      const outputPdb = outputs.get(pdbOutputIndex).fetchedValue;
+      return outputPdb ? new IList([outputPdb]) : new IList();
     }
 
     const framesOutput = outputs.get(framesOutputIndex);
