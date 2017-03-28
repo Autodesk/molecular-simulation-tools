@@ -55,13 +55,15 @@ router.get('/:workflowId', (req, res, next) => {
  * Get all workflows, including their run count
  */
 router.get('/', (req, res, next) => {
+  console.log('sdfsdfsdfsdfsdf');
   Promise.all([
     redis.hgetall(dbConstants.REDIS_WORKFLOWS),
     redis.hgetall(dbConstants.REDIS_RUNS),
   ]).then(([workflowsHash, runsHash]) => {
     const runCounts = workflowUtils.getRunCountsByWorkflows(runsHash || {});
 
-    const workflows = Object.values(workflowsHash || {}).map((workflowString) => {
+    const workflowValues = workflowsHash && Object.keys(workflowsHash).map(k => workflowsHash[k]) || [];
+    const workflows = workflowValues.map((workflowString) => {
       const workflow = JSON.parse(workflowString);
       workflow.runCount = runCounts.get(workflow.id) || 0;
       return workflow;

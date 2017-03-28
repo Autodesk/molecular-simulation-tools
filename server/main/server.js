@@ -11,6 +11,7 @@ const structureRoutes = require('../routes/structure');
 const workflowRoutes = require('../routes/workflow');
 const testRoutes = require('../routes/test');
 const versionRouter = require('./version');
+const log = require('../utils/log');
 
 // Create the server
 const app = express();
@@ -49,6 +50,9 @@ app.use(routeUtils.notFound);
 
 // error handler
 app.use((err, req, res, next) => {
+  if (err) {
+    log.error({error:err, message:err.message, url:req.originalUrl, stack:err.stack | null});
+  }
   // return error json, only providing error in development
   res.status(err.status || 500);
   return res.send({
