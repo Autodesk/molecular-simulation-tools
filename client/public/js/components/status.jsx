@@ -55,12 +55,13 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
+          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
               ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
               runCompleted={runCompleted}
-              selectedLigand={props.selectedLigand}
+              selectedLigand={selectedLigand}
             />
           );
           break;
@@ -85,11 +86,12 @@ function Status(props) {
             props.app.run.outputs, '.pdb',
           );
           const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
+          const numberOfPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs).size;
 
           selection = (
             <StatusResults
               morph={props.morph}
-              numberOfPdbs={props.numberOfPdbs}
+              numberOfPdbs={numberOfPdbs}
               onClickColorize={props.onClickColorize}
               onChangeMorph={props.onChangeMorph}
               resultValues={resultValues}
@@ -118,7 +120,6 @@ function Status(props) {
 
 Status.defaultProps = {
   hideContent: false,
-  selectedLigand: '',
 };
 
 Status.propTypes = {
@@ -128,10 +129,8 @@ Status.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
-  numberOfPdbs: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  selectedLigand: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,

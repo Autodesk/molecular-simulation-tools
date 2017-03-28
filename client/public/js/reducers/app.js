@@ -64,10 +64,7 @@ function app(state = initialState, action) {
           fetchingData: false,
         }));
       }
-      return state.set('run', state.run.merge({
-        inputs: action.inputs,
-        outputs: action.outputs,
-      }));
+      return state.set('run', action.run);
 
     case actionConstants.CLICK_RUN:
       return state.merge({

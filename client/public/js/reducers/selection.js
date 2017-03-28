@@ -1,8 +1,6 @@
-import { statusConstants } from 'molecular-design-applications-shared';
 import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
-import widgetUtils from '../utils/widget_utils';
 
 const initialState = new SelectionRecord();
 
@@ -30,15 +28,13 @@ function selection(state = initialState, action) {
         type: selectionConstants.WIDGET,
       });
 
-    case actionConstants.FETCHED_RUN:
-      if (action.error ||
-        action.app.run.status !== statusConstants.COMPLETED) {
+    case actionConstants.FETCHED_RUN_IO:
+      if (action.error) {
         return state;
       }
 
-      // Select active widget when loading a run
       return state.merge({
-        widgetIndex: widgetUtils.getActiveIndex(action.app.widgets, action.app.run),
+        widgetIndex: action.activeWidgetIndex,
         type: selectionConstants.WIDGET,
       });
 

@@ -4,37 +4,16 @@ import Status from '../components/status';
 import View from '../components/view';
 import AppRecord from '../records/app_record';
 import WidgetList from '../components/widget_list';
-import ioUtils from '../utils/io_utils';
-import selectionConstants from '../constants/selection_constants';
 
 require('../../css/app.scss');
 
 function App(props) {
-  const outputPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs);
-
-  let selectedModelData;
-  if (props.selection.widgetIndex === props.app.widgets.size) {
-    // Morph is chosen from a list of all input/output pdbs
-    selectedModelData = outputPdbs.get(props.morph);
-  } else if (props.selection.type === selectionConstants.WIDGET &&
-    props.app.run.inputs.size) {
-    selectedModelData = ioUtils.getPdb(props.app.run.inputs);
-  }
-
   let viewError;
   const fetchingError = props.app.fetchingError;
   if (fetchingError && fetchingError.response &&
     fetchingError.response.status === 404) {
     const lookingFor = props.runPage ? 'run' : 'app';
     viewError = `This ${lookingFor} does not exist!`;
-  }
-
-  let selectionStrings = null;
-  const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
-  if (selectedLigand) {
-    selectionStrings = ioUtils.getLigandSelectionStrings(
-      props.app.run.inputs, selectedLigand,
-    );
   }
 
   const loadingOrError = !!(props.app.fetching ||
@@ -62,11 +41,9 @@ function App(props) {
         fetchingData={props.app.run.fetchingData}
         hideContent={hideStatus}
         morph={props.morph}
-        numberOfPdbs={outputPdbs.size}
         onClickColorize={props.onClickColorize}
         onChangeMorph={props.onChangeMorph}
         onSelectInputFile={props.onSelectInputFile}
-        selectedLigand={selectedLigand}
         selection={props.selection}
         submitInputString={props.submitInputString}
         submitEmail={props.submitEmail}
@@ -76,8 +53,9 @@ function App(props) {
         colorized={props.colorized}
         error={viewError}
         loading={props.app.fetching || props.app.run.fetchingData}
-        modelData={selectedModelData}
-        selectionStrings={selectionStrings}
+        inputs={props.app.run.inputs}
+        morph={props.morph}
+        outputs={props.app.run.outputs}
       />
     </div>
   );
