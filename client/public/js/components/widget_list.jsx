@@ -1,5 +1,4 @@
 import React from 'react';
-import { statusConstants } from 'molecular-design-applications-shared';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import AppRecord from '../records/app_record';
@@ -11,7 +10,6 @@ require('../../css/widget_list.scss');
 
 function WidgetList(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
-  const runCompleted = props.app.run.status === statusConstants.COMPLETED;
   const widgetStatuses = widgetUtils.getStatuses(
     props.app.widgets, props.app.run,
   );
@@ -33,19 +31,6 @@ function WidgetList(props) {
                 totalNumber={props.app.widgets.size}
               />
             ))
-          }
-          {
-            runCompleted ? (
-              <WidgetListButton
-                primaryText={'Results'}
-                number={props.app.widgets.size}
-                onClick={props.clickWidget}
-                selected={props.selection.widgetIndex === props.app.widgets.size}
-                status={statusConstants.COMPLETED}
-                index={props.app.widgets.size}
-                totalNumber={props.app.widgets.size}
-              />
-            ) : null
           }
         </ol>
       </div>

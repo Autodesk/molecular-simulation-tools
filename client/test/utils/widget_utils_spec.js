@@ -122,6 +122,30 @@ describe('widgetUtils', () => {
         });
       });
     });
+
+    describe('when given a RESULTS widget', () => {
+      beforeEach(() => {
+        widget = new WidgetRecord({
+          id: widgetsConstants.RESULTS,
+        });
+      });
+
+      describe('when the run status is completed', () => {
+        beforeEach(() => {
+          run = run.set('status', statusConstants.COMPLETED);
+        });
+
+        it('returns true', () => {
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(true);
+        });
+      });
+
+      describe('when the run status is anything besides completed', () => {
+        it('returns false', () => {
+          expect(widgetUtils.isCompleted(widget, run)).to.equal(false);
+        });
+      });
+    });
   });
 
   describe('getStatuses', () => {
@@ -159,6 +183,68 @@ describe('widgetUtils', () => {
         expect(statuses.get(0)).to.equal(widgetStatusConstants.COMPLETED);
         expect(statuses.get(1)).to.equal(widgetStatusConstants.ACTIVE);
         expect(statuses.get(2)).to.equal(widgetStatusConstants.DISABLED);
+      });
+    });
+  });
+
+  describe('getActiveIndex', () => {
+    describe('when no widgets are completed', () => {
+      beforeEach(() => {
+        sinon.stub(widgetUtils, 'getStatuses', () =>
+          new IList([
+            widgetStatusConstants.ACTIVE,
+            widgetStatusConstants.DISABLED,
+            widgetStatusConstants.DISABLED,
+          ]),
+        );
+      });
+
+      afterEach(() => {
+        widgetUtils.getStatuses.restore();
+      });
+
+      it('returns 0', () => {
+        expect(widgetUtils.getActiveIndex()).to.equal(0);
+      });
+    });
+
+    describe('when the first widget is completed', () => {
+      beforeEach(() => {
+        sinon.stub(widgetUtils, 'getStatuses', () =>
+          new IList([
+            widgetStatusConstants.COMPLETED,
+            widgetStatusConstants.DISABLED,
+            widgetStatusConstants.DISABLED,
+          ]),
+        );
+      });
+
+      afterEach(() => {
+        widgetUtils.getStatuses.restore();
+      });
+
+      it('returns 1', () => {
+        expect(widgetUtils.getActiveIndex()).to.equal(1);
+      });
+    });
+
+    describe('when all widgets are completed', () => {
+      beforeEach(() => {
+        sinon.stub(widgetUtils, 'getStatuses', () =>
+          new IList([
+            widgetStatusConstants.COMPLETED,
+            widgetStatusConstants.COMPLETED,
+            widgetStatusConstants.COMPLETED,
+          ]),
+        );
+      });
+
+      afterEach(() => {
+        widgetUtils.getStatuses.restore();
+      });
+
+      it('returns the last index', () => {
+        expect(widgetUtils.getActiveIndex()).to.equal(2);
       });
     });
   });

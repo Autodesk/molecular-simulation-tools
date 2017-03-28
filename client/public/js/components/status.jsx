@@ -19,37 +19,7 @@ function Status(props) {
 
   let selection;
   if (!props.hideContent) {
-    if (props.selection.widgetIndex === props.app.widgets.size) {
-      const outputResultsIndex = ioUtils.getIndexByExtension(
-        props.app.run.outputs, 'results.json',
-      );
-      let resultValues;
-
-      if (outputResultsIndex !== -1) {
-        const outputResults = props.app.run.outputs.get(outputResultsIndex)
-          .fetchedValue;
-
-        if (outputResults.output_values) {
-          resultValues = new IList(outputResults.output_values);
-        }
-      }
-
-      const pdbIndex = ioUtils.getIndexByExtension(
-        props.app.run.outputs, '.pdb',
-      );
-      const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
-
-      selection = (
-        <StatusResults
-          morph={props.morph}
-          numberOfPdbs={props.numberOfPdbs}
-          onClickColorize={props.onClickColorize}
-          onChangeMorph={props.onChangeMorph}
-          resultValues={resultValues}
-          outputPdbUrl={outputPdbUrl}
-        />
-      );
-    } else if (!props.app.fetching && !props.app.fetchingError &&
+    if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       switch (props.app.widgets.get(props.selection.widgetIndex).id) {
         case widgetsConstants.LOAD:
@@ -91,6 +61,39 @@ function Status(props) {
               ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
               runCompleted={runCompleted}
               selectedLigand={props.selectedLigand}
+            />
+          );
+          break;
+        }
+
+        case widgetsConstants.RESULTS: {
+          const outputResultsIndex = ioUtils.getIndexByExtension(
+            props.app.run.outputs, 'results.json',
+          );
+          let resultValues;
+
+          if (outputResultsIndex !== -1) {
+            const outputResults = props.app.run.outputs.get(outputResultsIndex)
+              .fetchedValue;
+
+            if (outputResults.output_values) {
+              resultValues = new IList(outputResults.output_values);
+            }
+          }
+
+          const pdbIndex = ioUtils.getIndexByExtension(
+            props.app.run.outputs, '.pdb',
+          );
+          const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
+
+          selection = (
+            <StatusResults
+              morph={props.morph}
+              numberOfPdbs={props.numberOfPdbs}
+              onClickColorize={props.onClickColorize}
+              onChangeMorph={props.onChangeMorph}
+              resultValues={resultValues}
+              outputPdbUrl={outputPdbUrl}
             />
           );
           break;

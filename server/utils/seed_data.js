@@ -25,6 +25,12 @@ const apps = [
           title: 'Run',
         },
       },
+      {
+        id: widgetsConstants.RESULTS,
+        meta: {
+          title: 'Results',
+        },
+      },
     ],
     viewCount: 0,
   },
@@ -55,6 +61,12 @@ const apps = [
         id: widgetsConstants.RUN,
         meta: {
           title: 'Run',
+        },
+      },
+      {
+        id: widgetsConstants.RESULTS,
+        meta: {
+          title: 'Results',
         },
       },
     ],

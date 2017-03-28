@@ -7,7 +7,7 @@ const widgetUtils = {
    * Given a list of widgets, return of corresponding list of their statuses
    * @param {IList} widgets
    * @param {RunRecord}
-   * @return {IList of Booleans}
+   * @return {IList of statusConstants}
    */
   getStatuses(widgets, run) {
     let activeSet = false;
@@ -44,9 +44,28 @@ const widgetUtils = {
       case widgetsConstants.RUN:
         return run.status === statusConstants.COMPLETED;
 
+      case widgetsConstants.RESULTS:
+        return run.status === statusConstants.COMPLETED;
+
       default:
-        throw new Error('Invalid widgetId');
+        throw new Error(`Invalid widgetId: ${widget.id}`);
     }
+  },
+
+  /**
+   * Get the first incomplete widget, otherwise the last one overall
+   * @param {IList of WidgetRecords} widgets
+   * @param {RunRecord} run
+   * @returns {WidgetRecord}
+   */
+  getActiveIndex(widgets, run) {
+    const statuses = widgetUtils.getStatuses(widgets, run);
+
+    const activeIndex = statuses.findIndex(status =>
+      status !== statusConstants.COMPLETED
+    );
+
+    return activeIndex === -1 ? (statuses.size - 1) : activeIndex;
   },
 };
 
