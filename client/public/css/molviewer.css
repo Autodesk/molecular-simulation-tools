@@ -1,0 +1,218 @@
+.adsk-toolbar {
+    display: block;
+    position: absolute;
+    left: auto;
+    right: 0;
+    bottom: auto;
+    top: calc(50% - 40px);
+    text-align: center;
+    transition: opacity 0.2s ease 0.5s;
+    box-sizing: content-box;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.notouch .adsk-toolbar {
+    opacity: 0.9;
+}
+
+.adsk-control-group {
+    display: block;
+    margin: 0 5px;
+    color: #f4f4f4;
+    background-color: rgba(0,0,0,0);
+    box-shadow: 0 0 0 transparent;
+    border-radius: 5px;
+}
+
+
+
+#toolbar-selectTool {
+    width: 110px;
+}
+
+.adsk-button {
+    position: relative;
+    cursor: pointer;
+    padding: 6px 6px 6px 6px;
+    float: none;
+    pointer-events: all;
+    border-radius: 0;
+    border: 0;
+    height: 24px;
+    width: 24px;
+    margin: 0 4px 0 auto;
+    pointer-events: all;
+    box-sizing: content-box;
+}
+
+.adsk-button-icon {
+   display: inline-block;
+   padding-top: 3px;
+   font-size: 24px;
+   line-height: 1;
+   position: relative;
+   width: 100%;
+   height: 100%;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+
+.adsk-button-label {
+    float: right;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 3px;
+    margin-right: 6px;
+    font-family: helvetica, arial, sans-serif;
+}
+
+.adsk-button-label.active {
+    color: #3e6dff;
+}
+
+
+.adsk-button-dropdown {
+    position: absolute;
+    left: 0;
+    top: 36px;
+    height: auto;
+    width: 122px;
+    background-color: #303542;
+    z-index: 10;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    display: none;
+}
+
+.adsk-button-dropdown.active {
+    display: block;
+}
+
+.mol-menu-item {
+    font-family: helvetica, arial, sans-serif;
+    flex: 0 0 28px;
+    -webkit-flex: 0 0 28px;
+    height: 21px;
+    width: 100%;
+    padding-top: 9px;
+    padding-bottom: 2px;
+    cursor: pointer;
+    font-weight: 100;
+    font-size: 12px;
+}
+
+.mol-menu-text {
+    float: left;
+}
+
+.mol-menu-item-hotkey {
+    float: right;
+    margin-right: 5px;
+}
+
+.adsk-button-dropdown > .mol-menu-item {
+    padding-left: 11px;
+    width: calc(100% - 10px);
+    width: -webkit-calc(100% - 10px);
+    pointer-events: all;
+}
+
+
+
+.adsk-control-tooltip {
+    position: absolute;
+    bottom: 8px;
+    left: auto;
+    right: 39px;
+    visibility: hidden;
+    padding: 4px;
+    z-index: 5;
+    background-color: rgba(34,34,34,1.0);
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
+    color: #f4f4f4;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 1.0;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.adsk-button.active > .toolbar-selectTool {
+    opacity: 1;
+}
+
+.adsk-button.active > .toolbar-orbitTool {
+    opacity: 1;
+}
+
+.adsk-button.active > .toolbar-panTool {
+    opacity: 1;
+}
+
+.adsk-button.active > .toolbar-zoomTool {
+    opacity: 1;
+}
+
+
+
+
+
+#toolbar-selectTool-tooltip {
+    left: 113px;
+    display: none;
+}
+
+
+
+.toolbar-selectTool {
+    opacity: 0.5;
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="13px" height="20px" viewBox="0 0 13 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1597.000000, -877.000000)" fill="%23FFFFFF"> <path d="M1597,877 L1609.99497,887.232184 L1604.44315,888.180922 L1607.97384,895.410728 L1604.7365,897 L1601.18532,889.701408 L1597,893.518786 L1597,877 Z" id="cursor-icon-21" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+    background-position: top right;
+    background-repeat: no-repeat;
+    float: right;
+    width: 24px;
+    margin: 0 4px 0 auto;
+    height: 24px;
+}
+
+#toolbar-firstPersonTool {
+    display: none;
+}
+
+.light-background .toolbar-selectTool {
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="13px" height="20px" viewBox="0 0 13 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1597.000000, -877.000000)" fill="%232E3444"> <path d="M1597,877 L1609.99497,887.232184 L1604.44315,888.180922 L1607.97384,895.410728 L1604.7365,897 L1601.18532,889.701408 L1597,893.518786 L1597,877 Z" id="cursor-icon-21" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.light-background .adsk-button-label {
+    color: #2E3444;
+    opacity: 0.5;
+}
+
+.toolbar-orbitTool {
+    opacity: 0.5;
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="17px" viewBox="0 0 20 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1592.000000, -919.000000)" fill="%23FFFFFF"> <path d="M1602,935.868067 C1601.51309,935.954762 1601.01183,936 1600.5,936 C1595.80558,936 1592,932.19442 1592,927.5 C1592,922.80558 1595.80558,919 1600.5,919 C1605.02657,919 1608.72673,922.53831 1608.98554,927 L1607.48418,927 C1607.24549,923.252587 1604.33151,920.5 1600.5,920.5 C1596.5,920.5 1593.5,923.5 1593.5,927.5 C1593.5,931.5 1596.5,934.5 1600.5,934.5 C1601.01824,934.5 1601.51969,934.449644 1602,934.35328 L1602,935.868067 Z M1604.5,927 L1611.5,927 L1608,932 L1604.5,927 Z" id="Oval-113-Copy" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.light-background .toolbar-orbitTool {
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="17px" viewBox="0 0 20 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1592.000000, -919.000000)" fill="%232E3444"> <path d="M1602,935.868067 C1601.51309,935.954762 1601.01183,936 1600.5,936 C1595.80558,936 1592,932.19442 1592,927.5 C1592,922.80558 1595.80558,919 1600.5,919 C1605.02657,919 1608.72673,922.53831 1608.98554,927 L1607.48418,927 C1607.24549,923.252587 1604.33151,920.5 1600.5,920.5 C1596.5,920.5 1593.5,923.5 1593.5,927.5 C1593.5,931.5 1596.5,934.5 1600.5,934.5 C1601.01824,934.5 1601.51969,934.449644 1602,934.35328 L1602,935.868067 Z M1604.5,927 L1611.5,927 L1608,932 L1604.5,927 Z" id="Oval-113-Copy" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.toolbar-panTool{
+    opacity: 0.5;
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1592.000000, -954.000000)" fill="%23FFFFFF"> <path d="M1600.53812,962.571429 C1601.45858,962.078167 1601.07622,954.995705 1601.07622,954.995705 C1601.05278,954.445792 1601.47377,954 1602.02507,954 L1602.02507,954 C1602.57255,954 1603.01902,954.448769 1603.02594,955.000027 C1603.02594,955.000027 1603.01638,962.571429 1604.00768,962.571429 C1604.99898,962.571429 1604.98746,955.948438 1604.98746,955.948438 C1604.99382,955.398331 1605.43899,954.952381 1605.99029,954.952381 L1605.99029,954.952381 C1606.53777,954.952381 1606.98159,955.40115 1606.98159,955.952408 L1606.98159,963.52381 L1609.02638,958.670539 C1609.24256,958.157452 1609.84281,957.850923 1610.38655,957.990896 L1610.36411,957.985119 C1610.89913,958.122849 1611.23409,958.673119 1611.11426,959.205295 L1608.9642,968.753997 C1608.9642,971.65968 1606.52318,974 1603.51203,974 C1602.24302,974 1600.97021,973.747743 1600.04246,973.047619 L1592.53051,964.925851 C1591.78128,964.115802 1591.90885,962.946131 1592.8186,962.31111 L1591.93517,962.92776 C1592.84351,962.293727 1594.17477,962.444798 1594.91188,963.268822 L1598.05985,966.787991 L1598.05985,964.822575 L1595.95831,957.287467 C1595.81079,956.758529 1596.11621,956.22033 1596.65995,956.080357 L1596.63751,956.086134 C1597.17253,955.948404 1597.72906,956.265633 1597.88879,956.805505 C1597.88879,956.805505 1599.61765,963.06469 1600.53812,962.571429 Z" id="Rectangle-27-Copy-2" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.light-background .toolbar-panTool {
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1592.000000, -954.000000)" fill="%232E3444"> <path d="M1600.53812,962.571429 C1601.45858,962.078167 1601.07622,954.995705 1601.07622,954.995705 C1601.05278,954.445792 1601.47377,954 1602.02507,954 L1602.02507,954 C1602.57255,954 1603.01902,954.448769 1603.02594,955.000027 C1603.02594,955.000027 1603.01638,962.571429 1604.00768,962.571429 C1604.99898,962.571429 1604.98746,955.948438 1604.98746,955.948438 C1604.99382,955.398331 1605.43899,954.952381 1605.99029,954.952381 L1605.99029,954.952381 C1606.53777,954.952381 1606.98159,955.40115 1606.98159,955.952408 L1606.98159,963.52381 L1609.02638,958.670539 C1609.24256,958.157452 1609.84281,957.850923 1610.38655,957.990896 L1610.36411,957.985119 C1610.89913,958.122849 1611.23409,958.673119 1611.11426,959.205295 L1608.9642,968.753997 C1608.9642,971.65968 1606.52318,974 1603.51203,974 C1602.24302,974 1600.97021,973.747743 1600.04246,973.047619 L1592.53051,964.925851 C1591.78128,964.115802 1591.90885,962.946131 1592.8186,962.31111 L1591.93517,962.92776 C1592.84351,962.293727 1594.17477,962.444798 1594.91188,963.268822 L1598.05985,966.787991 L1598.05985,964.822575 L1595.95831,957.287467 C1595.81079,956.758529 1596.11621,956.22033 1596.65995,956.080357 L1596.63751,956.086134 C1597.17253,955.948404 1597.72906,956.265633 1597.88879,956.805505 C1597.88879,956.805505 1599.61765,963.06469 1600.53812,962.571429 Z" id="Rectangle-27-Copy-2" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.toolbar-zoomTool {
+    opacity: 0.5;
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1591.000000, -997.000000)" fill="%23FFFFFF"> <path d="M1603.56827,1011.56827 C1602.27306,1012.47079 1600.69833,1013 1599,1013 C1594.58172,1013 1591,1009.41828 1591,1005 C1591,1000.58172 1594.58172,997 1599,997 C1603.41828,997 1607,1000.58172 1607,1005 C1607,1006.69833 1606.47079,1008.27306 1605.56827,1009.56827 L1611,1015 L1609,1017 C1607.31409,1015.31409 1604.07785,1012.07785 1603.56827,1011.56827 Z M1598.99761,1011.49761 C1602.58746,1011.49761 1605.49761,1008.58746 1605.49761,1004.99761 C1605.49761,1001.40776 1602.58746,998.497607 1598.99761,998.497607 C1595.40776,998.497607 1592.49761,1001.40776 1592.49761,1004.99761 C1592.49761,1008.58746 1595.40776,1011.49761 1598.99761,1011.49761 Z" id="Oval-116-Copy-2" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
+
+.light-background .toolbar-zoomTool {
+    background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="CadNano-Files-Copy-14" sketch:type="MSArtboardGroup" transform="translate(-1591.000000, -997.000000)" fill="%232E3444"> <path d="M1603.56827,1011.56827 C1602.27306,1012.47079 1600.69833,1013 1599,1013 C1594.58172,1013 1591,1009.41828 1591,1005 C1591,1000.58172 1594.58172,997 1599,997 C1603.41828,997 1607,1000.58172 1607,1005 C1607,1006.69833 1606.47079,1008.27306 1605.56827,1009.56827 L1611,1015 L1609,1017 C1607.31409,1015.31409 1604.07785,1012.07785 1603.56827,1011.56827 Z M1598.99761,1011.49761 C1602.58746,1011.49761 1605.49761,1008.58746 1605.49761,1004.99761 C1605.49761,1001.40776 1602.58746,998.497607 1598.99761,998.497607 C1595.40776,998.497607 1592.49761,1001.40776 1592.49761,1004.99761 C1592.49761,1008.58746 1595.40776,1011.49761 1598.99761,1011.49761 Z" id="Oval-116-Copy-2" sketch:type="MSShapeGroup"></path> </g> </g> </svg>');
+}
