@@ -3,57 +3,12 @@ import { statusConstants } from 'molecular-design-applications-shared';
 import apiUtils from './api_utils';
 import ioUtils from './io_utils';
 
-const workflowUtils = {
+const appUtils = {
   /**
-   * Given a list of workflowNodes, return the overall status of the workflow
-   * @param workflowNodes {Immutable.List}
-   * @returns {String}
+   * Return a boolean indicating if the given run is runnable
+   * @param {RunRecord} run
+   * @returns {Boolean}
   */
-  getWorkflowStatus(workflowNodes) {
-    if (!workflowNodes.size) {
-      return statusConstants.IDLE;
-    }
-
-    let atLeastOneCanceled = false;
-    let atLeastOneError = false;
-    let allCompleted = true;
-    let allIdle = true;
-
-    for (let i = 0; i < workflowNodes.size; i += 1) {
-      const workflowNode = workflowNodes.get(i);
-
-      if (workflowNode.status === statusConstants.ERROR) {
-        atLeastOneError = true;
-        break;
-      } else if (workflowNode.status === statusConstants.CANCELED) {
-        atLeastOneCanceled = true;
-        break;
-      } else if (workflowNode.status === statusConstants.RUNNING) {
-        allCompleted = false;
-        allIdle = false;
-      } else if (workflowNode.status === statusConstants.COMPLETED) {
-        allIdle = false;
-      } else if (workflowNode.status === statusConstants.IDLE) {
-        allCompleted = false;
-      }
-    }
-
-    if (atLeastOneCanceled) {
-      return statusConstants.CANCELED;
-    }
-    if (atLeastOneError) {
-      return statusConstants.ERROR;
-    }
-    if (allCompleted) {
-      return statusConstants.COMPLETED;
-    }
-    if (allIdle) {
-      return statusConstants.IDLE;
-    }
-
-    return statusConstants.RUNNING;
-  },
-
   isRunnable(run) {
     if (!ioUtils.getPdb(run.inputs)) {
       return false;
@@ -88,19 +43,19 @@ const workflowUtils = {
   /**
    * Using the api, go through the full step0 input processing flow
    * Calls to this should be surrounded by try/catch!
-   * @param {String} workflowId
+   * @param {String} appId
    * @param {String} input
    * @param {String} [extension]
    * @returns {Array}
    */
-  processInput: async function processInput(workflowId, input, extension) {
-    let inputs = await apiUtils.processInput(workflowId, input, extension);
+  processInput: async function processInput(appId, input, extension) {
+    let inputs = await apiUtils.processInput(appId, input, extension);
 
     // Find the json results
-    inputs = await workflowUtils.fetchIoResults(inputs);
+    inputs = await appUtils.fetchIoResults(inputs);
 
     // Get the processed input pdbs
-    inputs = await workflowUtils.fetchIoPdbs(inputs);
+    inputs = await appUtils.fetchIoPdbs(inputs);
 
     // Make sure the json results are valid and also indicate a success.
     const inputErrorMessage = ioUtils.getInputError(inputs);
@@ -162,4 +117,4 @@ const workflowUtils = {
   },
 };
 
-export default workflowUtils;
+export default appUtils;

@@ -1,7 +1,7 @@
 const dbConstants = {
-  REDIS_WORKFLOWS: 'workflows',
+  REDIS_VERSION: 'mst_db_version',
+  REDIS_APPS: 'apps',
   REDIS_RUNS: 'runs',
-  REDIS_WORKFLOW_ERRORS: 'workflow_errors', // redis<HASH>
 };
 
 module.exports = dbConstants;

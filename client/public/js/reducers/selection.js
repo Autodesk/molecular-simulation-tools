@@ -3,74 +3,41 @@ import actionConstants from '../constants/action_constants';
 import SelectionRecord from '../records/selection_record';
 import selectionConstants from '../constants/selection_constants';
 
-const initialState = new SelectionRecord({
-  type: selectionConstants.WORKFLOW_NODE_LOAD,
-});
+const initialState = new SelectionRecord();
 
 function selection(state = initialState, action) {
   switch (action.type) {
-    case actionConstants.CLICK_NODE:
+    case actionConstants.CLICK_TASK:
       return state.merge({
-        id: action.nodeId,
-        type: selectionConstants.NODE,
-      });
-
-    // TODO unused since wed dont show workflow nodes anymore
-    case actionConstants.CLICK_WORKFLOW_NODE:
-      return state.merge({
-        id: action.workflowNodeId,
-        type: selectionConstants.WORKFLOW_NODE,
-      });
-
-    case actionConstants.CLICK_WORKFLOW_NODE_LOAD:
-      return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_LOAD,
-      });
-
-    case actionConstants.CLICK_WORKFLOW_NODE_LIGAND_SELECTION:
-      return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_LIGAND_SELECTION,
-      });
-
-    case actionConstants.CLICK_WORKFLOW_NODE_EMAIL:
-      return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_RUN,
-      });
-
-    case actionConstants.CLICK_WORKFLOW_NODE_RESULTS:
-      return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_RESULTS,
+        taskIndex: action.taskIndex,
+        type: selectionConstants.TASK,
       });
 
     case actionConstants.CLICK_ABOUT:
       return state.merge({
-        id: null,
+        taskIndex: null,
         type: selectionConstants.ABOUT,
       });
 
-    case actionConstants.FETCHED_WORKFLOW:
+    case actionConstants.FETCHED_APP:
       if (action.error) {
         return state;
       }
-      // Reset selection when loading a workflow
+      // Reset selection when loading a app
       return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_LOAD,
+        taskIndex: 0,
+        type: selectionConstants.TASK,
       });
 
     case actionConstants.FETCHED_RUN:
       if (action.error ||
-        action.workflow.run.status !== statusConstants.COMPLETED) {
+        action.app.run.status !== statusConstants.COMPLETED) {
         return state;
       }
       // Select results when loading a finished run
       return state.merge({
-        id: null,
-        type: selectionConstants.WORKFLOW_NODE_RESULTS,
+        taskIndex: action.app.tasks.size, // Results
+        type: selectionConstants.TASK,
       });
 
     default:

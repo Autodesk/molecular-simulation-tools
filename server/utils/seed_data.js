@@ -1,4 +1,6 @@
-const workflows = [
+const tasksConstants = require('molecular-design-applications-shared').tasksConstants;
+
+const apps = [
   {
     id: '0',
     title: 'Calculate electronic vertical detachment energy',
@@ -10,6 +12,14 @@ const workflows = [
     creatorImage: '/img/logo2.png',
     description: 'Calculate the electron binding energy of an' +
         ' anionic doublet species using DFT',
+    tasks: [
+      {
+        id: tasksConstants.LOAD,
+      },
+      {
+        id: tasksConstants.RUN,
+      },
+    ],
     viewCount: 0,
   },
   {
@@ -22,6 +32,17 @@ const workflows = [
     comingSoon: false,
     creatorImage: '/img/logo1.png',
     description: 'Automatically parameterize and refine a small molecule bound to a protein',
+    tasks: [
+      {
+        id: tasksConstants.LOAD,
+      },
+      {
+        id: tasksConstants.SELECTION,
+      },
+      {
+        id: tasksConstants.RUN,
+      },
+    ],
     viewCount: 0,
   },
   {
@@ -50,4 +71,4 @@ const workflows = [
   },
 ];
 
-module.exports = workflows;
+module.exports = apps;

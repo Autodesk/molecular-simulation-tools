@@ -12,7 +12,7 @@ function resultsSettings(state = initialState, action) {
       return state.set('morph', action.morph);
 
     case actionConstants.FETCHED_RUN:
-      if (action.error || !action.workflow.outputPdbUrl) {
+      if (action.error || !action.app.outputPdbUrl) {
         return state;
       }
       // TODO currently, we can only morph between input and output states

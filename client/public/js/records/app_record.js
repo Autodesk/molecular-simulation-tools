@@ -1,22 +1,22 @@
 import { Record, List as IList } from 'immutable';
 import RunRecord from './run_record';
 
-const WorkflowRecord = new Record({
+const AppRecord = new Record({
   bgColor: '',
   bgIndex: null,
   color: null,
   comingSoon: false,
   creatorImage: null,
   id: null,
-  fetching: false, // for fetching the workflow itself
+  fetching: false, // for fetching the app itself
   fetchingError: null,
   selectLigands: false,
   run: new RunRecord(),
   runCount: 0,
+  tasks: new IList(),
   title: '',
   viewCount: 0,
-  workflowNodes: new IList(),
   description: 'no description provided',
 });
 
-export default WorkflowRecord;
+export default AppRecord;

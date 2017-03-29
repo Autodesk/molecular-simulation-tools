@@ -18,25 +18,6 @@ const seedData = require('../utils/seed_data');
 const testUtils = require('../test/test_utils');
 
 /**
- * Normalize a port into a number, string, or false.
- */
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
  * Get port from environment and store in Express.
  */
 const DEFAULT_PORT = 4000;
@@ -97,12 +78,9 @@ function onListening(addr) {
 }
 
 /**
-  Before we create the server, we'll populate the database
-  with workflows
+  Before we create the server, initialize the database (seeds, migrations)
 */
-Promise.all(seedData.map(workflow =>
-  dbUtils.seed(redis, dbConstants.REDIS_WORKFLOWS, workflow)
-)).then(() => {
+dbUtils.initialize(redis).then(() => {
   /**
    * Create HTTP server.
    */

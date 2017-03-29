@@ -2,7 +2,8 @@ import { List as IList } from 'immutable';
 import axios from 'axios';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
-import WorkflowRecord from '../records/workflow_record';
+import TaskRecord from '../records/task_record';
+import AppRecord from '../records/app_record';
 import ioUtils from './io_utils';
 
 const API_URL = process.env.API_URL || '';
@@ -10,31 +11,33 @@ const API_URL = process.env.API_URL || '';
 const apiUtils = {
   /**
    * Start a run
-   * @param {String} workflowId
+   * @param {String} appId
    * @param {String} email
    * @param {IList} inputs
    * @param {String} selectedLigand
    * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(workflowId, email, inputs, selectedLigand, inputString) {
+  run(appId, email, inputs, selectedLigand, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
-      workflowId,
+      appId,
       email,
       inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
       inputString,
     }).then(res => res.data.runId);
   },
 
-  getWorkflow(workflowId) {
-    return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
-      new WorkflowRecord(res.data),
+  getApp(appId) {
+    return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
+      new AppRecord(Object.assign({}, res.data, {
+        tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
+      })),
     );
   },
 
-  getWorkflows() {
-    return axios.get(`${API_URL}/v1/workflow`).then(res =>
-      res.data.map(workflowData => new WorkflowRecord(workflowData)),
+  getApps() {
+    return axios.get(`${API_URL}/v1/app`).then(res =>
+      res.data.map(appData => new AppRecord(appData)),
     );
   },
 
@@ -48,11 +51,14 @@ const apiUtils = {
       const outputs = runData.outputs ?
         new IList(runData.outputs.map(output => new IoRecord(output))) :
         new IList();
-      return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
+      return new AppRecord(Object.assign({}, runData, runData.app, {
         run: new RunRecord(Object.assign({}, runData, {
           inputs,
           outputs,
         })),
+        tasks: new IList(runData.app.tasks.map(taskData =>
+          new TaskRecord(taskData)),
+        ),
       }));
     });
   },
@@ -65,12 +71,12 @@ const apiUtils = {
 
   /**
    * Process the input given by the user and return processed input
-   * @param workflowId {String}
+   * @param appId {String}
    * @param input {String} PDB, IUPAC, InChi, SMILES
    * @param extension {String} Optional
    * @returns {Promise}
    */
-  processInput(workflowId, input, extension) {
+  processInput(appId, input, extension) {
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -104,7 +110,7 @@ const apiUtils = {
         },
       ],
     };
-    return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
+    return axios.post(`${API_URL}/v1/structure/executeApp${appId}Step0`, data)
       .then((res) => {
         if (!res.data.success) {
           const error = new Error('Failed to process this input, please try again.');

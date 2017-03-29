@@ -16,8 +16,8 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/workflow0', (req, res) => {
-  testUtils.runTestWorkflowVDE()
+router.get('/app0', (req, res) => {
+  testUtils.runTestAppVDE()
     .then((result) => {
       if (result.success) {
         res.send(result);
@@ -30,8 +30,8 @@ router.get('/workflow0', (req, res) => {
     });
 });
 
-router.get('/workflow1', (req, res) => {
-  testUtils.runTestWorkflowQMMM()
+router.get('/app1', (req, res) => {
+  testUtils.runTestAppQMMM()
     .then((result) => {
       if (result.success) {
         res.send(result);
@@ -46,7 +46,7 @@ router.get('/workflow1', (req, res) => {
 
 router.get('/all', (req, res) => {
   /**
-   * Until /workflow0 works reliably every time (it sometimes fails)
+   * Until /app0 works reliably every time (it sometimes fails)
    * this route is just replicating /test
    */
   testUtils.runTestCCC()

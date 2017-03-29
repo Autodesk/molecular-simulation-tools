@@ -26,16 +26,16 @@ router.get('/:runId', (req, res, next) => {
       run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
     }
     run.params = null; // This is too big to send and unnecessary
-    return redis.hget(dbConstants.REDIS_WORKFLOWS, run.workflowId).then(
-      (workflowString) => {
-        if (!workflowString) {
+    return redis.hget(dbConstants.REDIS_APPS, run.appId).then(
+      (appString) => {
+        if (!appString) {
           return next(
-            new Error('Corrupt run data references nonexistant workflow')
+            new Error('Corrupt run data references nonexistant app')
           );
         }
-        const workflow = JSON.parse(workflowString);
+        const app = JSON.parse(appString);
         return res.send(Object.assign({}, run, {
-          workflow,
+          app,
         }));
       }).catch(next);
   }).catch(next);
@@ -45,14 +45,14 @@ router.get('/:runId', (req, res, next) => {
  * Start a run
  */
 router.post('/', (req, res, next) => {
-  const workflowId = req.body.workflowId.toString();
+  const appId = req.body.appId.toString();
   const email = req.body.email;
   const inputs = req.body.inputs;
   const inputString = req.body.inputString;
-  log.info({ email });
-  log.info({ workflowId });
-  if (workflowId === undefined) {
-    return next(new Error('Missing required parameter "workflowId"'));
+  log.info({ email, });
+  log.info({ appId, });
+  if (appId === undefined) {
+    return next(new Error('Missing required parameter "appId"'));
   }
   if (email && !isEmail(email)) {
     return next(new Error('Invalid email given'));
@@ -61,7 +61,7 @@ router.post('/', (req, res, next) => {
     return next(new Error('No inputs'));
   }
 
-  return runUtils.executeWorkflow(workflowId, email, inputs, inputString)
+  return runUtils.executeApp(appId, email, inputs, inputString)
     .then((jobId) => {
       log.info(`SUCCESS \n jobId=${JSON.stringify(jobId)}`);
       res.send({ runId: jobId });

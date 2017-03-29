@@ -8,7 +8,7 @@ const statusConstants = require('molecular-design-applications-shared').statusCo
 
 const testUtils = {
   runAllTests() {
-    return Promise.all([testUtils.runTestWorkflowVDE(), testUtils.runTestWorkflowQMMM()])
+    return Promise.all([testUtils.runTestAppVDE(), testUtils.runTestAppQMMM()])
       .then((results) => {
         let successCount = 0;
         let totalCount = 0;
@@ -44,7 +44,7 @@ const testUtils = {
       );
   },
 
-  runTestWorkflowVDE() {
+  runTestAppVDE() {
     const formData = {
       inputs: [
         {
@@ -59,7 +59,7 @@ const testUtils = {
     return Promise.resolve(true)
       // Step 1
       .then(() => {
-        const url = `http://localhost:${port}/v1/structure/executeWorkflow0Step0`;
+        const url = `http://localhost:${port}/v1/structure/executeApp0Step0`;
         return request.post({ url, body: formData, json: true })
           .then((body) => {
             if (!body.success) {
@@ -74,7 +74,7 @@ const testUtils = {
         const formDataStep2 = {
           email: null,
           inputs,
-          workflowId: 0
+          appId: 0
         };
 
         const url = `http://localhost:${port}/v1/run`;
@@ -115,7 +115,7 @@ const testUtils = {
       });
   },
 
-  runTestWorkflowQMMM() {
+  runTestAppQMMM() {
     const formData = {
       inputs: [
         {
@@ -126,7 +126,7 @@ const testUtils = {
     };
 
     const port = process.env.PORT;
-    const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
+    const url = `http://localhost:${port}/v1/structure/executeApp1Step0`;
     // Step 1
     return request.post({ url, body: formData, json: true })
       .then((body) => {
@@ -145,7 +145,7 @@ const testUtils = {
         const formDataStep2 = {
           email: null,
           inputs,
-          workflowId: 1
+          appId: 1
         };
 
         const urlStep2 = `http://localhost:${port}/v1/run`;

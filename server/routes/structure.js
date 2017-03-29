@@ -1,6 +1,6 @@
 const express = require('express');
+const appUtils = require('../utils/app_utils');
 const log = require('../utils/log');
-const workflowUtils = require('../utils/workflow_utils');
 
 const router = new express.Router();
 
@@ -18,15 +18,15 @@ const router = new express.Router();
  * }
  * @return { success: true, outputs: { filename: "url" }, jobResult: <CCC Job for debugging> }
  */
-router.post('/executeWorkflow0Step0', (req, res, next) => {
+router.post('/executeApp0Step0', (req, res, next) => {
   const inputs = req.body.inputs;
   if (!inputs) {
     return next(new Error('No inputs'));
   }
 
-  return workflowUtils.executeWorkflow0Step0(inputs)
+  return appUtils.executeApp0Step0(inputs)
     .then((jobResult) => {
-      log.debug({ jobId: jobResult.jobId, f: 'executeWorkflow0Step0' });
+      log.debug({ jobId: jobResult.jobId, f: 'executeApp0Step0' });
       res.send(jobResult);
     })
     .error((err) => {
@@ -36,7 +36,7 @@ router.post('/executeWorkflow0Step0', (req, res, next) => {
 });
 
 /**
- * First step in workflow1: selecting a ligand.
+ * First step in app1: selecting a ligand.
  * https://docs.google.com/presentation/d/1qP-8fPpsgtJnZOlg96ySwPACZvGlxT1jIIgjBECoDAE/edit#slide=id.g1c36f8ea4a_0_0
  * Expects an array with input definitions:
  * {
@@ -50,15 +50,15 @@ router.post('/executeWorkflow0Step0', (req, res, next) => {
  * }
  * @return { success: true, outputs: { filename: "url" }, jobResult: <CCC Job for debugging> }
  */
-router.post('/executeWorkflow1Step0', (req, res, next) => {
+router.post('/executeApp1Step0', (req, res, next) => {
   const inputs = req.body.inputs;
   if (!inputs) {
     return next(new Error('No inputs'));
   }
 
-  return workflowUtils.executeWorkflow1Step0(inputs)
+  return appUtils.executeApp1Step0(inputs)
     .then((jobResult) => {
-      log.debug({ jobId: jobResult.jobId, f: 'executeWorkflow1Step0' });
+      log.debug({ jobId: jobResult.jobId, f: 'executeApp1Step0' });
       res.send(jobResult);
     })
     .error((err) => {

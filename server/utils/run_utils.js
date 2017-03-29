@@ -3,15 +3,15 @@ const statusConstants = require('molecular-design-applications-shared').statusCo
 const cccUtils = require('../utils/ccc_utils.js');
 const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
+const appUtils = require('../utils/app_utils');
 const log = require('./log');
 const redis = require('../utils/redis');
-const workflowUtils = require('../utils/workflow_utils');
 
 const runUtils = {
 
   setRunStatus(runId, status) {
     if (!statusConstants[status]) {
-      return Promise.reject(`Unknown workflow status=${status}`);
+      return Promise.reject(`Unknown app status=${status}`);
     }
 
     return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
@@ -25,31 +25,32 @@ const runUtils = {
     });
   },
 
-  sendEmailsWorkflowEnded(runId) {
-    log.debug({ f: 'sendEmailsWorkflowEnded', runId });
+  sendEmailsAppEnded(runId) {
+    log.debug({ f: 'sendEmailsAppEnded', runId });
     redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
       if (!runString) {
-        return log.error({ f: 'sendEmailsWorkflowEnded', runString });
+        log.error({ f: 'sendEmailsAppEnded', runString });
+        return;
       }
 
       const run = JSON.parse(runString);
 
       if (run.email) {
-        log.debug({ f: 'sendEmailsWorkflowEnded', run, email: run.email });
-        return emailUtils.send(
+        log.debug({ f: 'sendEmailsAppEnded', run, email: run.email });
+        emailUtils.send(
           run.email,
-          'Your Workflow Has Ended',
+          'Your App Has Ended',
           './views/email_ended.ms',
           {
-            runUrl: `${process.env.FRONTEND_URL}/workflow/${run.workflowId}/${run.id}`,
+            runUrl: `${process.env.FRONTEND_URL}/app/${run.appId}/${run.id}`,
           }
         );
+        return;
       }
 
       log.warn({ f: 'sendEmailsWorkflowEnded', run, message: 'There was no email in the run' });
-      return Promise.resolve(true);
     }).catch((err) => {
-      log.error({ error: err, f: 'sendEmailsWorkflowEnded', runId });
+      log.error({ error: err, f: 'sendEmailsAppEnded', runId });
     });
   },
 
@@ -94,7 +95,7 @@ const runUtils = {
       localLog.error({ error: JSON.stringify(err) })
     )
     .then(() => {
-      runUtils.sendEmailsWorkflowEnded(runId);
+      runUtils.sendEmailsAppEnded(runId);
     });
   },
 
@@ -123,36 +124,36 @@ const runUtils = {
   },
 
   /**
-   * Execute a full workflow (not input processing)
-   * @param {String} workflowId
+   * Execute a full app (not input processing)
+   * @param {String} appId
    * @param {String} email
    * @param {Array} inputs
    * @param {String} [inputString]
    */
-  executeWorkflow(workflowId, email, inputs, inputString) {
-    const localLog = log.child({ f: 'executeWorkflow', workflowId, email });
+  executeApp(appId, email, inputs, inputString) {
+    const localLog = log.child({ f: 'executeApp', appId, email, });
     localLog.debug({});
-    let workflowPromise = null;
-    switch (workflowId.toString()) {
+    let appPromise = null;
+    switch (appId.toString()) {
       case '0':
-        workflowPromise = workflowUtils.executeWorkflow0Step1(inputs);
+        appPromise = appUtils.executeApp0Step1(inputs);
         break;
       case '1':
-        workflowPromise = workflowUtils.executeWorkflow1Step1(inputs);
+        appPromise = appUtils.executeApp1Step1(inputs);
         break;
       default:
-        return Promise.reject({ error: `No workflow for workflowId=${workflowId} type=${typeof workflowId}` });
+        return Promise.reject({ error: `No app for appId=${appId} type=${typeof appId}` });
     }
 
-    return workflowPromise
+    return appPromise
       .then((runId) => {
-        localLog.info({ workflowId, runId });
+        localLog.info({ appId, runId });
 
-        const runUrl = `${process.env.FRONTEND_URL}/workflow/${workflowId}/${runId}`;
+        const runUrl = `${process.env.FRONTEND_URL}/app/${appId}/${runId}`;
         if (email) {
           emailUtils.send(
             email,
-            'Your Workflow is Running',
+            'Your App is Running',
             'views/email_thanks.ms',
             { runUrl }
           )
@@ -163,7 +164,7 @@ const runUtils = {
 
         const runPayload = {
           id: runId,
-          workflowId,
+          appId,
           email,
           inputs,
           inputString,
@@ -206,9 +207,9 @@ const runUtils = {
     });
   },
 
-  // In case of crashes, check all running workflows and attach listeners
+  // In case of crashes, check all running apps and attach listeners
   // to the CCC jobs
-  addMonitorsToRunningWorkflow() {
+  addMonitorsToRunningApp() {
     redis.hkeys(dbConstants.REDIS_RUNS).then((keys) => {
       // log.warn({ message: 'On startup, resuming monitoring runs', runIds: keys });
       keys.forEach((runId) => {
@@ -228,6 +229,6 @@ const runUtils = {
   }
 };
 
-runUtils.addMonitorsToRunningWorkflow();
+runUtils.addMonitorsToRunningApp();
 
 module.exports = runUtils;
