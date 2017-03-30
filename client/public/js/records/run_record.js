@@ -1,4 +1,4 @@
-import { Record, List as IList } from 'immutable';
+import { Record, Map as IMap } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 
 const RunRecord = new Record({
@@ -8,12 +8,12 @@ const RunRecord = new Record({
   fetchingData: false, // for loading anything directly related on the run
   fetchingDataError: null,
   id: null,
-  inputs: new IList(),
   inputFileError: null,
   inputString: '',
   inputStringError: null,
-  outputs: new IList(),
+  ioResults: new IMap(),
   status: statusConstants.IDLE,
+  widgetRuns: new IMap(),
 });
 
 export default RunRecord;

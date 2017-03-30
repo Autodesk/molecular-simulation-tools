@@ -2,9 +2,9 @@ import { List as IList, Map as IMap, Record } from 'immutable';
 
 const WidgetRecord = new Record({
   id: '',
-  inputs: new IList(),
-  url: '',
   meta: new IMap(),
+  inputs: new IList(),
+  outputs: new IList(),
 });
 
 export default WidgetRecord;

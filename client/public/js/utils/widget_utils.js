@@ -1,5 +1,4 @@
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
-import ioUtils from './io_utils';
+import { statusConstants } from 'molecular-design-applications-shared';
 import widgetStatusConstants from '../constants/widget_status_constants';
 
 const widgetUtils = {
@@ -32,14 +31,23 @@ const widgetUtils = {
    * @return {Boolean}
    */
   isCompleted(widget, run) {
+    // TODO don't need full run, just ioResults
+    return widget.inputs.size && widget.inputs.every((input) =>
+      run.ioResults.get(input.id)
+    );
+
+    /*
     switch (widget.id) {
-      case widgetsConstants.LOAD:
+      case widgetsConstants.LOAD: {
         return !!(!run.inputFileError &&
           !run.inputStringError &&
-          ioUtils.getPdb(run.inputs));
+          ioUtils.getPdb(widgetRun.inputs));
+      }
 
-      case widgetsConstants.SELECTION:
-        return !!ioUtils.getSelectedLigand(run.inputs);
+      case widgetsConstants.SELECTION: {
+        const selectionWidgetRun = run.widgetRuns.get(widget.id);
+        return !!ioUtils.getSelectedLigand(selectionWidgetRun.inputs);
+      }
 
       case widgetsConstants.RUN:
         return run.status === statusConstants.COMPLETED;
@@ -50,6 +58,7 @@ const widgetUtils = {
       default:
         throw new Error(`Invalid widgetId: ${widget.id}`);
     }
+    */
   },
 
   /**

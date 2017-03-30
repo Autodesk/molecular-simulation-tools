@@ -21,12 +21,20 @@ function Status(props) {
   if (!props.hideContent) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
-      switch (props.app.widgets.get(props.selection.widgetIndex).id) {
-        case widgetsConstants.LOAD:
+      const widget = props.app.widgets.get(props.selection.widgetIndex);
+      const inputResults = widget.inputs.map(input =>
+        props.app.run.ioResults.get(input.id)
+      );
+      const outputResults = widget.outputs.map(output =>
+        props.app.run.ioResults.get(output.id)
+      );
+
+      switch (widget.id) {
+        case widgetsConstants.LOAD: {
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
-              inputData={ioUtils.getPdb(props.app.run.inputs)}
+              inputData={ioUtils.getPdb(inputResults)}
               inputFileError={props.app.run.inputFileError}
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}
@@ -36,6 +44,7 @@ function Status(props) {
             />
           );
           break;
+        }
 
         case widgetsConstants.RUN: {
           const running = props.app.run.status === statusConstants.RUNNING;
@@ -55,11 +64,11 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
+          const selectedLigand = ioUtils.getSelectedLigand(inputResults);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
+              ligandNames={ioUtils.getLigandNames(inputResults)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
@@ -68,25 +77,25 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const outputResultsIndex = ioUtils.getIndexByExtension(
-            props.app.run.outputs, 'results.json',
+          const resultsJsonIndex = ioUtils.getIndexByExtension(
+            outputResults, 'results.json',
           );
           let resultValues;
 
-          if (outputResultsIndex !== -1) {
-            const outputResults = props.app.run.outputs.get(outputResultsIndex)
+          if (resultsJsonIndex !== -1) {
+            const resultsJsonFetchedValue = outputResults.get(resultsJsonIndex)
               .fetchedValue;
 
-            if (outputResults.output_values) {
-              resultValues = new IList(outputResults.output_values);
+            if (resultsJsonFetchedValue.output_values) {
+              resultValues = new IList(resultsJsonFetchedValue.output_values);
             }
           }
 
           const pdbIndex = ioUtils.getIndexByExtension(
-            props.app.run.outputs, '.pdb',
+            outputResults, '.pdb',
           );
-          const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
-          const numberOfPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs).size;
+          const outputPdbUrl = outputResults.get(pdbIndex).value;
+          const numberOfPdbs = ioUtils.getAnimationPdbs(outputResults).size;
 
           selection = (
             <StatusResults

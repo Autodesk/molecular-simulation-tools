@@ -1,8 +1,9 @@
-import { List as IList } from 'immutable';
+import { List as IList, Map as IMap } from 'immutable';
 import axios from 'axios';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
+import WidgetRunRecord from '../records/widget_run_record';
 import AppRecord from '../records/app_record';
 import ioUtils from './io_utils';
 
@@ -30,7 +31,17 @@ const apiUtils = {
   getApp(appId) {
     return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
       new AppRecord(Object.assign({}, res.data, {
-        widgets: new IList(res.data.widgets.map(widgetData => new WidgetRecord(widgetData))),
+        widgets: new IList(
+          res.data.widgets.map(widgetData => new WidgetRecord(widgetData)),
+        ),
+        run: new RunRecord({
+          widgetRuns: res.data.widgets.reduce((reduction, widget) =>
+            reduction.set(widget.id, new WidgetRunRecord({
+              widgetId: widget.id,
+            })),
+            new IMap(),
+          ),
+        }),
       })),
     );
   },
@@ -119,7 +130,10 @@ const apiUtils = {
         }
 
         return new IList(res.data.outputs.map(output =>
-          new IoRecord(output),
+          // Remap name to ioId for clarity
+          new IoRecord(Object.assign({}, output, {
+            ioId: output.name,
+          })),
         ));
       });
   },

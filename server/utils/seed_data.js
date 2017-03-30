@@ -15,21 +15,44 @@ const apps = [
     widgets: [
       {
         id: widgetsConstants.LOAD,
+        type: widgetsConstants.LOAD,
         meta: {
           title: 'Load Molecule',
         },
+        outputs: [
+          { id: 'prep.pdb' },
+          { id: 'prep.json' },
+          { id: 'workflow_state.dill' },
+        ],
       },
       {
         id: widgetsConstants.RUN,
+        type: widgetsConstants.RUN,
         meta: {
           title: 'Run',
         },
+        inputs: [
+          { id: 'prep.pdb' },
+          { id: 'prep.json' },
+          { id: 'workflow_state.dill' },
+        ],
+        outputs: [
+          {
+            id: 'PROCESSED_PDB_DATA',
+          },
+        ],
       },
       {
         id: widgetsConstants.RESULTS,
+        type: widgetsConstants.RESULTS,
         meta: {
           title: 'Results',
         },
+        inputs: [
+          {
+            id: 'PROCESSED_PDB_DATA',
+          },
+        ],
       },
     ],
     viewCount: 0,
@@ -47,27 +70,64 @@ const apps = [
     widgets: [
       {
         id: widgetsConstants.LOAD,
+        type: widgetsConstants.LOAD,
         meta: {
           title: 'Load Molecule',
         },
+        outputs: [
+          { id: 'prep.pdb' },
+          { id: 'prep.json' },
+          { id: 'workflow_state.dill' },
+        ],
       },
       {
         id: widgetsConstants.SELECTION,
+        type: widgetsConstants.SELECTION,
         meta: {
           title: 'Ligand Selection',
         },
+        inputs: [
+          { id: 'prep.pdb' },
+          { id: 'prep.json' },
+          { id: 'workflow_state.dill' },
+        ],
+        outputs: [
+          {
+            id: 'LIGAND_SELECTION',
+          },
+        ],
       },
       {
         id: widgetsConstants.RUN,
+        type: widgetsConstants.RUN,
         meta: {
           title: 'Run',
         },
+        inputs: [
+          {
+            id: 'PDB_DATA',
+          },
+          {
+            id: 'LIGAND_SELECTION',
+          },
+        ],
+        outputs: [
+          {
+            id: 'PROCESSED_PDB_DATA',
+          },
+        ],
       },
       {
         id: widgetsConstants.RESULTS,
+        type: widgetsConstants.RESULTS,
         meta: {
           title: 'Results',
         },
+        inputs: [
+          {
+            id: 'PROCESSED_PDB_DATA',
+          },
+        ],
       },
     ],
     viewCount: 0,

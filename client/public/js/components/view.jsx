@@ -7,43 +7,43 @@ import '../../css/view.scss';
 
 class View extends React.Component {
   /**
-   * Find the appropriate PDB to display given inputs and outputs
-   * @param {IList of IoRecords} inputs
-   * @param {IList of IoRecords} outputs
+   * Find the appropriate PDB to display given inputResults and outputResults
+   * @param {IList of IoRecords} inputResults
+   * @param {IList of IoRecords} outputResults
    * @returns {IList of Strings}
    */
-  static getPdbs(inputs, outputs) {
-    const outputPdbs = ioUtils.getAnimationPdbs(outputs);
+  static getPdbs(inputResults, outputResults) {
+    const outputPdbs = ioUtils.getAnimationPdbs(outputResults);
 
     if (outputPdbs.size) {
       return outputPdbs;
     }
 
-    const inputPdb = ioUtils.getPdb(inputs);
+    const inputPdb = ioUtils.getPdb(inputResults);
 
     return inputPdb ? new IList([inputPdb]) : new IList();
   }
 
   /**
-   * Return the list of selection strings in the given inputs
-   * @param {IList of IoRecords} inputs
+   * Return the list of selection strings in the given inputResults
+   * @param {IList of IoRecords} inputResults
    * @returns {IList of Strings}
    */
-  static getSelectionStrings(inputs) {
-    const selectedLigand = ioUtils.getSelectedLigand(inputs);
+  static getSelectionStrings(inputResults) {
+    const selectedLigand = ioUtils.getSelectedLigand(inputResults);
     if (!selectedLigand) {
       return new IList();
     }
 
     return ioUtils.getLigandSelectionStrings(
-      inputs, selectedLigand,
+      inputResults, selectedLigand,
     );
   }
 
   componentDidMount() {
-    const selectionStrings = View.getSelectionStrings(this.props.inputs);
+    const selectionStrings = View.getSelectionStrings(this.props.inputResults);
     const pdbs = View.getPdbs(
-      this.props.inputs, this.props.outputs,
+      this.props.inputResults, this.props.outputResults,
     );
 
     this.renderMoleculeViewerPdbs(
@@ -55,15 +55,15 @@ class View extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const selectionStrings = View.getSelectionStrings(nextProps.inputs);
-    const oldSelectionStrings = View.getSelectionStrings(this.props.inputs);
+    const selectionStrings = View.getSelectionStrings(nextProps.inputResults);
+    const oldSelectionStrings = View.getSelectionStrings(this.props.inputResults);
     const pdbs = View.getPdbs(
-      nextProps.inputs, nextProps.outputs,
+      nextProps.inputResults, nextProps.outputResults,
     );
     let oldPdbs = new IList();
-    if (this.props.inputs && this.props.outputs) {
+    if (this.props.inputResults && this.props.outputResults) {
       oldPdbs = View.getPdbs(
-        this.props.inputs, this.props.outputs,
+        this.props.inputResults, this.props.outputResults,
       );
     }
 
@@ -154,10 +154,10 @@ View.defaultProps = {
 View.propTypes = {
   colorized: React.PropTypes.bool,
   error: React.PropTypes.string,
-  inputs: React.PropTypes.instanceOf(IList).isRequired,
+  inputResults: React.PropTypes.instanceOf(IList).isRequired,
   loading: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,
-  outputs: React.PropTypes.instanceOf(IList).isRequired,
+  outputResults: React.PropTypes.instanceOf(IList).isRequired,
   selectionStrings: React.PropTypes.instanceOf(IList),
 };
 

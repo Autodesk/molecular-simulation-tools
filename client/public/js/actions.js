@@ -203,26 +203,26 @@ export function submitInputString(inputString, appId) {
     try {
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
-      let inputs = await appUtils.processInput(
+      let inputResults = await appUtils.processInput(
         appId, newInput, extension,
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = ioUtils.getLigandNames(inputResults);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        inputResults = ioUtils.selectLigand(inputResults, ligands.get(0));
       }
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
-        inputs,
+        inputResults,
       });
     } catch (err) {
       console.error(err);
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
-        inputs: err ? err.inputs : null,
+        inputResults: err ? err.inputResults : null,
       });
     }
   };

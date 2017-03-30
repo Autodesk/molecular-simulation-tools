@@ -48,24 +48,24 @@ const appUtils = {
    * @param {String} [extension]
    * @returns {Array}
    */
-  processInput: async function processInput(appId, input, extension) {
-    let inputs = await apiUtils.processInput(appId, input, extension);
+  processInput: async function processInput(appId, inputString, extension) {
+    let inputResults = await apiUtils.processInput(appId, inputString, extension);
 
     // Find the json results
-    inputs = await appUtils.fetchIoResults(inputs);
+    inputResults = await appUtils.fetchIoResults(inputResults);
 
     // Get the processed input pdbs
-    inputs = await appUtils.fetchIoPdbs(inputs);
+    inputResults = await appUtils.fetchIoPdbs(inputResults);
 
     // Make sure the json results are valid and also indicate a success.
-    const inputErrorMessage = ioUtils.getInputError(inputs);
+    const inputErrorMessage = ioUtils.getInputError(inputResults);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
-      error.inputs = inputs;
+      error.inputResults = inputResults;
       throw error;
     }
 
-    return inputs;
+    return inputResults;
   },
 
   /**

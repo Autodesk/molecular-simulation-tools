@@ -1,7 +1,7 @@
 import { List as IList } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
-import RunRecord from '../records/run_record';
+import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
+import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
 
 const initialState = new AppRecord();
@@ -99,20 +99,36 @@ function app(state = initialState, action) {
         inputs: action.inputs || new IList(),
       }));
 
-    case actionConstants.SUBMIT_INPUT_STRING:
+    case actionConstants.SUBMIT_INPUT_STRING: {
+      // Clear ioResults for this widget
+      const widgetId = widgetsConstants.LOAD;
+      const widget = state.widgets.find(
+        widgetI => widgetI.id === widgetId
+      );
+      let newIoResults = state.run.ioResults;
+      widget.outputs.forEach((output) => {
+        newIoResults = newIoResults.delete(output.id);
+      });
+
       return state.set('run', state.run.merge({
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
         inputString: action.inputString,
-        inputs: [],
+        ioResults: newIoResults,
       }));
+    }
 
     case actionConstants.PROCESSED_INPUT_STRING: {
+      let newIoResults = state.run.ioResults;
+      action.inputResults.forEach((inputResult) => {
+        newIoResults = newIoResults.set(inputResult.ioId, inputResult);
+      });
+
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        inputs: action.inputs || new IList(),
+        ioResults: newIoResults,
       }));
     }
 

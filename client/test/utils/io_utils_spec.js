@@ -306,7 +306,7 @@ describe('ioUtils', () => {
         expect(updatedInputs.size).to.equal(2);
 
         const selectionInput = updatedInputs.find(input =>
-          input.name === 'selection.json',
+          input.ioId === 'selection.json',
         );
         expect(selectionInput.fetchedValue.ligandname).to.equal(ligand);
       });
@@ -328,7 +328,7 @@ describe('ioUtils', () => {
         expect(updatedInputs.size).to.equal(2);
 
         const selectionInput = updatedInputs.find(input =>
-          input.name === 'selection.json',
+          input.ioId === 'selection.json',
         );
         expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);
       });

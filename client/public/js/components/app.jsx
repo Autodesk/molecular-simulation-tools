@@ -1,9 +1,11 @@
+import { List as IList } from 'immutable';
 import React from 'react';
+import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
-import AppRecord from '../records/app_record';
 import WidgetList from '../components/widget_list';
+import ioUtils from '../utils/io_utils';
 
 require('../../css/app.scss');
 
@@ -21,6 +23,18 @@ function App(props) {
     props.app.run.fetchingDataError);
   const hideStatus = props.app.fetching ||
     props.app.run.fetchingDataError;
+
+  // TODO should get View pdbs based on active widget
+  const inputs = props.app.widgets.reduce(
+    (reduction, widget) => reduction.concat(widget.inputs),
+    new IList(),
+  );
+  const outputs = props.app.widgets.reduce(
+    (reduction, widget) => reduction.concat(widget.outputs),
+    new IList(),
+  );
+  const inputResults = ioUtils.getResults(inputs, props.app.run.ioResults);
+  const outputResults = ioUtils.getResults(outputs, props.app.run.ioResults);
 
   return (
     <div className="app">
@@ -53,9 +67,9 @@ function App(props) {
         colorized={props.colorized}
         error={viewError}
         loading={props.app.fetching || props.app.run.fetchingData}
-        inputs={props.app.run.inputs}
+        inputResults={inputResults}
         morph={props.morph}
-        outputs={props.app.run.outputs}
+        outputResults={outputResults}
       />
     </div>
   );

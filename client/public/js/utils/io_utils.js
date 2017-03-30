@@ -56,7 +56,7 @@ const ioUtils = {
     // Find outputs corresponding to each frame in framesOutput
     let pdbOutputs = new IList();
     framesOutput.fetchedValue.forEach((filename) => {
-      const matchedOutput = outputs.find(output => output.name === filename);
+      const matchedOutput = outputs.find(output => output.ioId === filename);
       if (!matchedOutput) {
         throw new Error('Invalid outputs data; minsteps_frames mismatch');
       }
@@ -114,7 +114,7 @@ const ioUtils = {
    * @returns {String}
    */
   getSelectedLigand(ios) {
-    const selectionInput = ios.find(io => io.name === 'selection.json');
+    const selectionInput = ios.find(io => io.ioId === 'selection.json');
 
     if (!selectionInput) {
       return '';
@@ -194,7 +194,7 @@ const ioUtils = {
     };
 
     return new IoRecord({
-      name: 'selection.json',
+      ioId: 'selection.json',
       type: 'inline',
       fetchedValue,
       value: JSON.stringify(fetchedValue),
@@ -216,7 +216,7 @@ const ioUtils = {
     }
 
     const selectionInputIndex = inputs.findIndex(input =>
-      input.name === 'selection.json',
+      input.ioId === 'selection.json',
     );
 
     if (selectionInputIndex === -1) {
@@ -231,6 +231,8 @@ const ioUtils = {
     };
     const updatedSelectionInput =
       inputs.get(selectionInputIndex).merge({
+        // TODO don't hardcode this ioId
+        ioId: 'LIGAND_SELECTION',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });
@@ -263,6 +265,25 @@ const ioUtils = {
     }
 
     return '';
+  },
+
+  getResults(ios, ioResults) {
+    let foundIoResults = new IList();
+
+    ios.forEach((io) => {
+      const ioResult = ioResults.get(io.id);
+      if (ioResult) {
+        foundIoResults = ioResults.push(ioResult);
+      }
+    });
+
+    return foundIoResults;
+  },
+
+  clearOutputResults(outputs, ioResults) {
+    outputs.forEach((output) => {
+      ioResults.delete(output.id);
+    });
   },
 };
 
