@@ -158,19 +158,19 @@ export function selectInputFile(file, appId) {
 
     try {
       const inputString = await appUtils.readFile(file);
-      let inputs = await appUtils.processInput(
+      let inputResults = await appUtils.processInput(
         appId, inputString, extension,
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = ioUtils.getLigandNames(inputResults);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        inputResults = ioUtils.selectLigand(inputResults, ligands.get(0));
       }
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        inputs,
+        inputResults,
       });
     } catch (err) {
       console.error(err);
