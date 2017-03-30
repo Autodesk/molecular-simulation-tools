@@ -24,7 +24,7 @@ function WidgetList(props) {
                 key={widget.id}
                 number={index + 1}
                 onClick={props.clickWidget}
-                primaryText={widget.meta.title}
+                primaryText={widget.title}
                 selected={props.selection.widgetIndex === index}
                 status={widgetStatuses.get(index)}
                 index={index}

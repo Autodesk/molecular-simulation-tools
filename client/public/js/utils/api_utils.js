@@ -1,10 +1,11 @@
 import { List as IList, Map as IMap } from 'immutable';
 import axios from 'axios';
+import AppRecord from '../records/app_record';
 import IoRecord from '../records/io_record';
+import IoResultRecord from '../records/io_result_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
 import WidgetRunRecord from '../records/widget_run_record';
-import AppRecord from '../records/app_record';
 import ioUtils from './io_utils';
 
 const API_URL = process.env.API_URL || '';
@@ -29,11 +30,23 @@ const apiUtils = {
   },
 
   getApp(appId) {
-    return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
-      new AppRecord(Object.assign({}, res.data, {
-        widgets: new IList(
-          res.data.widgets.map(widgetData => new WidgetRecord(widgetData)),
-        ),
+    return axios.get(`${API_URL}/v1/app/${appId}`).then((res) => {
+      const widgets = new IList(
+        res.data.widgets.map((widgetData) => {
+          const inputs = widgetData.inputs ? new IList(widgetData.inputs.map(
+            input => new IoRecord(input),
+          )) : new IList();
+          const outputs = widgetData.outputs ? new IList(widgetData.outputs.map(
+            output => new IoRecord(output),
+          )) : new IList();
+
+          return new WidgetRecord(
+            Object.assign({}, widgetData, { inputs, outputs })
+          );
+        }),
+      );
+      return new AppRecord(Object.assign({}, res.data, {
+        widgets,
         run: new RunRecord({
           widgetRuns: res.data.widgets.reduce((reduction, widget) =>
             reduction.set(widget.id, new WidgetRunRecord({
@@ -42,8 +55,8 @@ const apiUtils = {
             new IMap(),
           ),
         }),
-      })),
-    );
+      }));
+    });
   },
 
   getApps() {
@@ -56,20 +69,24 @@ const apiUtils = {
     return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
       res.data,
     ).then((runData) => {
-      const inputs = runData.inputs ?
-        new IList(runData.inputs.map(input => new IoRecord(input))) :
-        new IList();
-      const outputs = runData.outputs ?
-        new IList(runData.outputs.map(output => new IoRecord(output))) :
-        new IList();
+      const widgets = new IList(
+        runData.widgets.map((widgetData) => {
+          const inputs = widgetData.inputs ? new IList(widgetData.inputs.map(
+            input => new IoRecord(input),
+          )) : new IList();
+          const outputs = widgetData.outputs ? new IList(widgetData.outputs.map(
+            output => new IoRecord(output),
+          )) : new IList();
+
+          return new WidgetRecord(
+            Object.assign({}, widgetData, { inputs, outputs })
+          );
+        }),
+      );
+
       return new AppRecord(Object.assign({}, runData, runData.app, {
-        run: new RunRecord(Object.assign({}, runData, {
-          inputs,
-          outputs,
-        })),
-        widgets: new IList(runData.app.widgets.map(widgetData =>
-          new WidgetRecord(widgetData)),
-        ),
+        widgets,
+        run: new RunRecord(),
       }));
     });
   },
@@ -131,7 +148,7 @@ const apiUtils = {
 
         return new IList(res.data.outputs.map(output =>
           // Remap name to ioId for clarity
-          new IoRecord(Object.assign({}, output, {
+          new IoResultRecord(Object.assign({}, output, {
             ioId: output.name,
           })),
         ));

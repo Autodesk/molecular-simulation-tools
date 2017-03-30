@@ -32,8 +32,8 @@ const widgetUtils = {
    */
   isCompleted(widget, run) {
     // TODO don't need full run, just ioResults
-    return widget.inputs.size && widget.inputs.every((input) =>
-      run.ioResults.get(input.id)
+    return widget.outputs.size && widget.outputs.every((output) =>
+      run.ioResults.get(output.id)
     );
 
     /*

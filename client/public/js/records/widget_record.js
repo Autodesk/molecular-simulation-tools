@@ -1,8 +1,8 @@
-import { List as IList, Map as IMap, Record } from 'immutable';
+import { List as IList, Record } from 'immutable';
 
 const WidgetRecord = new Record({
   id: '',
-  meta: new IMap(),
+  title: '',
   inputs: new IList(),
   outputs: new IList(),
 });

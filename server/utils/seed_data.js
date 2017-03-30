@@ -16,9 +16,7 @@ const apps = [
       {
         id: widgetsConstants.LOAD,
         type: widgetsConstants.LOAD,
-        meta: {
-          title: 'Load Molecule',
-        },
+        title: 'Load Molecule',
         outputs: [
           { id: 'prep.pdb' },
           { id: 'prep.json' },
@@ -28,9 +26,7 @@ const apps = [
       {
         id: widgetsConstants.RUN,
         type: widgetsConstants.RUN,
-        meta: {
-          title: 'Run',
-        },
+        title: 'Run',
         inputs: [
           { id: 'prep.pdb' },
           { id: 'prep.json' },
@@ -45,9 +41,7 @@ const apps = [
       {
         id: widgetsConstants.RESULTS,
         type: widgetsConstants.RESULTS,
-        meta: {
-          title: 'Results',
-        },
+        title: 'Results',
         inputs: [
           {
             id: 'PROCESSED_PDB_DATA',
@@ -71,9 +65,7 @@ const apps = [
       {
         id: widgetsConstants.LOAD,
         type: widgetsConstants.LOAD,
-        meta: {
-          title: 'Load Molecule',
-        },
+        title: 'Load Molecule',
         outputs: [
           { id: 'prep.pdb' },
           { id: 'prep.json' },
@@ -83,9 +75,7 @@ const apps = [
       {
         id: widgetsConstants.SELECTION,
         type: widgetsConstants.SELECTION,
-        meta: {
-          title: 'Ligand Selection',
-        },
+        title: 'Ligand Selection',
         inputs: [
           { id: 'prep.pdb' },
           { id: 'prep.json' },
@@ -100,9 +90,7 @@ const apps = [
       {
         id: widgetsConstants.RUN,
         type: widgetsConstants.RUN,
-        meta: {
-          title: 'Run',
-        },
+        title: 'Run',
         inputs: [
           {
             id: 'PDB_DATA',
@@ -120,9 +108,7 @@ const apps = [
       {
         id: widgetsConstants.RESULTS,
         type: widgetsConstants.RESULTS,
-        meta: {
-          title: 'Results',
-        },
+        title: 'Results',
         inputs: [
           {
             id: 'PROCESSED_PDB_DATA',
