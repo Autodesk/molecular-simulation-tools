@@ -38,9 +38,12 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(appId, email, inputs, inputString) {
-      return () => {
-        dispatch(clickRun(appId, email, inputs, inputString));
+    clickRun(appId, email, ioResults, inputString) {
+      return (inputs) => {
+        const inputResults = inputs.map(input =>
+          ioResults.get(input.id),
+        );
+        dispatch(clickRun(appId, email, inputResults, inputString));
       };
     },
     clickWidget(widgetIndex) {
@@ -87,7 +90,7 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.app.id,
       stateProps.app.run.email,
-      stateProps.app.run.inputs,
+      stateProps.app.run.ioResults,
       stateProps.app.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),

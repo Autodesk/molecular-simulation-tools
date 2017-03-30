@@ -20,11 +20,11 @@ const apiUtils = {
    * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(appId, email, inputs, selectedLigand, inputString) {
+  run(appId, email, inputResults, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
       appId,
       email,
-      inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
+      inputs: ioUtils.formatInputResultsForServer(inputResults),
       inputString,
     }).then(res => res.data.runId);
   },

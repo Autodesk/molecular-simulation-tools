@@ -153,25 +153,26 @@ const ioUtils = {
   },
 
   /**
-   * Returns new inputs with all client-only fields removed, and selection.json
+   * Returns new inputResults with all client-only fields removed
    * added, with everything converted to an array
-   * @param inputs {IList}
+   * @param inputResults {IList}
    * @returns {Array}
    */
-  formatInputsForServer(inputs, selectedLigand) {
-    const selectedLigandInput = ioUtils.getIoResultWithLigand(inputs, selectedLigand);
-
-    let serverInputs = inputs.map(input =>
-      input.set('fetchedValue', null),
+  formatInputResultsForServer(inputResults) {
+    // Unset fetchedValue
+    let serverInputResults = inputResults.map(inputResult =>
+      inputResult.set('fetchedValue', null),
     );
 
-    if (selectedLigandInput) {
-      serverInputs = serverInputs.push(
-        ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
-      );
-    }
+    // Move ioId to name
+    serverInputResults = serverInputResults.toJS().map(inputResultData =>
+      Object.assign({}, inputResultData, {
+        ioId: null,
+        name: inputResultData.ioId,
+      }),
+    );
 
-    return serverInputs;
+    return serverInputResults;
   },
 
   /**

@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './button';
 import Input from './input';
+import WidgetRecord from '../records/widget_record';
 
 require('../../css/status_run.scss');
 
@@ -9,6 +10,7 @@ class StatusEmail extends React.Component {
     super(props);
 
     this.onChange = this.onChange.bind(this);
+    this.onClickRun = this.onClickRun.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
@@ -32,6 +34,10 @@ class StatusEmail extends React.Component {
     this.setState({
       email: e.target.value,
     });
+  }
+
+  onClickRun() {
+    this.props.clickRun(this.props.widget.inputs);
   }
 
   onSubmit(e) {
@@ -67,7 +73,7 @@ class StatusEmail extends React.Component {
         </form>
         <Button
           type="form"
-          onClick={this.props.clickRun}
+          onClick={this.onClickRun}
           disabled={!this.props.email}
         >
           Run Workflow
@@ -83,6 +89,7 @@ StatusEmail.propTypes = {
   emailError: React.PropTypes.string.isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
+  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
 
 export default StatusEmail;

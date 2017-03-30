@@ -110,18 +110,16 @@ export function clickWidget(widgetIndex) {
  * When the user clicks on the run button
  * @param {String} appId
  * @param {String} email
- * @param {IList} inputs
+ * @param {IList of IoResultRecords} inputResults
  * @param {String} [inputString]
  */
-export function clickRun(appId, email, inputs, inputString) {
+export function clickRun(appId, email, inputResults, inputString) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    const selectedLigand = ioUtils.getSelectedLigand(inputs);
-
-    apiUtils.run(appId, email, inputs, selectedLigand, inputString).then((runId) => {
+    apiUtils.run(appId, email, inputResults, inputString).then((runId) => {
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
         runId,
