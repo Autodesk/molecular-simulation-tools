@@ -1,31 +1,7 @@
-import isEmail from 'validator/lib/isEmail';
-import { statusConstants } from 'molecular-design-applications-shared';
 import apiUtils from './api_utils';
 import ioUtils from './io_utils';
 
 const appUtils = {
-  /**
-   * Return a boolean indicating if the given run is runnable
-   * @param {RunRecord} run
-   * @returns {Boolean}
-  */
-  isRunnable(run) {
-    if (!ioUtils.getPdb(run.inputs)) {
-      return false;
-    }
-    if (!isEmail(run.email)) {
-      return false;
-    }
-    if (run.status === statusConstants.RUNNING) {
-      return false;
-    }
-    if (run.fetching) {
-      return false;
-    }
-
-    return true;
-  },
-
   /**
    * Read the given file and return a promise that resolves with its contents
    * @param file {File}

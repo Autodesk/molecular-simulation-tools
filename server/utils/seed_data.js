@@ -82,9 +82,7 @@ const apps = [
           { id: 'workflow_state.dill' },
         ],
         outputs: [
-          {
-            id: 'LIGAND_SELECTION',
-          },
+          { id: 'selection.json' },
         ],
       },
       {
@@ -92,12 +90,10 @@ const apps = [
         type: widgetsConstants.RUN,
         title: 'Run',
         inputs: [
-          {
-            id: 'PDB_DATA',
-          },
-          {
-            id: 'LIGAND_SELECTION',
-          },
+          { id: 'prep.pdb' },
+          { id: 'prep.json' },
+          { id: 'workflow_state.dill' },
+          { id: 'selection.json' },
         ],
         outputs: [
           {

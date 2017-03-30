@@ -81,7 +81,7 @@ export function initializeRun(appId, runId) {
 
       // Find the widget that should be active for this run
       const activeWidgetIndex = widgetUtils.getActiveIndex(
-        app.widgets, updatedRun,
+        app.widgets, updatedRun.ioResults,
       );
 
       dispatch({

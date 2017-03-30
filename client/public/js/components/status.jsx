@@ -8,7 +8,6 @@ import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import appUtils from '../utils/app_utils';
 import ioUtils from '../utils/io_utils';
 import selectionConstants from '../constants/selection_constants';
 
@@ -47,17 +46,14 @@ function Status(props) {
         }
 
         case widgetsConstants.RUN: {
-          const running = props.app.run.status === statusConstants.RUNNING;
-          const runDisabled = running || runCompleted ||
-            !appUtils.isRunnable(props.app.run);
           selection = (
             <StatusRun
               clickRun={props.clickRun}
               email={props.app.run.email}
               emailError={props.app.run.emailError}
               runCompleted={runCompleted}
-              runDisabled={runDisabled}
               submitEmail={props.submitEmail}
+              widget={widget}
             />
           );
           break;

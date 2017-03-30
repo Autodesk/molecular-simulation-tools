@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
-import IoRecord from '../../public/js/records/io_record';
+import IoResultRecord from '../../public/js/records/io_result_record';
 import ioUtils from '../../public/js/utils/io_utils';
 
 describe('ioUtils', () => {
@@ -8,23 +8,23 @@ describe('ioUtils', () => {
   });
 
   describe('getAnimationPdbs', () => {
-    let outputs;
+    let outputResults;
 
     beforeEach(() => {
-      outputs = new IList([
-        new IoRecord({
+      outputResults = new IList([
+        new IoResultRecord({
           fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
           name: 'minstep_frames.json',
           type: 'url',
           value: 'http://example.com/minstep_frames.json',
         }),
-        new IoRecord({
+        new IoResultRecord({
           fetchedValue: 'imapdbstring',
           name: 'minstep.0.pdb',
           type: 'url',
           value: 'http://example.com/minstep.0.pdb',
         }),
-        new IoRecord({
+        new IoResultRecord({
           fetchedValue: 'imapdbstringtoo',
           name: 'minstep.1.pdb',
           type: 'url',
@@ -35,19 +35,19 @@ describe('ioUtils', () => {
 
     describe('when minstep_frames doesnt exist', () => {
       beforeEach(() => {
-        outputs = outputs.delete(0);
+        outputResults = outputResults.delete(0);
       });
 
       it('returns the first pdb', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = ioUtils.getAnimationPdbs(outputResults);
         expect(pdbs.size).to.equal(1);
-        expect(pdbs.get(0)).to.equal(outputs.get(0).fetchedValue);
+        expect(pdbs.get(0)).to.equal(outputResults.get(0).fetchedValue);
       });
 
       describe('when no pdbs exist', () => {
         beforeEach(() => {
-          outputs = new IList([
-            new IoRecord({
+          outputResults = new IList([
+            new IoResultRecord({
               fetchedValue: 'whatami',
               name: 'somethingweird.exe',
               type: 'crazy',
@@ -57,14 +57,14 @@ describe('ioUtils', () => {
         });
 
         it('throws an error', () => {
-          expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+          expect(ioUtils.getAnimationPdbs.bind(null, outputResults)).to.throw();
         });
       });
 
       describe('when a pdb file exists but not its fetchedValue', () => {
         beforeEach(() => {
-          outputs = new IList([
-            new IoRecord({
+          outputResults = new IList([
+            new IoResultRecord({
               fetchedValue: '',
               type: 'url',
               value: 'http://example.com/minstep.0.pdb',
@@ -73,69 +73,69 @@ describe('ioUtils', () => {
         });
 
         it('returns an empty list', () => {
-          const pdbs = ioUtils.getAnimationPdbs(outputs);
+          const pdbs = ioUtils.getAnimationPdbs(outputResults);
           expect(pdbs.size).to.equal(0);
         });
       });
     });
 
-    describe('when given an empty list of outputs', () => {
+    describe('when given an empty list of outputResults', () => {
       beforeEach(() => {
-        outputs = new IList();
+        outputResults = new IList();
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = ioUtils.getAnimationPdbs(outputResults);
         expect(pdbs.size).to.equal(0);
       });
     });
 
     describe('when minstep_frames fetchedValue doesnt exist', () => {
       beforeEach(() => {
-        outputs = outputs.set(0, outputs.get(0).set('fetchedValue', null));
+        outputResults = outputResults.set(0, outputResults.get(0).set('fetchedValue', null));
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = ioUtils.getAnimationPdbs(outputResults);
         expect(pdbs.size).to.equal(0);
       });
     });
 
     describe('when mismatched data between pdbs and minstep_frames', () => {
       beforeEach(() => {
-        outputs = outputs.delete(1);
+        outputResults = outputResults.delete(1);
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+        expect(ioUtils.getAnimationPdbs.bind(null, outputResults)).to.throw();
       });
     });
 
     describe('when data for each frame', () => {
       it('returns pdb data for each frame', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = ioUtils.getAnimationPdbs(outputResults);
         expect(pdbs.size).to.equal(2);
-        expect(pdbs.get(0)).to.equal(outputs.get(1).fetchedValue);
-        expect(pdbs.get(1)).to.equal(outputs.get(2).fetchedValue);
+        expect(pdbs.get(0)).to.equal(outputResults.get(1).fetchedValue);
+        expect(pdbs.get(1)).to.equal(outputResults.get(2).fetchedValue);
       });
     });
   });
 
   describe('getInputError', () => {
-    let inputs;
+    let inputResults;
     beforeEach(() => {
-      inputs = new IList();
+      inputResults = new IList();
     });
 
     describe('when no prep.json', () => {
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
+        expect(ioUtils.getInputError.bind(null, inputResults)).to.throw();
       });
     });
 
     describe('when prep.json with no fetchedValue', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
+        inputResults = inputResults.push(new IoResultRecord({
           name: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
@@ -143,13 +143,13 @@ describe('ioUtils', () => {
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
+        expect(ioUtils.getInputError.bind(null, inputResults)).to.throw();
       });
     });
 
     describe('when prep.json with success false', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
+        inputResults = inputResults.push(new IoResultRecord({
           name: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
@@ -160,13 +160,13 @@ describe('ioUtils', () => {
       });
 
       it('returns error string', () => {
-        expect(!!ioUtils.getInputError(inputs)).to.equal(true);
+        expect(!!ioUtils.getInputError(inputResults)).to.equal(true);
       });
     });
 
     describe('when prep.json with success true', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
+        inputResults = inputResults.push(new IoResultRecord({
           name: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
@@ -177,7 +177,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getInputError(inputs)).to.equal('');
+        expect(ioUtils.getInputError(inputResults)).to.equal('');
       });
     });
   });
@@ -196,7 +196,7 @@ describe('ioUtils', () => {
 
     describe('when selection.json has no value property', () => {
       beforeEach(() => {
-        ios = ios.push(new IoRecord({ name: 'selection.json' }));
+        ios = ios.push(new IoResultRecord({ name: 'selection.json' }));
       });
 
       it('returns empty string', () => {
@@ -206,7 +206,7 @@ describe('ioUtils', () => {
 
     describe('when selection.json value contains invalid json', () => {
       beforeEach(() => {
-        ios = ios.push(new IoRecord({ name: 'selection.json', value: 'asdf' }));
+        ios = ios.push(new IoResultRecord({ name: 'selection.json', value: 'asdf' }));
       });
 
       it('returns empty string', () => {
@@ -217,7 +217,7 @@ describe('ioUtils', () => {
     describe('when selection.json value contains a ligandname', () => {
       const ligandName = 'MPD513';
       beforeEach(() => {
-        ios = ios.push(new IoRecord({
+        ios = ios.push(new IoResultRecord({
           name: 'selection.json',
           value: `{"ligandname":"${ligandName}"}`,
         }));
@@ -234,7 +234,7 @@ describe('ioUtils', () => {
     let selectedLigandInput;
     beforeEach(() => {
       selectedLigand = 'ARQ401';
-      selectedLigandInput = new IoRecord({
+      selectedLigandInput = new IoResultRecord({
         name: 'prep.json',
         fetchedValue: {
           ligands: {
@@ -269,22 +269,22 @@ describe('ioUtils', () => {
       });
     });
 
-    describe('when inputs are valid', () => {
+    describe('when inputResults are valid', () => {
       it('returns an io record', () => {
         expect(
           ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
-        ).to.be.an.instanceof(IoRecord);
+        ).to.be.an.instanceof(IoResultRecord);
       });
     });
   });
 
   describe('selectLigand', () => {
     let ligand;
-    let inputs;
+    let inputResults;
     beforeEach(() => {
       ligand = 'ARQ401';
-      inputs = new IList([
-        new IoRecord({
+      inputResults = new IList([
+        new IoResultRecord({
           name: 'prep.json',
           value: 'http://example.com/prep.json',
           type: 'url',
@@ -302,10 +302,10 @@ describe('ioUtils', () => {
 
     describe('when no selection.json input is given', () => {
       it('creates one with the given ligand selected', () => {
-        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
-        expect(updatedInputs.size).to.equal(2);
+        const updatedInputResults = ioUtils.selectLigand(inputResults, ligand);
+        expect(updatedInputResults.size).to.equal(2);
 
-        const selectionInput = updatedInputs.find(input =>
+        const selectionInput = updatedInputResults.find(input =>
           input.ioId === 'selection.json',
         );
         expect(selectionInput.fetchedValue.ligandname).to.equal(ligand);
@@ -315,7 +315,7 @@ describe('ioUtils', () => {
     describe('when selection.json already exists', () => {
       beforeEach(() => {
         const fetchedValue = { ligandname: 'BBQ401', atom_ids: [1] };
-        inputs = inputs.push(new IoRecord({
+        inputResults = inputResults.push(new IoResultRecord({
           name: 'selection.json',
           type: 'inline',
           fetchedValue,
@@ -324,10 +324,10 @@ describe('ioUtils', () => {
       });
 
       it('updates selection.json to select the new ligand', () => {
-        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
-        expect(updatedInputs.size).to.equal(2);
+        const updatedInputResults = ioUtils.selectLigand(inputResults, ligand);
+        expect(updatedInputResults.size).to.equal(2);
 
-        const selectionInput = updatedInputs.find(input =>
+        const selectionInput = updatedInputResults.find(input =>
           input.ioId === 'selection.json',
         );
         expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);

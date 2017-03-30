@@ -1,23 +1,23 @@
 import { List as IList } from 'immutable';
-import IoRecord from '../records/io_record';
+import IoResultsRecord from '../records/io_result_record';
 
 const OUTPUT_ANIMATION_FRAMES = 'minstep_frames.json';
 
 const ioUtils = {
   /**
-   * Given a list of ios, find the first pdb io and get the pdb data.
+   * Given a list of ioResults, find the first pdb ioResult and get the pdb data.
    * If not found, returns null.
-   * @param ios {IList}
+   * @param ioResults {IList}
    * @returns {String}
    */
-  getPdb(ios) {
-    const pdbIndex = ioUtils.getIndexByExtension(ios, '.pdb');
+  getPdb(ioResults) {
+    const pdbIndex = ioUtils.getIndexByExtension(ioResults, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
     }
 
-    return ios.get(pdbIndex).fetchedValue;
+    return ioResults.get(pdbIndex).fetchedValue;
   },
 
   /**
@@ -69,52 +69,54 @@ const ioUtils = {
   /**
    * Given a list of inputs or outputs, return the index of the first element
    * that has the given file extension, or -1 if none
-   * @param ios {IList}
+   * @param ioResults {IList}
    * @param extension {String}
    * @returns {String}
    */
-  getIndexByExtension(ios, extension) {
-    return ios.findIndex(io => io.value.endsWith(extension));
+  getIndexByExtension(ioResults, extension) {
+    return ioResults.findIndex(ioResult => ioResult.value.endsWith(extension));
   },
 
   /**
-   * Given a list of ios, find and return a list of all ligands in results data
-   * @param ios {IList}
+   * Given a list of ioResults, find and return a list of all ligands in results data
+   * @param ioResults {IList}
    * @returns {IList}
    */
-  getLigandNames(ios) {
-    return ios.reduce((reduction, io) => {
-      if (!io.value.endsWith('.json') || !io.fetchedValue || !io.fetchedValue.ligands) {
+  getLigandNames(ioResults) {
+    return ioResults.reduce((reduction, ioResult) => {
+      if (!ioResult.value.endsWith('.json') ||
+        !ioResult.fetchedValue ||
+        !ioResult.fetchedValue.ligands) {
         return reduction;
       }
-      const ligandNames = new IList(Object.keys(io.fetchedValue.ligands));
+      const ligandNames = new IList(Object.keys(ioResult.fetchedValue.ligands));
       return reduction.concat(ligandNames);
     }, new IList());
   },
 
   /**
-   * From the given ios, returns all ligand selection strings found
-   * @param ios {IList}
+   * From the given ioResults, returns all ligand selection strings found
+   * @param ioResults {IList}
    * @param ligandName {String}
    * @return {IList}
    */
-  getLigandSelectionStrings(ios, ligandName) {
-    const ioWithLigand = ioUtils.getIoWithLigand(ios, ligandName);
+  getLigandSelectionStrings(ioResults, ligandName) {
+    const ioResultWithLigand = ioUtils.getIoResultWithLigand(ioResults, ligandName);
 
-    if (!ioWithLigand) {
+    if (!ioResultWithLigand) {
       return new IList();
     }
 
-    return new IList(ioWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
+    return new IList(ioResultWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
   },
 
   /**
-   * From the given ios, look for selection.json and its selected ligand.
-   * @param {IList} ios
+   * From the given ioResults, look for selection.json and its selected ligand.
+   * @param {IList} ioResults
    * @returns {String}
    */
-  getSelectedLigand(ios) {
-    const selectionInput = ios.find(io => io.ioId === 'selection.json');
+  getSelectedLigand(ioResults) {
+    const selectionInput = ioResults.find(ioResult => ioResult.ioId === 'selection.json');
 
     if (!selectionInput) {
       return '';
@@ -131,22 +133,22 @@ const ioUtils = {
   },
 
   /**
-   * From the given ios, returns the one that contains the given ligand name in
+   * From the given ioResults, returns the one that contains the given ligand name in
    * its json results, or undefined if none
-   * @param ios {IList}
+   * @param ioResults {IList}
    * @param ligandName {String}
-   * @returns {IoRecord}
+   * @returns {IoResultRecord}
    */
-  getIoWithLigand(ios, ligandName) {
-    return ios.find((io) => {
-      if (!io.value.endsWith('.json')) {
+  getIoResultWithLigand(ioResults, ligandName) {
+    return ioResults.find((ioResult) => {
+      if (!ioResult.value.endsWith('.json')) {
         return false;
       }
-      if (!io.fetchedValue || !io.fetchedValue.mv_ligand_strings) {
+      if (!ioResult.fetchedValue || !ioResult.fetchedValue.mv_ligand_strings) {
         return false;
       }
 
-      return io.fetchedValue.mv_ligand_strings[ligandName];
+      return ioResult.fetchedValue.mv_ligand_strings[ligandName];
     });
   },
 
@@ -157,7 +159,7 @@ const ioUtils = {
    * @returns {Array}
    */
   formatInputsForServer(inputs, selectedLigand) {
-    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, selectedLigand);
+    const selectedLigandInput = ioUtils.getIoResultWithLigand(inputs, selectedLigand);
 
     let serverInputs = inputs.map(input =>
       input.set('fetchedValue', null),
@@ -193,7 +195,7 @@ const ioUtils = {
       atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
     };
 
-    return new IoRecord({
+    return new IoResultsRecord({
       ioId: 'selection.json',
       type: 'inline',
       fetchedValue,
@@ -209,7 +211,7 @@ const ioUtils = {
    * @returns {IList}
    */
   selectLigand(inputs, ligand) {
-    const selectedLigandInput = ioUtils.getIoWithLigand(inputs, ligand);
+    const selectedLigandInput = ioUtils.getIoResultWithLigand(inputs, ligand);
 
     if (!selectedLigandInput) {
       throw new Error('The given inputs do not contain the given ligand.');

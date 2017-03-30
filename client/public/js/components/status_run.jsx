@@ -68,7 +68,7 @@ class StatusEmail extends React.Component {
         <Button
           type="form"
           onClick={this.props.clickRun}
-          disabled={this.props.runDisabled}
+          disabled={!this.props.email}
         >
           Run Workflow
         </Button>
@@ -82,7 +82,6 @@ StatusEmail.propTypes = {
   email: React.PropTypes.string.isRequired,
   emailError: React.PropTypes.string.isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
-  runDisabled: React.PropTypes.bool.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
 };
 
