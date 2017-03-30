@@ -273,7 +273,7 @@ const ioUtils = {
     ios.forEach((io) => {
       const ioResult = ioResults.get(io.id);
       if (ioResult) {
-        foundIoResults = ioResults.push(ioResult);
+        foundIoResults = foundIoResults.push(ioResult);
       }
     });
 
