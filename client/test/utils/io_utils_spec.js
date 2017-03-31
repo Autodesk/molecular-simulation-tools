@@ -121,7 +121,7 @@ describe('ioUtils', () => {
     });
   });
 
-  describe('getInputError', () => {
+  describe('getOutputResultsError', () => {
     let inputResults;
     beforeEach(() => {
       inputResults = new IList();
@@ -129,7 +129,7 @@ describe('ioUtils', () => {
 
     describe('when no prep.json', () => {
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputResults)).to.throw();
+        expect(ioUtils.getOutputResultsError.bind(null, inputResults)).to.throw();
       });
     });
 
@@ -143,7 +143,7 @@ describe('ioUtils', () => {
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputResults)).to.throw();
+        expect(ioUtils.getOutputResultsError.bind(null, inputResults)).to.throw();
       });
     });
 
@@ -160,7 +160,7 @@ describe('ioUtils', () => {
       });
 
       it('returns error string', () => {
-        expect(!!ioUtils.getInputError(inputResults)).to.equal(true);
+        expect(!!ioUtils.getOutputResultsError(inputResults)).to.equal(true);
       });
     });
 
@@ -177,7 +177,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getInputError(inputResults)).to.equal('');
+        expect(ioUtils.getOutputResultsError(inputResults)).to.equal('');
       });
     });
   });
@@ -229,12 +229,12 @@ describe('ioUtils', () => {
     });
   });
 
-  describe('createSelectionInput', () => {
+  describe('createSelectionIoResult', () => {
     let selectedLigand;
-    let selectedLigandInput;
+    let selectedLigandIoResult;
     beforeEach(() => {
       selectedLigand = 'ARQ401';
-      selectedLigandInput = new IoResultRecord({
+      selectedLigandIoResult= new IoResultRecord({
         name: 'prep.json',
         fetchedValue: {
           ligands: {
@@ -247,23 +247,23 @@ describe('ioUtils', () => {
     describe('when invalid selectedLigand given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionInput.bind(null, selectedLigandInput, null),
+          ioUtils.createSelectionIoResult.bind(null, selectedLigandIoResult, null),
         ).to.throw();
       });
     });
 
-    describe('when invalid selectedLigandInput given', () => {
+    describe('when invalid selectedLigandIoResult given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionInput.bind(null, null, selectedLigand),
+          ioUtils.createSelectionIoResult.bind(null, null, selectedLigand),
         ).to.throw();
         expect(
-          ioUtils.createSelectionInput.bind(
+          ioUtils.createSelectionIoResult.bind(
             null,
             {
               fethedValue: { ligands: { ARQ401: null } },
             },
-            selectedLigandInput,
+            selectedLigandIoResult,
           ),
         ).to.throw();
       });
@@ -272,7 +272,7 @@ describe('ioUtils', () => {
     describe('when inputResults are valid', () => {
       it('returns an io record', () => {
         expect(
-          ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
+          ioUtils.createSelectionIoResult(selectedLigandIoResult, selectedLigand),
         ).to.be.an.instanceof(IoResultRecord);
       });
     });

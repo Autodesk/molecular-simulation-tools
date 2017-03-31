@@ -28,6 +28,11 @@ const apiUtils = {
     }).then(res => res.data.runId);
   },
 
+  /**
+   * Fetch an app from the server (when there is no run)
+   * @param {String} appId
+   * @returns {Promise resolves with AppRecord}
+   */
   getApp(appId) {
     return axios.get(`${API_URL}/v1/app/${appId}`).then((res) => {
       const widgets = new IList(

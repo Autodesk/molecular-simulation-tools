@@ -34,7 +34,7 @@ const appUtils = {
     inputResults = await appUtils.fetchIoResultsPdbs(inputResults);
 
     // Make sure the json results are valid and also indicate a success.
-    const inputErrorMessage = ioUtils.getInputError(inputResults);
+    const inputErrorMessage = ioUtils.getOutputResultsError(inputResults);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
       error.inputResults = inputResults;

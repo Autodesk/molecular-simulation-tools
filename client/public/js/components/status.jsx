@@ -73,7 +73,7 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const resultsJsonIndex = ioUtils.getIndexByExtension(
+          const resultsJsonIndex = ioUtils.getIndexByValue(
             outputResults, 'results.json',
           );
           let resultValues;
@@ -87,7 +87,7 @@ function Status(props) {
             }
           }
 
-          const pdbIndex = ioUtils.getIndexByExtension(
+          const pdbIndex = ioUtils.getIndexByValue(
             outputResults, '.pdb',
           );
           const outputPdbUrl = outputResults.get(pdbIndex).value;

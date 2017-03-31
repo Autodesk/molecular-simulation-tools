@@ -1,7 +1,7 @@
 import { List as IList } from 'immutable';
-import IoResultsRecord from '../records/io_result_record';
+import IoResultRecord from '../records/io_result_record';
 
-const OUTPUT_ANIMATION_FRAMES = 'minstep_frames.json';
+const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
 const ioUtils = {
   /**
@@ -11,7 +11,7 @@ const ioUtils = {
    * @returns {String}
    */
   getPdb(ioResults) {
-    const pdbIndex = ioUtils.getIndexByExtension(ioResults, '.pdb');
+    const pdbIndex = ioUtils.getIndexByValue(ioResults, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
@@ -21,60 +21,60 @@ const ioUtils = {
   },
 
   /**
-   * Given a list of outputs, returns a list of pdb strings to be animated.
+   * Given a list of ioResults, returns a list of pdb strings to be animated.
    * Returns an empty list when none, or when data is missing.
-   * @param {IList} outputs
+   * @param {IList} ioResults
    * @returns {IList}
    */
-  getAnimationPdbs(outputs) {
-    // If there are no outputs yet, return empty list
-    if (!outputs.size) {
+  getAnimationPdbs(ioResults) {
+    // If there are no ioResults yet, return empty list
+    if (!ioResults.size) {
       return new IList();
     }
 
-    const framesOutputIndex = ioUtils.getIndexByExtension(
-      outputs, OUTPUT_ANIMATION_FRAMES,
+    const framesIoResultIndex = ioUtils.getIndexByValue(
+      ioResults, IO_ANIMATION_FRAMES,
     );
 
-    // If we don't have an output file to tell which animation frames to use,
-    // just return the first output pdb
-    if (framesOutputIndex === -1) {
-      const pdbOutputIndex = ioUtils.getIndexByExtension(outputs, '.pdb');
-      if (pdbOutputIndex === -1) {
-        throw new Error('No output pdb found');
+    // If we don't have an ioResult to tell which animation frames to use,
+    // just return the first pdb
+    if (framesIoResultIndex === -1) {
+      const pdbIoResultIndex = ioUtils.getIndexByValue(ioResults, '.pdb');
+      if (pdbIoResultIndex === -1) {
+        throw new Error('No pdb found');
       }
-      const outputPdb = outputs.get(pdbOutputIndex).fetchedValue;
-      return outputPdb ? new IList([outputPdb]) : new IList();
+      const pdb = ioResults.get(pdbIoResultIndex).fetchedValue;
+      return pdb ? new IList([pdb]) : new IList();
     }
 
-    const framesOutput = outputs.get(framesOutputIndex);
-    // If frames output exists but has no fetched value yet, return empty list
-    if (!framesOutput.fetchedValue) {
+    const framesIoResult = ioResults.get(framesIoResultIndex);
+    // If frames ioResult exists but has no fetched value yet, return empty list
+    if (!framesIoResult.fetchedValue) {
       return new IList();
     }
 
-    // Find outputs corresponding to each frame in framesOutput
-    let pdbOutputs = new IList();
-    framesOutput.fetchedValue.forEach((filename) => {
-      const matchedOutput = outputs.find(output => output.ioId === filename);
-      if (!matchedOutput) {
-        throw new Error('Invalid outputs data; minsteps_frames mismatch');
+    // Find ioResults corresponding to each frame in framesIoResult
+    let pdbIoResults = new IList();
+    framesIoResult.fetchedValue.forEach((filename) => {
+      const matchedIoResult = ioResults.find(ioResult => ioResult.ioId === filename);
+      if (!matchedIoResult) {
+        throw new Error('Invalid ioResults data; minsteps_frames mismatch');
       }
-      pdbOutputs = pdbOutputs.push(matchedOutput);
+      pdbIoResults = pdbIoResults.push(matchedIoResult);
     });
 
-    return pdbOutputs.map(output => output.fetchedValue);
+    return pdbIoResults.map(ioResult => ioResult.fetchedValue);
   },
 
   /**
-   * Given a list of inputs or outputs, return the index of the first element
-   * that has the given file extension, or -1 if none
+   * Given a list of ioResults, return the index of the first element
+   * that has the given string in its "value", or -1 if none
    * @param ioResults {IList}
-   * @param extension {String}
+   * @param string {String}
    * @returns {String}
    */
-  getIndexByExtension(ioResults, extension) {
-    return ioResults.findIndex(ioResult => ioResult.value.endsWith(extension));
+  getIndexByValue(ioResults, string) {
+    return ioResults.findIndex(ioResult => ioResult.value.endsWith(string));
   },
 
   /**
@@ -116,15 +116,15 @@ const ioUtils = {
    * @returns {String}
    */
   getSelectedLigand(ioResults) {
-    const selectionInput = ioResults.find(ioResult => ioResult.ioId === 'selection.json');
+    const selectionIoResult = ioResults.find(ioResult => ioResult.ioId === 'selection.json');
 
-    if (!selectionInput) {
+    if (!selectionIoResult) {
       return '';
     }
 
     let selectionValue;
     try {
-      selectionValue = JSON.parse(selectionInput.value);
+      selectionValue = JSON.parse(selectionIoResult.value);
     } catch (error) {
       return '';
     }
@@ -176,27 +176,28 @@ const ioUtils = {
   },
 
   /**
-   * Return an input representing the given selectedLigand
-   * @param inputs {IList}
-   * @returns {Array}
+   * Return an ioResult representing the given selectedLigand
+   * @param {IoResultRecord} selectedLigandIoResult
+   * @param {String} selectedLigand
+   * @returns {IoResultRecord}
    */
-  createSelectionInput(selectedLigandInput, selectedLigand) {
+  createSelectionIoResult(selectedLigandIoResult, selectedLigand) {
     if (!selectedLigand) {
       throw new Error('selectedLigand required');
     }
-    if (!selectedLigandInput ||
-      !selectedLigandInput.fetchedValue ||
-      !selectedLigandInput.fetchedValue.ligands ||
-      !selectedLigandInput.fetchedValue.ligands[selectedLigand]) {
-      throw new Error('No atom ids for given ligand in selectedLigandInput');
+    if (!selectedLigandIoResult ||
+      !selectedLigandIoResult.fetchedValue ||
+      !selectedLigandIoResult.fetchedValue.ligands ||
+      !selectedLigandIoResult.fetchedValue.ligands[selectedLigand]) {
+      throw new Error('No atom ids for given ligand in selectedLigandIoResult');
     }
 
     const fetchedValue = {
       ligandname: selectedLigand,
-      atom_ids: selectedLigandInput.fetchedValue.ligands[selectedLigand],
+      atom_ids: selectedLigandIoResult.fetchedValue.ligands[selectedLigand],
     };
 
-    return new IoResultsRecord({
+    return new IoResultRecord({
       ioId: 'selection.json',
       type: 'inline',
       fetchedValue,
@@ -205,66 +206,66 @@ const ioUtils = {
   },
 
   /**
-   * Return inputs modified to indicate the given ligand is selected.
-   * If no selection input, will be created.
-   * @param {IList} inputs
+   * Return ioResults modified to indicate the given ligand is selected.
+   * If no selection ioResult, will be created.
+   * @param {IList} ioResults
    * @param {String} ligand
    * @returns {IList}
    */
-  selectLigand(inputs, ligand) {
-    const selectedLigandInput = ioUtils.getIoResultWithLigand(inputs, ligand);
+  selectLigand(ioResults, ligand) {
+    const selectedLigandIoResult = ioUtils.getIoResultWithLigand(ioResults, ligand);
 
-    if (!selectedLigandInput) {
-      throw new Error('The given inputs do not contain the given ligand.');
+    if (!selectedLigandIoResult) {
+      throw new Error('The given ioResults do not contain the given ligand.');
     }
 
-    const selectionInputIndex = inputs.findIndex(input =>
-      input.ioId === 'selection.json',
+    const selectionIoResultIndex = ioResults.findIndex(ioResult =>
+      ioResult.ioId === 'selection.json',
     );
 
-    if (selectionInputIndex === -1) {
-      return inputs.push(
-        ioUtils.createSelectionInput(selectedLigandInput, ligand),
+    if (selectionIoResultIndex === -1) {
+      return ioResults.push(
+        ioUtils.createSelectionIoResult(selectedLigandIoResult, ligand),
       );
     }
 
     const fetchedValue = {
       ligandname: ligand,
-      atom_ids: selectedLigandInput.fetchedValue.ligands[ligand],
+      atom_ids: selectedLigandIoResult.fetchedValue.ligands[ligand],
     };
-    const updatedSelectionInput =
-      inputs.get(selectionInputIndex).merge({
+    const updatedSelectionIoResult =
+      ioResults.get(selectionIoResultIndex).merge({
         // TODO don't hardcode this ioId
         ioId: 'LIGAND_SELECTION',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });
-    return inputs.set(selectionInputIndex, updatedSelectionInput);
+    return ioResults.set(selectionIoResultIndex, updatedSelectionIoResult);
   },
 
   /**
-   * Inputs should always contain a prep.json with `success: true`.
-   * If they don't, returns an error string.
+   * outpuResults from a CCC widget should always contain a prep.json with
+   * `success: true`. If they don't, returns an error string.
    * If they do, returns empty string.
    * If anything else is wrong, throws an error.
-   * @param inputs {IList}
+   * @param outputResults {IList of IoResults}
    * @returns {String}
    */
-  getInputError(inputs) {
-    const prepIndex = ioUtils.getIndexByExtension(inputs, 'prep.json');
+  getOutputResultsError(outputResults) {
+    const prepIndex = ioUtils.getIndexByValue(outputResults, 'prep.json');
 
     if (prepIndex === -1) {
-      throw new Error('Inputs did not contain a prep.json file');
+      throw new Error('OutputResults did not contain a prep.json file');
     }
 
-    const prepFetchedValue = inputs.get(prepIndex).fetchedValue;
+    const prepFetchedValue = outputResults.get(prepIndex).fetchedValue;
 
     if (typeof prepFetchedValue !== 'object') {
-      throw new Error('Inputs prep.json was not fetched properly.');
+      throw new Error('prep.json was not fetched properly.');
     }
 
     if (!prepFetchedValue.success) {
-      return prepFetchedValue.errors || 'Input is invalid for this app.';
+      return prepFetchedValue.errors || 'OutputResult is invalid for this app.';
     }
 
     return '';
@@ -281,12 +282,6 @@ const ioUtils = {
     });
 
     return foundIoResults;
-  },
-
-  clearOutputResults(outputs, ioResults) {
-    outputs.forEach((output) => {
-      ioResults.delete(output.id);
-    });
   },
 };
 
