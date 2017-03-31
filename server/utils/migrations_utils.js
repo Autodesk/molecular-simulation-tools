@@ -14,7 +14,7 @@ const migrationsUtils = {
         return Promise.resolve();
       }
 
-      Promise.all(Object.values(runsHash).map((runString) => {
+      return Promise.all(Object.values(runsHash).map((runString) => {
         const run = JSON.parse(runString);
 
         if (run.appId) {

@@ -12,23 +12,24 @@ const appUtils = {
   executeCCCJob(jobJson) {
     // If this is a local dev docker-compose setup, mount the local ccc server
     // to the workflow container
-    jobJson.mountApiServer = process.env.CCC === 'ccc:9000';
+    const job = Object.assign({}, jobJson);
+    job.mountApiServer = process.env.CCC === 'ccc:9000';
 
-    if (!jobJson.createOptions) {
-      jobJson.createOptions = {};
+    if (!job.createOptions) {
+      job.createOptions = {};
     }
-    if (!jobJson.createOptions.Env) {
-      jobJson.createOptions.Env = [];
+    if (!job.createOptions.Env) {
+      job.createOptions.Env = [];
     }
 
-    jobJson.appendStdOut = true;
-    jobJson.appendStdErr = true;
+    job.appendStdOut = true;
+    job.appendStdErr = true;
 
-    jobJson.createOptions.Env.push(`CCC=${process.env.CCC}`);
+    job.createOptions.Env.push(`CCC=${process.env.CCC}`);
 
     return cccUtils.promise()
       .then(ccc =>
-        ccc.submitJobJson(jobJson)
+        ccc.submitJobJson(job)
       );
   },
 

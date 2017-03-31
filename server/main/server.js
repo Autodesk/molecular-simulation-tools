@@ -59,9 +59,9 @@ app.get(['/', '/app/*'], (req, res) => {
 app.use(routeUtils.notFound);
 
 // error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err) {
-    log.error({error:err, message:err.message, url:req.originalUrl, stack:err.stack | null});
+    log.error({ error: err, message: err.message, url: req.originalUrl, stack: err.stack });
   }
   // return error json, only providing error in development
   res.status(err.status || 500);

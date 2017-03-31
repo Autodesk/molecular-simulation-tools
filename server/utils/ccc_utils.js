@@ -17,13 +17,11 @@ const cccPromise =
     { max_tries: 50, interval: 1000, max_interval: 10000 }
   )
   .then(() => {
+    log.info('Connection to CCC established!');
     if (process.env.CCC === 'ccc:9000') {
-      log.warn('Dev mode, deleting all jobs');
+      log.warn('Dev mode, deleting all CCC jobs');
       return ccc.deleteAllJobs()
-        .then((result) => {
-          log.info({ m: 'result from ccc.delete all', result });
-          return ccc;
-        });
+        .then(() => ccc);
     }
 
     return ccc;
