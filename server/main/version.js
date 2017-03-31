@@ -44,8 +44,7 @@ function getVersion() {
 const VERSION = getVersion();
 
 router.get('/', (req, res) => {
-  res.statusCode = 200;
-  res.send(VERSION);
+  res.status(200).send(VERSION);
   return res.end();
 });
 
