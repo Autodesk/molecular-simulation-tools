@@ -5,7 +5,6 @@ import IoRecord from '../records/io_record';
 import IoResultRecord from '../records/io_result_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
-import WidgetRunRecord from '../records/widget_run_record';
 import ioUtils from './io_utils';
 
 const API_URL = process.env.API_URL || '';
@@ -47,14 +46,7 @@ const apiUtils = {
       );
       return new AppRecord(Object.assign({}, res.data, {
         widgets,
-        run: new RunRecord({
-          widgetRuns: res.data.widgets.reduce((reduction, widget) =>
-            reduction.set(widget.id, new WidgetRunRecord({
-              widgetId: widget.id,
-            })),
-            new IMap(),
-          ),
-        }),
+        run: new RunRecord(),
       }));
     });
   },

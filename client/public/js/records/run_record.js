@@ -13,7 +13,6 @@ const RunRecord = new Record({
   inputStringError: null,
   ioResults: new IMap(),
   status: statusConstants.IDLE,
-  widgetRuns: new IMap(),
 });
 
 export default RunRecord;
