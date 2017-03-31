@@ -60,6 +60,23 @@ describe('ioUtils', () => {
           expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
         });
       });
+
+      describe('when a pdb file exists but not its fetchedValue', () => {
+        beforeEach(() => {
+          outputs = new IList([
+            new IoRecord({
+              fetchedValue: '',
+              type: 'url',
+              value: 'http://example.com/minstep.0.pdb',
+            }),
+          ]);
+        });
+
+        it('returns an empty list', () => {
+          const pdbs = ioUtils.getAnimationPdbs(outputs);
+          expect(pdbs.size).to.equal(0);
+        });
+      });
     });
 
     describe('when given an empty list of outputs', () => {

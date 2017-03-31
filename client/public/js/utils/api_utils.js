@@ -2,7 +2,7 @@ import { List as IList } from 'immutable';
 import axios from 'axios';
 import IoRecord from '../records/io_record';
 import RunRecord from '../records/run_record';
-import TaskRecord from '../records/task_record';
+import WidgetRecord from '../records/widget_record';
 import AppRecord from '../records/app_record';
 import ioUtils from './io_utils';
 
@@ -30,7 +30,7 @@ const apiUtils = {
   getApp(appId) {
     return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
       new AppRecord(Object.assign({}, res.data, {
-        tasks: new IList(res.data.tasks.map(taskData => new TaskRecord(taskData))),
+        widgets: new IList(res.data.widgets.map(widgetData => new WidgetRecord(widgetData))),
       })),
     );
   },
@@ -56,8 +56,8 @@ const apiUtils = {
           inputs,
           outputs,
         })),
-        tasks: new IList(runData.app.tasks.map(taskData =>
-          new TaskRecord(taskData)),
+        widgets: new IList(runData.app.widgets.map(widgetData =>
+          new WidgetRecord(widgetData)),
         ),
       }));
     });

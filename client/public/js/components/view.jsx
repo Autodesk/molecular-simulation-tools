@@ -1,52 +1,116 @@
 import React from 'react';
-import { List as IList } from 'immutable';
+import { List as IList, is } from 'immutable';
 import MoleculeViewerWrapper from '../utils/molecule_viewer_wrapper';
+import ioUtils from '../utils/io_utils';
 import loadImg from '../../img/loadAnim.gif';
 import '../../css/view.scss';
 
 class View extends React.Component {
+  /**
+   * Find the appropriate PDB to display given inputs and outputs
+   * @param {IList of IoRecords} inputs
+   * @param {IList of IoRecords} outputs
+   * @returns {IList of Strings}
+   */
+  static getPdbs(inputs, outputs) {
+    const outputPdbs = ioUtils.getAnimationPdbs(outputs);
+
+    if (outputPdbs.size) {
+      return outputPdbs;
+    }
+
+    const inputPdb = ioUtils.getPdb(inputs);
+
+    return inputPdb ? new IList([inputPdb]) : new IList();
+  }
+
+  /**
+   * Return the list of selection strings in the given inputs
+   * @param {IList of IoRecords} inputs
+   * @returns {IList of Strings}
+   */
+  static getSelectionStrings(inputs) {
+    const selectedLigand = ioUtils.getSelectedLigand(inputs);
+    if (!selectedLigand) {
+      return new IList();
+    }
+
+    return ioUtils.getLigandSelectionStrings(
+      inputs, selectedLigand,
+    );
+  }
+
   componentDidMount() {
-    this.renderMoleculeViewer(
-      this.props.modelData,
-      null,
-      this.props.selectionStrings,
+    const selectionStrings = View.getSelectionStrings(this.props.inputs);
+    const pdbs = View.getPdbs(
+      this.props.inputs, this.props.outputs,
+    );
+
+    this.renderMoleculeViewerPdbs(
+      pdbs,
       this.props.loading,
     );
+    this.renderMoleculeViewerSelection(selectionStrings, pdbs.size);
+    this.renderMoleculeViewerPdbIndex(this.props.morph);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.renderMoleculeViewer(
-      nextProps.modelData,
-      this.props.modelData,
-      nextProps.selectionStrings,
-      nextProps.loading,
+    const selectionStrings = View.getSelectionStrings(nextProps.inputs);
+    const oldSelectionStrings = View.getSelectionStrings(this.props.inputs);
+    const pdbs = View.getPdbs(
+      nextProps.inputs, nextProps.outputs,
     );
+    let oldPdbs = new IList();
+    if (this.props.inputs && this.props.outputs) {
+      oldPdbs = View.getPdbs(
+        this.props.inputs, this.props.outputs,
+      );
+    }
+
+    // Render various parts of the molviewer if they have changed
+    if (!is(pdbs.toSet(), oldPdbs.toSet())) {
+      this.renderMoleculeViewerPdbs(
+        pdbs,
+        nextProps.loading,
+      );
+    }
+    if (!is(selectionStrings.toSet(), oldSelectionStrings.toSet())) {
+      this.renderMoleculeViewerSelection(selectionStrings, pdbs.size);
+    }
+    if (nextProps.morph !== this.props.morph) {
+      this.renderMoleculeViewerPdbIndex(nextProps.morph);
+    }
   }
 
-  renderMoleculeViewer(modelData, oldModelData, selectionStrings, loading) {
+  renderMoleculeViewerPdbs(pdbs, loading) {
     // Create or destroy the molviewer when needed
-    if ((loading || !modelData) && this.moleculeViewerW) {
-      // TODO the molviewer api should provide a better way to destroy itself
+    if ((loading || !pdbs.size) && this.moleculeViewerW) {
       this.moleculeViewerW.destroy();
       this.moleculeViewerW = undefined;
-    } else if (modelData && !this.moleculeViewerW) {
+    } else if (pdbs.size && !this.moleculeViewerW) {
       this.moleculeViewerW = new MoleculeViewerWrapper(
         this.moleculeViewerContainer,
       );
     }
 
     // Update the model whenever it's different than last render
-    if (modelData && this.moleculeViewerW) {
-      if (modelData !== oldModelData) {
-        this.moleculeViewerW.addModel(modelData);
-      }
-
-      if (selectionStrings) {
-        this.moleculeViewerW.select(selectionStrings);
-      }
+    if (pdbs.size && this.moleculeViewerW) {
+      this.moleculeViewerW.setModels(pdbs);
     }
 
     // TODO colorized like: moleculeViewer.setColor('ribbon', 'blue', '1');
+  }
+
+  renderMoleculeViewerSelection(selectionStrings, pdbsSize) {
+    if (this.moleculeViewerW && pdbsSize && selectionStrings) {
+      this.moleculeViewerW.setSelection(selectionStrings);
+    }
+  }
+
+  renderMoleculeViewerPdbIndex(pdbIndex) {
+    if (this.moleculeViewerW) {
+      this.moleculeViewerW.setPdbIndex(pdbIndex);
+    }
   }
 
   render() {
@@ -83,7 +147,6 @@ class View extends React.Component {
 
 View.defaultProps = {
   selectionStrings: new IList(),
-  modelData: '',
   error: '',
   colorized: false,
 };
@@ -91,8 +154,10 @@ View.defaultProps = {
 View.propTypes = {
   colorized: React.PropTypes.bool,
   error: React.PropTypes.string,
+  inputs: React.PropTypes.instanceOf(IList).isRequired,
   loading: React.PropTypes.bool.isRequired,
-  modelData: React.PropTypes.string,
+  morph: React.PropTypes.number.isRequired,
+  outputs: React.PropTypes.instanceOf(IList).isRequired,
   selectionStrings: React.PropTypes.instanceOf(IList),
 };
 

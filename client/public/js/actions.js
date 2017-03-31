@@ -2,9 +2,10 @@ import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
+import appUtils from './utils/app_utils';
 import ioUtils from './utils/io_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
-import appUtils from './utils/app_utils';
+import widgetUtils from './utils/widget_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
@@ -76,10 +77,17 @@ export function initializeRun(appId, runId) {
         inputs = ioUtils.selectLigand(inputs, ligands.get(0));
       }
 
+      const updatedRun = app.run.merge({ inputs, outputs });
+
+      // Find the widget that should be active for this run
+      const activeWidgetIndex = widgetUtils.getActiveIndex(
+        app.widgets, updatedRun,
+      );
+
       dispatch({
         type: actionConstants.FETCHED_RUN_IO,
-        inputs,
-        outputs,
+        run: updatedRun,
+        activeWidgetIndex,
       });
     } catch (error) {
       console.error(error);
@@ -91,10 +99,10 @@ export function initializeRun(appId, runId) {
   };
 }
 
-export function clickTask(taskIndex) {
+export function clickWidget(widgetIndex) {
   return {
-    type: actionConstants.CLICK_TASK,
-    taskIndex,
+    type: actionConstants.CLICK_WIDGET,
+    widgetIndex,
   };
 }
 

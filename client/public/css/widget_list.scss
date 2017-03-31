@@ -1,11 +1,11 @@
-.tasks-pane {
+.widget-list {
   display: flex;
   flex-direction: column;
   width: 200px;
   background-color: #3A3D79;
   padding-top: 44px;
 
-  .tasks {
+  .widget-list-buttons {
     flex: 1;
 
     .app-title {

@@ -85,7 +85,7 @@ class AppRouter extends React.Component {
           changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
           clickRun={this.props.clickRun}
-          clickTask={this.props.clickTask}
+          clickWidget={this.props.clickWidget}
           colorized={this.props.colorized}
           morph={this.props.morph}
           onClickColorize={this.props.onClickColorize}
@@ -126,7 +126,7 @@ AppRouter.propTypes = {
   clickAbout: React.PropTypes.func.isRequired,
   clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  clickTask: React.PropTypes.func.isRequired,
+  clickWidget: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   initializeRun: React.PropTypes.func.isRequired,
   initializeApp: React.PropTypes.func.isRequired,

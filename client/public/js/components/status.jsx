@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList } from 'immutable';
-import { statusConstants, tasksConstants } from 'molecular-design-applications-shared';
+import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
@@ -19,40 +19,10 @@ function Status(props) {
 
   let selection;
   if (!props.hideContent) {
-    if (props.selection.taskIndex === props.app.tasks.size) {
-      const outputResultsIndex = ioUtils.getIndexByExtension(
-        props.app.run.outputs, 'results.json',
-      );
-      let resultValues;
-
-      if (outputResultsIndex !== -1) {
-        const outputResults = props.app.run.outputs.get(outputResultsIndex)
-          .fetchedValue;
-
-        if (outputResults.output_values) {
-          resultValues = new IList(outputResults.output_values);
-        }
-      }
-
-      const pdbIndex = ioUtils.getIndexByExtension(
-        props.app.run.outputs, '.pdb',
-      );
-      const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
-
-      selection = (
-        <StatusResults
-          morph={props.morph}
-          numberOfPdbs={props.numberOfPdbs}
-          onClickColorize={props.onClickColorize}
-          onChangeMorph={props.onChangeMorph}
-          resultValues={resultValues}
-          outputPdbUrl={outputPdbUrl}
-        />
-      );
-    } else if (!props.app.fetching && !props.app.fetchingError &&
-      props.selection.type === selectionConstants.TASK) {
-      switch (props.app.tasks.get(props.selection.taskIndex).id) {
-        case tasksConstants.LOAD:
+    if (!props.app.fetching && !props.app.fetchingError &&
+      props.selection.type === selectionConstants.WIDGET) {
+      switch (props.app.widgets.get(props.selection.widgetIndex).id) {
+        case widgetsConstants.LOAD:
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
@@ -67,7 +37,7 @@ function Status(props) {
           );
           break;
 
-        case tasksConstants.RUN: {
+        case widgetsConstants.RUN: {
           const running = props.app.run.status === statusConstants.RUNNING;
           const runDisabled = running || runCompleted ||
             !appUtils.isRunnable(props.app.run);
@@ -84,13 +54,48 @@ function Status(props) {
           break;
         }
 
-        case tasksConstants.SELECTION: {
+        case widgetsConstants.SELECTION: {
+          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
               ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
               runCompleted={runCompleted}
-              selectedLigand={props.selectedLigand}
+              selectedLigand={selectedLigand}
+            />
+          );
+          break;
+        }
+
+        case widgetsConstants.RESULTS: {
+          const outputResultsIndex = ioUtils.getIndexByExtension(
+            props.app.run.outputs, 'results.json',
+          );
+          let resultValues;
+
+          if (outputResultsIndex !== -1) {
+            const outputResults = props.app.run.outputs.get(outputResultsIndex)
+              .fetchedValue;
+
+            if (outputResults.output_values) {
+              resultValues = new IList(outputResults.output_values);
+            }
+          }
+
+          const pdbIndex = ioUtils.getIndexByExtension(
+            props.app.run.outputs, '.pdb',
+          );
+          const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
+          const numberOfPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs).size;
+
+          selection = (
+            <StatusResults
+              morph={props.morph}
+              numberOfPdbs={numberOfPdbs}
+              onClickColorize={props.onClickColorize}
+              onChangeMorph={props.onChangeMorph}
+              resultValues={resultValues}
+              outputPdbUrl={outputPdbUrl}
             />
           );
           break;
@@ -115,7 +120,6 @@ function Status(props) {
 
 Status.defaultProps = {
   hideContent: false,
-  selectedLigand: '',
 };
 
 Status.propTypes = {
@@ -125,10 +129,8 @@ Status.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
-  numberOfPdbs: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
-  selectedLigand: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
