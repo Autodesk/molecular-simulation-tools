@@ -84,13 +84,15 @@ const apiUtils = {
         }),
       );
       let ioResults = new IMap();
-      runData.inputs.forEach((inputData) => {
+      const inputDatas = runData.inputs || [];
+      const outputDatas = runData.outputs || [];
+      inputDatas.forEach((inputData) => {
         const inputResult = new IoResultRecord(Object.assign({}, inputData, {
           ioId: inputData.name,
         }));
         ioResults = ioResults.set(inputResult.ioId, inputResult);
       });
-      runData.outputs.forEach((outputData) => {
+      outputDatas.forEach((outputData) => {
         const outputResult = new IoResultRecord(Object.assign({}, outputData, {
           ioId: outputData.name,
         }));
