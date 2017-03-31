@@ -21,9 +21,7 @@ const cccPromise =
     if (process.env.CCC === 'ccc:9000') {
       log.warn('Dev mode, deleting all CCC jobs');
       return ccc.deleteAllJobs()
-        .then((result) => {
-          return ccc;
-        });
+        .then(() => ccc);
     }
 
     return ccc;

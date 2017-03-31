@@ -3,20 +3,21 @@
 /**
  * Add this extra property to Errors right away
  */
-if (!('toJSON' in Error.prototype))
+if (!('toJSON' in Error.prototype)) {
   Object.defineProperty(Error.prototype, 'toJSON', {
-  value: function () {
-    var alt = {};
+    value: () => {
+      const alt = {};
 
-    Object.getOwnPropertyNames(this).forEach(function (key) {
-      alt[key] = this[key];
-    }, this);
+      Object.getOwnPropertyNames(this).forEach((key) => {
+        alt[key] = this[key];
+      }, this);
 
-    return alt;
-  },
-  configurable: true,
-  writable: true
-})
+      return alt;
+    },
+    configurable: true,
+    writable: true
+  });
+}
 
 /**
  * Module dependencies.
@@ -26,12 +27,10 @@ const http = require('http');
 const httpProxy = require('http-proxy');
 const retry = require('bluebird-retry');
 const app = require('../main/server');
-const dbConstants = require('../constants/db_constants');
 const dbUtils = require('../utils/db_utils');
 const log = require('../utils/log');
 const fluentSender = require('../utils/fluent_sender');
 const redis = require('../utils/redis');
-const seedData = require('../utils/seed_data');
 const testUtils = require('../test/test_utils');
 
 /**
