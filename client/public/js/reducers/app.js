@@ -15,6 +15,7 @@ function app(state = initialState, action) {
           fetchingError: null,
           run: new RunRecord({
             fetchingData: true,
+            fetchingDataError: null,
           }),
         });
       }
