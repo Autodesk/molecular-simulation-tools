@@ -271,6 +271,12 @@ const ioUtils = {
     return '';
   },
 
+  /**
+   * Return a list of the ioResults represented in the ios
+   * @param {IList of IoRecords} ios
+   * @param {IList of IoResultRecords} ioResults
+   * @returns {IList of IoResultRecords}
+   */
   getResults(ios, ioResults) {
     let foundIoResults = new IList();
 
