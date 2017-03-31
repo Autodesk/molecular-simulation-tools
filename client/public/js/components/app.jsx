@@ -21,8 +21,8 @@ function App(props) {
   const loadingOrError = !!(props.app.fetching ||
     props.app.fetchingError ||
     props.app.run.fetchingDataError);
-  const hideStatus = props.app.fetching ||
-    props.app.run.fetchingDataError;
+  const hideStatus = !!(props.app.fetching ||
+    props.app.run.fetchingDataError);
 
   // TODO should get View pdbs based on active widget
   const inputs = props.app.widgets.reduce(
