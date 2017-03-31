@@ -1,6 +1,24 @@
 #!/usr/bin/env node
 
 /**
+ * Add this extra property to Errors right away
+ */
+if (!('toJSON' in Error.prototype))
+  Object.defineProperty(Error.prototype, 'toJSON', {
+  value: function () {
+    var alt = {};
+
+    Object.getOwnPropertyNames(this).forEach(function (key) {
+      alt[key] = this[key];
+    }, this);
+
+    return alt;
+  },
+  configurable: true,
+  writable: true
+})
+
+/**
  * Module dependencies.
  */
 require('dotenv').config();
@@ -10,7 +28,6 @@ const retry = require('bluebird-retry');
 const app = require('../main/server');
 const dbConstants = require('../constants/db_constants');
 const dbUtils = require('../utils/db_utils');
-const errorUtils = require('../utils/error_utils');
 const log = require('../utils/log');
 const fluentSender = require('../utils/fluent_sender');
 const redis = require('../utils/redis');
@@ -118,7 +135,7 @@ process.on('uncaughtException', (err) => {
   // You can't pass the error object directly, fluent doesn't like it.
   let errorJson = null;
   try {
-    errorJson = errorUtils.toJson(err.toJSON());
+    errorJson = err.toJSON();
   } catch (e) {
     console.error(e);
   }
