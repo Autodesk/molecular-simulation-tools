@@ -236,7 +236,7 @@ const ioUtils = {
     const updatedSelectionIoResult =
       ioResults.get(selectionIoResultIndex).merge({
         // TODO don't hardcode this ioId
-        ioId: 'LIGAND_SELECTION',
+        ioId: 'selection.json',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });

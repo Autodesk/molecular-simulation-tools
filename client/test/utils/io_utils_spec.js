@@ -14,19 +14,19 @@ describe('ioUtils', () => {
       outputResults = new IList([
         new IoResultRecord({
           fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
-          name: 'minstep_frames.json',
+          ioId: 'minstep_frames.json',
           type: 'url',
           value: 'http://example.com/minstep_frames.json',
         }),
         new IoResultRecord({
           fetchedValue: 'imapdbstring',
-          name: 'minstep.0.pdb',
+          ioId: 'minstep.0.pdb',
           type: 'url',
           value: 'http://example.com/minstep.0.pdb',
         }),
         new IoResultRecord({
           fetchedValue: 'imapdbstringtoo',
-          name: 'minstep.1.pdb',
+          ioId: 'minstep.1.pdb',
           type: 'url',
           value: 'http://example.com/minstep.1.pdb',
         }),
@@ -49,7 +49,7 @@ describe('ioUtils', () => {
           outputResults = new IList([
             new IoResultRecord({
               fetchedValue: 'whatami',
-              name: 'somethingweird.exe',
+              ioId: 'somethingweird.exe',
               type: 'crazy',
               value: 'http://example.com',
             }),
@@ -136,7 +136,7 @@ describe('ioUtils', () => {
     describe('when prep.json with no fetchedValue', () => {
       beforeEach(() => {
         inputResults = inputResults.push(new IoResultRecord({
-          name: 'prep.json',
+          ioId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
         }));
@@ -150,7 +150,7 @@ describe('ioUtils', () => {
     describe('when prep.json with success false', () => {
       beforeEach(() => {
         inputResults = inputResults.push(new IoResultRecord({
-          name: 'prep.json',
+          ioId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -167,7 +167,7 @@ describe('ioUtils', () => {
     describe('when prep.json with success true', () => {
       beforeEach(() => {
         inputResults = inputResults.push(new IoResultRecord({
-          name: 'prep.json',
+          ioId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -196,7 +196,7 @@ describe('ioUtils', () => {
 
     describe('when selection.json has no value property', () => {
       beforeEach(() => {
-        ios = ios.push(new IoResultRecord({ name: 'selection.json' }));
+        ios = ios.push(new IoResultRecord({ ioId: 'selection.json' }));
       });
 
       it('returns empty string', () => {
@@ -206,7 +206,7 @@ describe('ioUtils', () => {
 
     describe('when selection.json value contains invalid json', () => {
       beforeEach(() => {
-        ios = ios.push(new IoResultRecord({ name: 'selection.json', value: 'asdf' }));
+        ios = ios.push(new IoResultRecord({ ioId: 'selection.json', value: 'asdf' }));
       });
 
       it('returns empty string', () => {
@@ -218,7 +218,7 @@ describe('ioUtils', () => {
       const ligandName = 'MPD513';
       beforeEach(() => {
         ios = ios.push(new IoResultRecord({
-          name: 'selection.json',
+          ioId: 'selection.json',
           value: `{"ligandname":"${ligandName}"}`,
         }));
       });
@@ -235,7 +235,7 @@ describe('ioUtils', () => {
     beforeEach(() => {
       selectedLigand = 'ARQ401';
       selectedLigandIoResult= new IoResultRecord({
-        name: 'prep.json',
+        ioId: 'prep.json',
         fetchedValue: {
           ligands: {
             ARQ401: [1, 2, 3],
@@ -285,7 +285,7 @@ describe('ioUtils', () => {
       ligand = 'ARQ401';
       inputResults = new IList([
         new IoResultRecord({
-          name: 'prep.json',
+          ioId: 'prep.json',
           value: 'http://example.com/prep.json',
           type: 'url',
           fetchedValue: {
@@ -316,7 +316,7 @@ describe('ioUtils', () => {
       beforeEach(() => {
         const fetchedValue = { ligandname: 'BBQ401', atom_ids: [1] };
         inputResults = inputResults.push(new IoResultRecord({
-          name: 'selection.json',
+          ioId: 'selection.json',
           type: 'inline',
           fetchedValue,
           value: JSON.stringify(fetchedValue),
@@ -327,8 +327,8 @@ describe('ioUtils', () => {
         const updatedInputResults = ioUtils.selectLigand(inputResults, ligand);
         expect(updatedInputResults.size).to.equal(2);
 
-        const selectionInput = updatedInputResults.find(input =>
-          input.ioId === 'selection.json',
+        const selectionInput = updatedInputResults.find(inputResult =>
+          inputResult.ioId === 'selection.json',
         );
         expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);
       });
