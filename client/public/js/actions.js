@@ -1,3 +1,4 @@
+import { Map as IMap } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
@@ -63,21 +64,23 @@ export function initializeRun(appId, runId) {
     });
 
     try {
-      let inputs = app.run.inputs;
-      let outputs = app.run.outputs;
+      let ioResultsList = app.run.ioResults.toList();
 
-      inputs = await appUtils.fetchIoPdbs(inputs);
-      inputs = await appUtils.fetchIoResults(inputs);
-      outputs = await appUtils.fetchIoPdbs(outputs);
-      outputs = await appUtils.fetchIoResults(outputs);
+      ioResultsList = await appUtils.fetchIoResultsPdbs(ioResultsList);
+      ioResultsList = await appUtils.fetchIoResultsJson(ioResultsList);
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = ioUtils.getLigandNames(ioResultsList);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        ioResultsList = ioUtils.selectLigand(ioResultsList, ligands.get(0));
       }
 
-      const updatedRun = app.run.merge({ inputs, outputs });
+      let ioResults = new IMap();
+      ioResultsList.forEach((ioResult) => {
+        ioResults = ioResults.set(ioResult.ioId, ioResult);
+      });
+
+      const updatedRun = app.run.merge({ ioResults });
 
       // Find the widget that should be active for this run
       const activeWidgetIndex = widgetUtils.getActiveIndex(

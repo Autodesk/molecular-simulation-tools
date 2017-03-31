@@ -28,10 +28,10 @@ const appUtils = {
     let inputResults = await apiUtils.processInput(appId, inputString, extension);
 
     // Find the json results
-    inputResults = await appUtils.fetchIoResults(inputResults);
+    inputResults = await appUtils.fetchIoResultsJson(inputResults);
 
     // Get the processed input pdbs
-    inputResults = await appUtils.fetchIoPdbs(inputResults);
+    inputResults = await appUtils.fetchIoResultsPdbs(inputResults);
 
     // Make sure the json results are valid and also indicate a success.
     const inputErrorMessage = ioUtils.getInputError(inputResults);
@@ -45,51 +45,57 @@ const appUtils = {
   },
 
   /**
-   * Fetch the results json for any of the given ios with a json url.
-   * Return new ios with fetchedResult set for the json.
-   * @param ios {IList}
+   * Fetch the results json for any of the given ioResults with a json url.
+   * Return new ioResults with fetchedResult set for the json.
+   * @param ioResults {IList of IoResultRecords}
    * @returns {Promise that resolves with IList}
    */
-  fetchIoResults(ios) {
-    let newIos = ios;
+  fetchIoResultsJson(ioResults) {
+    let newIoResults = ioResults;
 
-    return Promise.all(ios.map((io) => {
-      if (!io.value.endsWith('.json')) {
+    return Promise.all(ioResults.map((ioResult) => {
+      if (!ioResult.value.endsWith('.json')) {
         return Promise.resolve();
       }
-      return apiUtils.getIoData(io.value).then((results) => {
-        // Set newIos to a new list that contains the fetched results data
-        newIos = newIos.set(
-          newIos.indexOf(io), io.set('fetchedValue', results),
+      return apiUtils.getIoResultData(ioResult.value).then((results) => {
+        // Set newIoResults to a new list that contains the fetched results data
+        const ioResultIndex = newIoResults.findIndex(ioResultI =>
+          ioResultI === ioResult
+        );
+        newIoResults = newIoResults.set(
+          ioResultIndex, ioResult.set('fetchedValue', results),
         );
       });
 
-    // Resolve with the new list of ios
-    })).then(() => newIos);
+    // Resolve with the new list of ioResults
+    })).then(() => newIoResults);
   },
 
   /**
-   * Fetch the pdb for any of the given ios with a pdb url.
-   * Return new ios with fetchedResult set for the pdb data.
-   * @param ios {IList}
+   * Fetch the pdb for any of the given ioResults with a pdb url.
+   * Return new ioResults with fetchedResult set for the pdb data.
+   * @param ioResults {IList}
    * @returns {Promise that resolves with an IList}
    */
-  fetchIoPdbs(ios) {
-    let newIos = ios;
+  fetchIoResultsPdbs(ioResults) {
+    let newIoResults = ioResults;
 
-    return Promise.all(ios.map((io) => {
-      if (!io.value.endsWith('.pdb')) {
+    return Promise.all(ioResults.map((ioResult) => {
+      if (!ioResult.value.endsWith('.pdb')) {
         return Promise.resolve();
       }
-      return apiUtils.getPdb(io.value).then((results) => {
-        // Set newIos to a new list that contains the fetched pdb
-        newIos = newIos.set(
-          newIos.indexOf(io), io.set('fetchedValue', results),
+      return apiUtils.getPdb(ioResult.value).then((results) => {
+        // Set newIoResults to a new list that contains the fetched pdb
+        const ioResultIndex = newIoResults.findIndex(ioResultI =>
+          ioResultI === ioResult
+        );
+        newIoResults = newIoResults.set(
+          ioResultIndex, ioResult.set('fetchedValue', results),
         );
       });
 
-    // Resolve with the new list of ios
-    })).then(() => newIos);
+    // Resolve with the new list of ioResults
+    })).then(() => newIoResults);
   },
 };
 

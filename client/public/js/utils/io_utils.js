@@ -79,7 +79,7 @@ const ioUtils = {
 
   /**
    * Given a list of ioResults, find and return a list of all ligands in results data
-   * @param ioResults {IList}
+   * @param ioResults {IList of IoResultRecords}
    * @returns {IList}
    */
   getLigandNames(ioResults) {

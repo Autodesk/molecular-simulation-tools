@@ -70,7 +70,7 @@ const apiUtils = {
       res.data,
     ).then((runData) => {
       const widgets = new IList(
-        runData.widgets.map((widgetData) => {
+        runData.app.widgets.map((widgetData) => {
           const inputs = widgetData.inputs ? new IList(widgetData.inputs.map(
             input => new IoRecord(input),
           )) : new IList();
@@ -83,10 +83,23 @@ const apiUtils = {
           );
         }),
       );
+      let ioResults = new IMap();
+      runData.inputs.forEach((inputData) => {
+        const inputResult = new IoResultRecord(Object.assign({}, inputData, {
+          ioId: inputData.name,
+        }));
+        ioResults = ioResults.set(inputResult.ioId, inputResult);
+      });
+      runData.outputs.forEach((outputData) => {
+        const outputResult = new IoResultRecord(Object.assign({}, outputData, {
+          ioId: outputData.name,
+        }));
+        ioResults = ioResults.set(outputResult.ioId, outputResult);
+      });
 
       return new AppRecord(Object.assign({}, runData, runData.app, {
         widgets,
-        run: new RunRecord(),
+        run: new RunRecord(Object.assign({}, runData, { ioResults })),
       }));
     });
   },
@@ -160,7 +173,7 @@ const apiUtils = {
    * @param jsonUrl {String}
    * @returns {Promise}
    */
-  getIoData(jsonUrl) {
+  getIoResultData(jsonUrl) {
     return axios.get(jsonUrl).then(res => res.data);
   },
 
