@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+git submodule update --init --recursive
+echo "0.0.1-local" > VERSION
+cp etc/git/* .git/hooks
