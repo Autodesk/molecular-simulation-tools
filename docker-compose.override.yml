@@ -29,7 +29,6 @@ services:
       FLUENT_PORT: '24224'
       BLUEBIRD_DEBUG: '1'
       FLUENT: '1'
-      TRAVIS: '1'
     links:
       - redis
       - ccc
