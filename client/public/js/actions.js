@@ -280,10 +280,14 @@ export function clickColorize() {
   };
 }
 
-export function changeLigandSelection(inputs, ligand) {
+export function changeLigandSelection(ioResults, ligand) {
+  const ioResultsList = ioUtils.selectLigand(ioResults.toList(), ligand);
+  const updatedIoResults = new IMap(ioResultsList.map(ioResult =>
+    [ioResult.ioId, ioResult],
+  ));
   return {
     type: actionConstants.CHANGE_LIGAND_SELECTION,
-    inputs: ioUtils.selectLigand(inputs, ligand),
+    ioResults: updatedIoResults,
   };
 }
 

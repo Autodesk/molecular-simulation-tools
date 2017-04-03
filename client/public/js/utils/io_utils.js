@@ -208,23 +208,23 @@ const ioUtils = {
   /**
    * Return ioResults modified to indicate the given ligand is selected.
    * If no selection ioResult, will be created.
-   * @param {IList} ioResults
+   * @param {IList of IoResultRecords} ioResultsList
    * @param {String} ligand
    * @returns {IList}
    */
-  selectLigand(ioResults, ligand) {
-    const selectedLigandIoResult = ioUtils.getIoResultWithLigand(ioResults, ligand);
+  selectLigand(ioResultsList, ligand) {
+    const selectedLigandIoResult = ioUtils.getIoResultWithLigand(ioResultsList, ligand);
 
     if (!selectedLigandIoResult) {
-      throw new Error('The given ioResults do not contain the given ligand.');
+      throw new Error('The given ioResultsList does not contain the given ligand.');
     }
 
-    const selectionIoResultIndex = ioResults.findIndex(ioResult =>
+    const selectionIoResultIndex = ioResultsList.findIndex(ioResult =>
       ioResult.ioId === 'selection.json',
     );
 
     if (selectionIoResultIndex === -1) {
-      return ioResults.push(
+      return ioResultsList.push(
         ioUtils.createSelectionIoResult(selectedLigandIoResult, ligand),
       );
     }
@@ -234,13 +234,13 @@ const ioUtils = {
       atom_ids: selectedLigandIoResult.fetchedValue.ligands[ligand],
     };
     const updatedSelectionIoResult =
-      ioResults.get(selectionIoResultIndex).merge({
+      ioResultsList.get(selectionIoResultIndex).merge({
         // TODO don't hardcode this ioId
         ioId: 'selection.json',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });
-    return ioResults.set(selectionIoResultIndex, updatedSelectionIoResult);
+    return ioResultsList.set(selectionIoResultIndex, updatedSelectionIoResult);
   },
 
   /**

@@ -172,7 +172,7 @@ function app(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('inputs', action.inputs),
+        state.run.set('ioResults', action.ioResults),
       );
 
     default:

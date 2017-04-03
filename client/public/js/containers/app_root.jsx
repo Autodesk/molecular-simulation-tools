@@ -30,9 +30,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLigandSelection(inputs) {
+    changeLigandSelection(ioResults) {
       return (ligand) => {
-        dispatch(changeLigandSelection(inputs, ligand));
+        dispatch(changeLigandSelection(ioResults, ligand));
       };
     },
     clickAbout() {
@@ -97,7 +97,7 @@ function mergeProps(stateProps, dispatchProps) {
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.app.id),
     submitInputString: dispatchProps.submitInputString(stateProps.app.id),
     changeLigandSelection: dispatchProps.changeLigandSelection(
-      stateProps.app.run.inputs,
+      stateProps.app.run.ioResults,
     ),
   });
 }
