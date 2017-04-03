@@ -27,9 +27,9 @@ const migrationsUtils = {
           appId: run.workflowId,
         }))).then(() => {
           log.debug(`Finished migrating run ${run.id} workflow field.`);
-        }).catch(log.error);
+        });
       }));
-    }).catch(log.error);
+    });
   },
 
   /*
@@ -50,10 +50,10 @@ const migrationsUtils = {
 
           return redis.hset(dbConstants.REDIS_APPS, oldApp.id, JSON.stringify(oldApp)).then(() => {
             log.debug(`Finished migrating workflow ${oldApp.id} to app.`);
-          }).catch(log.error);
-        }).catch(log.error);
+          });
+        });
       });
-    }).catch(log.error);
+    });
   },
 };
 
