@@ -53,7 +53,6 @@ ADD ./client/README.md $APP/client/README.md
 ADD ./client/webpack.config.js $APP/client/webpack.config.js
 ADD ./client/public $APP/client/public
 ADD ./client/test $APP/client/test
-ADD ./shared $APP/shared
 
 RUN npm run build
 
