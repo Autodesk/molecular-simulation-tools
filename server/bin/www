@@ -5,7 +5,7 @@
  */
 if (!('toJSON' in Error.prototype)) {
   Object.defineProperty(Error.prototype, 'toJSON', {
-    value: () => {
+    value: function toJSON() {
       const alt = {};
 
       Object.getOwnPropertyNames(this).forEach((key) => {
@@ -110,7 +110,7 @@ dbUtils.initialize(redis).then(() => {
   server.on('listening', onListening(server.address()));
   server.timeout = 8 * 60 * 1000; // 8 minutes
 }).catch((err) => {
-  log.error({ error: err });
+  log.error({ error: err.toJSON() });
 });
 
 /**
