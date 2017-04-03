@@ -1,35 +1,30 @@
 version: '2'
 
+volumes:
+  redis-data:
+    driver: local
+
 services:
+
   server:
-    build:
-      context: .
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./server/public:/app/server/public
-      - ./server/bin:/app/server/bin
-      - ./server/constants:/app/server/constants
-      - ./server/etc:/app/server/etc
-      - ./server/main:/app/server/main
-      - ./server/routes:/app/server/routes
-      - ./server/views:/app/server/views
-      - ./server/test:/app/server/test
-      - ./server/utils:/app/server/utils
-      - ./shared:/app/shared
-      - ./tmp:/tmp
-      # Uncomment this if you want to do client development
-      # - ./client/dist:/app/client/dist
-    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
+    command: ["node", "bin/www"]
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+    build:
+      context: .
     environment:
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
       URL: "http://localhost:4000"
       REDIS_HOST: "redis"
-      FLUENT_PORT: '24224'
-      BLUEBIRD_DEBUG: '1'
-      FLUENT: '1'
-      TRAVIS: '1'
+      FLUENT_PORT: "24224"
+      FLUENT: "1"
+      TRAVIS: "1"
     links:
       - redis
       - ccc
@@ -42,8 +37,6 @@ services:
     ports:
       #Don't expose this port to the host, only linked containers.
       - "6379"
-    logging:
-      driver: "none"
     volumes:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
@@ -65,14 +58,11 @@ services:
       STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
       REMOVE_JOBS_ON_STARTUP: 'true'
       DISABLE_STARTUP_TEST: 'true'
-      ENABLE_FLUENT: 'true'
+      ENABLE_FLUENT: '0'
     links:
       - redis
-      - fluentd
 
   fluentd:
     image: "fluent/fluentd"
     ports:
       - "24224"
-    logging:
-      driver: "none"
