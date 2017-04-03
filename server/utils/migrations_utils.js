@@ -12,6 +12,7 @@ const migrationsUtils = {
 
     return redis.hgetall(dbConstants.REDIS_RUNS).then((runsHash) => {
       if (!runsHash) {
+        log.debug('Not migrating runs workflow fields because no runs found.');
         return Promise.resolve();
       }
 
@@ -39,6 +40,11 @@ const migrationsUtils = {
     log.debug('Migrating workflows to apps...');
 
     return redis.hgetall(OLD_REDIS_APPS).then((oldAppsHash) => {
+      if (!oldAppsHash) {
+        log.debug('Not migrating workflows to apps because no workflows found');
+        return Promise.resolve();
+      }
+
       Object.values(oldAppsHash).forEach((oldAppString) => {
         const oldApp = JSON.parse(oldAppString);
 
