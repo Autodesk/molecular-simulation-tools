@@ -15,6 +15,7 @@
     "comma-dangle": 0,
     "no-unused-vars": 1,
     "no-extend-native": ["error", { "exceptions": ["Error"] }],
-    "arrow-body-style": ["warn", "as-needed"]
+    "arrow-body-style": ["warn", "as-needed"],
+    "no-empty": ["error", { "allowEmptyCatch": true }]
   }
 }

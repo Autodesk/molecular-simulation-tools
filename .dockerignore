@@ -3,8 +3,8 @@
 .DS_Store
 .jenkins-config
 .env*
-**/node_modules/
-client/dist
+**/node_modules
+**/dist
 build
 ccc_local_storage
 tmp
