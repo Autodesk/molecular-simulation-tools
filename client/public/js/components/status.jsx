@@ -60,11 +60,11 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = ioUtils.getSelectedLigand(inputResults);
+          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.ioResults);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(inputResults)}
+              ligandNames={ioUtils.getLigandNames(props.app.run.ioResults)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
