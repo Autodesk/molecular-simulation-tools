@@ -1,5 +1,4 @@
 const widgetsConstants = require('molecular-design-applications-shared').widgetsConstants;
-const dbConstants = require('../constants/db_constants');
 
 const seedData = {
   version: 1,

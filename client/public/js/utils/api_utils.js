@@ -63,7 +63,7 @@ const apiUtils = {
   },
 
   getRun(runId) {
-    return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
+    return axios.get(`${API_URL}/v1/run/mock/${runId}`).then(res =>
       res.data,
     ).then((runData) => {
       const widgets = new IList(
