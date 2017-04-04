@@ -24,17 +24,18 @@ function App(props) {
   const hideStatus = !!(props.app.fetching ||
     props.app.run.fetchingDataError);
 
-  // TODO should get View pdbs based on active widget
-  const inputs = props.app.widgets.reduce(
-    (reduction, widget) => reduction.concat(widget.inputs),
-    new IList(),
-  );
-  const outputs = props.app.widgets.reduce(
-    (reduction, widget) => reduction.concat(widget.outputs),
-    new IList(),
-  );
-  const inputResults = ioUtils.getResults(inputs, props.app.run.ioResults);
-  const outputResults = ioUtils.getResults(outputs, props.app.run.ioResults);
+
+  const activeWidget = props.app.widgets.get(props.selection.widgetIndex);
+  let inputResults = new IList();
+  let outputResults = new IList();
+  if (activeWidget) {
+    inputResults = ioUtils.getResults(
+      activeWidget.inputs, props.app.run.ioResults,
+    );
+    outputResults = ioUtils.getResults(
+      activeWidget.outputs, props.app.run.ioResults,
+    );
+  }
 
   return (
     <div className="app">

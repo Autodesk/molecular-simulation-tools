@@ -41,7 +41,7 @@ const ioUtils = {
     if (framesIoResultIndex === -1) {
       const pdbIoResultIndex = ioUtils.getIndexByValue(ioResults, '.pdb');
       if (pdbIoResultIndex === -1) {
-        throw new Error('No pdb found');
+        return new IList();
       }
       const pdb = ioResults.get(pdbIoResultIndex).fetchedValue;
       return pdb ? new IList([pdb]) : new IList();

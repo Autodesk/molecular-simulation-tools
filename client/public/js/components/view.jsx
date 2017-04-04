@@ -15,13 +15,18 @@ class View extends React.Component {
   static getPdbs(inputResults, outputResults) {
     const outputPdbs = ioUtils.getAnimationPdbs(outputResults);
 
+    // Prefer to display output pdbs over input pdbs
     if (outputPdbs.size) {
       return outputPdbs;
     }
 
-    const inputPdb = ioUtils.getPdb(inputResults);
+    const inputPdbs = ioUtils.getAnimationPdbs(inputResults);
 
-    return inputPdb ? new IList([inputPdb]) : new IList();
+    if (inputPdbs.size) {
+      return inputPdbs;
+    }
+
+    return new IList();
   }
 
   /**

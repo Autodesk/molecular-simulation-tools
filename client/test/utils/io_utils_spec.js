@@ -56,8 +56,9 @@ describe('ioUtils', () => {
           ]);
         });
 
-        it('throws an error', () => {
-          expect(ioUtils.getAnimationPdbs.bind(null, outputResults)).to.throw();
+        it('returns an empty list', () => {
+          const pdbs = ioUtils.getAnimationPdbs(outputResults);
+          expect(pdbs.size).to.equal(0);
         });
       });
 
