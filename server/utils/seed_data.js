@@ -35,9 +35,12 @@ const seedData = {
             { id: 'workflow_state.dill' },
           ],
           outputs: [
-            {
-              id: 'PROCESSED_PDB_DATA',
-            },
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minsteps.tar.gz' },
+            { id: 'minstep_frames.json' },
           ],
         },
         {
@@ -45,9 +48,11 @@ const seedData = {
           type: widgetsConstants.RESULTS,
           title: 'Results',
           inputs: [
-            {
-              id: 'PROCESSED_PDB_DATA',
-            },
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minstep_frames.json' },
           ],
         },
       ],
@@ -98,9 +103,12 @@ const seedData = {
             { id: 'selection.json' },
           ],
           outputs: [
-            {
-              id: 'PROCESSED_PDB_DATA',
-            },
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minsteps.tar.gz' },
+            { id: 'minstep_frames.json' },
           ],
         },
         {
@@ -108,9 +116,11 @@ const seedData = {
           type: widgetsConstants.RESULTS,
           title: 'Results',
           inputs: [
-            {
-              id: 'PROCESSED_PDB_DATA',
-            },
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minstep_frames.json' },
           ],
         },
       ],
@@ -124,7 +134,7 @@ const seedData = {
       color: '#FFFFFF',
       comingSoon: true,
       creatorImage: '/img/logo2.png',
-      description: "Predict a small molecule's perceived color and" +
+      description: 'Predict a small molecule\'s perceived color and' +
           ' its UV-Viz spectra using TD-DFT',
       viewCount: 0,
     },

@@ -408,9 +408,12 @@ const mockedAppStatus = {
           { id: 'selection.json' },
         ],
         outputs: [
-          {
-            id: 'PROCESSED_PDB_DATA',
-          },
+          { id: 'final_structure.pdb' },
+          { id: 'results.json' },
+          { id: 'minstep.0.pdb' },
+          { id: 'minstep.1.pdb' },
+          { id: 'minsteps.tar.gz' },
+          { id: 'minstep_frames.json' },
         ],
       },
       {
@@ -418,9 +421,11 @@ const mockedAppStatus = {
         type: widgetsConstants.RESULTS,
         title: 'Results',
         inputs: [
-          {
-            id: 'PROCESSED_PDB_DATA',
-          },
+          { id: 'final_structure.pdb' },
+          { id: 'results.json' },
+          { id: 'minstep.0.pdb' },
+          { id: 'minstep.1.pdb' },
+          { id: 'minstep_frames.json' },
         ],
       },
     ],

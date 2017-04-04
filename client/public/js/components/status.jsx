@@ -24,9 +24,6 @@ function Status(props) {
       const inputResults = widget.inputs.map(input =>
         props.app.run.ioResults.get(input.id)
       );
-      const outputResults = widget.outputs.map(output =>
-        props.app.run.ioResults.get(output.id)
-      );
 
       switch (widget.id) {
         case widgetsConstants.LOAD: {
@@ -73,25 +70,22 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const resultsJsonIndex = ioUtils.getIndexByValue(
-            outputResults, 'results.json',
-          );
+          const resultsJsonResult = props.app.run.ioResults.get('results.json');
           let resultValues;
 
-          if (resultsJsonIndex !== -1) {
-            const resultsJsonFetchedValue = outputResults.get(resultsJsonIndex)
-              .fetchedValue;
+          if (resultsJsonResult) {
+            const resultsJsonFetchedValue = resultsJsonResult.fetchedValue;
 
             if (resultsJsonFetchedValue.output_values) {
               resultValues = new IList(resultsJsonFetchedValue.output_values);
             }
           }
 
-          const pdbIndex = ioUtils.getIndexByValue(
-            outputResults, '.pdb',
-          );
-          const outputPdbUrl = outputResults.get(pdbIndex).value;
-          const numberOfPdbs = ioUtils.getAnimationPdbs(outputResults).size;
+          const finalStructureResult =
+            props.app.run.ioResults.get('final_structure.pdb');
+          const outputPdbUrl = finalStructureResult.value;
+          const ioResultsList = props.app.run.ioResults.toList();
+          const numberOfPdbs = ioUtils.getAnimationPdbs(ioResultsList).size;
 
           selection = (
             <StatusResults
