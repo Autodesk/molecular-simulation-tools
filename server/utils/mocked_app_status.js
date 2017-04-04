@@ -29,7 +29,7 @@ const mockedAppStatus = {
       fetchedValue: '',
       name: 'selection.json',
       type: 'inline',
-      value: '{\'ligandname\':\'MPD513\',\'atom_ids\':[2224,2225,2226,2227,2228,2229,2230,2231]}'
+      value: '{"ligandname":"MPD513","atom_ids":[2224,2225,2226,2227,2228,2229,2230,2231]}'
     }
   ],
   jobResult: {
