@@ -52,6 +52,7 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && 
 			#Make sure we are logged into quay.io
 			docker login --username $QUAY_USERNAME --password $QUAY_PASSWORD quay.io
 			docker push $REPO_NAME
+			echo "Successfully pushed $REPO_NAME to quay.io"
 		else
 			echo "QUAY_USERNAME and QUAY_PASSWORD are not set, skipping docker image push to quay.io";
 		fi
