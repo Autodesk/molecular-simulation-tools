@@ -11,11 +11,13 @@
     "expect": true
   },
   "rules": {
-    "no-param-reassign": 1,
+    "no-param-reassign": [ "error", { "props": false }],
     "comma-dangle": 0,
     "no-unused-vars": 1,
     "no-extend-native": ["error", { "exceptions": ["Error"] }],
-    "arrow-body-style": ["warn", "as-needed"],
-    "no-empty": ["error", { "allowEmptyCatch": true }]
+    "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-else-return": 0,
+    "func-names": ["error", "as-needed"]
   }
 }

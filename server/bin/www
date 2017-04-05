@@ -89,15 +89,20 @@ const log = require('../utils/log');
 /**
  * Module dependencies.
  */
-
 const http = require('http');
 const httpProxy = require('http-proxy');
 const retry = require('bluebird-retry');
 const app = require('../main/server');
 const dbUtils = require('../utils/db_utils');
 fluentSender = require('../utils/fluent_sender');
-const redis = require('../utils/redis');
 const testUtils = require('../test/test_utils');
+
+const redisConnectionCreator = require('../main/redis_connection');
+const AppSession = require('../services/app_session');
+const WebsocketHandler = require('../services/websockets');
+const Notifications = require('../services/notifications');
+const dbPromise = require('../main/db');
+const WebsocketServer = require('../main/websocket_server');
 
 /**
  * Get port from environment and store in Express.
@@ -142,46 +147,68 @@ function onError(error) {
  * Event listener for HTTP server 'listening' event.
  */
 function onListening(addr) {
+  log.warn('onListening', addr);
   return () => {
     const bind = typeof addr === 'string'
       ? `pipe ${addr}`
       : `port ${addr.port}`;
     log.debug(`Listening on ${bind}`);
-    // Wait a bit, sometimes docker takes a while
-    retry(
-      testUtils.runTestCCC,
-      { max_tries: 20, interval: 1000 }
-    ).then((status) => {
-      log.info(`Internal functional tests: ${status.success ? 'OK' : 'Failed'} ${status.error != null ? JSON.stringify(status.error) : ''}`);
-      if (process.env.TRAVIS === '1') {
-        process.exit(status.success ? 0 : -1);
-      }
-    }).catch((err) => {
-      log.error({ status: 'Test failed:', error: JSON.stringify(err) });
-      if (process.env.TRAVIS === '1') {
-        process.exit(-1);
-      }
-    });
+    if (process.env.NODE_ENV === 'development') {
+      // Wait a bit, sometimes docker takes a while
+      log.debug('Running tests...');
+      retry(testUtils.runAllTests, { max_tries: 20, interval: 1000 })
+        .then((blob) => {
+          const status = blob.success ? 'OK' : 'Failed';
+          const error = blob.error != null ? JSON.stringify(blob.error) : '';
+          log.info(`Internal functional tests: ${status} ${error}`);
+          if (process.env.TRAVIS === '1') {
+            process.exit(blob.success ? 0 : -1);
+          }
+        })
+        .catch((err) => {
+          log.error({ status: 'Test failed:', error: JSON.stringify(err) });
+          if (process.env.TRAVIS === '1') {
+            process.exit(-1);
+          }
+        });
+    }
   };
 }
+
+const config = require('../main/config'); // This is a promise to deliver all db etc config
+
+config.redis = redisConnectionCreator();
+config.redisConnection = redisConnectionCreator;
 
 /**
   Before we create the server, initialize the database (seeds, migrations)
 */
-dbUtils.initialize(redis).then(() => {
-  /**
-   * Create HTTP server.
-   */
-  const server = http.createServer(app);
-
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening(server.address()));
-  server.timeout = 8 * 60 * 1000; // 8 minutes
-});
+dbUtils.initialize(config.redis)
+  .then(() => {
+    /**
+     * Create HTTP server.
+     */
+    const server = http.createServer(app);
+    config.server = server;
+  })
+  .then(() => dbPromise)
+  .then((db) => {
+    /* Create all the remaining services */
+    config.db = db;
+    config.notifications = new Notifications({ config });
+    config.session = new AppSession({ config });
+    config.wsHandler = new WebsocketHandler({ config });
+  })
+  .then(() => new WebsocketServer({ config }))
+  .then(() => {
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    config.server.on('error', onError);
+    config.server.listen(port);
+    config.server.on('listening', onListening(config.server.address()));
+    config.server.timeout = 8 * 60 * 1000; // 8 minutes
+  });
 
 /**
  * Proxy requests to port 9000 to the CCC server

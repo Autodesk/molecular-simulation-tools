@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Simple server for running workflows and email results",
   "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Autodesk/molecular-simulation-tools.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./",
@@ -17,11 +21,13 @@
     "bluebird": "^3.4.6",
     "bluebird-retry": "^0.10.1",
     "body-parser": "^1.15.2",
+    "bufferutil": "^3.0.0",
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "cloud-compute-cannon-client": "^0.2.1",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
+    "deep-equal": "^1.0.1",
     "dotenv": "^4.0.0",
     "express": "^4.14.0",
     "fluent-logger": "^2.2.0",
@@ -31,13 +37,19 @@
     "molecular-design-applications-shared": "../shared",
     "morgan": "^1.7.0",
     "mustache": "^2.3.0",
+    "pg": "^6.1.5",
+    "pg-hstore": "^2.3.2",
     "promise-redis": "0.0.5",
     "redis": "^2.6.3",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "sendgrid": "^4.7.1",
+    "sequelize": "^3.30.4",
     "shortid": "^2.2.6",
-    "validator": "^6.2.0"
+    "utf-8-validate": "^3.0.1",
+    "uuid": "^3.0.1",
+    "validator": "^6.2.0",
+    "ws": "^2.2.2"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
@@ -45,5 +57,16 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.8.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Autodesk/molecular-simulation-tools/issues"
+  },
+  "homepage": "https://github.com/Autodesk/molecular-simulation-tools#readme",
+  "bin": {
+    "mdtserver": "www.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }

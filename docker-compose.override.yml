@@ -15,12 +15,14 @@ services:
       - ./server/views:/app/server/views
       - ./server/test:/app/server/test
       - ./server/utils:/app/server/utils
+      - ./server/services:/app/server/services
       - ./shared:/app/shared
       - ./tmp:/tmp
       # Uncomment this if you want to do client development
       # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
+      DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -33,6 +35,16 @@ services:
       - redis
       - ccc
       - fluentd
+      - db
+
+  db:
+    image: postgres:9.6.2-alpine
+    environment:
+      POSTGRES_PASSWORD: 'mysecretpassword'
+      POSTGRES_USER: 'dbuser'
+      POSTGRES_DB: 'mst'
+    ports:
+      - "5432:5432"
 
   redis:
     restart: always
@@ -45,6 +57,8 @@ services:
       driver: "none"
     volumes:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    logging:
+      driver: none
 
   ccc:
     image: "quay.io/bionano/cloud-compute-cannon:08ef0106"
@@ -65,6 +79,7 @@ services:
       REMOVE_JOBS_ON_STARTUP: 'true'
       DISABLE_STARTUP_TEST: 'true'
       ENABLE_FLUENT: 'true'
+      FLUENT_PORT: '24224'
     links:
       - redis
       - fluentd

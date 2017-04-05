@@ -19,12 +19,12 @@ const cccPromise =
   .then(() => {
     log.debug('Connection to CCC established!');
     if (process.env.CCC === 'ccc:9000') {
-      log.debug('Dev mode, deleting all CCC jobs');
+      log.trace('Dev mode, deleting all CCC jobs');
       return ccc.deleteAllJobs()
         .then(() => ccc);
+    } else {
+      return Promise.resolve(ccc);
     }
-
-    return ccc;
   });
 
 const cccUtils = {
