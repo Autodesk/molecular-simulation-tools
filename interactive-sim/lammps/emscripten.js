@@ -7940,7 +7940,6 @@ function _gettimeofday(ptr) {
  return 0;
 }
 function _initFilesystem() {
- console.log("Initializing file system at " + dirPath);
  var dirPath = Module.get_dir_path();
  dirPath = dirPath.replace(/[^A-Za-z0-9]/g, "");
  console.log("Creating file system with directory: " + dirPath);
