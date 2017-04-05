@@ -34,6 +34,92 @@ Your Google Analytics key file should be placed at server/google_api_key.json.  
 #### API
 All routes are prefixed with the current version.  See the mock server in client/test/fixtures/mock_server.js for example responses.
 
+##### POST /session/start/:appId
+
+Begins an app session.
+
+POST data:
+
+	{
+		"email": "some-user@gmail.com",
+	}
+
+
+The email is a proxy for authentication.
+
+Returns:
+
+	{
+		sessionId: <SessionID>
+	}
+
+##### POST /session/outputs/:sessionId
+
+Update an app session outputs
+
+POST data:
+
+	{
+		"widgetId1":
+			{
+				"outputPipeId1": {
+					"type": "inline",
+					"value": "the data"
+				},
+				"outputPipeId2": {
+					"type": "url",
+					"value": "http://some.data.url"
+				}
+			},
+		"widgetId2":
+			{
+				"outputPipeId3": {
+					"type": "inline",
+					"value": "the data"
+				},
+				"outputPipeId4": {
+					"type": "url",
+					"value": "http://some.data.url"
+				}
+			}
+	}
+
+Returns `GET /session/:sessionId`
+
+##### DELETE /session/outputs/:sessionId
+
+Delete widget outputs
+
+POST data:
+[
+	"widgetId1",
+	"widgetId2"
+]
+
+Returns `GET /session/:sessionId`
+
+##### GET /session/:sessionId
+
+Returns the session state
+
+	{
+		"session": ":sessionId",
+		"widgets": {
+			"widgetId1": {
+				"out": {
+					"outputPipe1": {
+						"type": "inline",
+						"value": "actual data string"
+					},
+					"outputPipe2": {
+						"type": "url",
+						"value": "http://url.to.data"
+					}
+				}
+			}
+		}
+	}
+
 ##### GET workflow/:workflowId
 Returns the indicated workflow.
 
@@ -57,6 +143,7 @@ Returns the pdb data and a url to the pdb file represented by the given pdbId.  
 
 ##### PUT /structure/upload
 Uploads the given pdb file to the server and returns a public URL to it.  Sends formdata with a `workflowId` and a `file`.
+
 
 #### Test API
 

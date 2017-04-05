@@ -41,11 +41,9 @@ const dbUtils = {
             migrationsUtils.migrateRunsWorkflowField(redis)
           ];
           return Promise.all(promises)
+            .then(() => redis.set(dbConstants.REDIS_VERSION, 1))
             .then(() => {
-              return redis.set(dbConstants.REDIS_VERSION, 1)
-                .then(() => {
-                  log.debug('DB migrated to v1.');
-                });
+              log.debug('DB migrated to v1.');
             });
         }
         return Promise.resolve();

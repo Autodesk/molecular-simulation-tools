@@ -3,42 +3,47 @@ const isEmail = require('validator').isEmail;
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 const dbConstants = require('../constants/db_constants');
 const log = require('../utils/log');
-const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
 
 const router = new express.Router();
+
+function getRedis() {
+  return global.config.redis;
+}
 
 /**
  * Get the status of a run
  */
 router.get('/:runId', (req, res, next) => {
   log.info({ w: `/run/${req.params.runId}` });
-  redis.hget(dbConstants.REDIS_RUNS, req.params.runId).then((runString) => {
-    if (!runString) {
-      const error = new Error(`Run '${req.params.runId}' not found`);
-      error.status = 404;
-      log.error({ error, runId: req.params.runId });
-      return next(error);
-    }
+  getRedis()
+    .then(redis => redis.hget(dbConstants.REDIS_RUNS, req.params.runId))
+    .then((runString) => {
+      if (!runString) {
+        const error = new Error(`Run '${req.params.runId}' not found`);
+        error.status = 404;
+        log.error({ error, runId: req.params.runId });
+        return next(error);
+      }
 
-    const run = JSON.parse(runString);
-    if (run.outputPdbUrl && run.outputPdbUrl.indexOf('ccc:9000') > -1) {
-      run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
-    }
-    run.params = null; // This is too big to send and unnecessary
-    return redis.hget(dbConstants.REDIS_APPS, run.appId).then(
-      (appString) => {
-        if (!appString) {
-          return next(
-            new Error('Corrupt run data references nonexistant app')
-          );
-        }
-        const app = JSON.parse(appString);
-        return res.send(Object.assign({}, run, {
-          app,
-        }));
-      }).catch(next);
-  }).catch(next);
+      const run = JSON.parse(runString);
+      if (run.outputPdbUrl && run.outputPdbUrl.indexOf('ccc:9000') > -1) {
+        run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
+      }
+      run.params = null; // This is too big to send and unnecessary
+      return getRedis()
+        .then(redis => redis.hget(dbConstants.REDIS_APPS, run.appId))
+        .then((appString) => {
+          if (!appString) {
+            return next(
+              new Error('Corrupt run data references nonexistant app')
+            );
+          }
+          const app = JSON.parse(appString);
+          return res.send(Object.assign({}, run, { app }));
+        });
+    })
+    .catch(next);
 });
 
 /**
@@ -80,8 +85,9 @@ router.post('/cancel', (req, res, next) => {
     return next(new Error('Missing required parameter "runId"'));
   }
 
-  return redis.hget(dbConstants.REDIS_RUNS, req.body.runId).then(
-    (runString) => {
+  return getRedis()
+    .then(redis => redis.hget(dbConstants.REDIS_RUNS, req.body.runId))
+    .then((runString) => {
       if (!runString) {
         return next(new Error(`Run with id '${req.body.runId}' not found`));
       }
@@ -91,11 +97,12 @@ router.post('/cancel', (req, res, next) => {
         status: statusConstants.CANCELED,
       }));
 
-      return redis.hset(
-        dbConstants.REDIS_RUNS, req.body.runId, updatedRunString
-      ).then(() => res.end()).catch(next);
-    }
-  ).catch(next);
+      return getRedis()
+        .then(redis =>
+          redis.hset(dbConstants.REDIS_RUNS, req.body.runId, updatedRunString));
+    })
+    .then(() => res.end())
+    .catch(next);
 });
 
 module.exports = router;
