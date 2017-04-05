@@ -59,6 +59,13 @@ RUN npm run build
 
 
 #######################################
+# Interactive-sim static page
+#######################################
+RUN mkdir -p $APP/interactive-sim
+ADD ./interactive-sim $APP/interactive-sim
+
+
+#######################################
 # Server build/install packages
 #######################################
 RUN mkdir -p $APP/server
