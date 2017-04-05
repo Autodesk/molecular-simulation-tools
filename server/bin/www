@@ -198,10 +198,10 @@ config.redis
   .then(() => new WebsocketServer({ config }))
   .then(() => {
     /* Create all the remaining services */
-    global.config.db.resolve(db);
-    global.config.session.resolve(new AppSession({ config }));
-    global.config.wsHandler.resolve(new WebsocketHandler({ config }));
-    global.config.notifications.resolve(new Notifications({ config }));
+    config.db.resolve(db);
+    config.session.resolve(new AppSession({ config }));
+    config.wsHandler.resolve(new WebsocketHandler({ config }));
+    config.notifications.resolve(new Notifications({ config }));
   });
 
 /**

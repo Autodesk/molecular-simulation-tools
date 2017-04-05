@@ -25,17 +25,15 @@ function defer() {
   return promise;
 }
 
-if (!global.config) {
-  global.config = {
-    db: defer(),
-    redis: Promise.resolve(redisConnectionCreator()),
-    redisConnection: redisConnectionCreator,
-    server: defer(),
-    wss: defer(),
-    session: defer(),
-    wsHandler: defer(),
-    notifications: defer()
-  };
-}
+const config = {
+  db: defer(),
+  redis: Promise.resolve(redisConnectionCreator()),
+  redisConnection: redisConnectionCreator,
+  server: defer(),
+  wss: defer(),
+  session: defer(),
+  wsHandler: defer(),
+  notifications: defer()
+};
 
-module.exports = global.config;
+module.exports = config;
