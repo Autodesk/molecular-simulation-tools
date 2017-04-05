@@ -97,10 +97,11 @@ const dbUtils = require('../utils/db_utils');
 fluentSender = require('../utils/fluent_sender');
 const testUtils = require('../test/test_utils');
 
+const redisConnectionCreator = require('../main/redis_connection');
 const AppSession = require('../services/app_session');
 const WebsocketHandler = require('../services/websockets');
 const Notifications = require('../services/notifications');
-const db = require('../main/db');
+const dbPromise = require('../main/db');
 const WebsocketServer = require('../main/websocket_server');
 
 /**
@@ -146,6 +147,7 @@ function onError(error) {
  * Event listener for HTTP server 'listening' event.
  */
 function onListening(addr) {
+  log.warn('onListening', addr);
   return () => {
     const bind = typeof addr === 'string'
       ? `pipe ${addr}`
@@ -174,34 +176,37 @@ function onListening(addr) {
 }
 
 const config = require('../main/config'); // This is a promise to deliver all db etc config
+config.redis = redisConnectionCreator();
+config.redisConnection = redisConnectionCreator;
 
 /**
   Before we create the server, initialize the database (seeds, migrations)
 */
-config.redis
-  .then(redis => dbUtils.initialize(redis))
+dbUtils.initialize(config.redis)
   .then(() => {
     /**
      * Create HTTP server.
      */
     const server = http.createServer(app);
-
-    /**
-     * Listen on provided port, on all network interfaces.
-     */
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening(server.address()));
-    server.timeout = 8 * 60 * 1000; // 8 minutes
-    config.server.resolve(server);
+    config.server = server;
+  })
+  .then(() => dbPromise)
+  .then((db) => {
+    /* Create all the remaining services */
+    config.db = db;
+    config.notifications = new Notifications({ config });
+    config.session = new AppSession({ config });
+    config.wsHandler = new WebsocketHandler({ config });
   })
   .then(() => new WebsocketServer({ config }))
   .then(() => {
-    /* Create all the remaining services */
-    config.db.resolve(db);
-    config.session.resolve(new AppSession({ config }));
-    config.wsHandler.resolve(new WebsocketHandler({ config }));
-    config.notifications.resolve(new Notifications({ config }));
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    config.server.on('error', onError);
+    config.server.listen(port);
+    config.server.on('listening', onListening(config.server.address()));
+    config.server.timeout = 8 * 60 * 1000; // 8 minutes
   });
 
 /**

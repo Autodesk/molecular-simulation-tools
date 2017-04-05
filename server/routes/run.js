@@ -13,8 +13,7 @@ const router = new express.Router();
  */
 router.get('/:runId', (req, res, next) => {
   log.info({ w: `/run/${req.params.runId}` });
-  config.redis
-    .then(redis => redis.hget(dbConstants.REDIS_RUNS, req.params.runId))
+  config.redis.hget(dbConstants.REDIS_RUNS, req.params.runId)
     .then((runString) => {
       if (!runString) {
         const error = new Error(`Run '${req.params.runId}' not found`);
@@ -28,8 +27,7 @@ router.get('/:runId', (req, res, next) => {
         run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
       }
       run.params = null; // This is too big to send and unnecessary
-      return config.redis
-        .then(redis => redis.hget(dbConstants.REDIS_APPS, run.appId))
+      return config.redis.hget(dbConstants.REDIS_APPS, run.appId)
         .then((appString) => {
           if (!appString) {
             return next(

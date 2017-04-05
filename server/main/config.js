@@ -3,7 +3,7 @@
  * redis pub/sub channels, websocket
  */
 const Promise = require('bluebird');
-const redisConnectionCreator = require('./redis_connection');
+
 /*
  * The global config object containing the various services.
  * All objects are promises, deferring the creation
@@ -26,14 +26,14 @@ function defer() {
 }
 
 const config = {
-  db: defer(),
-  redis: Promise.resolve(redisConnectionCreator()),
-  redisConnection: redisConnectionCreator,
-  server: defer(),
-  wss: defer(),
-  session: defer(),
-  wsHandler: defer(),
-  notifications: defer()
+  db: null,
+  redis: null,
+  redisConnection: null,
+  server: null,
+  wss: null,
+  session: null,
+  wsHandler: null,
+  notifications: null
 };
 
 module.exports = config;

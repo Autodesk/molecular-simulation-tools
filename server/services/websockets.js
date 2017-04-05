@@ -14,24 +14,22 @@ const jsonrpcConstants = require('molecular-design-applications-shared').jsonrpc
 function WebsocketHandler(options) {
   assert(options, 'Missing options in WebsocketHandler constructor');
   assert(options.config, 'Missing options.config in WebsocketHandler constructor');
+  const config = options.config;
+  assert(config.session, 'Missing config.session in WebsocketHandler constructor');
+  assert(config.notifications, 'Missing config.notifications in WebsocketHandler constructor');
   this.sessionSockets = {};// SessionId => Websocket
   this.notifications = options.config.notifications;
   this.session = options.config.session;
 
   /* On redis session update pubsub notification, send the app session via websocket */
-  this.notifications
-    .then(notifications =>
-      notifications.subscribe(dbConstants.REDIS_SESSION_UPDATE, (sessionId) => {
-        if (this.sessionSockets[sessionId]) {
-          return this.sendSessionState(this.sessionSockets[sessionId])
-            .catch((err) => {
-              log.error({ error: err, message: 'Failed to send session state on redis notification', sessionId });
-            });
-        } else {
-          return Promise.resolve();
-        }
-      })
-    );
+  this.notifications.subscribe(dbConstants.REDIS_SESSION_UPDATE, (sessionId) => {
+    if (this.sessionSockets[sessionId]) {
+      return this.sendSessionState(this.sessionSockets[sessionId])
+        .catch((err) => {
+          log.error({ error: err, message: 'Failed to send session state on redis notification', sessionId });
+        });
+    }
+  });
 }
 
 WebsocketHandler.prototype.onWebsocketMessage = function onWebsocketMessage(ws, message) {
@@ -105,14 +103,6 @@ WebsocketHandler.prototype.onWebsocketConnection = function onWebsocketConnectio
   });
 };
 
-/**
- * [description]
- * @param  {[type]} ws     [description]
- * @param  {[type]} meta   [description]
- * @param  {[type]} method [description]
- * @param  {[type]} params [description]
- * @return {[type]}        Promise of results
- */
 WebsocketHandler.prototype.onJsonRpcMessage = function onJsonRpcMessage(ws, method, params) {
   switch (method) {
     case jsonrpcConstants.SESSION: {
@@ -123,8 +113,7 @@ WebsocketHandler.prototype.onJsonRpcMessage = function onJsonRpcMessage(ws, meth
       log.debug(`Registering websocket for session=${sessionId}`);
       ws.meta.sessionId = sessionId;
       this.sessionSockets[sessionId] = ws;
-      return this.session
-        .then(session => session.getState(sessionId));
+      return this.session.getState(sessionId);
     }
     default:
       return Promise.resolve(`Unknown jsonrpc method=${method}`);
@@ -134,8 +123,7 @@ WebsocketHandler.prototype.onJsonRpcMessage = function onJsonRpcMessage(ws, meth
 WebsocketHandler.prototype.sendSessionState = function sendSessionState(ws) {
   const sessionId = ws.meta && ws.meta.sessionId;
   if (sessionId) {
-    return this.session
-      .then(session => session.getState(sessionId))
+    return this.session.getState(sessionId)
       .then((sessionState) => {
         if (ws.readyState === WebSocket.OPEN) {
           this.sessionSockets[sessionId].send(JSON.stringify(

@@ -30,8 +30,7 @@ router.get('/exitcode/:runId', (req, res) => {
 router.get('/:appId', (req, res, next) => {
   const appId = req.params.appId;
 
-  config.redis
-    .then(redis => redis.hget(dbConstants.REDIS_APPS, appId))
+  config.redis.hget(dbConstants.REDIS_APPS, appId)
     .then((appString) => {
       if (!appString) {
         const error = new Error(`No app found for given app id ${appId}`);
@@ -43,9 +42,8 @@ router.get('/:appId', (req, res, next) => {
 
       // Write +1 viewCount for this app
       app.viewCount = app.viewCount ? app.viewCount + 1 : 1;
-      return config.redis
-        .then(redis =>
-          redis.hset(dbConstants.REDIS_APPS, appId, JSON.stringify(app)))
+      return config.redis.hset(dbConstants.REDIS_APPS,
+          appId,JSON.stringify(app))
         .then(() => res.send(app));
     })
     .catch(next);
@@ -55,11 +53,9 @@ router.get('/:appId', (req, res, next) => {
  * Get all apps, including their run count
  */
 router.get('/', (req, res, next) => {
-  config.redis
-    .then(redis =>
-      Promise.all([
-        redis.hgetall(dbConstants.REDIS_APPS),
-        redis.hgetall(dbConstants.REDIS_RUNS)])
+    Promise.all([
+      config.redis.hgetall(dbConstants.REDIS_APPS),
+      config.redis.hgetall(dbConstants.REDIS_RUNS)]
     )
     .then(([appsHash, runsHash]) => {
       const runCounts = appUtils.getRunCountsByApps(runsHash || {});

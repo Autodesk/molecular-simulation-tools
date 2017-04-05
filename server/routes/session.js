@@ -13,8 +13,8 @@ router.post('/start/:appId', (req, res, next) => {
   assert(req.body, 'POST /start/:appId Missing request body');
   assert(req.body.email, 'POST /start/:appId Missing email field');
   assert(req.params.appId, 'POST /start/:appId Missing appId');
-  config.session
-    .then(session => session.startSession(req.params.appId, req.body.email))
+
+  config.session.startSession(req.params.appId, req.body.email)
     .then((result) => {
       log.info({ m: 'return from startSession', result });
       return res.json(result);
@@ -28,8 +28,7 @@ router.post('/start/:appId', (req, res, next) => {
 router.post('/outputs/:sessionId', (req, res, next) => {
   const sessionId = req.params.sessionId;
   assert(sessionId, 'Missing sessionId in POST /outputs/:sessionId');
-  config.session
-    .then(session => session.setOutputs(sessionId, req.body))
+  config.session.setOutputs(sessionId, req.body)
     .then(result => res.json(result))
     .catch(next);
 });
@@ -39,9 +38,7 @@ router.post('/outputs/:sessionId', (req, res, next) => {
  */
 router.delete('/outputs/:appId', (req, res, next) => {
   assert(req.params.appId, 'Missing appId in DELETE /outputs/:appId');
-  config.session
-    .then(session =>
-      session.deleteOutputs(req.params.appId, req.body.widgetIds))
+  config.session.deleteOutputs(req.params.appId, req.body.widgetIds)
     .then(result => res.json(result))
     .catch(next);
 });
@@ -51,8 +48,7 @@ router.delete('/outputs/:appId', (req, res, next) => {
  */
 router.get('/:sessionId', (req, res, next) => {
   assert(req.params.sessionId, 'Missing sessionId in GET /:sessionId');
-  config.session
-    .then(session => session.getState(req.params.sessionId))
+  config.session.getState(req.params.sessionId)
     .then(result => res.json(result))
     .catch(next);
 });

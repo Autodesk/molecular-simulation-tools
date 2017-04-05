@@ -51,39 +51,13 @@ function AppSession(options) {
   assert(options, 'Missing options in AppSession constructor');
   assert(options.config, 'Missing options.config in AppSession constructor');
   assert(options.config.notifications, 'Missing options.config.notifications in AppSession constructor');
+  assert(options.config.db, 'Missing options.config.db in AppSession constructor');
   this.notifications = options.config.notifications;
-  this.ready = options.config.db
-    .then((db) => {
-      this.db = db;
-      /* Initialize the models */
-      return initializeModels(this.db);
-    });
-  this.notifications
-    .then((notifications) => {
-      notifications.subscribe(dbConstants.REDIS_SESSION_UPDATE, (sessionId) => {
-        options.config.wsHandler.then((wshandler) => {
-          if (wshandler.sessionSockets[sessionId]) {
-            this.getState(sessionId)
-              .then((sessionState) => {
-                // Check again, it might have disconnected in between
-                if (wshandler.sessionSockets[sessionId]) {
-                  wshandler.sessionSockets[sessionId].send(JSON.stringify(
-                    {
-                      jsonrpc: '2.0',
-                      method: jsonrpcConstants.SESSION_UPDATE,
-                      params: {
-                        sessionId,
-                        state: sessionState
-                      }
-                    }));
-                }
-              });
-          }
-        });
-      });
-    });
+  this.db = options.config.db;
+  this.ready = initializeModels(this.db);
 }
 
+//See README.md
 AppSession.prototype.startSession = function startSession(appId, email) {
   log.debug(`AppSession.startSession appId=${appId} email=${email}`);
   return this.ready
@@ -101,11 +75,7 @@ AppSession.prototype.startSession = function startSession(appId, email) {
     });
 };
 
-/**
- * [setOutputs description]
- * @param {[type]} sessionId  [description]
- * @param {[type]} outputHash {widgetId: {key:DRO (Data-Reference-Object (see above))}}
- */
+//See README.md
 AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
   log.debug(`AppSession.setOutputs sessionId=${sessionId} outputHash=${outputHash}`);
   assert(sessionId, 'Missing sessionId in AppSession setOutputs');
@@ -136,12 +106,7 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
     });
 };
 
-/**
- * [deleteOutputs description]
- * @param  {[type]} sessionId  [description]
- * @param  {[type]} outputHash {widgetId: [outputPipe1, outputPipe1, ...]}
- * @return {[type]}            [description]
- */
+//See README.md
 AppSession.prototype.deleteOutputs = function deleteOutputs(sessionId, widgetIds) {
   log.debug(`AppSession.deleteOutputs sessionId=${sessionId} widgetIds=${JSON.stringify(widgetIds)}`);
   return this.ready
@@ -160,6 +125,7 @@ AppSession.prototype.deleteOutputs = function deleteOutputs(sessionId, widgetIds
     .then(() => this.getState(sessionId));
 };
 
+//See README.md
 AppSession.prototype.getState = function getState(sessionId) {
   assert(sessionId, 'AppSession.getState: missing sessionId');
   log.debug(`AppSession.getState sessionId=${sessionId}`);
@@ -185,9 +151,8 @@ AppSession.prototype.getState = function getState(sessionId) {
 
 AppSession.prototype.notifySessionUpdated = function notifySessionUpdated(sessionId) {
   log.debug(`AppSession.notifySessionUpdated sessionId=${sessionId}`);
-  return this.notifications
-    .then(notifications =>
-      notifications.broadcast(dbConstants.REDIS_SESSION_UPDATE, sessionId));
+  return this.notifications.broadcast(
+    dbConstants.REDIS_SESSION_UPDATE, sessionId);
 };
 
 module.exports = AppSession;

@@ -27,8 +27,7 @@ util.inherits(Notifications, EventEmitter);
 
 Notifications.prototype.broadcast = function broadcast(channel, message) {
   log.debug(`Notifications.broadcast channel=${channel} message=${message}`);
-  return this.redis
-    .then(redis => redis.publish(channel, message));
+  return this.redis.publish(channel, message);
 };
 
 Notifications.prototype.subscribe = function subscribe(channel, handler) {
