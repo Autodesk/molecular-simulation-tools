@@ -43,7 +43,7 @@ router.get('/:appId', (req, res, next) => {
       // Write +1 viewCount for this app
       app.viewCount = app.viewCount ? app.viewCount + 1 : 1;
       return config.redis.hset(dbConstants.REDIS_APPS,
-          appId,JSON.stringify(app))
+          appId, JSON.stringify(app))
         .then(() => res.send(app));
     })
     .catch(next);
@@ -53,22 +53,22 @@ router.get('/:appId', (req, res, next) => {
  * Get all apps, including their run count
  */
 router.get('/', (req, res, next) => {
-    Promise.all([
-      config.redis.hgetall(dbConstants.REDIS_APPS),
-      config.redis.hgetall(dbConstants.REDIS_RUNS)]
-    )
-    .then(([appsHash, runsHash]) => {
-      const runCounts = appUtils.getRunCountsByApps(runsHash || {});
+  Promise.all([
+    config.redis.hgetall(dbConstants.REDIS_APPS),
+    config.redis.hgetall(dbConstants.REDIS_RUNS)]
+  )
+  .then(([appsHash, runsHash]) => {
+    const runCounts = appUtils.getRunCountsByApps(runsHash || {});
 
-      const apps = Object.values(appsHash || {}).map((appString) => {
-        const app = JSON.parse(appString);
-        app.runCount = runCounts.get(app.id) || 0;
-        return app;
-      });
+    const apps = Object.values(appsHash || {}).map((appString) => {
+      const app = JSON.parse(appString);
+      app.runCount = runCounts.get(app.id) || 0;
+      return app;
+    });
 
-      return res.send(apps);
-    })
-    .catch(next);
+    return res.send(apps);
+  })
+  .catch(next);
 });
 
 module.exports = router;

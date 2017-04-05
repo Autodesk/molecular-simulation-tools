@@ -176,6 +176,7 @@ function onListening(addr) {
 }
 
 const config = require('../main/config'); // This is a promise to deliver all db etc config
+
 config.redis = redisConnectionCreator();
 config.redisConnection = redisConnectionCreator;
 

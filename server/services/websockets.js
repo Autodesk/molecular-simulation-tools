@@ -29,6 +29,7 @@ function WebsocketHandler(options) {
           log.error({ error: err, message: 'Failed to send session state on redis notification', sessionId });
         });
     }
+    return null;
   });
 }
 

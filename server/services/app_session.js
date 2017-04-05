@@ -19,7 +19,6 @@ const Sequelize = require('sequelize');
 const uuidV4 = require('uuid/v4');
 const log = require('../utils/log');
 const dbConstants = require('../constants/db_constants');
-const jsonrpcConstants = require('molecular-design-applications-shared').jsonrpcConstants;
 
 let Session = null;
 let WidgetValue = null;
@@ -57,7 +56,7 @@ function AppSession(options) {
   this.ready = initializeModels(this.db);
 }
 
-//See README.md
+// See README.md
 AppSession.prototype.startSession = function startSession(appId, email) {
   log.debug(`AppSession.startSession appId=${appId} email=${email}`);
   return this.ready
@@ -75,7 +74,7 @@ AppSession.prototype.startSession = function startSession(appId, email) {
     });
 };
 
-//See README.md
+// See README.md
 AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
   log.debug(`AppSession.setOutputs sessionId=${sessionId} outputHash=${outputHash}`);
   assert(sessionId, 'Missing sessionId in AppSession setOutputs');
@@ -106,7 +105,7 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
     });
 };
 
-//See README.md
+// See README.md
 AppSession.prototype.deleteOutputs = function deleteOutputs(sessionId, widgetIds) {
   log.debug(`AppSession.deleteOutputs sessionId=${sessionId} widgetIds=${JSON.stringify(widgetIds)}`);
   return this.ready
@@ -125,7 +124,7 @@ AppSession.prototype.deleteOutputs = function deleteOutputs(sessionId, widgetIds
     .then(() => this.getState(sessionId));
 };
 
-//See README.md
+// See README.md
 AppSession.prototype.getState = function getState(sessionId) {
   assert(sessionId, 'AppSession.getState: missing sessionId');
   log.debug(`AppSession.getState sessionId=${sessionId}`);
