@@ -1,0 +1,44 @@
+.top20
+{
+	margin-top: 20px;
+}
+
+.top10
+{
+	margin-top: 10px;
+}
+
+.top50
+{
+	margin-top: 50px;
+}
+
+.bottom10
+{
+	margin-bottom: 10px;
+}
+
+.bottom20
+{
+	margin-bottom: 20px;
+}
+
+.bottom50
+{
+	margin-bottom: 50px;
+}
+
+#qrCode
+{
+	display: None;
+}
+
+#molViewer
+{
+	height: 700px;
+}
+
+.hidden
+{
+	display: None;
+}
