@@ -50,7 +50,6 @@ class HomePage extends React.Component {
           runCount={app.runCount}
           title={app.title}
           description={app.description}
-          viewCount={app.viewCount}
           id={app.id}
           key={app.id}
         />,

@@ -372,7 +372,6 @@ const mockedAppStatus = {
     id: '1',
     selectLigands: true,
     title: 'Refine a protein-ligand complex',
-    viewCount: 45,
     widgets: [
       {
         id: widgetsConstants.LOAD,
