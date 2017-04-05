@@ -1,4 +1,12 @@
 /******************************* Requirements **************************************/
+self.Module = {
+	preRun: [],
+	postRun: [],
+	print: function(text){ return; },
+	printErr: function(text){ return; },
+	ENVIRONMENT: 'WORKER'
+};
+
 importScripts('/interactive-sim/js/constant.js');
 
 console.log("WORKER: About to load wasm binary");
@@ -12,15 +20,6 @@ xhr.onload = function() {
 	importScripts('/interactive-sim/lammps/emscripten.js');
 };
 xhr.send(null);
-
-
-self.Module = {
-	preRun: [],
-	postRun: [],
-	print: function(text){ return; },
-	printErr: function(text){ return; },
-	ENVIRONMENT: 'WORKER'
-};
 
 /******************************* LAMMPS Variables *******************************/
 const NAME_FIX_NVT = "fix_nvt";
