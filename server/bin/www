@@ -97,7 +97,7 @@ const dbUtils = require('../utils/db_utils');
 fluentSender = require('../utils/fluent_sender');
 const testUtils = require('../test/test_utils');
 
-const AppSession = require('../services/appsession');
+const AppSession = require('../services/app_session');
 const WebsocketHandler = require('../services/websockets');
 const Notifications = require('../services/notifications');
 const db = require('../main/db');

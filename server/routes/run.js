@@ -4,19 +4,16 @@ const statusConstants = require('molecular-design-applications-shared').statusCo
 const dbConstants = require('../constants/db_constants');
 const log = require('../utils/log');
 const runUtils = require('../utils/run_utils');
+const config = require('../main/config');
 
 const router = new express.Router();
-
-function getRedis() {
-  return global.config.redis;
-}
 
 /**
  * Get the status of a run
  */
 router.get('/:runId', (req, res, next) => {
   log.info({ w: `/run/${req.params.runId}` });
-  getRedis()
+  config.redis
     .then(redis => redis.hget(dbConstants.REDIS_RUNS, req.params.runId))
     .then((runString) => {
       if (!runString) {
@@ -31,7 +28,7 @@ router.get('/:runId', (req, res, next) => {
         run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
       }
       run.params = null; // This is too big to send and unnecessary
-      return getRedis()
+      return config.redis
         .then(redis => redis.hget(dbConstants.REDIS_APPS, run.appId))
         .then((appString) => {
           if (!appString) {
@@ -85,7 +82,7 @@ router.post('/cancel', (req, res, next) => {
     return next(new Error('Missing required parameter "runId"'));
   }
 
-  return getRedis()
+  return config.redis
     .then(redis => redis.hget(dbConstants.REDIS_RUNS, req.body.runId))
     .then((runString) => {
       if (!runString) {
@@ -97,7 +94,7 @@ router.post('/cancel', (req, res, next) => {
         status: statusConstants.CANCELED,
       }));
 
-      return getRedis()
+      return config.redis
         .then(redis =>
           redis.hset(dbConstants.REDIS_RUNS, req.body.runId, updatedRunString));
     })
