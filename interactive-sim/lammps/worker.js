@@ -3,7 +3,6 @@ self.Module = {
 	preRun: [],
 	postRun: [],
 	print: function(text){ return; },
-	printErr: function(text){ return; },
 	ENVIRONMENT: 'WORKER'
 };
 
