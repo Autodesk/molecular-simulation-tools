@@ -73,7 +73,9 @@ class View extends React.Component {
     }
 
     // Render various parts of the molviewer if they have changed
-    if (!is(pdbs.toSet(), oldPdbs.toSet())) {
+    const pdbsChanged = !is(pdbs.toSet(), oldPdbs.toSet());
+    const loadingChanged = nextProps.loading !== this.props.loading;
+    if (pdbsChanged || loadingChanged) {
       this.renderMoleculeViewerPdbs(
         pdbs,
         nextProps.loading,
