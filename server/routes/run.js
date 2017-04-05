@@ -1,3 +1,4 @@
+const apps = require('molecular-simulation-tools-apps');
 const express = require('express');
 const isEmail = require('validator').isEmail;
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
@@ -35,18 +36,16 @@ router.get('/:runId', (req, res, next) => {
       run.outputPdbUrl = run.outputPdbUrl.replace('ccc:9000', 'localhost:9000');
     }
     run.params = null; // This is too big to send and unnecessary
-    return redis.hget(dbConstants.REDIS_APPS, run.appId).then(
-      (appString) => {
-        if (!appString) {
-          return next(
-            new Error('Corrupt run data references nonexistant app')
-          );
-        }
-        const app = JSON.parse(appString);
-        return res.send(Object.assign({}, run, {
-          app,
-        }));
-      }).catch(next);
+
+    const app = apps.get(run.appId);
+    if (!app) {
+      return next(
+        new Error('Corrupt run data references nonexistant app')
+      );
+    }
+    return res.send(Object.assign({}, run, {
+      app,
+    }));
   }).catch(next);
 });
 

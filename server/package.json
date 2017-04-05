@@ -29,6 +29,7 @@
     "googleapis": "^16.1.0",
     "http-proxy": "^1.16.2",
     "molecular-design-applications-shared": "../shared",
+    "molecular-simulation-tools-apps": "../apps-data",
     "morgan": "^1.7.0",
     "mustache": "^2.3.0",
     "promise-redis": "0.0.5",

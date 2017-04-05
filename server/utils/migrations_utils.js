@@ -45,7 +45,7 @@ const migrationsUtils = {
         return Promise.resolve();
       }
 
-      Object.values(oldAppsHash).forEach((oldAppString) => {
+      return Promise.all(Object.values(oldAppsHash).map((oldAppString) => {
         const oldApp = JSON.parse(oldAppString);
 
         return redis.hget(dbConstants.REDIS_APPS, oldApp.id).then((appString) => {
@@ -58,7 +58,7 @@ const migrationsUtils = {
             log.debug(`Finished migrating workflow ${oldApp.id} to app.`);
           });
         });
-      });
+      }));
     });
   },
 };

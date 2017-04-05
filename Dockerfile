@@ -60,6 +60,12 @@ RUN npm run build
 #######################################
 # Server build/install packages
 #######################################
+RUN mkdir -p $APP/apps-data
+ADD ./apps-data $APP/apps-data
+WORKDIR $APP/apps-data
+RUN npm install
+WORKDIR $APP
+
 RUN mkdir -p $APP/server
 ADD ./server/package.json $APP/server/package.json
 WORKDIR $APP/server

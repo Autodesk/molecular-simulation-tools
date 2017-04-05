@@ -13,14 +13,9 @@ const dbUtils = {
     log.debug('Initializing db...');
 
     // Migrate
-    return dbUtils.migrate(redis).then(() => {
-      // Then seed
-      const appPromises = seedData.apps.map(app =>
-        dbUtils.seedApp(redis, dbConstants.REDIS_APPS, app)
-      );
-      const versionPromise = dbUtils.seedVersion(redis);
-      return Promise.all([...appPromises, versionPromise]);
-    }).then(() => {
+    return dbUtils.migrate(redis).then(() =>
+      dbUtils.seedVersion(redis)
+    ).then(() => {
       log.debug('Initialized db.');
     });
   },
@@ -50,27 +45,6 @@ const dbUtils = {
   },
 
   /**
-   * Set the given object in the indicated hash by id if doesn't already exist
-   * @param redis {RedisClient}
-   * @param hashName {String}
-   * @param data {Object}
-   */
-  seedApp(redis, hashName, appData) {
-    log.debug(`Seeding app ${appData.id}...`);
-
-    return redis.hexists(hashName, appData.id).then((exists) => {
-      if (exists) {
-        log.debug(`App ${appData.id} already exists, not seeding.`);
-        return Promise.resolve();
-      }
-
-      return redis.hset(hashName, appData.id, JSON.stringify(appData)).then(() => {
-        log.debug(`Seeded app ${appData.id}.`);
-      });
-    });
-  },
-
-  /**
    * Set the db version to the latest value
    * @param {RedisClient} redis
    * @returns {Promise}
@@ -80,7 +54,7 @@ const dbUtils = {
 
     return redis.exists(dbConstants.REDIS_VERSION).then((exists) => {
       if (exists) {
-        log.debug(`Version already exists, not seeding.`);
+        log.debug('Version already exists, not seeding.');
         return Promise.resolve();
       }
 
