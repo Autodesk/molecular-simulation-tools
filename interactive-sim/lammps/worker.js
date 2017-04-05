@@ -1,3 +1,4 @@
+/******************************* Requirements **************************************/
 importScripts('/interactive-sim/js/constant.js');
 
 console.log("WORKER: About to load wasm binary");
