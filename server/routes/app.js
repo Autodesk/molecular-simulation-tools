@@ -29,7 +29,7 @@ router.get('/exitcode/:runId', (req, res) => {
 router.get('/:appId', (req, res, next) => {
   const appId = req.params.appId;
 
-  global.config.redis()
+  global.config.redis
     .then(redis => redis.hget(dbConstants.REDIS_APPS, appId))
     .then((appString) => {
       if (!appString) {
@@ -42,7 +42,7 @@ router.get('/:appId', (req, res, next) => {
 
       // Write +1 viewCount for this app
       app.viewCount = app.viewCount ? app.viewCount + 1 : 1;
-      return global.config.redis()
+      return global.config.redis
         .then(redis =>
           redis.hset(dbConstants.REDIS_APPS, appId, JSON.stringify(app)))
         .then(() => res.send(app));
@@ -54,7 +54,7 @@ router.get('/:appId', (req, res, next) => {
  * Get all apps, including their run count
  */
 router.get('/', (req, res, next) => {
-  global.config.redis()
+  global.config.redis
     .then(redis =>
       Promise.all([
         redis.hgetall(dbConstants.REDIS_APPS),

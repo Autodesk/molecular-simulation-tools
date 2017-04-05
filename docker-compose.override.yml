@@ -79,6 +79,7 @@ services:
       REMOVE_JOBS_ON_STARTUP: 'true'
       DISABLE_STARTUP_TEST: 'true'
       ENABLE_FLUENT: 'true'
+      FLUENT_PORT: '24224'
     links:
       - redis
       - fluentd
