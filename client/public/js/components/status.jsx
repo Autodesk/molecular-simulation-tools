@@ -8,7 +8,7 @@ import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 import selectionConstants from '../constants/selection_constants';
 
 require('../../css/status.scss');
@@ -21,8 +21,8 @@ function Status(props) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
-      const inputResults = widget.inputs.map(input =>
-        props.app.run.ioResults.get(input.id)
+      const inputPipeDatas = widget.inputPipes.map(inputPipe =>
+        props.app.run.pipeDatas.get(inputPipe.id)
       );
 
       switch (widget.id) {
@@ -30,7 +30,7 @@ function Status(props) {
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
-              inputData={ioUtils.getPdb(inputResults)}
+              inputData={pipeUtils.getPdb(inputPipeDatas)}
               inputFileError={props.app.run.inputFileError}
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}
@@ -57,11 +57,11 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.ioResults);
+          const selectedLigand = pipeUtils.getSelectedLigand(props.app.run.pipeDatas);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(props.app.run.ioResults)}
+              ligandNames={pipeUtils.getLigandNames(props.app.run.pipeDatas)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
@@ -70,7 +70,7 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const resultsJsonResult = props.app.run.ioResults.get('results.json');
+          const resultsJsonResult = props.app.run.pipeDatas.get('results.json');
           let resultValues;
 
           if (resultsJsonResult) {
@@ -82,10 +82,10 @@ function Status(props) {
           }
 
           const finalStructureResult =
-            props.app.run.ioResults.get('final_structure.pdb');
+            props.app.run.pipeDatas.get('final_structure.pdb');
           const outputPdbUrl = finalStructureResult.value;
-          const ioResultsList = props.app.run.ioResults.toList();
-          const numberOfPdbs = ioUtils.getAnimationPdbs(ioResultsList).size;
+          const pipeDatasList = props.app.run.pipeDatas.toList();
+          const numberOfPdbs = pipeUtils.getAnimationPdbs(pipeDatasList).size;
 
           selection = (
             <StatusResults

@@ -84,14 +84,14 @@ function app(state = initialState, action) {
       });
 
     case actionConstants.INPUT_FILE: {
-      // Clear ioResults for this widget
+      // Clear pipeDatas for this widget
       const widgetId = widgetsConstants.LOAD;
       const widget = state.widgets.find(
         widgetI => widgetI.id === widgetId
       );
-      let newIoResults = state.run.ioResults;
-      widget.outputs.forEach((output) => {
-        newIoResults = newIoResults.delete(output.id);
+      let newIoResults = state.run.pipeDatas;
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({
@@ -99,31 +99,31 @@ function app(state = initialState, action) {
         inputFileError: null,
         inputStringError: null,
         inputString: '',
-        ioResults: newIoResults,
+        pipeDatas: newIoResults,
       }));
     }
 
     case actionConstants.INPUT_FILE_COMPLETE: {
-      let newIoResults = state.run.ioResults;
-      action.inputResults.forEach((inputResult) => {
-        newIoResults = newIoResults.set(inputResult.ioId, inputResult);
+      let newIoResults = state.run.pipeDatas;
+      action.inputPipeDatas.forEach((inputPipeData) => {
+        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
       });
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputFileError: action.error,
-        ioResults: newIoResults,
+        pipeDatas: newIoResults,
       }));
     }
 
     case actionConstants.SUBMIT_INPUT_STRING: {
-      // Clear ioResults for this widget
+      // Clear pipeDatas for this widget
       const widgetId = widgetsConstants.LOAD;
       const widget = state.widgets.find(
         widgetI => widgetI.id === widgetId
       );
-      let newIoResults = state.run.ioResults;
-      widget.outputs.forEach((output) => {
-        newIoResults = newIoResults.delete(output.id);
+      let newIoResults = state.run.pipeDatas;
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({
@@ -131,20 +131,20 @@ function app(state = initialState, action) {
         inputFileError: null,
         inputStringError: null,
         inputString: action.inputString,
-        ioResults: newIoResults,
+        pipeDatas: newIoResults,
       }));
     }
 
     case actionConstants.PROCESSED_INPUT_STRING: {
-      let newIoResults = state.run.ioResults;
-      action.inputResults.forEach((inputResult) => {
-        newIoResults = newIoResults.set(inputResult.ioId, inputResult);
+      let newIoResults = state.run.pipeDatas;
+      action.inputPipeDatas.forEach((inputPipeData) => {
+        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
       });
 
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        ioResults: newIoResults,
+        pipeDatas: newIoResults,
       }));
     }
 
@@ -172,7 +172,7 @@ function app(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('ioResults', action.ioResults),
+        state.run.set('pipeDatas', action.pipeDatas),
       );
 
     default:

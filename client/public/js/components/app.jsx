@@ -5,7 +5,7 @@ import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
 import WidgetList from '../components/widget_list';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 
 require('../../css/app.scss');
 
@@ -26,14 +26,14 @@ function App(props) {
 
 
   const activeWidget = props.app.widgets.get(props.selection.widgetIndex);
-  let inputResults = new IList();
-  let outputResults = new IList();
+  let inputPipeDatas = new IList();
+  let outputPipeDatas = new IList();
   if (activeWidget) {
-    inputResults = ioUtils.getResults(
-      activeWidget.inputs, props.app.run.ioResults,
+    inputPipeDatas = pipeUtils.getPipeDatas(
+      activeWidget.inputPipes, props.app.run.pipeDatas,
     );
-    outputResults = ioUtils.getResults(
-      activeWidget.outputs, props.app.run.ioResults,
+    outputPipeDatas = pipeUtils.getPipeDatas(
+      activeWidget.outputPipes, props.app.run.pipeDatas,
     );
   }
 
@@ -68,9 +68,9 @@ function App(props) {
         colorized={props.colorized}
         error={viewError}
         loading={props.app.fetching || props.app.run.fetchingData}
-        inputResults={inputResults}
+        inputPipeDatas={inputPipeDatas}
         morph={props.morph}
-        outputResults={outputResults}
+        outputPipeDatas={outputPipeDatas}
       />
     </div>
   );

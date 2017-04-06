@@ -26,22 +26,23 @@ const dbUtils = {
    * @returns {Promise}
    */
   migrate(redis) {
-    return redis.get(dbConstants.REDIS_VERSION).then((version) => {
-      if (!version || version < 1) {
-        log.debug('DB migrating to v1...');
+    return redis.get(dbConstants.REDIS_VERSION)
+      .then((version) => {
+        if (!version || version < 1) {
+          log.debug('DB migrating to v1...');
 
-        return Promise.all([
-          migrationsUtils.migrateWorkflowsToApps(redis),
-          migrationsUtils.migrateRunsWorkflowField(redis),
-        ]).then(() =>
-          redis.set(dbConstants.REDIS_VERSION, 1).then(() => {
-            log.debug('DB migrated to v1.');
-          })
-        );
-      }
-
-      return Promise.resolve();
-    });
+          const promises = [
+            migrationsUtils.migrateWorkflowsToApps(redis),
+            migrationsUtils.migrateRunsWorkflowField(redis)
+          ];
+          return Promise.all(promises)
+            .then(() => redis.set(dbConstants.REDIS_VERSION, 1))
+            .then(() => {
+              log.debug('DB migrated to v1.');
+            });
+        }
+        return Promise.resolve();
+      });
   },
 
   /**

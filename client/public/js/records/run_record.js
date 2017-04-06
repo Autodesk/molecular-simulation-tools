@@ -11,7 +11,7 @@ const RunRecord = new Record({
   inputFileError: null,
   inputString: '',
   inputStringError: null,
-  ioResults: new IMap(),
+  pipeDatas: new IMap(),
   status: statusConstants.IDLE,
 });
 

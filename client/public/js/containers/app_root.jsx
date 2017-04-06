@@ -30,20 +30,20 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLigandSelection(ioResults) {
+    changeLigandSelection(pipeDatas) {
       return (ligand) => {
-        dispatch(changeLigandSelection(ioResults, ligand));
+        dispatch(changeLigandSelection(pipeDatas, ligand));
       };
     },
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(appId, email, ioResults, inputString) {
+    clickRun(appId, email, pipeDatas, inputString) {
       return (inputs) => {
-        const inputResults = inputs.map(input =>
-          ioResults.get(input.id),
+        const inputPipeDatas = inputs.map(input =>
+          pipeDatas.get(input.id),
         );
-        dispatch(clickRun(appId, email, inputResults, inputString));
+        dispatch(clickRun(appId, email, inputPipeDatas, inputString));
       };
     },
     clickWidget(widgetIndex) {
@@ -90,14 +90,14 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.app.id,
       stateProps.app.run.email,
-      stateProps.app.run.ioResults,
+      stateProps.app.run.pipeDatas,
       stateProps.app.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.app.id),
     submitInputString: dispatchProps.submitInputString(stateProps.app.id),
     changeLigandSelection: dispatchProps.changeLigandSelection(
-      stateProps.app.run.ioResults,
+      stateProps.app.run.pipeDatas,
     ),
   });
 }

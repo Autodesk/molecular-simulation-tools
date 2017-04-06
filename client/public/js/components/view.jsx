@@ -1,26 +1,26 @@
 import React from 'react';
 import { List as IList, is } from 'immutable';
 import MoleculeViewerWrapper from '../utils/molecule_viewer_wrapper';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 import loadImg from '../../img/loadAnim.gif';
 import '../../css/view.scss';
 
 class View extends React.Component {
   /**
-   * Find the appropriate PDB to display given inputResults and outputResults
-   * @param {IList of IoRecords} inputResults
-   * @param {IList of IoRecords} outputResults
+   * Find the appropriate PDB to display given inputPipeDatas and outputPipeDatas
+   * @param {IList of PipeDataRecords} inputPipeDatas
+   * @param {IList of PipeDataRecords} outputPipeDatas
    * @returns {IList of Strings}
    */
-  static getPdbs(inputResults, outputResults) {
-    const outputPdbs = ioUtils.getAnimationPdbs(outputResults);
+  static getPdbs(inputPipeDatas, outputPipeDatas) {
+    const outputPdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
 
     // Prefer to display output pdbs over input pdbs
     if (outputPdbs.size) {
       return outputPdbs;
     }
 
-    const inputPdbs = ioUtils.getAnimationPdbs(inputResults);
+    const inputPdbs = pipeUtils.getAnimationPdbs(inputPipeDatas);
 
     if (inputPdbs.size) {
       return inputPdbs;
@@ -30,25 +30,25 @@ class View extends React.Component {
   }
 
   /**
-   * Return the list of selection strings in the given inputResults
-   * @param {IList of IoRecords} inputResults
+   * Return the list of selection strings in the given inputPipeDatas
+   * @param {IList of PipeDataRecords} inputPipeDatas
    * @returns {IList of Strings}
    */
-  static getSelectionStrings(inputResults) {
-    const selectedLigand = ioUtils.getSelectedLigand(inputResults);
+  static getSelectionStrings(inputPipeDatas) {
+    const selectedLigand = pipeUtils.getSelectedLigand(inputPipeDatas);
     if (!selectedLigand) {
       return new IList();
     }
 
-    return ioUtils.getLigandSelectionStrings(
-      inputResults, selectedLigand,
+    return pipeUtils.getLigandSelectionStrings(
+      inputPipeDatas, selectedLigand,
     );
   }
 
   componentDidMount() {
-    const selectionStrings = View.getSelectionStrings(this.props.inputResults);
+    const selectionStrings = View.getSelectionStrings(this.props.inputPipeDatas);
     const pdbs = View.getPdbs(
-      this.props.inputResults, this.props.outputResults,
+      this.props.inputPipeDatas, this.props.outputPipeDatas,
     );
 
     this.renderMoleculeViewerPdbs(
@@ -60,15 +60,15 @@ class View extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const selectionStrings = View.getSelectionStrings(nextProps.inputResults);
-    const oldSelectionStrings = View.getSelectionStrings(this.props.inputResults);
+    const selectionStrings = View.getSelectionStrings(nextProps.inputPipeDatas);
+    const oldSelectionStrings = View.getSelectionStrings(this.props.inputPipeDatas);
     const pdbs = View.getPdbs(
-      nextProps.inputResults, nextProps.outputResults,
+      nextProps.inputPipeDatas, nextProps.outputPipeDatas,
     );
     let oldPdbs = new IList();
-    if (this.props.inputResults && this.props.outputResults) {
+    if (this.props.inputPipeDatas && this.props.outputPipeDatas) {
       oldPdbs = View.getPdbs(
-        this.props.inputResults, this.props.outputResults,
+        this.props.inputPipeDatas, this.props.outputPipeDatas,
       );
     }
 
@@ -161,10 +161,10 @@ View.defaultProps = {
 View.propTypes = {
   colorized: React.PropTypes.bool,
   error: React.PropTypes.string,
-  inputResults: React.PropTypes.instanceOf(IList).isRequired,
+  inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   loading: React.PropTypes.bool.isRequired,
   morph: React.PropTypes.number.isRequired,
-  outputResults: React.PropTypes.instanceOf(IList).isRequired,
+  outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   selectionStrings: React.PropTypes.instanceOf(IList),
 };
 

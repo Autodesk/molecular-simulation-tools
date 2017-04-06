@@ -4,9 +4,9 @@
 const apps = require('molecular-simulation-tools-apps');
 const express = require('express');
 const dbConstants = require('../constants/db_constants');
-const redis = require('../utils/redis');
 const runUtils = require('../utils/run_utils');
 const appUtils = require('../utils/app_utils');
+const config = require('../main/config');
 
 const router = new express.Router();
 
@@ -47,7 +47,7 @@ router.get('/:appId', (req, res, next) => {
  * Get all apps, including their run count
  */
 router.get('/', (req, res, next) => {
-  redis.hgetall(dbConstants.REDIS_RUNS)
+  config.redis.hgetall(dbConstants.REDIS_RUNS)
     .then((runsHash) => {
       const runCounts = appUtils.getRunCountsByApps(runsHash || {});
 
