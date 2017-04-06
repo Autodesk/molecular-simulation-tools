@@ -25,15 +25,18 @@ function initWorker() {
 	gLammpsWorker.onmessage = function(e) {
 		console.log("Received Message!");
 		switch(e.data[0]) {
+		case MESSAGE_WORKER_READY:
+			let workerReady = e.data[1];
+			if(!workerReady)
+				break; 
+						
+			setUpNew('default');
+			break;
+
 		case MESSAGE_LAMMPS_DATA:
 		case MESSAGE_SNAPSHOT_DATA:
 			let success = e.data[1];
 			if (success) {
-					
-				// remove highlight
-				let btns = document.getElementsByClassName('BtnLoadNew');
-				setElementsClass(btns, 'BtnLoadNew btn btn-default');	
-				
 				// get simulation box size
 				gLammpsWorker.postMessage([MESSAGE_SIMULATION_BOX]);
 		
@@ -138,7 +141,7 @@ function setUpNew(mol) {
 		removeExcessSnapshotBtns(0);
 		latestSnapshotNum = 0;
         }	
-
+		
 	// determine which molecule to load
 	switch(mol) {
 	case '1yu8-1-10':
@@ -148,7 +151,8 @@ function setUpNew(mol) {
 			gDuration = 20;
 			gOutputFreq = 20;
 		}
-
+		document.getElementById('BtnLoadRes1-10').className = 'btn btn-primary';
+		document.getElementById('BtnLoadRes11-20').className = 'btn btn-default';
 		break;
 
 	case '1yu8-11-20':
@@ -159,7 +163,8 @@ function setUpNew(mol) {
 			gDuration = 20;
 			gOutputFreq = 20;
 		}
-
+		document.getElementById('BtnLoadRes1-10').className = 'btn btn-default';
+		document.getElementById('BtnLoadRes11-20').className = 'btn btn-primary';
 		break;
 
 	}

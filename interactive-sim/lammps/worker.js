@@ -1,9 +1,8 @@
 /******************************* Requirements **************************************/
 self.Module = {
 	preRun: [],
-	postRun: [],
 	print: function(text){ return; },
-	ENVIRONMENT: 'WORKER'
+	postRun: function(){ console.log("Finished Running Main"); postMessage([MESSAGE_WORKER_READY, true]); }
 };
 
 importScripts('/interactive-sim/js/constant.js');
@@ -13,7 +12,6 @@ let xhr = new XMLHttpRequest();
 xhr.open('GET', '/interactive-sim/lammps/emscripten.wasm', true);
 xhr.responseType = 'arraybuffer';
 xhr.onload = function() {
-	console.log("WORKER: Got wasm");
 	Module.wasmBinary = xhr.response;
 	console.log("WORKER: importing emscripten.js");
 	importScripts('/interactive-sim/lammps/emscripten.js');
@@ -55,6 +53,9 @@ onmessage = function(e) {
 	// Create lammps system
 	case MESSAGE_LAMMPS_DATA:
 	case MESSAGE_SNAPSHOT_DATA:
+		if(e.data.length != 2)
+			break;		
+
 		let dirPath;
 		try {
 			// Get directory path. This ensures Module is loaded properly 
@@ -74,7 +75,7 @@ onmessage = function(e) {
 
 		let d = new Date();
 		let id = d.getTime()%111111;
-	
+			
 		// MESSAGE_LAMMPS_DATA
 		if(e.data[0] == MESSAGE_LAMMPS_DATA) {
 			let molData = e.data[1];
@@ -84,15 +85,6 @@ onmessage = function(e) {
 
 		}
 		//  MESSAGE_SNAPSHOT_DATA
-		else if(e.data[1] == null || e.data[1] == undefined) {
-			try {	
-				lmpsForWeb = new Module.Lammps_Web(id, true);
-			} catch(e) {
-				message.push(false);
-				postMessage(message);
-				break;
-			}
-		}
 		else {
 			let dataFileName = e.data[1];
 			lmpsForWeb = new Module.Lammps_Web(id, dataFileName, false);
