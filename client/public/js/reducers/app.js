@@ -1,7 +1,6 @@
-import { List as IList } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
-import RunRecord from '../records/run_record';
+import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
+import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
 
 const initialState = new AppRecord();
@@ -16,6 +15,7 @@ function app(state = initialState, action) {
           fetchingError: null,
           run: new RunRecord({
             fetchingData: true,
+            fetchingDataError: null,
           }),
         });
       }
@@ -83,36 +83,68 @@ function app(state = initialState, action) {
         fetching: false,
       });
 
-    case actionConstants.INPUT_FILE:
+    case actionConstants.INPUT_FILE: {
+      // Clear pipeDatas for this widget
+      const widgetId = widgetsConstants.LOAD;
+      const widget = state.widgets.find(
+        widgetI => widgetI.id === widgetId
+      );
+      let newIoResults = state.run.pipeDatas;
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
+      });
+
       return state.set('run', state.run.merge({
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
         inputString: '',
-        inputs: [],
+        pipeDatas: newIoResults,
       }));
+    }
 
-    case actionConstants.INPUT_FILE_COMPLETE:
+    case actionConstants.INPUT_FILE_COMPLETE: {
+      let newIoResults = state.run.pipeDatas;
+      action.inputPipeDatas.forEach((inputPipeData) => {
+        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
+      });
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputFileError: action.error,
-        inputs: action.inputs || new IList(),
+        pipeDatas: newIoResults,
       }));
+    }
 
-    case actionConstants.SUBMIT_INPUT_STRING:
+    case actionConstants.SUBMIT_INPUT_STRING: {
+      // Clear pipeDatas for this widget
+      const widgetId = widgetsConstants.LOAD;
+      const widget = state.widgets.find(
+        widgetI => widgetI.id === widgetId
+      );
+      let newIoResults = state.run.pipeDatas;
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
+      });
+
       return state.set('run', state.run.merge({
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
         inputString: action.inputString,
-        inputs: [],
+        pipeDatas: newIoResults,
       }));
+    }
 
     case actionConstants.PROCESSED_INPUT_STRING: {
+      let newIoResults = state.run.pipeDatas;
+      action.inputPipeDatas.forEach((inputPipeData) => {
+        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
+      });
+
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        inputs: action.inputs || new IList(),
+        pipeDatas: newIoResults,
       }));
     }
 
@@ -140,7 +172,7 @@ function app(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('inputs', action.inputs),
+        state.run.set('pipeDatas', action.pipeDatas),
       );
 
     default:

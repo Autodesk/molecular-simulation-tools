@@ -1,9 +1,10 @@
+import { Map as IMap } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import appUtils from './utils/app_utils';
-import ioUtils from './utils/io_utils';
+import pipeUtils from './utils/pipe_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import widgetUtils from './utils/widget_utils';
 
@@ -63,25 +64,27 @@ export function initializeRun(appId, runId) {
     });
 
     try {
-      let inputs = app.run.inputs;
-      let outputs = app.run.outputs;
+      let pipeDatasList = app.run.pipeDatas.toList();
 
-      inputs = await appUtils.fetchIoPdbs(inputs);
-      inputs = await appUtils.fetchIoResults(inputs);
-      outputs = await appUtils.fetchIoPdbs(outputs);
-      outputs = await appUtils.fetchIoResults(outputs);
+      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = pipeUtils.getLigandNames(pipeDatasList);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
       }
 
-      const updatedRun = app.run.merge({ inputs, outputs });
+      let pipeDatas = new IMap();
+      pipeDatasList.forEach((pipeData) => {
+        pipeDatas = pipeDatas.set(pipeData.pipeId, pipeData);
+      });
+
+      const updatedRun = app.run.merge({ pipeDatas });
 
       // Find the widget that should be active for this run
       const activeWidgetIndex = widgetUtils.getActiveIndex(
-        app.widgets, updatedRun,
+        app.widgets, updatedRun.pipeDatas,
       );
 
       dispatch({
@@ -110,33 +113,32 @@ export function clickWidget(widgetIndex) {
  * When the user clicks on the run button
  * @param {String} appId
  * @param {String} email
- * @param {IList} inputs
+ * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(appId, email, inputs, inputString) {
+export function clickRun(appId, email, inputPipeDatas, inputString) {
   return (dispatch) => {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    const selectedLigand = ioUtils.getSelectedLigand(inputs);
+    apiUtils.run(appId, email, inputPipeDatas, inputString)
+      .then((runId) => {
+        dispatch({
+          type: actionConstants.RUN_SUBMITTED,
+          runId,
+        });
 
-    apiUtils.run(appId, email, inputs, selectedLigand, inputString).then((runId) => {
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        runId,
+        browserHistory.push(`/app/${appId}/${runId}`);
+        dispatch(initializeRun(appId, runId));
+      }).catch((err) => {
+        console.error(err);
+
+        dispatch({
+          type: actionConstants.RUN_SUBMITTED,
+          err,
+        });
       });
-
-      browserHistory.push(`/app/${appId}/${runId}`);
-      dispatch(initializeRun(appId, runId));
-    }).catch((err) => {
-      console.error(err);
-
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        err,
-      });
-    });
   };
 }
 
@@ -158,19 +160,19 @@ export function selectInputFile(file, appId) {
 
     try {
       const inputString = await appUtils.readFile(file);
-      let inputs = await appUtils.processInput(
+      let inputPipeDatas = await appUtils.processInput(
         appId, inputString, extension,
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
-        inputs,
+        inputPipeDatas,
       });
     } catch (err) {
       console.error(err);
@@ -203,26 +205,26 @@ export function submitInputString(inputString, appId) {
     try {
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
-      let inputs = await appUtils.processInput(
+      let inputPipeDatas = await appUtils.processInput(
         appId, newInput, extension,
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputs);
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {
-        inputs = ioUtils.selectLigand(inputs, ligands.get(0));
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
-        inputs,
+        inputPipeDatas,
       });
     } catch (err) {
       console.error(err);
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
-        inputs: err ? err.inputs : null,
+        inputPipeDatas: err ? err.inputPipeDatas : null,
       });
     }
   };
@@ -279,10 +281,14 @@ export function clickColorize() {
   };
 }
 
-export function changeLigandSelection(inputs, ligand) {
+export function changeLigandSelection(pipeDatas, ligand) {
+  const pipeDatasList = pipeUtils.selectLigand(pipeDatas.toList(), ligand);
+  const updatedPipeDatas = new IMap(pipeDatasList.map(pipeData =>
+    [pipeData.pipeId, pipeData],
+  ));
   return {
     type: actionConstants.CHANGE_LIGAND_SELECTION,
-    inputs: ioUtils.selectLigand(inputs, ligand),
+    pipeDatas: updatedPipeDatas,
   };
 }
 

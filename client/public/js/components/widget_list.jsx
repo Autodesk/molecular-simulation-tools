@@ -11,7 +11,7 @@ require('../../css/widget_list.scss');
 function WidgetList(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const widgetStatuses = widgetUtils.getStatuses(
-    props.app.widgets, props.app.run,
+    props.app.widgets, props.app.run.pipeDatas,
   );
 
   return (
@@ -24,7 +24,7 @@ function WidgetList(props) {
                 key={widget.id}
                 number={index + 1}
                 onClick={props.clickWidget}
-                primaryText={widget.meta.title}
+                primaryText={widget.title}
                 selected={props.selection.widgetIndex === index}
                 status={widgetStatuses.get(index)}
                 index={index}

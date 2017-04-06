@@ -8,8 +8,7 @@ import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import appUtils from '../utils/app_utils';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 import selectionConstants from '../constants/selection_constants';
 
 require('../../css/status.scss');
@@ -21,12 +20,17 @@ function Status(props) {
   if (!props.hideContent) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
-      switch (props.app.widgets.get(props.selection.widgetIndex).id) {
-        case widgetsConstants.LOAD:
+      const widget = props.app.widgets.get(props.selection.widgetIndex);
+      const inputPipeDatas = widget.inputPipes.map(inputPipe =>
+        props.app.run.pipeDatas.get(inputPipe.id)
+      );
+
+      switch (widget.id) {
+        case widgetsConstants.LOAD: {
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
-              inputData={ioUtils.getPdb(props.app.run.inputs)}
+              inputData={pipeUtils.getPdb(inputPipeDatas)}
               inputFileError={props.app.run.inputFileError}
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}
@@ -36,30 +40,28 @@ function Status(props) {
             />
           );
           break;
+        }
 
         case widgetsConstants.RUN: {
-          const running = props.app.run.status === statusConstants.RUNNING;
-          const runDisabled = running || runCompleted ||
-            !appUtils.isRunnable(props.app.run);
           selection = (
             <StatusRun
               clickRun={props.clickRun}
               email={props.app.run.email}
               emailError={props.app.run.emailError}
               runCompleted={runCompleted}
-              runDisabled={runDisabled}
               submitEmail={props.submitEmail}
+              widget={widget}
             />
           );
           break;
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.inputs);
+          const selectedLigand = pipeUtils.getSelectedLigand(props.app.run.pipeDatas);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(props.app.run.inputs)}
+              ligandNames={pipeUtils.getLigandNames(props.app.run.pipeDatas)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
@@ -68,25 +70,22 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const outputResultsIndex = ioUtils.getIndexByExtension(
-            props.app.run.outputs, 'results.json',
-          );
+          const resultsJsonResult = props.app.run.pipeDatas.get('results.json');
           let resultValues;
 
-          if (outputResultsIndex !== -1) {
-            const outputResults = props.app.run.outputs.get(outputResultsIndex)
-              .fetchedValue;
+          if (resultsJsonResult) {
+            const resultsJsonFetchedValue = resultsJsonResult.fetchedValue;
 
-            if (outputResults.output_values) {
-              resultValues = new IList(outputResults.output_values);
+            if (resultsJsonFetchedValue.output_values) {
+              resultValues = new IList(resultsJsonFetchedValue.output_values);
             }
           }
 
-          const pdbIndex = ioUtils.getIndexByExtension(
-            props.app.run.outputs, '.pdb',
-          );
-          const outputPdbUrl = props.app.run.outputs.get(pdbIndex).value;
-          const numberOfPdbs = ioUtils.getAnimationPdbs(props.app.run.outputs).size;
+          const finalStructureResult =
+            props.app.run.pipeDatas.get('final_structure.pdb');
+          const outputPdbUrl = finalStructureResult.value;
+          const pipeDatasList = props.app.run.pipeDatas.toList();
+          const numberOfPdbs = pipeUtils.getAnimationPdbs(pipeDatasList).size;
 
           selection = (
             <StatusResults

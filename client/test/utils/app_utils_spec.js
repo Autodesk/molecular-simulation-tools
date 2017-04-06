@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
 import RunRecord from '../../public/js/records/run_record';
-import IoRecord from '../../public/js/records/io_record';
+import PipeDataRecord from '../../public/js/records/pipe_data_record';
 import appUtils from '../../public/js/utils/app_utils';
 
 describe('appUtils', () => {
@@ -10,7 +10,7 @@ describe('appUtils', () => {
   beforeEach(() => {
     run = new RunRecord({
       inputs: new IList([
-        new IoRecord({
+        new PipeDataRecord({
           name: 'asdf.pdb',
           value: 'asdf.pdb',
           type: 'pdb',
@@ -18,34 +18,6 @@ describe('appUtils', () => {
         }),
       ]),
       email: 'justin.mccandless@autodesk.com',
-    });
-  });
-
-  describe('isRunnable', () => {
-    describe('when no inputs', () => {
-      beforeEach(() => {
-        run = run.set('inputs', new IList());
-      });
-
-      it('returns false', () => {
-        expect(appUtils.isRunnable(run)).to.equal(false);
-      });
-    });
-
-    describe('when no email', () => {
-      beforeEach(() => {
-        run = run.set('email', '');
-      });
-
-      it('returns false', () => {
-        expect(appUtils.isRunnable(run)).to.equal(false);
-      });
-    });
-
-    describe('when email and inputs', () => {
-      it('returns true', () => {
-        expect(appUtils.isRunnable(run)).to.equal(true);
-      });
     });
   });
 });

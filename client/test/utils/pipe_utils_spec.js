@@ -1,32 +1,32 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
-import IoRecord from '../../public/js/records/io_record';
-import ioUtils from '../../public/js/utils/io_utils';
+import PipeDataRecord from '../../public/js/records/pipe_data_record';
+import pipeUtils from '../../public/js/utils/pipe_utils';
 
-describe('ioUtils', () => {
+describe('pipeUtils', () => {
   beforeEach(() => {
   });
 
   describe('getAnimationPdbs', () => {
-    let outputs;
+    let outputPipeDatas;
 
     beforeEach(() => {
-      outputs = new IList([
-        new IoRecord({
+      outputPipeDatas = new IList([
+        new PipeDataRecord({
           fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
-          name: 'minstep_frames.json',
+          pipeId: 'minstep_frames.json',
           type: 'url',
           value: 'http://example.com/minstep_frames.json',
         }),
-        new IoRecord({
+        new PipeDataRecord({
           fetchedValue: 'imapdbstring',
-          name: 'minstep.0.pdb',
+          pipeId: 'minstep.0.pdb',
           type: 'url',
           value: 'http://example.com/minstep.0.pdb',
         }),
-        new IoRecord({
+        new PipeDataRecord({
           fetchedValue: 'imapdbstringtoo',
-          name: 'minstep.1.pdb',
+          pipeId: 'minstep.1.pdb',
           type: 'url',
           value: 'http://example.com/minstep.1.pdb',
         }),
@@ -35,36 +35,37 @@ describe('ioUtils', () => {
 
     describe('when minstep_frames doesnt exist', () => {
       beforeEach(() => {
-        outputs = outputs.delete(0);
+        outputPipeDatas = outputPipeDatas.delete(0);
       });
 
       it('returns the first pdb', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(1);
-        expect(pdbs.get(0)).to.equal(outputs.get(0).fetchedValue);
+        expect(pdbs.get(0)).to.equal(outputPipeDatas.get(0).fetchedValue);
       });
 
       describe('when no pdbs exist', () => {
         beforeEach(() => {
-          outputs = new IList([
-            new IoRecord({
+          outputPipeDatas = new IList([
+            new PipeDataRecord({
               fetchedValue: 'whatami',
-              name: 'somethingweird.exe',
+              pipeId: 'somethingweird.exe',
               type: 'crazy',
               value: 'http://example.com',
             }),
           ]);
         });
 
-        it('throws an error', () => {
-          expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+        it('returns an empty list', () => {
+          const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
+          expect(pdbs.size).to.equal(0);
         });
       });
 
       describe('when a pdb file exists but not its fetchedValue', () => {
         beforeEach(() => {
-          outputs = new IList([
-            new IoRecord({
+          outputPipeDatas = new IList([
+            new PipeDataRecord({
               fetchedValue: '',
               type: 'url',
               value: 'http://example.com/minstep.0.pdb',
@@ -73,84 +74,84 @@ describe('ioUtils', () => {
         });
 
         it('returns an empty list', () => {
-          const pdbs = ioUtils.getAnimationPdbs(outputs);
+          const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
           expect(pdbs.size).to.equal(0);
         });
       });
     });
 
-    describe('when given an empty list of outputs', () => {
+    describe('when given an empty list of outputPipeDatas', () => {
       beforeEach(() => {
-        outputs = new IList();
+        outputPipeDatas = new IList();
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(0);
       });
     });
 
     describe('when minstep_frames fetchedValue doesnt exist', () => {
       beforeEach(() => {
-        outputs = outputs.set(0, outputs.get(0).set('fetchedValue', null));
+        outputPipeDatas = outputPipeDatas.set(0, outputPipeDatas.get(0).set('fetchedValue', null));
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(0);
       });
     });
 
     describe('when mismatched data between pdbs and minstep_frames', () => {
       beforeEach(() => {
-        outputs = outputs.delete(1);
+        outputPipeDatas = outputPipeDatas.delete(1);
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getAnimationPdbs.bind(null, outputs)).to.throw();
+        expect(pipeUtils.getAnimationPdbs.bind(null, outputPipeDatas)).to.throw();
       });
     });
 
     describe('when data for each frame', () => {
       it('returns pdb data for each frame', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputs);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(2);
-        expect(pdbs.get(0)).to.equal(outputs.get(1).fetchedValue);
-        expect(pdbs.get(1)).to.equal(outputs.get(2).fetchedValue);
+        expect(pdbs.get(0)).to.equal(outputPipeDatas.get(1).fetchedValue);
+        expect(pdbs.get(1)).to.equal(outputPipeDatas.get(2).fetchedValue);
       });
     });
   });
 
-  describe('getInputError', () => {
-    let inputs;
+  describe('getOutputPipeDatasError', () => {
+    let inputPipeDatas;
     beforeEach(() => {
-      inputs = new IList();
+      inputPipeDatas = new IList();
     });
 
     describe('when no prep.json', () => {
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
+        expect(pipeUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
       });
     });
 
     describe('when prep.json with no fetchedValue', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
-          name: 'prep.json',
+        inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
+          pipeId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
         }));
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getInputError.bind(null, inputs)).to.throw();
+        expect(pipeUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
       });
     });
 
     describe('when prep.json with success false', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
-          name: 'prep.json',
+        inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
+          pipeId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -160,14 +161,14 @@ describe('ioUtils', () => {
       });
 
       it('returns error string', () => {
-        expect(!!ioUtils.getInputError(inputs)).to.equal(true);
+        expect(!!pipeUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal(true);
       });
     });
 
     describe('when prep.json with success true', () => {
       beforeEach(() => {
-        inputs = inputs.push(new IoRecord({
-          name: 'prep.json',
+        inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
+          pipeId: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -177,7 +178,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getInputError(inputs)).to.equal('');
+        expect(pipeUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal('');
       });
     });
   });
@@ -190,52 +191,52 @@ describe('ioUtils', () => {
 
     describe('when no selection.json io given', () => {
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
     describe('when selection.json has no value property', () => {
       beforeEach(() => {
-        ios = ios.push(new IoRecord({ name: 'selection.json' }));
+        ios = ios.push(new PipeDataRecord({ pipeId: 'selection.json' }));
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
     describe('when selection.json value contains invalid json', () => {
       beforeEach(() => {
-        ios = ios.push(new IoRecord({ name: 'selection.json', value: 'asdf' }));
+        ios = ios.push(new PipeDataRecord({ pipeId: 'selection.json', value: 'asdf' }));
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
     describe('when selection.json value contains a ligandname', () => {
       const ligandName = 'MPD513';
       beforeEach(() => {
-        ios = ios.push(new IoRecord({
-          name: 'selection.json',
+        ios = ios.push(new PipeDataRecord({
+          pipeId: 'selection.json',
           value: `{"ligandname":"${ligandName}"}`,
         }));
       });
 
       it('returns empty the ligandname', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal(ligandName);
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal(ligandName);
       });
     });
   });
 
-  describe('createSelectionInput', () => {
+  describe('createSelectionPipeData', () => {
     let selectedLigand;
-    let selectedLigandInput;
+    let selectedLigandPipeData;
     beforeEach(() => {
       selectedLigand = 'ARQ401';
-      selectedLigandInput = new IoRecord({
-        name: 'prep.json',
+      selectedLigandPipeData= new PipeDataRecord({
+        pipeId: 'prep.json',
         fetchedValue: {
           ligands: {
             ARQ401: [1, 2, 3],
@@ -247,45 +248,45 @@ describe('ioUtils', () => {
     describe('when invalid selectedLigand given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionInput.bind(null, selectedLigandInput, null),
+          pipeUtils.createSelectionPipeData.bind(null, selectedLigandPipeData, null),
         ).to.throw();
       });
     });
 
-    describe('when invalid selectedLigandInput given', () => {
+    describe('when invalid selectedLigandPipeData given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionInput.bind(null, null, selectedLigand),
+          pipeUtils.createSelectionPipeData.bind(null, null, selectedLigand),
         ).to.throw();
         expect(
-          ioUtils.createSelectionInput.bind(
+          pipeUtils.createSelectionPipeData.bind(
             null,
             {
               fethedValue: { ligands: { ARQ401: null } },
             },
-            selectedLigandInput,
+            selectedLigandPipeData,
           ),
         ).to.throw();
       });
     });
 
-    describe('when inputs are valid', () => {
+    describe('when inputPipeDatas are valid', () => {
       it('returns an io record', () => {
         expect(
-          ioUtils.createSelectionInput(selectedLigandInput, selectedLigand),
-        ).to.be.an.instanceof(IoRecord);
+          pipeUtils.createSelectionPipeData(selectedLigandPipeData, selectedLigand),
+        ).to.be.an.instanceof(PipeDataRecord);
       });
     });
   });
 
   describe('selectLigand', () => {
     let ligand;
-    let inputs;
+    let inputPipeDatas;
     beforeEach(() => {
       ligand = 'ARQ401';
-      inputs = new IList([
-        new IoRecord({
-          name: 'prep.json',
+      inputPipeDatas = new IList([
+        new PipeDataRecord({
+          pipeId: 'prep.json',
           value: 'http://example.com/prep.json',
           type: 'url',
           fetchedValue: {
@@ -302,11 +303,11 @@ describe('ioUtils', () => {
 
     describe('when no selection.json input is given', () => {
       it('creates one with the given ligand selected', () => {
-        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
-        expect(updatedInputs.size).to.equal(2);
+        const updatedInputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligand);
+        expect(updatedInputPipeDatas.size).to.equal(2);
 
-        const selectionInput = updatedInputs.find(input =>
-          input.name === 'selection.json',
+        const selectionInput = updatedInputPipeDatas.find(input =>
+          input.pipeId === 'selection.json',
         );
         expect(selectionInput.fetchedValue.ligandname).to.equal(ligand);
       });
@@ -315,8 +316,8 @@ describe('ioUtils', () => {
     describe('when selection.json already exists', () => {
       beforeEach(() => {
         const fetchedValue = { ligandname: 'BBQ401', atom_ids: [1] };
-        inputs = inputs.push(new IoRecord({
-          name: 'selection.json',
+        inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
+          pipeId: 'selection.json',
           type: 'inline',
           fetchedValue,
           value: JSON.stringify(fetchedValue),
@@ -324,11 +325,11 @@ describe('ioUtils', () => {
       });
 
       it('updates selection.json to select the new ligand', () => {
-        const updatedInputs = ioUtils.selectLigand(inputs, ligand);
-        expect(updatedInputs.size).to.equal(2);
+        const updatedInputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligand);
+        expect(updatedInputPipeDatas.size).to.equal(2);
 
-        const selectionInput = updatedInputs.find(input =>
-          input.name === 'selection.json',
+        const selectionInput = updatedInputPipeDatas.find(inputPipeData =>
+          inputPipeData.pipeId === 'selection.json',
         );
         expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);
       });

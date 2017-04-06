@@ -5,6 +5,9 @@ const initialState = new UserMessageRecord();
 
 function userMessage(state = initialState, action) {
   switch (action.type) {
+    case actionConstants.INITIALIZE_APP:
+      return initialState;
+
     case actionConstants.FETCHED_APP:
       if (!action.error) {
         return state;

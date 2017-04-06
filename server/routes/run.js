@@ -3,10 +3,19 @@ const isEmail = require('validator').isEmail;
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 const dbConstants = require('../constants/db_constants');
 const log = require('../utils/log');
+const mockedAppStatus = require('../utils/mocked_app_status');
 const runUtils = require('../utils/run_utils');
 const config = require('../main/config');
 
 const router = new express.Router();
+
+/**
+ * TODO Remove this when the CWL/CCC widget run endpoint is implemented
+ * Mocking of /:runId
+ */
+router.get('/mock/:runId', (req, res, next) => {
+  res.send(mockedAppStatus);
+});
 
 /**
  * Get the status of a run

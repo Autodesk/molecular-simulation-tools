@@ -1,68 +1,57 @@
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
-import ioUtils from './io_utils';
+import { List as IList } from 'immutable';
 import widgetStatusConstants from '../constants/widget_status_constants';
 
 const widgetUtils = {
   /**
-   * Given a list of widgets, return of corresponding list of their statuses
-   * @param {IList} widgets
-   * @param {RunRecord}
-   * @return {IList of statusConstants}
+   * Based on the expected inputs/outputs to the existing pipeDatas, return
+   * the status of the widget
+   * @param {IList of PipeRecords}
+   * @param {IList of PipeRecords}
+   * @param {IList of PipeDataRecords}
+   * @returns {statusConstant}
    */
-  getStatuses(widgets, run) {
-    let activeSet = false;
-    return widgets.map((widget) => {
-      if (activeSet) {
+  getStatus(inputPipes = new IList(), outputPipes = new IList(), pipeDatas) {
+    // If it doesn't have all its inputs, it is disabled
+    for (const inputPipe of inputPipes) {
+      if (!pipeDatas.get(inputPipe.id)) {
         return widgetStatusConstants.DISABLED;
       }
+    }
 
-      if (!widgetUtils.isCompleted(widget, run)) {
-        activeSet = true;
+    // If it doesn't have all of its outputs, it is active
+    for (const outputPipe of outputPipes) {
+      if (!pipeDatas.get(outputPipe.id)) {
         return widgetStatusConstants.ACTIVE;
       }
+    }
 
-      return widgetStatusConstants.COMPLETED;
-    });
+    // Otherwise (all inputs and all outputs), it's completed
+    return widgetStatusConstants.COMPLETED;
   },
 
   /**
-   * Given a widget (and run data), return a bool indicating if it's completed
-   * @param {WidgetRecord}
-   * @param {RunRecord}
-   * @return {Boolean}
+   * Given a list of widgets, return of corresponding list of their statuses
+   * @param {IList of WidgetRecords} widgets
+   * @param {IList of pipeDataRecords}
+   * @return {IList of widgetStatusConstants}
    */
-  isCompleted(widget, run) {
-    switch (widget.id) {
-      case widgetsConstants.LOAD:
-        return !!(!run.inputFileError &&
-          !run.inputStringError &&
-          ioUtils.getPdb(run.inputs));
-
-      case widgetsConstants.SELECTION:
-        return !!ioUtils.getSelectedLigand(run.inputs);
-
-      case widgetsConstants.RUN:
-        return run.status === statusConstants.COMPLETED;
-
-      case widgetsConstants.RESULTS:
-        return run.status === statusConstants.COMPLETED;
-
-      default:
-        throw new Error(`Invalid widgetId: ${widget.id}`);
-    }
+  getStatuses(widgets, pipeDatas) {
+    return widgets.map(widget =>
+      widgetUtils.getStatus(widget.inputPipes, widget.outputPipes, pipeDatas)
+    );
   },
 
   /**
    * Get the first incomplete widget, otherwise the last one overall
    * @param {IList of WidgetRecords} widgets
-   * @param {RunRecord} run
+   * @param {IList of PipeDataRecords} pipeDatas
    * @returns {WidgetRecord}
    */
-  getActiveIndex(widgets, run) {
-    const statuses = widgetUtils.getStatuses(widgets, run);
+  getActiveIndex(widgets, pipeDatas) {
+    const statuses = widgetUtils.getStatuses(widgets, pipeDatas);
 
     const activeIndex = statuses.findIndex(status =>
-      status !== statusConstants.COMPLETED
+      status !== widgetStatusConstants.COMPLETED
     );
 
     return activeIndex === -1 ? (statuses.size - 1) : activeIndex;

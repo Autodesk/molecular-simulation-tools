@@ -1,9 +1,11 @@
+import { List as IList } from 'immutable';
 import React from 'react';
+import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
-import AppRecord from '../records/app_record';
 import WidgetList from '../components/widget_list';
+import pipeUtils from '../utils/pipe_utils';
 
 require('../../css/app.scss');
 
@@ -19,8 +21,21 @@ function App(props) {
   const loadingOrError = !!(props.app.fetching ||
     props.app.fetchingError ||
     props.app.run.fetchingDataError);
-  const hideStatus = props.app.fetching ||
-    props.app.run.fetchingDataError;
+  const hideStatus = !!(props.app.fetching ||
+    props.app.run.fetchingDataError);
+
+
+  const activeWidget = props.app.widgets.get(props.selection.widgetIndex);
+  let inputPipeDatas = new IList();
+  let outputPipeDatas = new IList();
+  if (activeWidget) {
+    inputPipeDatas = pipeUtils.getPipeDatas(
+      activeWidget.inputPipes, props.app.run.pipeDatas,
+    );
+    outputPipeDatas = pipeUtils.getPipeDatas(
+      activeWidget.outputPipes, props.app.run.pipeDatas,
+    );
+  }
 
   return (
     <div className="app">
@@ -53,9 +68,9 @@ function App(props) {
         colorized={props.colorized}
         error={viewError}
         loading={props.app.fetching || props.app.run.fetchingData}
-        inputs={props.app.run.inputs}
+        inputPipeDatas={inputPipeDatas}
         morph={props.morph}
-        outputs={props.app.run.outputs}
+        outputPipeDatas={outputPipeDatas}
       />
     </div>
   );

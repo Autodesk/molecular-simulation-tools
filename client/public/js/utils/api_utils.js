@@ -1,10 +1,11 @@
-import { List as IList } from 'immutable';
+import { List as IList, Map as IMap } from 'immutable';
 import axios from 'axios';
-import IoRecord from '../records/io_record';
+import AppRecord from '../records/app_record';
+import PipeRecord from '../records/pipe_record';
+import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
-import AppRecord from '../records/app_record';
-import ioUtils from './io_utils';
+import pipeUtils from './pipe_utils';
 
 const API_URL = process.env.API_URL || '';
 
@@ -18,49 +19,97 @@ const apiUtils = {
    * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(appId, email, inputs, selectedLigand, inputString) {
+  run(appId, email, inputPipeDatas, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
       appId,
       email,
-      inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
+      inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
       inputString,
-    }).then(res => res.data.runId);
+    })
+      .then(res => res.data.runId);
   },
 
+  /**
+   * Fetch an app from the server (when there is no run)
+   * @param {String} appId
+   * @returns {Promise resolves with AppRecord}
+   */
   getApp(appId) {
-    return axios.get(`${API_URL}/v1/app/${appId}`).then(res =>
-      new AppRecord(Object.assign({}, res.data, {
-        widgets: new IList(res.data.widgets.map(widgetData => new WidgetRecord(widgetData))),
-      })),
-    );
+    return axios.get(`${API_URL}/v1/app/${appId}`)
+      .then((res) => {
+        const widgets = new IList(
+          res.data.widgets.map((widgetData) => {
+            const inputPipes = widgetData.inputs ?
+              new IList(widgetData.inputs.map(
+                inputPipeJson => new PipeRecord(inputPipeJson),
+              )) : new IList();
+            const outputPipes = widgetData.outputs ?
+              new IList(widgetData.outputs.map(
+                outputPipeJson => new PipeRecord(outputPipeJson),
+              )) : new IList();
+
+            return new WidgetRecord(
+              Object.assign({}, widgetData, { inputPipes, outputPipes })
+            );
+          }),
+        );
+        return new AppRecord(Object.assign({}, res.data, {
+          widgets,
+          run: new RunRecord(),
+        }));
+      });
   },
 
   getApps() {
-    return axios.get(`${API_URL}/v1/app`).then(res =>
-      res.data.map(appData => new AppRecord(appData)),
-    );
+    return axios.get(`${API_URL}/v1/app`)
+      .then(res =>
+        res.data.map(appData => new AppRecord(appData)),
+      );
   },
 
   getRun(runId) {
-    return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
-      res.data,
-    ).then((runData) => {
-      const inputs = runData.inputs ?
-        new IList(runData.inputs.map(input => new IoRecord(input))) :
-        new IList();
-      const outputs = runData.outputs ?
-        new IList(runData.outputs.map(output => new IoRecord(output))) :
-        new IList();
-      return new AppRecord(Object.assign({}, runData, runData.app, {
-        run: new RunRecord(Object.assign({}, runData, {
-          inputs,
-          outputs,
-        })),
-        widgets: new IList(runData.app.widgets.map(widgetData =>
-          new WidgetRecord(widgetData)),
-        ),
-      }));
-    });
+    return axios.get(`${API_URL}/v1/run/mock/${runId}`)
+      .then(res =>
+        res.data,
+      )
+      .then((runData) => {
+        const widgets = new IList(
+          runData.app.widgets.map((widgetData) => {
+            const inputPipes = widgetData.inputs ?
+              new IList(widgetData.inputs.map(
+                inputPipeJson => new PipeRecord(inputPipeJson),
+              )) : new IList();
+            const outputPipes = widgetData.outputs ?
+              new IList(widgetData.outputs.map(
+                outputPipeJson => new PipeRecord(outputPipeJson),
+              )) : new IList();
+
+            return new WidgetRecord(
+              Object.assign({}, widgetData, { inputPipes, outputPipes })
+            );
+          }),
+        );
+        let pipeDatas = new IMap();
+        const inputDatas = runData.inputs || [];
+        const outputDatas = runData.outputs || [];
+        inputDatas.forEach((inputData) => {
+          const inputPipeData = new PipeDataRecord(Object.assign({}, inputData, {
+            pipeId: inputData.name,
+          }));
+          pipeDatas = pipeDatas.set(inputPipeData.pipeId, inputPipeData);
+        });
+        outputDatas.forEach((outputData) => {
+          const outputPipeData = new PipeDataRecord(Object.assign({}, outputData, {
+            pipeId: outputData.name,
+          }));
+          pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
+        });
+
+        return new AppRecord(Object.assign({}, runData, runData.app, {
+          widgets,
+          run: new RunRecord(Object.assign({}, runData, { pipeDatas })),
+        }));
+      });
   },
 
   cancelRun(runId) {
@@ -119,18 +168,22 @@ const apiUtils = {
         }
 
         return new IList(res.data.outputs.map(output =>
-          new IoRecord(output),
+          // Remap name to pipeId for clarity
+          new PipeDataRecord(Object.assign({}, output, {
+            pipeId: output.name,
+          })),
         ));
       });
   },
 
   /**
-   * Fetch and parse the json file that is returned from step0 input processing
+   * Fetch and parse a json file
    * @param jsonUrl {String}
    * @returns {Promise}
    */
-  getIoData(jsonUrl) {
-    return axios.get(jsonUrl).then(res => res.data);
+  getPipeDataJson(jsonUrl) {
+    return axios.get(jsonUrl)
+      .then(res => res.data);
   },
 
   /**
@@ -139,7 +192,8 @@ const apiUtils = {
    * @returns {String}
    */
   getPdb(pdbUrl) {
-    return axios.get(pdbUrl).then(res => res.data);
+    return axios.get(pdbUrl)
+      .then(res => res.data);
   },
 };
 

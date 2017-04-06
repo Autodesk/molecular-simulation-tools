@@ -1,31 +1,7 @@
-import isEmail from 'validator/lib/isEmail';
-import { statusConstants } from 'molecular-design-applications-shared';
 import apiUtils from './api_utils';
-import ioUtils from './io_utils';
+import pipeUtils from './pipe_utils';
 
 const appUtils = {
-  /**
-   * Return a boolean indicating if the given run is runnable
-   * @param {RunRecord} run
-   * @returns {Boolean}
-  */
-  isRunnable(run) {
-    if (!ioUtils.getPdb(run.inputs)) {
-      return false;
-    }
-    if (!isEmail(run.email)) {
-      return false;
-    }
-    if (run.status === statusConstants.RUNNING) {
-      return false;
-    }
-    if (run.fetching) {
-      return false;
-    }
-
-    return true;
-  },
-
   /**
    * Read the given file and return a promise that resolves with its contents
    * @param file {File}
@@ -48,72 +24,80 @@ const appUtils = {
    * @param {String} [extension]
    * @returns {Array}
    */
-  processInput: async function processInput(appId, input, extension) {
-    let inputs = await apiUtils.processInput(appId, input, extension);
+  processInput: async function processInput(appId, inputString, extension) {
+    let inputPipeDatas = await apiUtils.processInput(appId, inputString, extension);
 
-    // Find the json results
-    inputs = await appUtils.fetchIoResults(inputs);
+    // Fetch any json files
+    inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
 
-    // Get the processed input pdbs
-    inputs = await appUtils.fetchIoPdbs(inputs);
+    // Fetch any pdb files
+    inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
 
-    // Make sure the json results are valid and also indicate a success.
-    const inputErrorMessage = ioUtils.getInputError(inputs);
+    // Make sure the json pipeDatas are valid and also indicate a success.
+    const inputErrorMessage = pipeUtils.getOutputPipeDatasError(inputPipeDatas);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
-      error.inputs = inputs;
+      error.inputPipeDatas = inputPipeDatas;
       throw error;
     }
 
-    return inputs;
+    return inputPipeDatas;
   },
 
   /**
-   * Fetch the results json for any of the given ios with a json url.
-   * Return new ios with fetchedResult set for the json.
-   * @param ios {IList}
+   * Fetch the json for any of the given pipeDatas with a json url.
+   * Return new pipeDatas with fetchedValue set for the json.
+   * @param pipeDatas {IList of PipeDataRecords}
    * @returns {Promise that resolves with IList}
    */
-  fetchIoResults(ios) {
-    let newIos = ios;
+  fetchPipeDataJson(pipeDatas) {
+    let newPipeDatas = pipeDatas;
 
-    return Promise.all(ios.map((io) => {
-      if (!io.value.endsWith('.json')) {
+    return Promise.all(pipeDatas.map((pipeData) => {
+      if (!pipeData.value.endsWith('.json')) {
         return Promise.resolve();
       }
-      return apiUtils.getIoData(io.value).then((results) => {
-        // Set newIos to a new list that contains the fetched results data
-        newIos = newIos.set(
-          newIos.indexOf(io), io.set('fetchedValue', results),
-        );
-      });
-
-    // Resolve with the new list of ios
-    })).then(() => newIos);
+      return apiUtils.getPipeDataJson(pipeData.value)
+        .then((results) => {
+          // Set newPipeDatas to a new list that contains the fetched results data
+          const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+            pipeDataI === pipeData
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('fetchedValue', results),
+          );
+        });
+    }))
+      // Resolve with the new list of pipeDatas
+      .then(() => newPipeDatas);
   },
 
   /**
-   * Fetch the pdb for any of the given ios with a pdb url.
-   * Return new ios with fetchedResult set for the pdb data.
-   * @param ios {IList}
+   * Fetch the pdb for any of the given pipeDatas with a pdb url.
+   * Return new pipeDatas with fetchedValue set for the pdb data.
+   * @param pipeDatas {IList}
    * @returns {Promise that resolves with an IList}
    */
-  fetchIoPdbs(ios) {
-    let newIos = ios;
+  fetchPipeDataPdbs(pipeDatas) {
+    let newPipeDatas = pipeDatas;
 
-    return Promise.all(ios.map((io) => {
-      if (!io.value.endsWith('.pdb')) {
+    return Promise.all(pipeDatas.map((pipeData) => {
+      if (!pipeData.value.endsWith('.pdb')) {
         return Promise.resolve();
       }
-      return apiUtils.getPdb(io.value).then((results) => {
-        // Set newIos to a new list that contains the fetched pdb
-        newIos = newIos.set(
-          newIos.indexOf(io), io.set('fetchedValue', results),
-        );
-      });
-
-    // Resolve with the new list of ios
-    })).then(() => newIos);
+      return apiUtils.getPdb(pipeData.value)
+        .then((results) => {
+          // Set newPipeDatas to a new list that contains the fetched pdb
+          const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+            pipeDataI === pipeData
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('fetchedValue', results),
+          );
+        });
+    }))
+    // Resolve with the new list of pipeDatas
+      .then(() => newPipeDatas);
   },
 };
 

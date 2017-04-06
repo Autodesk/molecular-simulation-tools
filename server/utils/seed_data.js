@@ -17,21 +17,43 @@ const seedData = {
       widgets: [
         {
           id: widgetsConstants.LOAD,
-          meta: {
-            title: 'Load Molecule',
-          },
+          type: widgetsConstants.LOAD,
+          title: 'Load Molecule',
+          outputs: [
+            { id: 'prep.pdb' },
+            { id: 'prep.json' },
+            { id: 'workflow_state.dill' },
+          ],
         },
         {
           id: widgetsConstants.RUN,
-          meta: {
-            title: 'Run',
-          },
+          type: widgetsConstants.RUN,
+          title: 'Run',
+          inputs: [
+            { id: 'prep.pdb' },
+            { id: 'prep.json' },
+            { id: 'workflow_state.dill' },
+          ],
+          outputs: [
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minsteps.tar.gz' },
+            { id: 'minstep_frames.json' },
+          ],
         },
         {
           id: widgetsConstants.RESULTS,
-          meta: {
-            title: 'Results',
-          },
+          type: widgetsConstants.RESULTS,
+          title: 'Results',
+          inputs: [
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minstep_frames.json' },
+          ],
         },
       ],
       viewCount: 0,
@@ -49,27 +71,57 @@ const seedData = {
       widgets: [
         {
           id: widgetsConstants.LOAD,
-          meta: {
-            title: 'Load Molecule',
-          },
+          type: widgetsConstants.LOAD,
+          title: 'Load Molecule',
+          outputs: [
+            { id: 'prep.pdb' },
+            { id: 'prep.json' },
+            { id: 'workflow_state.dill' },
+          ],
         },
         {
           id: widgetsConstants.SELECTION,
-          meta: {
-            title: 'Ligand Selection',
-          },
+          type: widgetsConstants.SELECTION,
+          title: 'Ligand Selection',
+          inputs: [
+            { id: 'prep.pdb' },
+            { id: 'prep.json' },
+            { id: 'workflow_state.dill' },
+          ],
+          outputs: [
+            { id: 'selection.json' },
+          ],
         },
         {
           id: widgetsConstants.RUN,
-          meta: {
-            title: 'Run',
-          },
+          type: widgetsConstants.RUN,
+          title: 'Run',
+          inputs: [
+            { id: 'prep.pdb' },
+            { id: 'prep.json' },
+            { id: 'workflow_state.dill' },
+            { id: 'selection.json' },
+          ],
+          outputs: [
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minsteps.tar.gz' },
+            { id: 'minstep_frames.json' },
+          ],
         },
         {
           id: widgetsConstants.RESULTS,
-          meta: {
-            title: 'Results',
-          },
+          type: widgetsConstants.RESULTS,
+          title: 'Results',
+          inputs: [
+            { id: 'final_structure.pdb' },
+            { id: 'results.json' },
+            { id: 'minstep.0.pdb' },
+            { id: 'minstep.1.pdb' },
+            { id: 'minstep_frames.json' },
+          ],
         },
       ],
       viewCount: 0,
@@ -82,7 +134,7 @@ const seedData = {
       color: '#FFFFFF',
       comingSoon: true,
       creatorImage: '/img/logo2.png',
-      description: "Predict a small molecule's perceived color and" +
+      description: 'Predict a small molecule\'s perceived color and' +
           ' its UV-Viz spectra using TD-DFT',
       viewCount: 0,
     },
