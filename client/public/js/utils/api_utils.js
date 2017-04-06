@@ -37,9 +37,9 @@ const apiUtils = {
   getApp(appId) {
     return axios.get(`${API_URL}/v1/app/${appId}`)
       .then((res) => {
-        const widgets = new IList(
+        let widgets = new IList(
           res.data.widgets.map((widgetData) => {
-            const inputPipes = widgetData.inputs ?
+            let inputPipes = widgetData.inputs ?
               new IList(widgetData.inputs.map(
                 inputPipeJson => new PipeRecord(inputPipeJson),
               )) : new IList();
@@ -48,11 +48,26 @@ const apiUtils = {
                 outputPipeJson => new PipeRecord(outputPipeJson),
               )) : new IList();
 
+            // Hack in email requirement (TODO remove with auth)
+            inputPipes = inputPipes.push(new PipeRecord({
+              id: 'email',
+            }));
+
             return new WidgetRecord(
               Object.assign({}, widgetData, { inputPipes, outputPipes })
             );
           }),
         );
+
+        // Hack in email widget (TODO remove with Auth)
+        widgets = widgets.unshift(new WidgetRecord({
+          id: 'enter-email',
+          title: 'Enter Email',
+          outputPipes: new IList([
+            new PipeRecord({ id: 'email' }),
+          ]),
+        }));
+
         return new AppRecord(Object.assign({}, res.data, {
           widgets,
           run: new RunRecord(),
@@ -73,9 +88,9 @@ const apiUtils = {
         res.data,
       )
       .then((runData) => {
-        const widgets = new IList(
+        let widgets = new IList(
           runData.app.widgets.map((widgetData) => {
-            const inputPipes = widgetData.inputs ?
+            let inputPipes = widgetData.inputs ?
               new IList(widgetData.inputs.map(
                 inputPipeJson => new PipeRecord(inputPipeJson),
               )) : new IList();
@@ -84,11 +99,26 @@ const apiUtils = {
                 outputPipeJson => new PipeRecord(outputPipeJson),
               )) : new IList();
 
+            // Hack in email requirement (TODO remove with auth)
+            inputPipes = inputPipes.push(new PipeRecord({
+              id: 'email',
+            }));
+
             return new WidgetRecord(
               Object.assign({}, widgetData, { inputPipes, outputPipes })
             );
           }),
         );
+
+        // Hack in email widget (TODO remove with Auth)
+        widgets = widgets.unshift(new WidgetRecord({
+          id: 'enter-email',
+          title: 'Enter Email',
+          outputPipes: new IList([
+            new PipeRecord({ id: 'email' }),
+          ]),
+        }));
+
         let pipeDatas = new IMap();
         const inputDatas = runData.inputs || [];
         const outputDatas = runData.outputs || [];

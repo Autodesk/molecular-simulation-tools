@@ -21,16 +21,16 @@ function Status(props) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
-      const inputPipeDatas = widget.inputPipes.map(inputPipe =>
-        props.app.run.pipeDatas.get(inputPipe.id)
-      );
 
       switch (widget.id) {
         case widgetsConstants.LOAD: {
+          const outputPipeDatas = pipeUtils.getPipeDatas(
+            widget.outputPipes, props.app.run.pipeDatas,
+          );
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
-              inputData={pipeUtils.getPdb(inputPipeDatas)}
+              inputData={pipeUtils.getPdb(outputPipeDatas)}
               inputFileError={props.app.run.inputFileError}
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}

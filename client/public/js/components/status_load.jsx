@@ -58,7 +58,7 @@ class StatusLoad extends React.Component {
   }
 
   onClickDownload() {
-    const encodedData = encodeURIComponent(this.props.inputData);
+    const encodedData = encodeURIComponent(this.props.pdb);
     const link = document.createElement('a');
     link.href = `data:text/plain;charset=utf-8,${encodedData}`;
     link.download = 'processed_input_structure.pdb';
@@ -70,7 +70,7 @@ class StatusLoad extends React.Component {
     const inputErrorClass = this.props.inputStringError ? 'error' : '';
 
     let downloadButton;
-    if (this.props.inputData) {
+    if (this.props.pdb) {
       downloadButton = (
         <Button
           type="form"
@@ -132,7 +132,7 @@ class StatusLoad extends React.Component {
 }
 
 StatusLoad.defaultProps = {
-  inputData: '',
+  pdb: '',
   inputStringError: null,
   inputFileError: null,
 };
@@ -140,7 +140,7 @@ StatusLoad.defaultProps = {
 StatusLoad.propTypes = {
   runCompleted: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
-  inputData: React.PropTypes.string,
+  pdb: React.PropTypes.string,
   inputString: React.PropTypes.string.isRequired,
   inputStringError: React.PropTypes.string,
   inputFileError: React.PropTypes.string,
