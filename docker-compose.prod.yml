@@ -5,6 +5,7 @@ services:
     image: "quay.io/bionano/mdtapps_server:${VERSION}"
     environment:
       CCC: "ccc.${BNR_ENVIRONMENT}.bionano.bio:9000"
+      DB_CONNECTION_URI: '${DB_CONNECTION_URI}'
       NODE_ENV: "production"
       FRONTEND_URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
       URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
