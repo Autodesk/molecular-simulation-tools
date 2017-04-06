@@ -9,6 +9,7 @@ const routeUtils = require('../utils/route_utils');
 const runRoutes = require('../routes/run');
 const structureRoutes = require('../routes/structure');
 const appRoutes = require('../routes/app');
+const sessionRoutes = require('../routes/session');
 const testRoutes = require('../routes/test');
 const versionRouter = require('./version');
 const log = require('../utils/log');
@@ -37,6 +38,7 @@ app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 app.use(`${appConstants.VERSION_PREFIX}/app`, appRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/session`, sessionRoutes);
 app.use('/test', testRoutes);
 app.use('/version', versionRouter);
 

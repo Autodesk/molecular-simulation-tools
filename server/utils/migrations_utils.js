@@ -45,7 +45,7 @@ const migrationsUtils = {
         return Promise.resolve();
       }
 
-      Object.values(oldAppsHash).forEach((oldAppString) => {
+      const promises = Object.values(oldAppsHash).map((oldAppString) => {
         const oldApp = JSON.parse(oldAppString);
 
         return redis.hget(dbConstants.REDIS_APPS, oldApp.id).then((appString) => {
@@ -59,6 +59,7 @@ const migrationsUtils = {
           });
         });
       });
+      return Promise.all(promises);
     });
   },
 };

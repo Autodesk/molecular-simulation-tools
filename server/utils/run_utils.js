@@ -5,7 +5,11 @@ const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
 const appUtils = require('../utils/app_utils');
 const log = require('./log');
-const redis = require('../utils/redis');
+const config = require('../main/config');
+
+function getRedis() {
+  return config.redis;
+}
 
 const runUtils = {
 
@@ -13,45 +17,47 @@ const runUtils = {
     if (!statusConstants[status]) {
       return Promise.reject(`Unknown app status=${status}`);
     }
-
-    return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
-      const run = JSON.parse(runString);
-      const updatedRun = Object.assign({}, run, {
-        status,
+    return getRedis()
+      .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
+      .then((runString) => {
+        const run = JSON.parse(runString);
+        const updatedRun = Object.assign({}, run, {
+          status,
+        });
+        return getRedis()
+          .then(redis => redis.hset(dbConstants.REDIS_RUNS,
+            runId, JSON.stringify(updatedRun)));
       });
-      return redis.hset(
-        dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
-      );
-    });
   },
 
   sendEmailsAppEnded(runId) {
     log.debug({ f: 'sendEmailsAppEnded', runId });
-    redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
-      if (!runString) {
-        log.error({ f: 'sendEmailsAppEnded', runString });
-        return;
-      }
+    return getRedis()
+      .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
+      .then((runString) => {
+        if (!runString) {
+          log.error({ f: 'sendEmailsAppEnded', runString });
+          return;
+        }
 
-      const run = JSON.parse(runString);
+        const run = JSON.parse(runString);
 
-      if (run.email) {
-        log.debug({ f: 'sendEmailsAppEnded', run, email: run.email });
-        emailUtils.send(
-          run.email,
-          'Your App Has Ended',
-          './views/email_ended.ms',
-          {
-            runUrl: `${process.env.FRONTEND_URL}/app/${run.appId}/${run.id}`,
-          }
-        );
-        return;
-      }
-
-      log.warn({ f: 'sendEmailsWorkflowEnded', run, message: 'There was no email in the run' });
-    }).catch((err) => {
-      log.error({ error: err, f: 'sendEmailsAppEnded', runId });
-    });
+        if (run.email) {
+          log.debug({ f: 'sendEmailsAppEnded', run, email: run.email });
+          emailUtils.send(
+            run.email,
+            'Your App Has Ended',
+            './views/email_ended.ms',
+            {
+              runUrl: `${process.env.FRONTEND_URL}/app/${run.appId}/${run.id}`,
+            }
+          );
+        } else {
+          log.warn({ f: 'sendEmailsWorkflowEnded', run, message: 'There was no email in the run' });
+        }
+      }).catch((err) => {
+        log.error({ error: err, f: 'sendEmailsAppEnded', runId });
+      });
   },
 
   processJobFinished(jobResult) {
@@ -62,41 +68,40 @@ const runUtils = {
     localLog.debug({ jobResult });
     // Check for errors in the job result
     // Set the final output and status on the run
-    return redis.hget(dbConstants.REDIS_RUNS, runId).then((runString) => {
-      const run = JSON.parse(runString);
+    return getRedis()
+      .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
+      .then((runString) => {
+        const run = JSON.parse(runString);
 
-      // Don't set results on a canceled run
-      if (run.status === statusConstants.CANCELED) {
-        localLog.debug(`Run ${runId} canceled, so results not written.`);
-        return Promise.resolve();
-      }
+        // Don't set results on a canceled run
+        if (run.status === statusConstants.CANCELED) {
+          localLog.debug(`Run ${runId} canceled, so results not written.`);
+          return Promise.resolve();
+        }
 
-      const status = jobResult.exitCode === 0 ?
-        statusConstants.COMPLETED : statusConstants.ERROR;
-      const outputs = [];
-      for (let i = 0; i < jobResult.outputs.length; i += 1) {
-        outputs.push({
-          name: jobResult.outputs[i],
-          type: 'url',
-          value: jobResult.outputsBaseUrl + jobResult.outputs[i]
+        const status = jobResult.exitCode === 0 ?
+          statusConstants.COMPLETED : statusConstants.ERROR;
+        const outputs = [];
+        for (let i = 0; i < jobResult.outputs.length; i += 1) {
+          outputs.push({
+            name: jobResult.outputs[i],
+            type: 'url',
+            value: jobResult.outputsBaseUrl + jobResult.outputs[i]
+          });
+        }
+        const updatedRun = Object.assign({}, run, {
+          outputs,
+          status,
+          jobResult,
+          ended: Date.now(),
         });
-      }
-      const updatedRun = Object.assign({}, run, {
-        outputs,
-        status,
-        jobResult,
-        ended: Date.now(),
-      });
-      return redis.hset(
-        dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)
-      );
-    })
-    .catch(err =>
-      localLog.error({ error: JSON.stringify(err) })
-    )
-    .then(() => {
-      runUtils.sendEmailsAppEnded(runId);
-    });
+        return getRedis()
+          .then(redis => redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)));
+      })
+      .catch(err =>
+        localLog.error({ error: JSON.stringify(err) })
+      )
+      .then(() => runUtils.sendEmailsAppEnded(runId));
   },
 
   waitOnJob(runId) {
@@ -172,10 +177,16 @@ const runUtils = {
         };
         localLog.debug(JSON.stringify(runPayload).substr(0, 300));
 
-        const runPromise = redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(runPayload));
-        const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
+        return getRedis()
+          .then((redis) => {
+            const runPromise = redis.hset(
+              dbConstants.REDIS_RUNS,
+              runId,
+              JSON.stringify(runPayload));
+            const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
 
-        return Promise.all([runPromise, statePromise]).then(() => runId);
+            return Promise.all([runPromise, statePromise]).then(() => runId);
+          });
       })
       .then((runId) => {
         if (!runId) {
@@ -196,39 +207,20 @@ const runUtils = {
    * @returns {[Promise]}
    */
   getRunStatus(runId) {
-    return redis.hget(dbConstants.REDIS_RUNS, runId).then((run) => {
-      let normalizedStatus = run.status;
-      if (run.status === null) {
-        normalizedStatus = statusConstants.IDLE;
-      }
-      return normalizedStatus;
-    }).catch((err) => {
-      log.error({ f: 'getRunStatus', runId, error: err });
-    });
+    return getRedis()
+      .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
+      .then((run) => {
+        let normalizedStatus = run.status;
+        if (run.status === null) {
+          normalizedStatus = statusConstants.IDLE;
+        }
+        return normalizedStatus;
+      })
+      .catch((err) => {
+        log.error({ f: 'getRunStatus', runId, error: err });
+      });
   },
 
-  // In case of crashes, check all running apps and attach listeners
-  // to the CCC jobs
-  addMonitorsToRunningApp() {
-    redis.hkeys(dbConstants.REDIS_RUNS).then((keys) => {
-      // log.warn({ message: 'On startup, resuming monitoring runs', runIds: keys });
-      keys.forEach((runId) => {
-        runUtils.getRunStatus(runId)
-          .then((state) => {
-            if (state === statusConstants.RUNNING) {
-              log.debug(`runId=${runId} running, reattaching listener to CCC job`);
-              runUtils.monitorRun(runId);
-            }
-          }, (err) => {
-            log.error(err);
-          });
-      });
-    }).catch((err) => {
-      log.error(err);
-    });
-  }
 };
-
-runUtils.addMonitorsToRunningApp();
 
 module.exports = runUtils;
