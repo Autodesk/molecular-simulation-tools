@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { List as IList } from 'immutable';
 import PipeDataRecord from '../../public/js/records/pipe_data_record';
-import ioUtils from '../../public/js/utils/io_utils';
+import pipeUtils from '../../public/js/utils/pipe_utils';
 
-describe('ioUtils', () => {
+describe('pipeUtils', () => {
   beforeEach(() => {
   });
 
@@ -39,7 +39,7 @@ describe('ioUtils', () => {
       });
 
       it('returns the first pdb', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(1);
         expect(pdbs.get(0)).to.equal(outputPipeDatas.get(0).fetchedValue);
       });
@@ -57,7 +57,7 @@ describe('ioUtils', () => {
         });
 
         it('returns an empty list', () => {
-          const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+          const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
           expect(pdbs.size).to.equal(0);
         });
       });
@@ -74,7 +74,7 @@ describe('ioUtils', () => {
         });
 
         it('returns an empty list', () => {
-          const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+          const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
           expect(pdbs.size).to.equal(0);
         });
       });
@@ -86,7 +86,7 @@ describe('ioUtils', () => {
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(0);
       });
     });
@@ -97,7 +97,7 @@ describe('ioUtils', () => {
       });
 
       it('returns an empty list', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(0);
       });
     });
@@ -108,13 +108,13 @@ describe('ioUtils', () => {
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getAnimationPdbs.bind(null, outputPipeDatas)).to.throw();
+        expect(pipeUtils.getAnimationPdbs.bind(null, outputPipeDatas)).to.throw();
       });
     });
 
     describe('when data for each frame', () => {
       it('returns pdb data for each frame', () => {
-        const pdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+        const pdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
         expect(pdbs.size).to.equal(2);
         expect(pdbs.get(0)).to.equal(outputPipeDatas.get(1).fetchedValue);
         expect(pdbs.get(1)).to.equal(outputPipeDatas.get(2).fetchedValue);
@@ -130,7 +130,7 @@ describe('ioUtils', () => {
 
     describe('when no prep.json', () => {
       it('throws an error', () => {
-        expect(ioUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
+        expect(pipeUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
       });
     });
 
@@ -144,7 +144,7 @@ describe('ioUtils', () => {
       });
 
       it('throws an error', () => {
-        expect(ioUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
+        expect(pipeUtils.getOutputPipeDatasError.bind(null, inputPipeDatas)).to.throw();
       });
     });
 
@@ -161,7 +161,7 @@ describe('ioUtils', () => {
       });
 
       it('returns error string', () => {
-        expect(!!ioUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal(true);
+        expect(!!pipeUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal(true);
       });
     });
 
@@ -178,7 +178,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal('');
+        expect(pipeUtils.getOutputPipeDatasError(inputPipeDatas)).to.equal('');
       });
     });
   });
@@ -191,7 +191,7 @@ describe('ioUtils', () => {
 
     describe('when no selection.json io given', () => {
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
@@ -201,7 +201,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
@@ -211,7 +211,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty string', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal('');
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal('');
       });
     });
 
@@ -225,7 +225,7 @@ describe('ioUtils', () => {
       });
 
       it('returns empty the ligandname', () => {
-        expect(ioUtils.getSelectedLigand(ios)).to.equal(ligandName);
+        expect(pipeUtils.getSelectedLigand(ios)).to.equal(ligandName);
       });
     });
   });
@@ -248,7 +248,7 @@ describe('ioUtils', () => {
     describe('when invalid selectedLigand given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionPipeData.bind(null, selectedLigandPipeData, null),
+          pipeUtils.createSelectionPipeData.bind(null, selectedLigandPipeData, null),
         ).to.throw();
       });
     });
@@ -256,10 +256,10 @@ describe('ioUtils', () => {
     describe('when invalid selectedLigandPipeData given', () => {
       it('throws an error', () => {
         expect(
-          ioUtils.createSelectionPipeData.bind(null, null, selectedLigand),
+          pipeUtils.createSelectionPipeData.bind(null, null, selectedLigand),
         ).to.throw();
         expect(
-          ioUtils.createSelectionPipeData.bind(
+          pipeUtils.createSelectionPipeData.bind(
             null,
             {
               fethedValue: { ligands: { ARQ401: null } },
@@ -273,7 +273,7 @@ describe('ioUtils', () => {
     describe('when inputPipeDatas are valid', () => {
       it('returns an io record', () => {
         expect(
-          ioUtils.createSelectionPipeData(selectedLigandPipeData, selectedLigand),
+          pipeUtils.createSelectionPipeData(selectedLigandPipeData, selectedLigand),
         ).to.be.an.instanceof(PipeDataRecord);
       });
     });
@@ -303,7 +303,7 @@ describe('ioUtils', () => {
 
     describe('when no selection.json input is given', () => {
       it('creates one with the given ligand selected', () => {
-        const updatedInputPipeDatas = ioUtils.selectLigand(inputPipeDatas, ligand);
+        const updatedInputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligand);
         expect(updatedInputPipeDatas.size).to.equal(2);
 
         const selectionInput = updatedInputPipeDatas.find(input =>
@@ -325,7 +325,7 @@ describe('ioUtils', () => {
       });
 
       it('updates selection.json to select the new ligand', () => {
-        const updatedInputPipeDatas = ioUtils.selectLigand(inputPipeDatas, ligand);
+        const updatedInputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligand);
         expect(updatedInputPipeDatas.size).to.equal(2);
 
         const selectionInput = updatedInputPipeDatas.find(inputPipeData =>

@@ -8,7 +8,7 @@ import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
 import StatusResults from './status_results';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 import selectionConstants from '../constants/selection_constants';
 
 require('../../css/status.scss');
@@ -30,7 +30,7 @@ function Status(props) {
           selection = (
             <StatusLoad
               fetchingData={props.app.run.fetchingData}
-              inputData={ioUtils.getPdb(inputPipeDatas)}
+              inputData={pipeUtils.getPdb(inputPipeDatas)}
               inputFileError={props.app.run.inputFileError}
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}
@@ -57,11 +57,11 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = ioUtils.getSelectedLigand(props.app.run.pipeDatas);
+          const selectedLigand = pipeUtils.getSelectedLigand(props.app.run.pipeDatas);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={ioUtils.getLigandNames(props.app.run.pipeDatas)}
+              ligandNames={pipeUtils.getLigandNames(props.app.run.pipeDatas)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
@@ -85,7 +85,7 @@ function Status(props) {
             props.app.run.pipeDatas.get('final_structure.pdb');
           const outputPdbUrl = finalStructureResult.value;
           const pipeDatasList = props.app.run.pipeDatas.toList();
-          const numberOfPdbs = ioUtils.getAnimationPdbs(pipeDatasList).size;
+          const numberOfPdbs = pipeUtils.getAnimationPdbs(pipeDatasList).size;
 
           selection = (
             <StatusResults

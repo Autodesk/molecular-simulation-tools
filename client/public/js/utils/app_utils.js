@@ -1,5 +1,5 @@
 import apiUtils from './api_utils';
-import ioUtils from './io_utils';
+import pipeUtils from './pipe_utils';
 
 const appUtils = {
   /**
@@ -34,7 +34,7 @@ const appUtils = {
     inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
 
     // Make sure the json pipeDatas are valid and also indicate a success.
-    const inputErrorMessage = ioUtils.getOutputPipeDatasError(inputPipeDatas);
+    const inputErrorMessage = pipeUtils.getOutputPipeDatasError(inputPipeDatas);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
       error.inputPipeDatas = inputPipeDatas;

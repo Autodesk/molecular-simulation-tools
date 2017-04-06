@@ -5,7 +5,7 @@ import PipeRecord from '../records/pipe_record';
 import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
-import ioUtils from './io_utils';
+import pipeUtils from './pipe_utils';
 
 const API_URL = process.env.API_URL || '';
 
@@ -23,7 +23,7 @@ const apiUtils = {
     return axios.post(`${API_URL}/v1/run`, {
       appId,
       email,
-      inputs: ioUtils.formatInputPipeDatasForServer(inputPipeDatas),
+      inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
       inputString,
     }).then(res => res.data.runId);
   },

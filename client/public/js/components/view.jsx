@@ -1,7 +1,7 @@
 import React from 'react';
 import { List as IList, is } from 'immutable';
 import MoleculeViewerWrapper from '../utils/molecule_viewer_wrapper';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 import loadImg from '../../img/loadAnim.gif';
 import '../../css/view.scss';
 
@@ -13,14 +13,14 @@ class View extends React.Component {
    * @returns {IList of Strings}
    */
   static getPdbs(inputPipeDatas, outputPipeDatas) {
-    const outputPdbs = ioUtils.getAnimationPdbs(outputPipeDatas);
+    const outputPdbs = pipeUtils.getAnimationPdbs(outputPipeDatas);
 
     // Prefer to display output pdbs over input pdbs
     if (outputPdbs.size) {
       return outputPdbs;
     }
 
-    const inputPdbs = ioUtils.getAnimationPdbs(inputPipeDatas);
+    const inputPdbs = pipeUtils.getAnimationPdbs(inputPipeDatas);
 
     if (inputPdbs.size) {
       return inputPdbs;
@@ -35,12 +35,12 @@ class View extends React.Component {
    * @returns {IList of Strings}
    */
   static getSelectionStrings(inputPipeDatas) {
-    const selectedLigand = ioUtils.getSelectedLigand(inputPipeDatas);
+    const selectedLigand = pipeUtils.getSelectedLigand(inputPipeDatas);
     if (!selectedLigand) {
       return new IList();
     }
 
-    return ioUtils.getLigandSelectionStrings(
+    return pipeUtils.getLigandSelectionStrings(
       inputPipeDatas, selectedLigand,
     );
   }

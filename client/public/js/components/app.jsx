@@ -5,7 +5,7 @@ import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
 import View from '../components/view';
 import WidgetList from '../components/widget_list';
-import ioUtils from '../utils/io_utils';
+import pipeUtils from '../utils/pipe_utils';
 
 require('../../css/app.scss');
 
@@ -29,10 +29,10 @@ function App(props) {
   let inputPipeDatas = new IList();
   let outputPipeDatas = new IList();
   if (activeWidget) {
-    inputPipeDatas = ioUtils.getPipeDatas(
+    inputPipeDatas = pipeUtils.getPipeDatas(
       activeWidget.inputPipes, props.app.run.pipeDatas,
     );
-    outputPipeDatas = ioUtils.getPipeDatas(
+    outputPipeDatas = pipeUtils.getPipeDatas(
       activeWidget.outputPipes, props.app.run.pipeDatas,
     );
   }

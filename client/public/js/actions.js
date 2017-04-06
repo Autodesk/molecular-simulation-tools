@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import appUtils from './utils/app_utils';
-import ioUtils from './utils/io_utils';
+import pipeUtils from './utils/pipe_utils';
 import rcsbApiUtils from './utils/rcsb_api_utils';
 import widgetUtils from './utils/widget_utils';
 
@@ -70,9 +70,9 @@ export function initializeRun(appId, runId) {
       pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(pipeDatasList);
+      const ligands = pipeUtils.getLigandNames(pipeDatasList);
       if (ligands.size === 1) {
-        pipeDatasList = ioUtils.selectLigand(pipeDatasList, ligands.get(0));
+        pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
       }
 
       let pipeDatas = new IMap();
@@ -164,9 +164,9 @@ export function selectInputFile(file, appId) {
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputPipeDatas);
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {
-        inputPipeDatas = ioUtils.selectLigand(inputPipeDatas, ligands.get(0));
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
       dispatch({
@@ -209,9 +209,9 @@ export function submitInputString(inputString, appId) {
       );
 
       // If only one ligand, select it
-      const ligands = ioUtils.getLigandNames(inputPipeDatas);
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {
-        inputPipeDatas = ioUtils.selectLigand(inputPipeDatas, ligands.get(0));
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
       dispatch({
@@ -281,7 +281,7 @@ export function clickColorize() {
 }
 
 export function changeLigandSelection(pipeDatas, ligand) {
-  const pipeDatasList = ioUtils.selectLigand(pipeDatas.toList(), ligand);
+  const pipeDatasList = pipeUtils.selectLigand(pipeDatas.toList(), ligand);
   const updatedPipeDatas = new IMap(pipeDatasList.map(pipeData =>
     [pipeData.pipeId, pipeData],
   ));
