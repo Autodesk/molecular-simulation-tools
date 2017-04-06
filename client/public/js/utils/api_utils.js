@@ -25,7 +25,8 @@ const apiUtils = {
       email,
       inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
       inputString,
-    }).then(res => res.data.runId);
+    })
+      .then(res => res.data.runId);
   },
 
   /**
@@ -34,77 +35,81 @@ const apiUtils = {
    * @returns {Promise resolves with AppRecord}
    */
   getApp(appId) {
-    return axios.get(`${API_URL}/v1/app/${appId}`).then((res) => {
-      const widgets = new IList(
-        res.data.widgets.map((widgetData) => {
-          const inputPipes = widgetData.inputs ?
-            new IList(widgetData.inputs.map(
-              inputPipeJson => new PipeRecord(inputPipeJson),
-            )) : new IList();
-          const outputPipes = widgetData.outputs ?
-            new IList(widgetData.outputs.map(
-              outputPipeJson => new PipeRecord(outputPipeJson),
-            )) : new IList();
+    return axios.get(`${API_URL}/v1/app/${appId}`)
+      .then((res) => {
+        const widgets = new IList(
+          res.data.widgets.map((widgetData) => {
+            const inputPipes = widgetData.inputs ?
+              new IList(widgetData.inputs.map(
+                inputPipeJson => new PipeRecord(inputPipeJson),
+              )) : new IList();
+            const outputPipes = widgetData.outputs ?
+              new IList(widgetData.outputs.map(
+                outputPipeJson => new PipeRecord(outputPipeJson),
+              )) : new IList();
 
-          return new WidgetRecord(
-            Object.assign({}, widgetData, { inputPipes, outputPipes })
-          );
-        }),
-      );
-      return new AppRecord(Object.assign({}, res.data, {
-        widgets,
-        run: new RunRecord(),
-      }));
-    });
+            return new WidgetRecord(
+              Object.assign({}, widgetData, { inputPipes, outputPipes })
+            );
+          }),
+        );
+        return new AppRecord(Object.assign({}, res.data, {
+          widgets,
+          run: new RunRecord(),
+        }));
+      });
   },
 
   getApps() {
-    return axios.get(`${API_URL}/v1/app`).then(res =>
-      res.data.map(appData => new AppRecord(appData)),
-    );
+    return axios.get(`${API_URL}/v1/app`)
+      .then(res =>
+        res.data.map(appData => new AppRecord(appData)),
+      );
   },
 
   getRun(runId) {
-    return axios.get(`${API_URL}/v1/run/mock/${runId}`).then(res =>
-      res.data,
-    ).then((runData) => {
-      const widgets = new IList(
-        runData.app.widgets.map((widgetData) => {
-          const inputPipes = widgetData.inputs ?
-            new IList(widgetData.inputs.map(
-              inputPipeJson => new PipeRecord(inputPipeJson),
-            )) : new IList();
-          const outputPipes = widgetData.outputs ?
-            new IList(widgetData.outputs.map(
-              outputPipeJson => new PipeRecord(outputPipeJson),
-            )) : new IList();
+    return axios.get(`${API_URL}/v1/run/mock/${runId}`)
+      .then(res =>
+        res.data,
+      )
+      .then((runData) => {
+        const widgets = new IList(
+          runData.app.widgets.map((widgetData) => {
+            const inputPipes = widgetData.inputs ?
+              new IList(widgetData.inputs.map(
+                inputPipeJson => new PipeRecord(inputPipeJson),
+              )) : new IList();
+            const outputPipes = widgetData.outputs ?
+              new IList(widgetData.outputs.map(
+                outputPipeJson => new PipeRecord(outputPipeJson),
+              )) : new IList();
 
-          return new WidgetRecord(
-            Object.assign({}, widgetData, { inputPipes, outputPipes })
-          );
-        }),
-      );
-      let pipeDatas = new IMap();
-      const inputDatas = runData.inputs || [];
-      const outputDatas = runData.outputs || [];
-      inputDatas.forEach((inputData) => {
-        const inputPipeData = new PipeDataRecord(Object.assign({}, inputData, {
-          pipeId: inputData.name,
-        }));
-        pipeDatas = pipeDatas.set(inputPipeData.pipeId, inputPipeData);
-      });
-      outputDatas.forEach((outputData) => {
-        const outputPipeData = new PipeDataRecord(Object.assign({}, outputData, {
-          pipeId: outputData.name,
-        }));
-        pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
-      });
+            return new WidgetRecord(
+              Object.assign({}, widgetData, { inputPipes, outputPipes })
+            );
+          }),
+        );
+        let pipeDatas = new IMap();
+        const inputDatas = runData.inputs || [];
+        const outputDatas = runData.outputs || [];
+        inputDatas.forEach((inputData) => {
+          const inputPipeData = new PipeDataRecord(Object.assign({}, inputData, {
+            pipeId: inputData.name,
+          }));
+          pipeDatas = pipeDatas.set(inputPipeData.pipeId, inputPipeData);
+        });
+        outputDatas.forEach((outputData) => {
+          const outputPipeData = new PipeDataRecord(Object.assign({}, outputData, {
+            pipeId: outputData.name,
+          }));
+          pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
+        });
 
-      return new AppRecord(Object.assign({}, runData, runData.app, {
-        widgets,
-        run: new RunRecord(Object.assign({}, runData, { pipeDatas })),
-      }));
-    });
+        return new AppRecord(Object.assign({}, runData, runData.app, {
+          widgets,
+          run: new RunRecord(Object.assign({}, runData, { pipeDatas })),
+        }));
+      });
   },
 
   cancelRun(runId) {
@@ -177,7 +182,8 @@ const apiUtils = {
    * @returns {Promise}
    */
   getPipeDataJson(jsonUrl) {
-    return axios.get(jsonUrl).then(res => res.data);
+    return axios.get(jsonUrl)
+      .then(res => res.data);
   },
 
   /**
@@ -186,7 +192,8 @@ const apiUtils = {
    * @returns {String}
    */
   getPdb(pdbUrl) {
-    return axios.get(pdbUrl).then(res => res.data);
+    return axios.get(pdbUrl)
+      .then(res => res.data);
   },
 };
 

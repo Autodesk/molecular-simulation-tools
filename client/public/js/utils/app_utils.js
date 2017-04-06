@@ -57,18 +57,19 @@ const appUtils = {
       if (!pipeData.value.endsWith('.json')) {
         return Promise.resolve();
       }
-      return apiUtils.getPipeDataJson(pipeData.value).then((results) => {
-        // Set newPipeDatas to a new list that contains the fetched results data
-        const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
-          pipeDataI === pipeData
-        );
-        newPipeDatas = newPipeDatas.set(
-          pipeDataIndex, pipeData.set('fetchedValue', results),
-        );
-      });
-
-    // Resolve with the new list of pipeDatas
-    })).then(() => newPipeDatas);
+      return apiUtils.getPipeDataJson(pipeData.value)
+        .then((results) => {
+          // Set newPipeDatas to a new list that contains the fetched results data
+          const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+            pipeDataI === pipeData
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('fetchedValue', results),
+          );
+        });
+    }))
+      // Resolve with the new list of pipeDatas
+      .then(() => newPipeDatas);
   },
 
   /**
@@ -84,18 +85,19 @@ const appUtils = {
       if (!pipeData.value.endsWith('.pdb')) {
         return Promise.resolve();
       }
-      return apiUtils.getPdb(pipeData.value).then((results) => {
-        // Set newPipeDatas to a new list that contains the fetched pdb
-        const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
-          pipeDataI === pipeData
-        );
-        newPipeDatas = newPipeDatas.set(
-          pipeDataIndex, pipeData.set('fetchedValue', results),
-        );
-      });
-
+      return apiUtils.getPdb(pipeData.value)
+        .then((results) => {
+          // Set newPipeDatas to a new list that contains the fetched pdb
+          const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+            pipeDataI === pipeData
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('fetchedValue', results),
+          );
+        });
+    }))
     // Resolve with the new list of pipeDatas
-    })).then(() => newPipeDatas);
+      .then(() => newPipeDatas);
   },
 };
 

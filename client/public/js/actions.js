@@ -122,22 +122,23 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(appId, email, inputPipeDatas, inputString).then((runId) => {
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        runId,
-      });
+    apiUtils.run(appId, email, inputPipeDatas, inputString)
+      .then((runId) => {
+        dispatch({
+          type: actionConstants.RUN_SUBMITTED,
+          runId,
+        });
 
-      browserHistory.push(`/app/${appId}/${runId}`);
-      dispatch(initializeRun(appId, runId));
-    }).catch((err) => {
-      console.error(err);
+        browserHistory.push(`/app/${appId}/${runId}`);
+        dispatch(initializeRun(appId, runId));
+      }).catch((err) => {
+        console.error(err);
 
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        err,
+        dispatch({
+          type: actionConstants.RUN_SUBMITTED,
+          err,
+        });
       });
-    });
   };
 }
 

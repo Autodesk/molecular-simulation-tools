@@ -174,7 +174,8 @@ const runUtils = {
           JSON.stringify(runPayload));
         const statePromise = runUtils.setRunStatus(runId, statusConstants.RUNNING);
 
-        return Promise.all([runPromise, statePromise]).then(() => runId);
+        return Promise.all([runPromise, statePromise])
+          .then(() => runId);
       })
       .then((runId) => {
         if (!runId) {
