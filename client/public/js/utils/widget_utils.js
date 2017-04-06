@@ -5,22 +5,22 @@ const widgetUtils = {
   /**
    * Based on the expected inputs/outputs to the existing ioResults, return
    * the status of the widget
-   * @param {IList of IoRecords}
-   * @param {IList of IoRecords}
+   * @param {IList of PipeRecords}
+   * @param {IList of PipeRecords}
    * @param {IList of IoResultRecords}
    * @returns {statusConstant}
    */
-  getStatus(inputs = new IList(), outputs = new IList(), ioResults) {
+  getStatus(inputPipes = new IList(), outputPipes = new IList(), ioResults) {
     // If it doesn't have all its inputs, it is disabled
-    for (const input of inputs) {
-      if (!ioResults.get(input.id)) {
+    for (const inputPipe of inputPipes) {
+      if (!ioResults.get(inputPipe.id)) {
         return widgetStatusConstants.DISABLED;
       }
     }
 
     // If it doesn't have all of its outputs, it is active
-    for (const output of outputs) {
-      if (!ioResults.get(output.id)) {
+    for (const outputPipe of outputPipes) {
+      if (!ioResults.get(outputPipe.id)) {
         return widgetStatusConstants.ACTIVE;
       }
     }
@@ -37,7 +37,7 @@ const widgetUtils = {
    */
   getStatuses(widgets, ioResults) {
     return widgets.map(widget =>
-      widgetUtils.getStatus(widget.inputs, widget.outputs, ioResults)
+      widgetUtils.getStatus(widget.inputPipes, widget.outputPipes, ioResults)
     );
   },
 

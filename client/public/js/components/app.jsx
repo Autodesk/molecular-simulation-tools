@@ -30,10 +30,10 @@ function App(props) {
   let outputResults = new IList();
   if (activeWidget) {
     inputResults = ioUtils.getResults(
-      activeWidget.inputs, props.app.run.ioResults,
+      activeWidget.inputPipes, props.app.run.ioResults,
     );
     outputResults = ioUtils.getResults(
-      activeWidget.outputs, props.app.run.ioResults,
+      activeWidget.outputPipes, props.app.run.ioResults,
     );
   }
 

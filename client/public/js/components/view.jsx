@@ -8,8 +8,8 @@ import '../../css/view.scss';
 class View extends React.Component {
   /**
    * Find the appropriate PDB to display given inputResults and outputResults
-   * @param {IList of IoRecords} inputResults
-   * @param {IList of IoRecords} outputResults
+   * @param {IList of IoResultRecords} inputResults
+   * @param {IList of IoResultRecords} outputResults
    * @returns {IList of Strings}
    */
   static getPdbs(inputResults, outputResults) {
@@ -31,7 +31,7 @@ class View extends React.Component {
 
   /**
    * Return the list of selection strings in the given inputResults
-   * @param {IList of IoRecords} inputResults
+   * @param {IList of IoResultRecords} inputResults
    * @returns {IList of Strings}
    */
   static getSelectionStrings(inputResults) {

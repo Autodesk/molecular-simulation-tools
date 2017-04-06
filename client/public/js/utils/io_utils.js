@@ -272,16 +272,16 @@ const ioUtils = {
   },
 
   /**
-   * Return a list of the ioResults represented in the ios
-   * @param {IList of IoRecords} ios
+   * Return a list of the ioResults represented in the pipes
+   * @param {IList of PipeRecords} pipes
    * @param {IList of IoResultRecords} ioResults
    * @returns {IList of IoResultRecords}
    */
-  getResults(ios, ioResults) {
+  getResults(pipes, ioResults) {
     let foundIoResults = new IList();
 
-    ios.forEach((io) => {
-      const ioResult = ioResults.get(io.id);
+    pipes.forEach((pipe) => {
+      const ioResult = ioResults.get(pipe.id);
       if (ioResult) {
         foundIoResults = foundIoResults.push(ioResult);
       }

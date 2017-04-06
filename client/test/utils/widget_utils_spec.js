@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { List as IList, Map as IMap } from 'immutable';
 import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
-import IoRecord from '../../public/js/records/io_record';
+import PipeRecord from '../../public/js/records/pipe_record';
 import IoResultRecord from '../../public/js/records/io_result_record';
 import RunRecord from '../../public/js/records/run_record';
 import WidgetRecord from '../../public/js/records/widget_record';
@@ -11,18 +11,18 @@ import widgetUtils from '../../public/js/utils/widget_utils';
 
 describe('widgetUtils', () => {
   describe('getStatus', () => {
-    let inputs;
-    let outputs;
+    let inputPipes;
+    let outputPipes;
     let ioResults;
 
     beforeEach(() => {
-      inputs = new IList([
-        new IoRecord({ id: 'one' }),
-        new IoRecord({ id: 'two' }),
+      inputPipes = new IList([
+        new PipeRecord({ id: 'one' }),
+        new PipeRecord({ id: 'two' }),
       ]);
-      outputs = new IList([
-        new IoRecord({ id: 'three' }),
-        new IoRecord({ id: 'four' }),
+      outputPipes = new IList([
+        new PipeRecord({ id: 'three' }),
+        new PipeRecord({ id: 'four' }),
       ]);
 
       ioResults = new IMap({});
@@ -34,7 +34,7 @@ describe('widgetUtils', () => {
       });
 
       it('returns DISABLED', () => {
-        const status = widgetUtils.getStatus(inputs, outputs, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
         expect(status).to.equal(widgetStatusConstants.DISABLED);
       });
     });
@@ -46,7 +46,7 @@ describe('widgetUtils', () => {
       });
 
       it('returns ACTIVE', () => {
-        const status = widgetUtils.getStatus(inputs, outputs, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
         expect(status).to.equal(widgetStatusConstants.ACTIVE);
       });
     });
@@ -60,7 +60,7 @@ describe('widgetUtils', () => {
       });
 
       it('returns COMPLETED', () => {
-        const status = widgetUtils.getStatus(inputs, outputs, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
         expect(status).to.equal(widgetStatusConstants.COMPLETED);
       });
     });

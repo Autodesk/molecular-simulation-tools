@@ -90,8 +90,8 @@ function app(state = initialState, action) {
         widgetI => widgetI.id === widgetId
       );
       let newIoResults = state.run.ioResults;
-      widget.outputs.forEach((output) => {
-        newIoResults = newIoResults.delete(output.id);
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({
@@ -122,8 +122,8 @@ function app(state = initialState, action) {
         widgetI => widgetI.id === widgetId
       );
       let newIoResults = state.run.ioResults;
-      widget.outputs.forEach((output) => {
-        newIoResults = newIoResults.delete(output.id);
+      widget.outputPipes.forEach((outputPipe) => {
+        newIoResults = newIoResults.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({

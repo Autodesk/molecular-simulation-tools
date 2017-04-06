@@ -21,8 +21,8 @@ function Status(props) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
-      const inputResults = widget.inputs.map(input =>
-        props.app.run.ioResults.get(input.id)
+      const inputResults = widget.inputPipes.map(inputPipe =>
+        props.app.run.ioResults.get(inputPipe.id)
       );
 
       switch (widget.id) {

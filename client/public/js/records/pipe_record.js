@@ -1,7 +1,7 @@
 import { Record } from 'immutable';
 
-const IoRecord = new Record({
+const PipeRecord = new Record({
   id: '',
 });
 
-export default IoRecord;
+export default PipeRecord;

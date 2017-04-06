@@ -37,7 +37,7 @@ class StatusEmail extends React.Component {
   }
 
   onClickRun() {
-    this.props.clickRun(this.props.widget.inputs);
+    this.props.clickRun(this.props.widget.inputPipes);
   }
 
   onSubmit(e) {

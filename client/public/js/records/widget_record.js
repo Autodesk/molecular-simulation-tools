@@ -3,8 +3,8 @@ import { List as IList, Record } from 'immutable';
 const WidgetRecord = new Record({
   id: '',
   title: '',
-  inputs: new IList(),
-  outputs: new IList(),
+  inputPipes: new IList(),
+  outputPipes: new IList(),
 });
 
 export default WidgetRecord;

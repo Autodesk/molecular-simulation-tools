@@ -1,7 +1,7 @@
 import { List as IList, Map as IMap } from 'immutable';
 import axios from 'axios';
 import AppRecord from '../records/app_record';
-import IoRecord from '../records/io_record';
+import PipeRecord from '../records/pipe_record';
 import IoResultRecord from '../records/io_result_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
@@ -37,15 +37,17 @@ const apiUtils = {
     return axios.get(`${API_URL}/v1/app/${appId}`).then((res) => {
       const widgets = new IList(
         res.data.widgets.map((widgetData) => {
-          const inputs = widgetData.inputs ? new IList(widgetData.inputs.map(
-            input => new IoRecord(input),
-          )) : new IList();
-          const outputs = widgetData.outputs ? new IList(widgetData.outputs.map(
-            output => new IoRecord(output),
-          )) : new IList();
+          const inputPipes = widgetData.inputs ?
+            new IList(widgetData.inputs.map(
+              inputPipeJson => new PipeRecord(inputPipeJson),
+            )) : new IList();
+          const outputPipes = widgetData.outputs ?
+            new IList(widgetData.outputs.map(
+              outputPipeJson => new PipeRecord(outputPipeJson),
+            )) : new IList();
 
           return new WidgetRecord(
-            Object.assign({}, widgetData, { inputs, outputs })
+            Object.assign({}, widgetData, { inputPipes, outputPipes })
           );
         }),
       );
@@ -68,15 +70,17 @@ const apiUtils = {
     ).then((runData) => {
       const widgets = new IList(
         runData.app.widgets.map((widgetData) => {
-          const inputs = widgetData.inputs ? new IList(widgetData.inputs.map(
-            input => new IoRecord(input),
-          )) : new IList();
-          const outputs = widgetData.outputs ? new IList(widgetData.outputs.map(
-            output => new IoRecord(output),
-          )) : new IList();
+          const inputPipes = widgetData.inputs ?
+            new IList(widgetData.inputs.map(
+              inputPipeJson => new PipeRecord(inputPipeJson),
+            )) : new IList();
+          const outputPipes = widgetData.outputs ?
+            new IList(widgetData.outputs.map(
+              outputPipeJson => new PipeRecord(outputPipeJson),
+            )) : new IList();
 
           return new WidgetRecord(
-            Object.assign({}, widgetData, { inputs, outputs })
+            Object.assign({}, widgetData, { inputPipes, outputPipes })
           );
         }),
       );
