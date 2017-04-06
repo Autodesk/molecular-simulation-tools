@@ -26,14 +26,14 @@ function App(props) {
 
 
   const activeWidget = props.app.widgets.get(props.selection.widgetIndex);
-  let inputResults = new IList();
-  let outputResults = new IList();
+  let inputPipeDatas = new IList();
+  let outputPipeDatas = new IList();
   if (activeWidget) {
-    inputResults = ioUtils.getResults(
-      activeWidget.inputPipes, props.app.run.ioResults,
+    inputPipeDatas = ioUtils.getPipeDatas(
+      activeWidget.inputPipes, props.app.run.pipeDatas,
     );
-    outputResults = ioUtils.getResults(
-      activeWidget.outputPipes, props.app.run.ioResults,
+    outputPipeDatas = ioUtils.getPipeDatas(
+      activeWidget.outputPipes, props.app.run.pipeDatas,
     );
   }
 
@@ -68,9 +68,9 @@ function App(props) {
         colorized={props.colorized}
         error={viewError}
         loading={props.app.fetching || props.app.run.fetchingData}
-        inputResults={inputResults}
+        inputPipeDatas={inputPipeDatas}
         morph={props.morph}
-        outputResults={outputResults}
+        outputPipeDatas={outputPipeDatas}
       />
     </div>
   );

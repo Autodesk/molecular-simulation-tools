@@ -25,77 +25,77 @@ const appUtils = {
    * @returns {Array}
    */
   processInput: async function processInput(appId, inputString, extension) {
-    let inputResults = await apiUtils.processInput(appId, inputString, extension);
+    let inputPipeDatas = await apiUtils.processInput(appId, inputString, extension);
 
-    // Find the json results
-    inputResults = await appUtils.fetchIoResultsJson(inputResults);
+    // Fetch any json files
+    inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
 
-    // Get the processed input pdbs
-    inputResults = await appUtils.fetchIoResultsPdbs(inputResults);
+    // Fetch any pdb files
+    inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
 
-    // Make sure the json results are valid and also indicate a success.
-    const inputErrorMessage = ioUtils.getOutputResultsError(inputResults);
+    // Make sure the json pipeDatas are valid and also indicate a success.
+    const inputErrorMessage = ioUtils.getOutputPipeDatasError(inputPipeDatas);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
-      error.inputResults = inputResults;
+      error.inputPipeDatas = inputPipeDatas;
       throw error;
     }
 
-    return inputResults;
+    return inputPipeDatas;
   },
 
   /**
-   * Fetch the results json for any of the given ioResults with a json url.
-   * Return new ioResults with fetchedResult set for the json.
-   * @param ioResults {IList of IoResultRecords}
+   * Fetch the json for any of the given pipeDatas with a json url.
+   * Return new pipeDatas with fetchedValue set for the json.
+   * @param pipeDatas {IList of PipeDataRecords}
    * @returns {Promise that resolves with IList}
    */
-  fetchIoResultsJson(ioResults) {
-    let newIoResults = ioResults;
+  fetchPipeDataJson(pipeDatas) {
+    let newPipeDatas = pipeDatas;
 
-    return Promise.all(ioResults.map((ioResult) => {
-      if (!ioResult.value.endsWith('.json')) {
+    return Promise.all(pipeDatas.map((pipeData) => {
+      if (!pipeData.value.endsWith('.json')) {
         return Promise.resolve();
       }
-      return apiUtils.getIoResultData(ioResult.value).then((results) => {
-        // Set newIoResults to a new list that contains the fetched results data
-        const ioResultIndex = newIoResults.findIndex(ioResultI =>
-          ioResultI === ioResult
+      return apiUtils.getPipeDataJson(pipeData.value).then((results) => {
+        // Set newPipeDatas to a new list that contains the fetched results data
+        const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+          pipeDataI === pipeData
         );
-        newIoResults = newIoResults.set(
-          ioResultIndex, ioResult.set('fetchedValue', results),
+        newPipeDatas = newPipeDatas.set(
+          pipeDataIndex, pipeData.set('fetchedValue', results),
         );
       });
 
-    // Resolve with the new list of ioResults
-    })).then(() => newIoResults);
+    // Resolve with the new list of pipeDatas
+    })).then(() => newPipeDatas);
   },
 
   /**
-   * Fetch the pdb for any of the given ioResults with a pdb url.
-   * Return new ioResults with fetchedResult set for the pdb data.
-   * @param ioResults {IList}
+   * Fetch the pdb for any of the given pipeDatas with a pdb url.
+   * Return new pipeDatas with fetchedValue set for the pdb data.
+   * @param pipeDatas {IList}
    * @returns {Promise that resolves with an IList}
    */
-  fetchIoResultsPdbs(ioResults) {
-    let newIoResults = ioResults;
+  fetchPipeDataPdbs(pipeDatas) {
+    let newPipeDatas = pipeDatas;
 
-    return Promise.all(ioResults.map((ioResult) => {
-      if (!ioResult.value.endsWith('.pdb')) {
+    return Promise.all(pipeDatas.map((pipeData) => {
+      if (!pipeData.value.endsWith('.pdb')) {
         return Promise.resolve();
       }
-      return apiUtils.getPdb(ioResult.value).then((results) => {
-        // Set newIoResults to a new list that contains the fetched pdb
-        const ioResultIndex = newIoResults.findIndex(ioResultI =>
-          ioResultI === ioResult
+      return apiUtils.getPdb(pipeData.value).then((results) => {
+        // Set newPipeDatas to a new list that contains the fetched pdb
+        const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
+          pipeDataI === pipeData
         );
-        newIoResults = newIoResults.set(
-          ioResultIndex, ioResult.set('fetchedValue', results),
+        newPipeDatas = newPipeDatas.set(
+          pipeDataIndex, pipeData.set('fetchedValue', results),
         );
       });
 
-    // Resolve with the new list of ioResults
-    })).then(() => newIoResults);
+    // Resolve with the new list of pipeDatas
+    })).then(() => newPipeDatas);
   },
 };
 

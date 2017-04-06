@@ -1,130 +1,130 @@
 import { List as IList } from 'immutable';
-import IoResultRecord from '../records/io_result_record';
+import PipeDataRecord from '../records/pipe_data_record';
 
 const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
 const ioUtils = {
   /**
-   * Given a list of ioResults, find the first pdb ioResult and get the pdb data.
+   * Given a list of pipeDatas, find the first pdb pipeData and get the pdb data.
    * If not found, returns null.
-   * @param ioResults {IList}
+   * @param pipeDatas {IList}
    * @returns {String}
    */
-  getPdb(ioResults) {
-    const pdbIndex = ioUtils.getIndexByValue(ioResults, '.pdb');
+  getPdb(pipeDatas) {
+    const pdbIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
     }
 
-    return ioResults.get(pdbIndex).fetchedValue;
+    return pipeDatas.get(pdbIndex).fetchedValue;
   },
 
   /**
-   * Given a list of ioResults, returns a list of pdb strings to be animated.
+   * Given a list of pipeDatas, returns a list of pdb strings to be animated.
    * Returns an empty list when none, or when data is missing.
-   * @param {IList} ioResults
+   * @param {IList} pipeDatas
    * @returns {IList}
    */
-  getAnimationPdbs(ioResults) {
-    // If there are no ioResults yet, return empty list
-    if (!ioResults.size) {
+  getAnimationPdbs(pipeDatas) {
+    // If there are no pipeDatas yet, return empty list
+    if (!pipeDatas.size) {
       return new IList();
     }
 
-    const framesIoResultIndex = ioUtils.getIndexByValue(
-      ioResults, IO_ANIMATION_FRAMES,
+    const framesPipeDataIndex = ioUtils.getIndexByValue(
+      pipeDatas, IO_ANIMATION_FRAMES,
     );
 
-    // If we don't have an ioResult to tell which animation frames to use,
+    // If we don't have an pipeData to tell which animation frames to use,
     // just return the first pdb
-    if (framesIoResultIndex === -1) {
-      const pdbIoResultIndex = ioUtils.getIndexByValue(ioResults, '.pdb');
-      if (pdbIoResultIndex === -1) {
+    if (framesPipeDataIndex === -1) {
+      const pdbPipeDataIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
+      if (pdbPipeDataIndex === -1) {
         return new IList();
       }
-      const pdb = ioResults.get(pdbIoResultIndex).fetchedValue;
+      const pdb = pipeDatas.get(pdbPipeDataIndex).fetchedValue;
       return pdb ? new IList([pdb]) : new IList();
     }
 
-    const framesIoResult = ioResults.get(framesIoResultIndex);
-    // If frames ioResult exists but has no fetched value yet, return empty list
-    if (!framesIoResult.fetchedValue) {
+    const framesPipeData = pipeDatas.get(framesPipeDataIndex);
+    // If frames pipeData exists but has no fetched value yet, return empty list
+    if (!framesPipeData.fetchedValue) {
       return new IList();
     }
 
-    // Find ioResults corresponding to each frame in framesIoResult
-    let pdbIoResults = new IList();
-    framesIoResult.fetchedValue.forEach((filename) => {
-      const matchedIoResult = ioResults.find(ioResult => ioResult.ioId === filename);
-      if (!matchedIoResult) {
-        throw new Error('Invalid ioResults data; minsteps_frames mismatch');
+    // Find pipeDatas corresponding to each frame in framesPipeData
+    let pdbPipeDatas = new IList();
+    framesPipeData.fetchedValue.forEach((filename) => {
+      const matchedPipeData = pipeDatas.find(pipeData => pipeData.pipeId === filename);
+      if (!matchedPipeData) {
+        throw new Error('Invalid pipeDatas data; minsteps_frames mismatch');
       }
-      pdbIoResults = pdbIoResults.push(matchedIoResult);
+      pdbPipeDatas = pdbPipeDatas.push(matchedPipeData);
     });
 
-    return pdbIoResults.map(ioResult => ioResult.fetchedValue);
+    return pdbPipeDatas.map(pipeData => pipeData.fetchedValue);
   },
 
   /**
-   * Given a list of ioResults, return the index of the first element
+   * Given a list of pipeDatas, return the index of the first element
    * that has the given string in its "value", or -1 if none
-   * @param ioResults {IList}
+   * @param pipeDatas {IList}
    * @param string {String}
    * @returns {String}
    */
-  getIndexByValue(ioResults, string) {
-    return ioResults.findIndex(ioResult => ioResult.value.endsWith(string));
+  getIndexByValue(pipeDatas, string) {
+    return pipeDatas.findIndex(pipeData => pipeData.value.endsWith(string));
   },
 
   /**
-   * Given a list of ioResults, find and return a list of all ligands in results data
-   * @param ioResults {IList of IoResultRecords}
+   * Given a list of pipeDatas, find and return a list of all ligands
+   * @param pipeDatas {IList of PipeDataRecords}
    * @returns {IList}
    */
-  getLigandNames(ioResults) {
-    return ioResults.reduce((reduction, ioResult) => {
-      if (!ioResult.value.endsWith('.json') ||
-        !ioResult.fetchedValue ||
-        !ioResult.fetchedValue.ligands) {
+  getLigandNames(pipeDatas) {
+    return pipeDatas.reduce((reduction, pipeData) => {
+      if (!pipeData.value.endsWith('.json') ||
+        !pipeData.fetchedValue ||
+        !pipeData.fetchedValue.ligands) {
         return reduction;
       }
-      const ligandNames = new IList(Object.keys(ioResult.fetchedValue.ligands));
+      const ligandNames = new IList(Object.keys(pipeData.fetchedValue.ligands));
       return reduction.concat(ligandNames);
     }, new IList());
   },
 
   /**
-   * From the given ioResults, returns all ligand selection strings found
-   * @param ioResults {IList}
+   * From the given pipeDatas, returns all ligand selection strings found
+   * @param pipeDatas {IList}
    * @param ligandName {String}
    * @return {IList}
    */
-  getLigandSelectionStrings(ioResults, ligandName) {
-    const ioResultWithLigand = ioUtils.getIoResultWithLigand(ioResults, ligandName);
+  getLigandSelectionStrings(pipeDatas, ligandName) {
+    const pipeDataWithLigand = ioUtils.getPipeDataWithLigand(pipeDatas, ligandName);
 
-    if (!ioResultWithLigand) {
+    if (!pipeDataWithLigand) {
       return new IList();
     }
 
-    return new IList(ioResultWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
+    return new IList(pipeDataWithLigand.fetchedValue.mv_ligand_strings[ligandName]);
   },
 
   /**
-   * From the given ioResults, look for selection.json and its selected ligand.
-   * @param {IList} ioResults
+   * From the given pipeDatas, look for selection.json and its selected ligand.
+   * @param {IList} pipeDatas
    * @returns {String}
    */
-  getSelectedLigand(ioResults) {
-    const selectionIoResult = ioResults.find(ioResult => ioResult.ioId === 'selection.json');
+  getSelectedLigand(pipeDatas) {
+    const selectionPipeData = pipeDatas.find(pipeData => pipeData.pipeId === 'selection.json');
 
-    if (!selectionIoResult) {
+    if (!selectionPipeData) {
       return '';
     }
 
     let selectionValue;
     try {
-      selectionValue = JSON.parse(selectionIoResult.value);
+      selectionValue = JSON.parse(selectionPipeData.value);
     } catch (error) {
       return '';
     }
@@ -133,72 +133,72 @@ const ioUtils = {
   },
 
   /**
-   * From the given ioResults, returns the one that contains the given ligand name in
+   * From the given pipeDatas, returns the one that contains the given ligand name in
    * its json results, or undefined if none
-   * @param ioResults {IList}
+   * @param pipeDatas {IList}
    * @param ligandName {String}
-   * @returns {IoResultRecord}
+   * @returns {PipeDataRecord}
    */
-  getIoResultWithLigand(ioResults, ligandName) {
-    return ioResults.find((ioResult) => {
-      if (!ioResult.value.endsWith('.json')) {
+  getPipeDataWithLigand(pipeDatas, ligandName) {
+    return pipeDatas.find((pipeData) => {
+      if (!pipeData.value.endsWith('.json')) {
         return false;
       }
-      if (!ioResult.fetchedValue || !ioResult.fetchedValue.mv_ligand_strings) {
+      if (!pipeData.fetchedValue || !pipeData.fetchedValue.mv_ligand_strings) {
         return false;
       }
 
-      return ioResult.fetchedValue.mv_ligand_strings[ligandName];
+      return pipeData.fetchedValue.mv_ligand_strings[ligandName];
     });
   },
 
   /**
-   * Returns new inputResults with all client-only fields removed
+   * Returns new inputPipeDatas with all client-only fields removed
    * added, with everything converted to an array
-   * @param inputResults {IList}
+   * @param inputPipeDatas {IList}
    * @returns {Array}
    */
-  formatInputResultsForServer(inputResults) {
+  formatInputPipeDatasForServer(inputPipeDatas) {
     // Unset fetchedValue
-    let serverInputResults = inputResults.map(inputResult =>
-      inputResult.set('fetchedValue', null),
+    let serverInputPipeDatas = inputPipeDatas.map(inputPipeData =>
+      inputPipeData.set('fetchedValue', null),
     );
 
-    // Move ioId to name
-    serverInputResults = serverInputResults.toJS().map(inputResultData =>
-      Object.assign({}, inputResultData, {
-        ioId: null,
-        name: inputResultData.ioId,
+    // Move pipeId to name
+    serverInputPipeDatas = serverInputPipeDatas.toJS().map(inputPipeDataData =>
+      Object.assign({}, inputPipeDataData, {
+        pipeId: null,
+        name: inputPipeDataData.pipeId,
       }),
     );
 
-    return serverInputResults;
+    return serverInputPipeDatas;
   },
 
   /**
-   * Return an ioResult representing the given selectedLigand
-   * @param {IoResultRecord} selectedLigandIoResult
+   * Return an pipeData representing the given selectedLigand
+   * @param {PipeDataRecord} selectedLigandPipeData
    * @param {String} selectedLigand
-   * @returns {IoResultRecord}
+   * @returns {PipeDataRecord}
    */
-  createSelectionIoResult(selectedLigandIoResult, selectedLigand) {
+  createSelectionPipeData(selectedLigandPipeData, selectedLigand) {
     if (!selectedLigand) {
       throw new Error('selectedLigand required');
     }
-    if (!selectedLigandIoResult ||
-      !selectedLigandIoResult.fetchedValue ||
-      !selectedLigandIoResult.fetchedValue.ligands ||
-      !selectedLigandIoResult.fetchedValue.ligands[selectedLigand]) {
-      throw new Error('No atom ids for given ligand in selectedLigandIoResult');
+    if (!selectedLigandPipeData ||
+      !selectedLigandPipeData.fetchedValue ||
+      !selectedLigandPipeData.fetchedValue.ligands ||
+      !selectedLigandPipeData.fetchedValue.ligands[selectedLigand]) {
+      throw new Error('No atom ids for given ligand in selectedLigandPipeData');
     }
 
     const fetchedValue = {
       ligandname: selectedLigand,
-      atom_ids: selectedLigandIoResult.fetchedValue.ligands[selectedLigand],
+      atom_ids: selectedLigandPipeData.fetchedValue.ligands[selectedLigand],
     };
 
-    return new IoResultRecord({
-      ioId: 'selection.json',
+    return new PipeDataRecord({
+      pipeId: 'selection.json',
       type: 'inline',
       fetchedValue,
       value: JSON.stringify(fetchedValue),
@@ -206,88 +206,88 @@ const ioUtils = {
   },
 
   /**
-   * Return ioResults modified to indicate the given ligand is selected.
-   * If no selection ioResult, will be created.
-   * @param {IList of IoResultRecords} ioResultsList
+   * Return pipeDatas modified to indicate the given ligand is selected.
+   * If no selection pipeData, will be created.
+   * @param {IList of PipeDataRecords} pipeDatasList
    * @param {String} ligand
    * @returns {IList}
    */
-  selectLigand(ioResultsList, ligand) {
-    const selectedLigandIoResult = ioUtils.getIoResultWithLigand(ioResultsList, ligand);
+  selectLigand(pipeDatasList, ligand) {
+    const selectedLigandPipeData = ioUtils.getPipeDataWithLigand(pipeDatasList, ligand);
 
-    if (!selectedLigandIoResult) {
-      throw new Error('The given ioResultsList does not contain the given ligand.');
+    if (!selectedLigandPipeData) {
+      throw new Error('The given pipeDatasList does not contain the given ligand.');
     }
 
-    const selectionIoResultIndex = ioResultsList.findIndex(ioResult =>
-      ioResult.ioId === 'selection.json',
+    const selectionPipeDataIndex = pipeDatasList.findIndex(pipeData =>
+      pipeData.pipeId === 'selection.json',
     );
 
-    if (selectionIoResultIndex === -1) {
-      return ioResultsList.push(
-        ioUtils.createSelectionIoResult(selectedLigandIoResult, ligand),
+    if (selectionPipeDataIndex === -1) {
+      return pipeDatasList.push(
+        ioUtils.createSelectionPipeData(selectedLigandPipeData, ligand),
       );
     }
 
     const fetchedValue = {
       ligandname: ligand,
-      atom_ids: selectedLigandIoResult.fetchedValue.ligands[ligand],
+      atom_ids: selectedLigandPipeData.fetchedValue.ligands[ligand],
     };
-    const updatedSelectionIoResult =
-      ioResultsList.get(selectionIoResultIndex).merge({
-        // TODO don't hardcode this ioId
-        ioId: 'selection.json',
+    const updatedSelectionPipeData =
+      pipeDatasList.get(selectionPipeDataIndex).merge({
+        // TODO don't hardcode this pipeId
+        pipeId: 'selection.json',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });
-    return ioResultsList.set(selectionIoResultIndex, updatedSelectionIoResult);
+    return pipeDatasList.set(selectionPipeDataIndex, updatedSelectionPipeData);
   },
 
   /**
-   * outpuResults from a CCC widget should always contain a prep.json with
+   * outputPipeDatas from a CCC widget should always contain a prep.json with
    * `success: true`. If they don't, returns an error string.
    * If they do, returns empty string.
    * If anything else is wrong, throws an error.
-   * @param outputResults {IList of IoResults}
+   * @param outputPipeDatas {IList of PipeDatas}
    * @returns {String}
    */
-  getOutputResultsError(outputResults) {
-    const prepIndex = ioUtils.getIndexByValue(outputResults, 'prep.json');
+  getOutputPipeDatasError(outputPipeDatas) {
+    const prepIndex = ioUtils.getIndexByValue(outputPipeDatas, 'prep.json');
 
     if (prepIndex === -1) {
-      throw new Error('OutputResults did not contain a prep.json file');
+      throw new Error('OutputPipeDatas did not contain a prep.json file');
     }
 
-    const prepFetchedValue = outputResults.get(prepIndex).fetchedValue;
+    const prepFetchedValue = outputPipeDatas.get(prepIndex).fetchedValue;
 
     if (typeof prepFetchedValue !== 'object') {
       throw new Error('prep.json was not fetched properly.');
     }
 
     if (!prepFetchedValue.success) {
-      return prepFetchedValue.errors || 'OutputResult is invalid for this app.';
+      return prepFetchedValue.errors || 'OutputPipeData is invalid for this app.';
     }
 
     return '';
   },
 
   /**
-   * Return a list of the ioResults represented in the pipes
+   * Return a list of the pipeDatas represented in the pipes
    * @param {IList of PipeRecords} pipes
-   * @param {IList of IoResultRecords} ioResults
-   * @returns {IList of IoResultRecords}
+   * @param {IList of PipeDataRecords} pipeDatas
+   * @returns {IList of PipeDataRecords}
    */
-  getResults(pipes, ioResults) {
-    let foundIoResults = new IList();
+  getPipeDatas(pipes, pipeDatas) {
+    let foundPipeDatas = new IList();
 
     pipes.forEach((pipe) => {
-      const ioResult = ioResults.get(pipe.id);
-      if (ioResult) {
-        foundIoResults = foundIoResults.push(ioResult);
+      const pipeData = pipeDatas.get(pipe.id);
+      if (pipeData) {
+        foundPipeDatas = foundPipeDatas.push(pipeData);
       }
     });
 
-    return foundIoResults;
+    return foundPipeDatas;
   },
 };
 

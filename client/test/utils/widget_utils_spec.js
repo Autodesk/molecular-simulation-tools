@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { List as IList, Map as IMap } from 'immutable';
 import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import PipeRecord from '../../public/js/records/pipe_record';
-import IoResultRecord from '../../public/js/records/io_result_record';
+import PipeDataRecord from '../../public/js/records/pipe_data_record';
 import RunRecord from '../../public/js/records/run_record';
 import WidgetRecord from '../../public/js/records/widget_record';
 import widgetStatusConstants from '../../public/js/constants/widget_status_constants';
@@ -13,7 +13,7 @@ describe('widgetUtils', () => {
   describe('getStatus', () => {
     let inputPipes;
     let outputPipes;
-    let ioResults;
+    let pipeDatas;
 
     beforeEach(() => {
       inputPipes = new IList([
@@ -25,49 +25,49 @@ describe('widgetUtils', () => {
         new PipeRecord({ id: 'four' }),
       ]);
 
-      ioResults = new IMap({});
+      pipeDatas = new IMap({});
     });
 
     describe('when not all inputs exist yet', () => {
       beforeEach(() => {
-        ioResults = ioResults.set('one', new IoResultRecord({ ioId: 'one' }));
+        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
       });
 
       it('returns DISABLED', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
         expect(status).to.equal(widgetStatusConstants.DISABLED);
       });
     });
 
     describe('when all inputs exist but not all outputs', () => {
       beforeEach(() => {
-        ioResults = ioResults.set('one', new IoResultRecord({ ioId: 'one' }));
-        ioResults = ioResults.set('two', new IoResultRecord({ ioId: 'two' }));
+        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
+        pipeDatas = pipeDatas.set('two', new PipeDataRecord({ pipeId: 'two' }));
       });
 
       it('returns ACTIVE', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
         expect(status).to.equal(widgetStatusConstants.ACTIVE);
       });
     });
 
     describe('when all inputs and all outputs exist', () => {
       beforeEach(() => {
-        ioResults = ioResults.set('one', new IoResultRecord({ ioId: 'one' }));
-        ioResults = ioResults.set('two', new IoResultRecord({ ioId: 'two' }));
-        ioResults = ioResults.set('three', new IoResultRecord({ ioId: 'three' }));
-        ioResults = ioResults.set('four', new IoResultRecord({ ioId: 'four' }));
+        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
+        pipeDatas = pipeDatas.set('two', new PipeDataRecord({ pipeId: 'two' }));
+        pipeDatas = pipeDatas.set('three', new PipeDataRecord({ pipeId: 'three' }));
+        pipeDatas = pipeDatas.set('four', new PipeDataRecord({ pipeId: 'four' }));
       });
 
       it('returns COMPLETED', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, ioResults);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
         expect(status).to.equal(widgetStatusConstants.COMPLETED);
       });
     });
   });
 
   describe('getStatuses', () => {
-    const ioResults = new IList();
+    const pipeDatas = new IList();
     const widgets = IList([
         new WidgetRecord({}),
         new WidgetRecord({}),
@@ -85,8 +85,8 @@ describe('widgetUtils', () => {
       widgetUtils.getStatus.restore();
     });
 
-    it('retuns list of result from getStatus', () => {
-      const statuses = widgetUtils.getStatuses(widgets, ioResults);
+    it('retuns list of results from getStatus', () => {
+      const statuses = widgetUtils.getStatuses(widgets, pipeDatas);
       expect(statuses.size).to.equal(3);
       expect(statuses.get(0)).to.equal(widgetStatusConstants.COMPLETED);
       expect(statuses.get(1)).to.equal(widgetStatusConstants.COMPLETED);

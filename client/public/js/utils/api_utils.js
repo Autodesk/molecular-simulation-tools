@@ -2,7 +2,7 @@ import { List as IList, Map as IMap } from 'immutable';
 import axios from 'axios';
 import AppRecord from '../records/app_record';
 import PipeRecord from '../records/pipe_record';
-import IoResultRecord from '../records/io_result_record';
+import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
 import ioUtils from './io_utils';
@@ -19,11 +19,11 @@ const apiUtils = {
    * @param {String} [inputString]
    * @returns {Promise}
    */
-  run(appId, email, inputResults, inputString) {
+  run(appId, email, inputPipeDatas, inputString) {
     return axios.post(`${API_URL}/v1/run`, {
       appId,
       email,
-      inputs: ioUtils.formatInputResultsForServer(inputResults),
+      inputs: ioUtils.formatInputPipeDatasForServer(inputPipeDatas),
       inputString,
     }).then(res => res.data.runId);
   },
@@ -84,25 +84,25 @@ const apiUtils = {
           );
         }),
       );
-      let ioResults = new IMap();
+      let pipeDatas = new IMap();
       const inputDatas = runData.inputs || [];
       const outputDatas = runData.outputs || [];
       inputDatas.forEach((inputData) => {
-        const inputResult = new IoResultRecord(Object.assign({}, inputData, {
-          ioId: inputData.name,
+        const inputPipeData = new PipeDataRecord(Object.assign({}, inputData, {
+          pipeId: inputData.name,
         }));
-        ioResults = ioResults.set(inputResult.ioId, inputResult);
+        pipeDatas = pipeDatas.set(inputPipeData.pipeId, inputPipeData);
       });
       outputDatas.forEach((outputData) => {
-        const outputResult = new IoResultRecord(Object.assign({}, outputData, {
-          ioId: outputData.name,
+        const outputPipeData = new PipeDataRecord(Object.assign({}, outputData, {
+          pipeId: outputData.name,
         }));
-        ioResults = ioResults.set(outputResult.ioId, outputResult);
+        pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
       });
 
       return new AppRecord(Object.assign({}, runData, runData.app, {
         widgets,
-        run: new RunRecord(Object.assign({}, runData, { ioResults })),
+        run: new RunRecord(Object.assign({}, runData, { pipeDatas })),
       }));
     });
   },
@@ -163,20 +163,20 @@ const apiUtils = {
         }
 
         return new IList(res.data.outputs.map(output =>
-          // Remap name to ioId for clarity
-          new IoResultRecord(Object.assign({}, output, {
-            ioId: output.name,
+          // Remap name to pipeId for clarity
+          new PipeDataRecord(Object.assign({}, output, {
+            pipeId: output.name,
           })),
         ));
       });
   },
 
   /**
-   * Fetch and parse the json file that is returned from step0 input processing
+   * Fetch and parse a json file
    * @param jsonUrl {String}
    * @returns {Promise}
    */
-  getIoResultData(jsonUrl) {
+  getPipeDataJson(jsonUrl) {
     return axios.get(jsonUrl).then(res => res.data);
   },
 
