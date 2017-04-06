@@ -89,6 +89,7 @@ class StatusLoad extends React.Component {
             onSubmit={this.onSubmitInputString}
           >
             <Input
+              autoComplete="email"
               className={`enterMolecule ${inputErrorClass}`}
               type="text"
               placeholder="Enter molecule here"

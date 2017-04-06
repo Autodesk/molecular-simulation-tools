@@ -1,4 +1,5 @@
 import { List as IList, Map as IMap } from 'immutable';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import axios from 'axios';
 import AppRecord from '../records/app_record';
 import PipeRecord from '../records/pipe_record';
@@ -61,7 +62,7 @@ const apiUtils = {
 
         // Hack in email widget (TODO remove with Auth)
         widgets = widgets.unshift(new WidgetRecord({
-          id: 'enter-email',
+          id: widgetsConstants.ENTER_EMAIL,
           title: 'Enter Email',
           outputPipes: new IList([
             new PipeRecord({ id: 'email' }),
@@ -82,6 +83,11 @@ const apiUtils = {
       );
   },
 
+  /**
+   * Get the indicated run data from the server
+   * @param {String} runId
+   * @returns {Promise}
+   */
   getRun(runId) {
     return axios.get(`${API_URL}/v1/run/mock/${runId}`)
       .then(res =>
@@ -112,7 +118,7 @@ const apiUtils = {
 
         // Hack in email widget (TODO remove with Auth)
         widgets = widgets.unshift(new WidgetRecord({
-          id: 'enter-email',
+          id: widgetsConstants.ENTER_EMAIL,
           title: 'Enter Email',
           outputPipes: new IList([
             new PipeRecord({ id: 'email' }),
@@ -224,6 +230,17 @@ const apiUtils = {
   getPdb(pdbUrl) {
     return axios.get(pdbUrl)
       .then(res => res.data);
+  },
+
+  /**
+   * Start a new app session
+   * @param {String} appId
+   * @param {String} email
+   * @returns {Promise resolves with sessionId}
+   */
+  startSession(email, appId) {
+    return axios.post(`${API_URL}/v1/session/start/${appId}`, { email })
+      .then(response => response.data.sessionId);
   },
 };
 

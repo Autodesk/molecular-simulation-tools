@@ -74,8 +74,10 @@ function mapDispatchToProps(dispatch) {
         dispatch(submitInputString(input, appId));
       };
     },
-    submitEmail(email) {
-      dispatch(submitEmail(email));
+    submitEmail(appId, runId) {
+      return (email) => {
+        dispatch(submitEmail(email, appId, runId));
+      };
     },
     clickCancel(runId) {
       return () => {
@@ -98,6 +100,10 @@ function mergeProps(stateProps, dispatchProps) {
     submitInputString: dispatchProps.submitInputString(stateProps.app.id),
     changeLigandSelection: dispatchProps.changeLigandSelection(
       stateProps.app.run.pipeDatas,
+    ),
+    submitEmail: dispatchProps.submitEmail(
+      stateProps.app.id,
+      stateProps.app.run.id,
     ),
   });
 }

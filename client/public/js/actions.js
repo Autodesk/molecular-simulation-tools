@@ -230,17 +230,40 @@ export function submitInputString(inputString, appId) {
   };
 }
 
-export function submitEmail(email) {
-  if (!isEmail(email)) {
-    return {
-      type: actionConstants.SUBMIT_EMAIL,
-      error: 'Invalid email',
-    };
-  }
+export function submitEmail(email, appId, runId) {
+  return async function submitEmailDispatch(dispatch) {
+    if (!isEmail(email)) {
+      dispatch({
+        type: actionConstants.SUBMIT_EMAIL,
+        error: 'Invalid email',
+      });
+    }
 
-  return {
-    type: actionConstants.SUBMIT_EMAIL,
-    email,
+    dispatch({
+      type: actionConstants.SUBMIT_EMAIL,
+      runId,
+    });
+
+    if (runId) {
+      // TODO update email in session
+      return;
+    }
+
+    let createdRunId;
+    try {
+      createdRunId = await apiUtils.startSession(email, appId);
+    } catch (error) {
+      dispatch({
+        type: actionConstants.CALLED_START_SESSION,
+        error,
+      });
+    }
+
+    dispatch({
+      type: actionConstants.CALLED_START_SESSION,
+      email,
+      runId: createdRunId,
+    });
   };
 }
 

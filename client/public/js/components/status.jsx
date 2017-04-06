@@ -4,6 +4,7 @@ import { statusConstants, widgetsConstants } from 'molecular-design-applications
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
+import StatusEnterEmail from './status_enter_email';
 import StatusLigandSelection from './status_ligand_selection';
 import StatusLoad from './status_load';
 import StatusRun from './status_run';
@@ -23,6 +24,19 @@ function Status(props) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
 
       switch (widget.id) {
+        case widgetsConstants.ENTER_EMAIL: {
+          const emailPipeData = props.app.run.pipeDatas.get('email');
+          selection = (
+            <StatusEnterEmail
+              email={emailPipeData ? emailPipeData.value : ''}
+              emailError={props.app.run.emailError}
+              runCompleted={runCompleted}
+              submitEmail={props.submitEmail}
+            />
+          );
+          break;
+        }
+
         case widgetsConstants.LOAD: {
           const outputPipeDatas = pipeUtils.getPipeDatas(
             widget.outputPipes, props.app.run.pipeDatas,

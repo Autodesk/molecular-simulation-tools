@@ -1,5 +1,6 @@
 import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
+import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
 
@@ -150,11 +151,32 @@ function app(state = initialState, action) {
 
     case actionConstants.SUBMIT_EMAIL:
       if (action.error) {
-        return state.set('run', state.run.set('emailError', action.error));
+        return state.set('run', state.run.merge({
+          emailError: action.error,
+          fetchingData: false,
+        }));
       }
       return state.set('run', state.run.merge({
-        email: action.email,
         emailError: '',
+        fetchingData: true,
+      }));
+
+    case actionConstants.CALLED_START_SESSION:
+      if (action.error) {
+        return state.set('run', state.run.merge({
+          emailError: action.error,
+          fetchingData: false,
+        }));
+      }
+      return state.set('run', state.run.merge({
+        emailError: '',
+        fetchingData: false,
+        id: action.runId,
+        pipeDatas: state.run.pipeDatas.set('email', new PipeDataRecord({
+          pipeId: 'email',
+          type: 'inline',
+          value: action.email,
+        })),
       }));
 
     case actionConstants.CLICK_CANCEL:
