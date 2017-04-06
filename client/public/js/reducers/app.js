@@ -90,9 +90,9 @@ function app(state = initialState, action) {
       const widget = state.widgets.find(
         widgetI => widgetI.id === widgetId
       );
-      let newIoResults = state.run.pipeDatas;
+      let newPipeDatas = state.run.pipeDatas;
       widget.outputPipes.forEach((outputPipe) => {
-        newIoResults = newIoResults.delete(outputPipe.id);
+        newPipeDatas = newPipeDatas.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({
@@ -100,19 +100,19 @@ function app(state = initialState, action) {
         inputFileError: null,
         inputStringError: null,
         inputString: '',
-        pipeDatas: newIoResults,
+        pipeDatas: newPipeDatas,
       }));
     }
 
     case actionConstants.INPUT_FILE_COMPLETE: {
-      let newIoResults = state.run.pipeDatas;
+      let newPipeDatas = state.run.pipeDatas;
       action.inputPipeDatas.forEach((inputPipeData) => {
-        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
+        newPipeDatas = newPipeDatas.set(inputPipeData.pipeId, inputPipeData);
       });
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputFileError: action.error,
-        pipeDatas: newIoResults,
+        pipeDatas: newPipeDatas,
       }));
     }
 
@@ -122,9 +122,9 @@ function app(state = initialState, action) {
       const widget = state.widgets.find(
         widgetI => widgetI.id === widgetId
       );
-      let newIoResults = state.run.pipeDatas;
+      let newPipeDatas = state.run.pipeDatas;
       widget.outputPipes.forEach((outputPipe) => {
-        newIoResults = newIoResults.delete(outputPipe.id);
+        newPipeDatas = newPipeDatas.delete(outputPipe.id);
       });
 
       return state.set('run', state.run.merge({
@@ -132,20 +132,20 @@ function app(state = initialState, action) {
         inputFileError: null,
         inputStringError: null,
         inputString: action.inputString,
-        pipeDatas: newIoResults,
+        pipeDatas: newPipeDatas,
       }));
     }
 
     case actionConstants.PROCESSED_INPUT_STRING: {
-      let newIoResults = state.run.pipeDatas;
+      let newPipeDatas = state.run.pipeDatas;
       action.inputPipeDatas.forEach((inputPipeData) => {
-        newIoResults = newIoResults.set(inputPipeData.pipeId, inputPipeData);
+        newPipeDatas = newPipeDatas.set(inputPipeData.pipeId, inputPipeData);
       });
 
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        pipeDatas: newIoResults,
+        pipeDatas: newPipeDatas,
       }));
     }
 
