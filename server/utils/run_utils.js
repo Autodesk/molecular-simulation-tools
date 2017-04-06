@@ -7,24 +7,19 @@ const appUtils = require('../utils/app_utils');
 const log = require('./log');
 const config = require('../main/config');
 
-function getRedis() {
-  return config.redis;
-}
-
 const runUtils = {
-
   setRunStatus(runId, status) {
     if (!statusConstants[status]) {
       return Promise.reject(`Unknown app status=${status}`);
     }
-    return getRedis()
+    return config.redis
       .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
       .then((runString) => {
         const run = JSON.parse(runString);
         const updatedRun = Object.assign({}, run, {
           status,
         });
-        return getRedis()
+        return config.redis
           .then(redis => redis.hset(dbConstants.REDIS_RUNS,
             runId, JSON.stringify(updatedRun)));
       });
@@ -32,7 +27,7 @@ const runUtils = {
 
   sendEmailsAppEnded(runId) {
     log.debug({ f: 'sendEmailsAppEnded', runId });
-    return getRedis()
+    return config.redis
       .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
       .then((runString) => {
         if (!runString) {
@@ -68,7 +63,7 @@ const runUtils = {
     localLog.debug({ jobResult });
     // Check for errors in the job result
     // Set the final output and status on the run
-    return getRedis()
+    return config.redis
       .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
       .then((runString) => {
         const run = JSON.parse(runString);
@@ -95,7 +90,7 @@ const runUtils = {
           jobResult,
           ended: Date.now(),
         });
-        return getRedis()
+        return config.redis
           .then(redis => redis.hset(dbConstants.REDIS_RUNS, runId, JSON.stringify(updatedRun)));
       })
       .catch(err =>
@@ -141,6 +136,7 @@ const runUtils = {
     let appPromise = null;
     switch (appId.toString()) {
       case '0':
+        console.log('omg ex 0');
         appPromise = appUtils.executeApp0Step1(inputs);
         break;
       case '1':
@@ -177,7 +173,7 @@ const runUtils = {
         };
         localLog.debug(JSON.stringify(runPayload).substr(0, 300));
 
-        return getRedis()
+        return config.redis
           .then((redis) => {
             const runPromise = redis.hset(
               dbConstants.REDIS_RUNS,
@@ -207,7 +203,7 @@ const runUtils = {
    * @returns {[Promise]}
    */
   getRunStatus(runId) {
-    return getRedis()
+    return config.redis
       .then(redis => redis.hget(dbConstants.REDIS_RUNS, runId))
       .then((run) => {
         let normalizedStatus = run.status;
