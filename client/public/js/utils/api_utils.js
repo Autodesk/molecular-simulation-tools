@@ -99,19 +99,35 @@ const apiUtils = {
       )
       .then((runData) => {
         let pipeDatas = new IMap();
-        const inputDatas = runData.inputs || [];
-        const outputDatas = runData.outputs || [];
-        inputDatas.forEach((inputData) => {
-          const inputPipeData = new PipeDataRecord(Object.assign({}, inputData, {
-            pipeId: inputData.name,
-          }));
-          pipeDatas = pipeDatas.set(inputPipeData.pipeId, inputPipeData);
-        });
-        outputDatas.forEach((outputData) => {
-          const outputPipeData = new PipeDataRecord(Object.assign({}, outputData, {
-            pipeId: outputData.name,
-          }));
-          pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
+
+        Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
+          Object.entries(widgetData.in).forEach(([pipeName, pipeDataServer]) => {
+            const pipeId = JSON.stringify({
+              pipeName,
+              sourceWidgetId: widgetId,
+            });
+            pipeDatas = pipeDatas.set(
+              pipeId,
+              new PipeDataRecord(Object.assign({}, pipeDataServer, {
+                pipeId,
+                type: pipeDataServer.type,
+                value: pipeDataServer.value,
+              })),
+            );
+          });
+          Object.entries(widgetData.out).forEach(([pipeName, pipeDataServer]) => {
+            const pipeId = JSON.stringify({
+              pipeName,
+            });
+            pipeDatas = pipeDatas.set(
+              pipeId,
+              new PipeDataRecord(Object.assign({}, pipeDataServer, {
+                pipeId,
+                type: pipeDataServer.type,
+                value: pipeDataServer.value,
+              })),
+            );
+          });
         });
 
         return new RunRecord(Object.assign({}, runData, { pipeDatas }));
@@ -220,7 +236,22 @@ const apiUtils = {
    * @returns {Promise}
    */
   updateSession(runId, pipeDatas) {
-    return axios.post(`${API_URL}/v1/session/outputs/${runId}`, pipeDatas.toJS());
+    // For now, massage frontend pipeDatas to backend nested data format
+    const pipeDatasServer = {};
+    pipeDatas.valueSeq().forEach((pipeData) => {
+      const { pipeName, sourceWidgetId } = JSON.parse(pipeData.pipeId);
+
+      if (!pipeDatasServer[sourceWidgetId]) {
+        pipeDatasServer[sourceWidgetId] = {};
+      }
+
+      pipeDatasServer[sourceWidgetId][pipeName] = {
+        type: pipeData.type,
+        value: pipeData.value,
+      };
+    });
+
+    return axios.post(`${API_URL}/v1/session/outputs/${runId}`, pipeDatasServer);
   },
 };
 

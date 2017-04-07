@@ -1,6 +1,7 @@
 import { Map as IMap } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import PipeDataRecord from './records/pipe_data_record';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
@@ -256,30 +257,35 @@ export function submitEmail(email, appId, runId, pipeDatas) {
     }
 
     let createdRunId;
+    let updatedPipeDatas;
     try {
       createdRunId = await apiUtils.startSession(email, appId);
 
-      const updatedPipeDatas = pipeDatas.set(
-        'email',
+      const pipeId = JSON.stringify({
+        pipeName: 'email',
+        sourceWidgetId: widgetsConstants.ENTER_EMAIL,
+      });
+      updatedPipeDatas = pipeDatas.set(
+        pipeId,
         new PipeDataRecord({
-          pipeId: 'email',
+          pipeId,
           type: 'inline',
           value: email,
         }),
       );
 
-      const response = await apiUtils.updateSession(createdRunId, updatedPipeDatas);
-      console.log('supyo', response);
+      await apiUtils.updateSession(createdRunId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
     } catch (error) {
+      console.error(error);
       dispatch({
-        type: actionConstants.CALLED_START_SESSION,
+        type: actionConstants.START_SESSION,
         error,
       });
     }
 
     dispatch({
-      type: actionConstants.CALLED_START_SESSION,
-      email,
+      type: actionConstants.START_SESSION,
+      updatedPipeDatas,
       runId: createdRunId,
     });
 

@@ -1,7 +1,6 @@
 import keyMirror from 'keymirror';
 
 const actionConstants = keyMirror({
-  CALLED_START_SESSION: null,
   CHANGE_LIGAND_SELECTION: null,
   CHANGE_MORPH: null,
   CLICK_ABOUT: null,
@@ -20,6 +19,7 @@ const actionConstants = keyMirror({
   MESSAGE_TIMEOUT: null,
   PROCESSED_INPUT_STRING: null,
   RUN_SUBMITTED: null,
+  START_SESSION: null,
   SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,
