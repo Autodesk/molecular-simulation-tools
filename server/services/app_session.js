@@ -76,7 +76,6 @@ AppSession.prototype.startSession = function startSession(appId, email) {
 
 // See README.md
 AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
-  log.debug(`AppSession.setOutputs sessionId=${sessionId} outputHash=${outputHash}`);
   assert(sessionId, 'Missing sessionId in AppSession setOutputs');
   return Session.findById(sessionId)
     .then((session) => {
@@ -135,10 +134,13 @@ AppSession.prototype.getState = function getState(sessionId) {
       const widgetStates = {};
       widgetValues.forEach((widget) => {
         if (!widgetStates[widget.widget]) {
-          widgetStates[widget.widget] = { in: {}, out: {} };
+          widgetStates[widget.widget] = {};
         }
         const value = { type: widget.type, value: widget.value };
         const inOut = widget.output ? 'out' : 'in';
+        if (!widgetStates[widget.widget][inOut]) {
+          widgetStates[widget.widget][inOut] = {};
+        }
         widgetStates[widget.widget][inOut][widget.pipe] = value;
       });
       return {
@@ -152,6 +154,23 @@ AppSession.prototype.notifySessionUpdated = function notifySessionUpdated(sessio
   log.debug(`AppSession.notifySessionUpdated sessionId=${sessionId}`);
   return this.notifications.broadcast(
     dbConstants.REDIS_SESSION_UPDATE, sessionId);
+};
+
+AppSession.prototype.deleteSession = function deleteSession(sessionId) {
+  log.debug(`AppSession.deleteSession sessionId=${sessionId}`);
+  return this.ready
+    .then(() => Session.findById(sessionId))
+    .then(session =>
+      session.getWidgetvalues()
+        .then((widgetValues) => {
+          const promises = [];
+          widgetValues.forEach((widget) => {
+            promises.push(widget.destroy());
+          });
+          return Promise.all(promises);
+        })
+        .then(() => session.destroy())
+    );
 };
 
 module.exports = AppSession;

@@ -120,6 +120,100 @@ Returns the session state
 		}
 	}
 
+##### POST /ccc/runturbo
+
+Submits a "fast" docker job to the server. Turbo jobs are not saved, and there is no interaction with sessions or widgets. It is meant for client widgets to call on their own.
+
+POST data (all fields are optional):
+
+	{
+		"id": "optional custom job id",
+		"inputs": {
+			"input1Key": {
+				"value": "input1ValueString"
+			},
+			"input2Key": {
+				"type": "url",
+				"value": "http://some.url.value"
+			}
+		}
+		"image": "docker.io/busybox:latest",
+		"imagePullOptions": {},
+		"command": ["/bin/sh", "/some/script"],
+		"workingDir": "/inputs",
+		"parameters": {
+			"cpus": 1,
+			"maxDuration": 600
+		},
+		"inputsPath": "/inputs",
+		"outputsPath": "/ouputs",
+		"meta": {}
+	}
+
+Returns:
+
+{
+  "id": "S1DWbFHTx",
+  "outputs": {
+    "val1": "Some string data",
+    "val2": "0.20731535302965964"
+  },
+  "error": null,
+  "stdout": [],
+  "stderr": [],
+  "exitCode": 0,
+  "stats": {
+    "copyInputs": "0.149s",
+    "ensureImage": "0s",
+    "containerCreation": "0.161s",
+    "containerExecution": "1.302s",
+    "copyOutputs": "0.208s",
+    "copyLogs": "0.003s",
+    "total": "1.5110000000000001s"
+  }
+}
+
+##### POST /ccc/run/:sessionId/:widgetId
+
+Submits a CCC job for a session widget. The outputs will be saved in the session and the session will be updated (and notified via websocket)
+
+POST data (all fields optional):
+
+	{
+		"inputs": {
+			"inputKey1": {
+				"type": "url",
+				"value": "http://some.url"
+			},
+			"inputKey2": {
+				"type": "inline",
+				"value": "Raw data string"
+			},
+		},
+		"image": "docker.io/busybox:latest",
+		"imagePullOptions": {},
+		"command": ["/bin/sh", "/some/script"],
+		"workingDir": "/inputs",
+		"parameters": {
+			"cpus": 1,
+			"maxDuration": 600
+		},
+		"inputsPath": "/inputs",
+		"outputsPath": "/ouputs",
+		"meta": {},
+		"appendStdOut": true,
+		"appendStdErr": true
+	}
+
+Returns:
+
+{
+  "sessionId": "fefd7b397aaf4a7c8ce2a6d8fbd28759",
+  "jobId": "BJaHVYBTl"
+}
+
+The results will be computed out-of-band, and returned via the websocket (the server monitors the job internally).
+
 ##### GET workflow/:workflowId
 Returns the indicated workflow.
 
