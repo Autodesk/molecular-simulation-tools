@@ -74,9 +74,9 @@ function mapDispatchToProps(dispatch) {
         dispatch(submitInputString(input, appId));
       };
     },
-    submitEmail(appId, runId) {
+    submitEmail(appId, runId, pipeDatas) {
       return (email) => {
-        dispatch(submitEmail(email, appId, runId));
+        dispatch(submitEmail(email, appId, runId, pipeDatas));
       };
     },
     clickCancel(runId) {
@@ -104,6 +104,7 @@ function mergeProps(stateProps, dispatchProps) {
     submitEmail: dispatchProps.submitEmail(
       stateProps.app.id,
       stateProps.app.run.id,
+      stateProps.app.run.pipeDatas,
     ),
   });
 }

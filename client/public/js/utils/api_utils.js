@@ -76,6 +76,10 @@ const apiUtils = {
       });
   },
 
+  /**
+   * Fetch all apps
+   * @returns {Promise}
+   */
   getApps() {
     return axios.get(`${API_URL}/v1/app`)
       .then(res =>
@@ -86,45 +90,14 @@ const apiUtils = {
   /**
    * Get the indicated run data from the server
    * @param {String} runId
-   * @returns {Promise}
+   * @returns {Promise resolves with RunRecord}
    */
   getRun(runId) {
-    return axios.get(`${API_URL}/v1/run/mock/${runId}`)
+    return axios.get(`${API_URL}/v1/session/${runId}`)
       .then(res =>
         res.data,
       )
       .then((runData) => {
-        let widgets = new IList(
-          runData.app.widgets.map((widgetData) => {
-            let inputPipes = widgetData.inputs ?
-              new IList(widgetData.inputs.map(
-                inputPipeJson => new PipeRecord(inputPipeJson),
-              )) : new IList();
-            const outputPipes = widgetData.outputs ?
-              new IList(widgetData.outputs.map(
-                outputPipeJson => new PipeRecord(outputPipeJson),
-              )) : new IList();
-
-            // Hack in email requirement (TODO remove with auth)
-            inputPipes = inputPipes.push(new PipeRecord({
-              id: 'email',
-            }));
-
-            return new WidgetRecord(
-              Object.assign({}, widgetData, { inputPipes, outputPipes })
-            );
-          }),
-        );
-
-        // Hack in email widget (TODO remove with Auth)
-        widgets = widgets.unshift(new WidgetRecord({
-          id: widgetsConstants.ENTER_EMAIL,
-          title: 'Enter Email',
-          outputPipes: new IList([
-            new PipeRecord({ id: 'email' }),
-          ]),
-        }));
-
         let pipeDatas = new IMap();
         const inputDatas = runData.inputs || [];
         const outputDatas = runData.outputs || [];
@@ -141,10 +114,7 @@ const apiUtils = {
           pipeDatas = pipeDatas.set(outputPipeData.pipeId, outputPipeData);
         });
 
-        return new AppRecord(Object.assign({}, runData, runData.app, {
-          widgets,
-          run: new RunRecord(Object.assign({}, runData, { pipeDatas })),
-        }));
+        return new RunRecord(Object.assign({}, runData, { pipeDatas }));
       });
   },
 
@@ -241,6 +211,16 @@ const apiUtils = {
   startSession(email, appId) {
     return axios.post(`${API_URL}/v1/session/start/${appId}`, { email })
       .then(response => response.data.sessionId);
+  },
+
+  /**
+   * Set pipeDatas in a session
+   * @param {String} runId
+   * @param {IList of PipeDataRecords}
+   * @returns {Promise}
+   */
+  updateSession(runId, pipeDatas) {
+    return axios.post(`${API_URL}/v1/session/outputs/${runId}`, pipeDatas.toJS());
   },
 };
 

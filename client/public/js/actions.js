@@ -1,6 +1,7 @@
 import { Map as IMap } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
+import PipeDataRecord from './records/pipe_data_record';
 import actionConstants from './constants/action_constants';
 import apiUtils from './utils/api_utils';
 import appUtils from './utils/app_utils';
@@ -48,15 +49,20 @@ export function initializeRun(appId, runId) {
     });
 
     let app;
+    let run;
     try {
-      app = await apiUtils.getRun(runId);
+      app = await apiUtils.getApp(appId);
+      run = await apiUtils.getRun(runId);
     } catch (error) {
+      console.error(error);
       dispatch({
         type: actionConstants.FETCHED_RUN,
         error,
       });
       return;
     }
+
+    app = app.set('run', run);
 
     dispatch({
       type: actionConstants.FETCHED_RUN,
@@ -230,7 +236,7 @@ export function submitInputString(inputString, appId) {
   };
 }
 
-export function submitEmail(email, appId, runId) {
+export function submitEmail(email, appId, runId, pipeDatas) {
   return async function submitEmailDispatch(dispatch) {
     if (!isEmail(email)) {
       dispatch({
@@ -252,6 +258,18 @@ export function submitEmail(email, appId, runId) {
     let createdRunId;
     try {
       createdRunId = await apiUtils.startSession(email, appId);
+
+      const updatedPipeDatas = pipeDatas.set(
+        'email',
+        new PipeDataRecord({
+          pipeId: 'email',
+          type: 'inline',
+          value: email,
+        }),
+      );
+
+      const response = await apiUtils.updateSession(createdRunId, updatedPipeDatas);
+      console.log('supyo', response);
     } catch (error) {
       dispatch({
         type: actionConstants.CALLED_START_SESSION,
@@ -264,6 +282,8 @@ export function submitEmail(email, appId, runId) {
       email,
       runId: createdRunId,
     });
+
+    browserHistory.push(`/app/${appId}/${createdRunId}`);
   };
 }
 
