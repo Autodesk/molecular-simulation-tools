@@ -88,6 +88,7 @@ ADD ./server/etc $APP/server/etc
 ADD ./server/main $APP/server/main
 ADD ./server/public $APP/server/public
 ADD ./server/routes $APP/server/routes
+ADD ./server/services $APP/server/services
 ADD ./server/test $APP/server/test
 ADD ./server/utils $APP/server/utils
 ADD ./server/views $APP/server/views
