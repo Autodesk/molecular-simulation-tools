@@ -94,7 +94,7 @@ CCC.prototype.runTurbo = function runTurbo(jobBlob) {
       const promises = [];
       const inputs = {};
       if (jobBlob.inputs) {
-        Object.entries(jobBlob.inputs).forEach(([key, inputBlob]) =>
+        Object.entries(jobBlob.inputs).forEach(([key, inputBlob]) => {
           if (inputBlob.type === 'url') {
             promises.push(
               request(inputBlob.value)
