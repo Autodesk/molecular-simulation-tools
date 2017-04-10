@@ -22,6 +22,7 @@ const MESSAGE_ERROR = 'error';
 const MESSAGE_SIMULATION_BOX = 'simulation_box';
 const MESSAGE_POSITION_DATA = 'position';
 const MESSAGE_ENERGY_DATA = 'energy';
+const MESSAGE_WORKER_READY = 'worker_ready';
 
 /*************** Worker && Index Onmessage Constants ************/
 const MESSAGE_SAVE_SNAPSHOT = 'snapshot';

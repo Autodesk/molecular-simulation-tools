@@ -1346,7 +1346,7 @@ function integrateWasmJS(Module) {
 integrateWasmJS(Module);
 var ASM_CONSTS = [];
 STATIC_BASE = 1024;
-STATICTOP = STATIC_BASE + 346240;
+STATICTOP = STATIC_BASE + 346208;
 __ATINIT__.push({
  func: (function() {
   __GLOBAL__I_000101();
@@ -1365,7 +1365,7 @@ __ATINIT__.push({
  })
 });
 memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasmJSMethod"].indexOf("interpret-asm2wasm") >= 0 ? "emscripten.js.mem" : null;
-var STATIC_BUMP = 346240;
+var STATIC_BUMP = 346208;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 var tempDoublePtr = STATICTOP;
@@ -8161,8 +8161,8 @@ STACK_MAX = STACK_BASE + TOTAL_STACK;
 DYNAMIC_BASE = Runtime.alignMemory(STACK_MAX);
 HEAP32[DYNAMICTOP_PTR >> 2] = DYNAMIC_BASE;
 staticSealed = true;
-Module["wasmTableSize"] = 8425;
-Module["wasmMaxTableSize"] = 8425;
+Module["wasmTableSize"] = 7913;
+Module["wasmMaxTableSize"] = 7913;
 function invoke_iiiiiiii(index, a1, a2, a3, a4, a5, a6, a7) {
  try {
   return Module["dynCall_iiiiiiii"](index, a1, a2, a3, a4, a5, a6, a7);
@@ -8846,7 +8846,7 @@ var __ZN10Lammps_Web18get_simulation_boxEv = Module["__ZN10Lammps_Web18get_simul
 var __ZN10Lammps_Web11execute_cmdENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE = Module["__ZN10Lammps_Web11execute_cmdENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"] = asm["__ZN10Lammps_Web11execute_cmdENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"];
 var getTempRet0 = Module["getTempRet0"] = asm["getTempRet0"];
 var ___udivdi3 = Module["___udivdi3"] = asm["___udivdi3"];
-var __Z20get_restart_filenamev = Module["__Z20get_restart_filenamev"] = asm["__Z20get_restart_filenamev"];
+var setThrew = Module["setThrew"] = asm["setThrew"];
 var _bitshift64Lshr = Module["_bitshift64Lshr"] = asm["_bitshift64Lshr"];
 var __ZN10Lammps_Web8minimizeEi = Module["__ZN10Lammps_Web8minimizeEi"] = asm["__ZN10Lammps_Web8minimizeEi"];
 var _bitshift64Shl = Module["_bitshift64Shl"] = asm["_bitshift64Shl"];
@@ -8889,7 +8889,6 @@ var establishStackSpace = Module["establishStackSpace"] = asm["establishStackSpa
 var ___uremdi3 = Module["___uremdi3"] = asm["___uremdi3"];
 var __ZN10Lammps_Web13save_snapshotENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE = Module["__ZN10Lammps_Web13save_snapshotENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"] = asm["__ZN10Lammps_Web13save_snapshotENSt3__212basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE"];
 var __GLOBAL__sub_I_lmps_web_cpp = Module["__GLOBAL__sub_I_lmps_web_cpp"] = asm["__GLOBAL__sub_I_lmps_web_cpp"];
-var setThrew = Module["setThrew"] = asm["setThrew"];
 var _malloc = Module["_malloc"] = asm["_malloc"];
 var _pthread_mutex_lock = Module["_pthread_mutex_lock"] = asm["_pthread_mutex_lock"];
 var __ZN10Lammps_Web14get_num_framesEv = Module["__ZN10Lammps_Web14get_num_framesEv"] = asm["__ZN10Lammps_Web14get_num_framesEv"];
