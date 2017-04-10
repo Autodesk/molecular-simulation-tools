@@ -97,12 +97,13 @@ const dbUtils = require('../utils/db_utils');
 fluentSender = require('../utils/fluent_sender');
 const testUtils = require('../test/test_utils');
 
-const redisConnectionCreator = require('../main/redis_connection');
+const RedisConfig = require('../main/redis_config');
 const AppSession = require('../services/app_session');
 const WebsocketHandler = require('../services/websockets');
 const Notifications = require('../services/notifications');
 const dbPromise = require('../main/db');
 const WebsocketServer = require('../main/websocket_server');
+const CCCService = require('../services/ccc');
 
 /**
  * Get port from environment and store in Express.
@@ -147,12 +148,12 @@ function onError(error) {
  * Event listener for HTTP server 'listening' event.
  */
 function onListening(addr) {
-  log.warn('onListening', addr);
+  log.debug('onListening', addr);
   return () => {
     const bind = typeof addr === 'string'
       ? `pipe ${addr}`
       : `port ${addr.port}`;
-    log.debug(`Listening on ${bind}`);
+    log.info(`Listening on ${bind}`);
     if (process.env.NODE_ENV === 'development') {
       // Wait a bit, sometimes docker takes a while
       log.debug('Running tests...');
@@ -164,6 +165,7 @@ function onListening(addr) {
           if (process.env.TRAVIS === '1') {
             process.exit(blob.success ? 0 : -1);
           }
+          return null;
         })
         .catch((err) => {
           log.error({ status: 'Test failed:', error: JSON.stringify(err) });
@@ -177,8 +179,9 @@ function onListening(addr) {
 
 const config = require('../main/config'); // This is a promise to deliver all db etc config
 
-config.redis = redisConnectionCreator();
-config.redisConnection = redisConnectionCreator;
+config.redisConfig = new RedisConfig();
+config.redis = config.redisConfig.connect();
+
 
 /**
   Before we create the server, initialize the database (seeds, migrations)
@@ -198,8 +201,10 @@ dbUtils.initialize(config.redis)
     config.notifications = new Notifications({ config });
     config.session = new AppSession({ config });
     config.wsHandler = new WebsocketHandler({ config });
+    config.ccc = new CCCService({ config });
+    config.wss = new WebsocketServer({ config }).wss;
+    return null;// http://goo.gl/rRqMUw
   })
-  .then(() => new WebsocketServer({ config }))
   .then(() => {
     /**
      * Listen on provided port, on all network interfaces.
