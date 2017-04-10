@@ -39,19 +39,21 @@ All routes are prefixed with the current version.  See the mock server in client
 Begins an app session.
 
 POST data:
-
-	{
-		"email": "some-user@gmail.com",
-	}
-
+```
+{
+	"email": "some-user@gmail.com",
+}
+```
 
 The email is a proxy for authentication.
 
 Returns:
 
-	{
-		sessionId: <SessionID>
-	}
+```
+{
+	sessionId: <SessionID>
+}
+```
 
 ##### POST /session/outputs/:sessionId
 
@@ -59,30 +61,32 @@ Update an app session outputs
 
 POST data:
 
-	{
-		"widgetId1":
-			{
-				"outputPipeId1": {
-					"type": "inline",
-					"value": "the data"
-				},
-				"outputPipeId2": {
-					"type": "url",
-					"value": "http://some.data.url"
-				}
+```
+{
+	"widgetId1":
+		{
+			"outputPipeId1": {
+				"type": "inline",
+				"value": "the data"
 			},
-		"widgetId2":
-			{
-				"outputPipeId3": {
-					"type": "inline",
-					"value": "the data"
-				},
-				"outputPipeId4": {
-					"type": "url",
-					"value": "http://some.data.url"
-				}
+			"outputPipeId2": {
+				"type": "url",
+				"value": "http://some.data.url"
 			}
-	}
+		},
+	"widgetId2":
+		{
+			"outputPipeId3": {
+				"type": "inline",
+				"value": "the data"
+			},
+			"outputPipeId4": {
+				"type": "url",
+				"value": "http://some.data.url"
+			}
+		}
+}
+```
 
 Returns `GET /session/:sessionId`
 
@@ -91,10 +95,13 @@ Returns `GET /session/:sessionId`
 Delete widget outputs
 
 POST data:
+
+```
 [
 	"widgetId1",
 	"widgetId2"
 ]
+```
 
 Returns `GET /session/:sessionId`
 
@@ -102,23 +109,25 @@ Returns `GET /session/:sessionId`
 
 Returns the session state
 
-	{
-		"session": ":sessionId",
-		"widgets": {
-			"widgetId1": {
-				"out": {
-					"outputPipe1": {
-						"type": "inline",
-						"value": "actual data string"
-					},
-					"outputPipe2": {
-						"type": "url",
-						"value": "http://url.to.data"
-					}
+```
+{
+	"session": ":sessionId",
+	"widgets": {
+		"widgetId1": {
+			"out": {
+				"outputPipe1": {
+					"type": "inline",
+					"value": "actual data string"
+				},
+				"outputPipe2": {
+					"type": "url",
+					"value": "http://url.to.data"
 				}
 			}
 		}
 	}
+}
+```
 
 ##### POST /ccc/runturbo
 
@@ -126,32 +135,35 @@ Submits a "fast" docker job to the server. Turbo jobs are not saved, and there i
 
 POST data (all fields are optional):
 
-	{
-		"id": "optional custom job id",
-		"inputs": {
-			"input1Key": {
-				"value": "input1ValueString"
-			},
-			"input2Key": {
-				"type": "url",
-				"value": "http://some.url.value"
-			}
-		}
-		"image": "docker.io/busybox:latest",
-		"imagePullOptions": {},
-		"command": ["/bin/sh", "/some/script"],
-		"workingDir": "/inputs",
-		"parameters": {
-			"cpus": 1,
-			"maxDuration": 600
+```
+{
+	"id": "optional custom job id",
+	"inputs": {
+		"input1Key": {
+			"value": "input1ValueString"
 		},
-		"inputsPath": "/inputs",
-		"outputsPath": "/ouputs",
-		"meta": {}
+		"input2Key": {
+			"type": "url",
+			"value": "http://some.url.value"
+		}
 	}
+	"image": "docker.io/busybox:latest",
+	"imagePullOptions": {},
+	"command": ["/bin/sh", "/some/script"],
+	"workingDir": "/inputs",
+	"parameters": {
+		"cpus": 1,
+		"maxDuration": 600
+	},
+	"inputsPath": "/inputs",
+	"outputsPath": "/ouputs",
+	"meta": {}
+}
+```
 
 Returns:
 
+```
 {
   "id": "S1DWbFHTx",
   "outputs": {
@@ -172,6 +184,7 @@ Returns:
     "total": "1.5110000000000001s"
   }
 }
+```
 
 ##### POST /ccc/run/:sessionId/:widgetId
 
@@ -179,38 +192,42 @@ Submits a CCC job for a session widget. The outputs will be saved in the session
 
 POST data (all fields optional):
 
-	{
-		"inputs": {
-			"inputKey1": {
-				"type": "url",
-				"value": "http://some.url"
-			},
-			"inputKey2": {
-				"type": "inline",
-				"value": "Raw data string"
-			},
+```
+{
+	"inputs": {
+		"inputKey1": {
+			"type": "url",
+			"value": "http://some.url"
 		},
-		"image": "docker.io/busybox:latest",
-		"imagePullOptions": {},
-		"command": ["/bin/sh", "/some/script"],
-		"workingDir": "/inputs",
-		"parameters": {
-			"cpus": 1,
-			"maxDuration": 600
+		"inputKey2": {
+			"type": "inline",
+			"value": "Raw data string"
 		},
-		"inputsPath": "/inputs",
-		"outputsPath": "/ouputs",
-		"meta": {},
-		"appendStdOut": true,
-		"appendStdErr": true
-	}
+	},
+	"image": "docker.io/busybox:latest",
+	"imagePullOptions": {},
+	"command": ["/bin/sh", "/some/script"],
+	"workingDir": "/inputs",
+	"parameters": {
+		"cpus": 1,
+		"maxDuration": 600
+	},
+	"inputsPath": "/inputs",
+	"outputsPath": "/ouputs",
+	"meta": {},
+	"appendStdOut": true,
+	"appendStdErr": true
+}
 
+```
 Returns:
 
+```
 {
   "sessionId": "fefd7b397aaf4a7c8ce2a6d8fbd28759",
   "jobId": "BJaHVYBTl"
 }
+```
 
 The results will be computed out-of-band, and returned via the websocket (the server monitors the job internally).
 

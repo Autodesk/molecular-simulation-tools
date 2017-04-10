@@ -21,8 +21,6 @@ router.post('/runturbo', (req, res, next) => {
 router.post('/run/:sessionId/:widgetId', (req, res, next) => {
   const sessionId = req.params.sessionId;
   const widgetId = req.params.widgetId;
-  assert(sessionId, 'Missing sessionId');
-  assert(widgetId, 'Missing widgetId');
 
   // Massage mst input type to CCC input type
   req.body.inputs = Object.keys(req.body.inputs).map((inputName) => {

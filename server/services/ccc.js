@@ -94,8 +94,7 @@ CCC.prototype.runTurbo = function runTurbo(jobBlob) {
       const promises = [];
       const inputs = {};
       if (jobBlob.inputs) {
-        Object.keys(jobBlob.inputs).forEach((key) => {
-          const inputBlob = jobBlob.inputs[key];
+        Object.entries(jobBlob.inputs).forEach(([key, inputBlob]) =>
           if (inputBlob.type === 'url') {
             promises.push(
               request(inputBlob.value)
@@ -116,8 +115,7 @@ CCC.prototype.runTurbo = function runTurbo(jobBlob) {
 };
 
 /**
- * [turboJob description]
- * @return {[type]} [description]
+ * Cloud-compute-cannon job (see README)
  */
 CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
   // Map jobId to session
