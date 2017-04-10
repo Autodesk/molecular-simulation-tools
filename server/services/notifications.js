@@ -18,7 +18,7 @@ function Notifications(options) {
   assert(options, 'Missing options in Notifications constructor');
   assert(options.config, 'Missing options.config in Notifications constructor');
   this.redis = options.config.redis;
-  this.redisConnection = options.config.redisConnection;
+  this.redisConfig = options.config.redisConfig;
   this.subscribeChannels = {};
   this.listeners = {};
 }
@@ -41,7 +41,7 @@ Notifications.prototype.subscribe = function subscribe(channel, handler) {
   }
 
   if (!this.subscribeChannels[channel]) {
-    const subscribeRedisConnection = this.redisConnection();
+    const subscribeRedisConnection = this.redisConfig.connect();
     this.subscribeChannels[channel] = subscribeRedisConnection;
     subscribeRedisConnection.on('message', (messageChannel, message) => {
       for (let i = 0; i < this.listeners[messageChannel].length; i += 1) {

@@ -22,6 +22,7 @@
     "bluebird-retry": "^0.10.1",
     "body-parser": "^1.15.2",
     "bufferutil": "^3.0.0",
+    "bull": "^2.2.6",
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "cloud-compute-cannon-client": "^0.2.1",

@@ -9,12 +9,11 @@ function WebsocketServer(options) {
   const wssConfig = { server: config.server, perMessageDeflate: false };
   const wss = new WebSocket.Server(wssConfig);
   log.info('Created Websocket Server');
-  config.wss = wss;
   wss.on('connection', (ws) => {
-    log.debug('Got websocket connection');
+    log.trace('Got websocket connection');
     config.wsHandler.onWebsocketConnection(ws);
   });
-  return wss;
+  this.wss = wss;
 }
 
 module.exports = WebsocketServer;

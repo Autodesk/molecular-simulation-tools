@@ -1,6 +1,5 @@
 const Promise = require('bluebird');
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
-const cccUtils = require('../utils/ccc_utils.js');
 const dbConstants = require('../constants/db_constants');
 const emailUtils = require('../utils/email_utils');
 const appUtils = require('../utils/app_utils');
@@ -92,13 +91,6 @@ const runUtils = {
         localLog.error({ error: JSON.stringify(err) })
       )
       .then(() => runUtils.sendEmailsAppEnded(runId));
-  },
-
-  waitOnJob(runId) {
-    return cccUtils.promise()
-      .then(ccc =>
-        ccc.getJobResult(runId)
-      );
   },
 
   monitorRun(runId) {

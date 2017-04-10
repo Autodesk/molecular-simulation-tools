@@ -24,12 +24,12 @@ function WebsocketHandler(options) {
   /* On redis session update pubsub notification, send the app session via websocket */
   this.notifications.subscribe(dbConstants.REDIS_SESSION_UPDATE, (sessionId) => {
     if (this.sessionSockets[sessionId]) {
-      return this.sendSessionState(this.sessionSockets[sessionId])
+      this.sendSessionState(this.sessionSockets[sessionId])
+        .then(() => null)
         .catch((err) => {
           log.error({ error: err, message: 'Failed to send session state on redis notification', sessionId });
         });
     }
-    return null;
   });
 }
 
@@ -131,10 +131,7 @@ WebsocketHandler.prototype.sendSessionState = function sendSessionState(ws) {
             {
               jsonrpc: '2.0',
               method: jsonrpcConstants.SESSION_UPDATE,
-              params: {
-                session: sessionId,
-                state: sessionState
-              }
+              params: sessionState
             }));
         } else {
           log.warn('Websocket closed before we could send the session data');

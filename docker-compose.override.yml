@@ -20,7 +20,7 @@ services:
       - ./tmp:/tmp
       # Uncomment this if you want to do client development
       # - ./client/dist:/app/client/dist
-    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
+    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www.js", "bin/www.js"]
     environment:
       DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
       CCC: "ccc:9000"
@@ -61,10 +61,14 @@ services:
       driver: none
 
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:08ef0106"
+    image: "quay.io/bionano/cloud-compute-cannon:3bc4caa7"
+    command: ["nodemon", "-w", "server", "server/cloud-compute-cannon-server.js"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
+      - ../cloud-compute-cannon/build/server:/app/server
+
+
     ports:
       - "9000:9000"
     environment:
@@ -73,11 +77,14 @@ services:
       #worker containers to map the local file system to /inputs+/outputs within
       #the container. Only used for local docker providers (not cloud)
       HOST_PWD: "$PWD"
+      LOCAL: "true"
       #Sets the max log level (bunyan where 10=trace 40=warn)
-      LOG_LEVEL: "40"
+      LOG_LEVEL: "20"
       STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      SCALE_UP_CONTROL: "external"
+      SCALE_DOWN_CONTROL: "external"
       REMOVE_JOBS_ON_STARTUP: 'true'
-      DISABLE_STARTUP_TEST: 'true'
+      DISABLE_STARTUP_TEST: 'false'
       ENABLE_FLUENT: 'true'
       FLUENT_PORT: '24224'
     links:
