@@ -246,9 +246,22 @@ export function submitEmail(email, appId, runId, pipeDatas) {
       });
     }
 
+    const pipeId = JSON.stringify({
+      name: 'email',
+      sourceWidgetId: widgetsConstants.ENTER_EMAIL,
+    });
+    const updatedPipeDatas = pipeDatas.set(
+      pipeId,
+      new PipeDataRecord({
+        pipeId,
+        type: 'inline',
+        value: email,
+      }),
+    );
+
     dispatch({
       type: actionConstants.SUBMIT_EMAIL,
-      runId,
+      updatedPipeDatas,
     });
 
     if (runId) {
@@ -257,22 +270,8 @@ export function submitEmail(email, appId, runId, pipeDatas) {
     }
 
     let createdRunId;
-    let updatedPipeDatas;
     try {
       createdRunId = await apiUtils.startSession(email, appId);
-
-      const pipeId = JSON.stringify({
-        name: 'email',
-        sourceWidgetId: widgetsConstants.ENTER_EMAIL,
-      });
-      updatedPipeDatas = pipeDatas.set(
-        pipeId,
-        new PipeDataRecord({
-          pipeId,
-          type: 'inline',
-          value: email,
-        }),
-      );
 
       await apiUtils.updateSession(createdRunId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
     } catch (error) {
@@ -280,12 +279,12 @@ export function submitEmail(email, appId, runId, pipeDatas) {
       dispatch({
         type: actionConstants.START_SESSION,
         error,
+        clearedPipeDatas: pipeDatas,
       });
     }
 
     dispatch({
       type: actionConstants.START_SESSION,
-      updatedPipeDatas,
       runId: createdRunId,
     });
 

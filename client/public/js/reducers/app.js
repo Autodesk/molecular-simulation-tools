@@ -158,6 +158,7 @@ function app(state = initialState, action) {
       return state.set('run', state.run.merge({
         emailError: '',
         fetchingData: true,
+        pipeDatas: action.updatedPipeDatas,
       }));
 
     case actionConstants.START_SESSION:
@@ -165,13 +166,13 @@ function app(state = initialState, action) {
         return state.set('run', state.run.merge({
           emailError: action.error,
           fetchingData: false,
+          pipeDatas: action.clearedPipeDatas,
         }));
       }
       return state.set('run', state.run.merge({
         emailError: '',
         fetchingData: false,
         id: action.runId,
-        pipeDatas: action.updatedPipeDatas,
       }));
 
     case actionConstants.CLICK_CANCEL:
