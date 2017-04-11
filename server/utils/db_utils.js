@@ -13,16 +13,13 @@ const dbUtils = {
     log.debug('Initializing db...');
 
     // Migrate
-    return dbUtils.migrate(redis).then(() => {
-      // Then seed
-      const appPromises = seedData.apps.map(app =>
-        dbUtils.seedApp(redis, dbConstants.REDIS_APPS, app)
-      );
-      const versionPromise = dbUtils.seedVersion(redis);
-      return Promise.all([...appPromises, versionPromise]);
-    }).then(() => {
-      log.debug('Initialized db.');
-    });
+    return dbUtils.migrate(redis)
+      .then(() =>
+        dbUtils.seedVersion(redis)
+      )
+      .then(() => {
+        log.debug('Initialized db.');
+      });
   },
 
   /**
@@ -48,27 +45,6 @@ const dbUtils = {
         }
         return Promise.resolve();
       });
-  },
-
-  /**
-   * Set the given object in the indicated hash by id if doesn't already exist
-   * @param redis {RedisClient}
-   * @param hashName {String}
-   * @param data {Object}
-   */
-  seedApp(redis, hashName, appData) {
-    log.debug(`Seeding app ${appData.id}...`);
-
-    return redis.hexists(hashName, appData.id).then((exists) => {
-      if (exists) {
-        log.debug(`App ${appData.id} already exists, not seeding.`);
-        return Promise.resolve();
-      }
-
-      return redis.hset(hashName, appData.id, JSON.stringify(appData)).then(() => {
-        log.debug(`Seeded app ${appData.id}.`);
-      });
-    });
   },
 
   /**

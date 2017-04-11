@@ -15,7 +15,6 @@ const AppRecord = new Record({
   runCount: 0,
   widgets: new IList(),
   title: '',
-  viewCount: 0,
   description: 'no description provided',
 });
 

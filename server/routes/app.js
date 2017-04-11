@@ -1,6 +1,7 @@
 /**
  * App routes
  */
+const apps = require('molecular-simulation-tools-apps');
 const express = require('express');
 const dbConstants = require('../constants/db_constants');
 const runUtils = require('../utils/run_utils');
@@ -30,45 +31,32 @@ router.get('/exitcode/:runId', (req, res) => {
 router.get('/:appId', (req, res, next) => {
   const appId = req.params.appId;
 
-  config.redis.hget(dbConstants.REDIS_APPS, appId)
-    .then((appString) => {
-      if (!appString) {
-        const error = new Error(`No app found for given app id ${appId}`);
-        error.status = 404;
-        return next(error);
-      }
+  const app = apps.get(appId);
+  if (!app) {
+    const error = new Error(
+      `No app found for given app id ${appId}`
+    );
+    error.status = 404;
+    return next(error);
+  }
 
-      const app = JSON.parse(appString);
-
-      // Write +1 viewCount for this app
-      app.viewCount = app.viewCount ? app.viewCount + 1 : 1;
-      return config.redis.hset(dbConstants.REDIS_APPS,
-          appId, JSON.stringify(app))
-        .then(() => res.send(app));
-    })
-    .catch(next);
+  return res.send(app);
 });
 
 /**
  * Get all apps, including their run count
  */
 router.get('/', (req, res, next) => {
-  Promise.all([
-    config.redis.hgetall(dbConstants.REDIS_APPS),
-    config.redis.hgetall(dbConstants.REDIS_RUNS)]
-  )
-  .then(([appsHash, runsHash]) => {
-    const runCounts = appUtils.getRunCountsByApps(runsHash || {});
+  config.redis.hgetall(dbConstants.REDIS_RUNS)
+    .then((runsHash) => {
+      const runCounts = appUtils.getRunCountsByApps(runsHash || {});
 
-    const apps = Object.values(appsHash || {}).map((appString) => {
-      const app = JSON.parse(appString);
-      app.runCount = runCounts.get(app.id) || 0;
-      return app;
-    });
+      const appsWithRunCounts = apps.toList().map(app =>
+        Object.assign({}, app, { runCount: runCounts.get(app.id) || 0 })
+      );
 
-    return res.send(apps);
-  })
-  .catch(next);
+      return res.send(appsWithRunCounts);
+    }).catch(next);
 });
 
 module.exports = router;

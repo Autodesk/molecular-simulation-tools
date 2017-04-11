@@ -66,7 +66,6 @@ function AppCard(props) {
       </p>
       <div className="cardOverlay">
         <h6 className="cardDeveloper">by Autodesk</h6>
-        <h7 className="cardViews">{props.viewCount} Views</h7>
         <h7 className="cardRuns">{props.runCount} Runs</h7>
       </div>
       {comingSoonEl}
@@ -83,7 +82,6 @@ AppCard.propTypes = {
   id: React.PropTypes.string.isRequired,
   runCount: React.PropTypes.number.isRequired,
   title: React.PropTypes.string.isRequired,
-  viewCount: React.PropTypes.number.isRequired,
   description: React.PropTypes.string.isRequired,
 };
 

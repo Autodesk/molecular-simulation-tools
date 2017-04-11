@@ -74,6 +74,10 @@ RUN npm run build
 #######################################
 # Server build/install packages
 #######################################
+ADD ./apps-data $APP/apps-data
+WORKDIR $APP/apps-data
+RUN npm install
+
 RUN mkdir -p $APP/server
 ADD ./server/package.json $APP/server/package.json
 WORKDIR $APP/server
