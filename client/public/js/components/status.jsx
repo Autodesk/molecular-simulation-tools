@@ -22,6 +22,9 @@ function Status(props) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
+      const inputPipeDatas = pipeUtils.getPipeDatas(
+        widget.inputPipes, props.app.run.pipeDatas,
+      );
       const outputPipeDatas = pipeUtils.getPipeDatas(
         widget.outputPipes, props.app.run.pipeDatas,
       );
@@ -59,8 +62,8 @@ function Status(props) {
           selection = (
             <StatusRun
               clickRun={props.clickRun}
-              email={props.app.run.email}
               emailError={props.app.run.emailError}
+              inputPipeDatas={inputPipeDatas}
               runCompleted={runCompleted}
               submitEmail={props.submitEmail}
               widget={widget}
