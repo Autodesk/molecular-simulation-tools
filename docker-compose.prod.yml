@@ -7,7 +7,7 @@ services:
       CCC: "internal-lb.${BNR_ENVIRONMENT}.bionano.bio:9000"
       REDIS_HOST: "redis.${BNR_ENVIRONMENT}.bionano.bio"
       #share sql postgress cluster with gctor
-      DB_CONNECTION_URI: gctor-db${BNR_ENV_URL_SUFFIX}.bionano.bio
+      PGHOST: "gctor-db${BNR_ENV_URL_SUFFIX}.bionano.bio"
       NODE_ENV: "production"
       FRONTEND_URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
       URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
