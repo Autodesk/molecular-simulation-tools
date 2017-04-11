@@ -141,7 +141,10 @@ const apiUtils = {
           });
         });
 
-        return new RunRecord(Object.assign({}, runData, { pipeDatas }));
+        return new RunRecord(Object.assign({}, runData, {
+          id: runId,
+          pipeDatas,
+        }));
       });
   },
 
@@ -201,9 +204,11 @@ const apiUtils = {
         }
 
         return new IList(res.data.outputs.map(output =>
-          // Remap name to pipeId for clarity
           new PipeDataRecord(Object.assign({}, output, {
-            pipeId: output.name,
+            pipeId: JSON.stringify({
+              name: output.name,
+              sourceWidgetId: widgetsConstants.LOAD,
+            }),
           })),
         ));
       });

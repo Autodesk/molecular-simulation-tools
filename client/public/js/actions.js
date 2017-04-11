@@ -149,7 +149,7 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
   };
 }
 
-export function selectInputFile(file, appId) {
+export function selectInputFile(file, appId, runId, pipeDatas) {
   return async function selectInputFileDispatch(dispatch) {
     dispatch({
       type: actionConstants.INPUT_FILE,
@@ -177,6 +177,15 @@ export function selectInputFile(file, appId) {
         inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
+      let updatedPipeDatas = pipeDatas;
+      inputPipeDatas.forEach((inputPipeData) => {
+        updatedPipeDatas = updatedPipeDatas.set(
+          inputPipeData.pipeId, inputPipeData,
+        );
+      });
+
+      await apiUtils.updateSession(runId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
         inputPipeDatas,
@@ -192,7 +201,7 @@ export function selectInputFile(file, appId) {
   };
 }
 
-export function submitInputString(inputString, appId) {
+export function submitInputString(inputString, appId, runId, pipeDatas) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
@@ -222,9 +231,18 @@ export function submitInputString(inputString, appId) {
         inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
+      let updatedPipeDatas = pipeDatas;
+      inputPipeDatas.forEach((inputPipeData) => {
+        updatedPipeDatas = updatedPipeDatas.set(
+          inputPipeData.pipeId, inputPipeData,
+        );
+      });
+
+      await apiUtils.updateSession(runId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
-        inputPipeDatas,
+        updatedPipeDatas,
       });
     } catch (err) {
       console.error(err);

@@ -64,14 +64,14 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onSelectInputFile(appId) {
+    onSelectInputFile(appId, runId, pipeDatas) {
       return (file) => {
-        dispatch(selectInputFile(file, appId));
+        dispatch(selectInputFile(file, appId, runId, pipeDatas));
       };
     },
-    submitInputString(appId) {
+    submitInputString(appId, runId, pipeDatas) {
       return (input) => {
-        dispatch(submitInputString(input, appId));
+        dispatch(submitInputString(input, appId, runId, pipeDatas));
       };
     },
     submitEmail(appId, runId, pipeDatas) {
@@ -96,8 +96,16 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
-    onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.app.id),
-    submitInputString: dispatchProps.submitInputString(stateProps.app.id),
+    onSelectInputFile: dispatchProps.onSelectInputFile(
+      stateProps.app.id,
+      stateProps.app.run.id,
+      stateProps.app.run.pipeDatas,
+    ),
+    submitInputString: dispatchProps.submitInputString(
+      stateProps.app.id,
+      stateProps.app.run.id,
+      stateProps.app.run.pipeDatas,
+    ),
     changeLigandSelection: dispatchProps.changeLigandSelection(
       stateProps.app.run.pipeDatas,
     ),

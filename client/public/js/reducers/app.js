@@ -91,7 +91,7 @@ function app(state = initialState, action) {
       );
       let newPipeDatas = state.run.pipeDatas;
       widget.outputPipes.forEach((outputPipe) => {
-        newPipeDatas = newPipeDatas.delete(outputPipe.id);
+        newPipeDatas = newPipeDatas.delete(JSON.stringify(outputPipe.toJS()));
       });
 
       return state.set('run', state.run.merge({
@@ -123,7 +123,7 @@ function app(state = initialState, action) {
       );
       let newPipeDatas = state.run.pipeDatas;
       widget.outputPipes.forEach((outputPipe) => {
-        newPipeDatas = newPipeDatas.delete(outputPipe.id);
+        newPipeDatas = newPipeDatas.delete(JSON.stringify(outputPipe.toJS()));
       });
 
       return state.set('run', state.run.merge({
@@ -135,18 +135,12 @@ function app(state = initialState, action) {
       }));
     }
 
-    case actionConstants.PROCESSED_INPUT_STRING: {
-      let newPipeDatas = state.run.pipeDatas;
-      action.inputPipeDatas.forEach((inputPipeData) => {
-        newPipeDatas = newPipeDatas.set(inputPipeData.pipeId, inputPipeData);
-      });
-
+    case actionConstants.PROCESSED_INPUT_STRING:
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        pipeDatas: newPipeDatas,
+        pipeDatas: action.updatedPipeDatas || state.run.pipeDatas,
       }));
-    }
 
     case actionConstants.SUBMIT_EMAIL:
       if (action.error) {
