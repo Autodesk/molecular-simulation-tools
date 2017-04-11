@@ -25,6 +25,8 @@ services:
       # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
+      # DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
+      PGHOST: 'db'
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -35,6 +37,18 @@ services:
       - redis
       - ccc
       - fluentd
+      - db
+
+  db:
+    # image: postgres:9.6.2-alpine
+    build:
+      context: ./server/etc/postgress
+    environment:
+      POSTGRES_PASSWORD: 'dataStoreMST'
+      POSTGRES_USER: 'mstDBUser'
+      POSTGRES_DB: 'mstDBv1'
+    ports:
+      - "5432:5432"
 
   redis:
     restart: always
