@@ -11,18 +11,19 @@ import widgetUtils from '../../public/js/utils/widget_utils';
 
 describe('widgetUtils', () => {
   describe('getStatus', () => {
+    const source = 'widgetId';
     let inputPipes;
     let outputPipes;
     let pipeDatas;
 
     beforeEach(() => {
       inputPipes = new IList([
-        new PipeRecord({ id: 'one' }),
-        new PipeRecord({ id: 'two' }),
+        new PipeRecord({ name: 'one', source }),
+        new PipeRecord({ name: 'two', source }),
       ]);
       outputPipes = new IList([
-        new PipeRecord({ id: 'three' }),
-        new PipeRecord({ id: 'four' }),
+        new PipeRecord({ name: 'three', source }),
+        new PipeRecord({ name: 'four', source }),
       ]);
 
       pipeDatas = new IMap({});
@@ -30,7 +31,8 @@ describe('widgetUtils', () => {
 
     describe('when not all inputs exist yet', () => {
       beforeEach(() => {
-        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
+        const pipeKey = JSON.stringify(inputPipes.get(0).toJS());
+        pipeDatas = pipeDatas.set(pipeKey, new PipeDataRecord({ pipeId: 'one' }));
       });
 
       it('returns DISABLED', () => {
@@ -41,8 +43,10 @@ describe('widgetUtils', () => {
 
     describe('when all inputs exist but not all outputs', () => {
       beforeEach(() => {
-        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
-        pipeDatas = pipeDatas.set('two', new PipeDataRecord({ pipeId: 'two' }));
+        const pipeKeyOne = JSON.stringify(inputPipes.get(0).toJS());
+        const pipeKeyTwo = JSON.stringify(inputPipes.get(1).toJS());
+        pipeDatas = pipeDatas.set(pipeKeyOne, new PipeDataRecord({ pipeId: 'one' }));
+        pipeDatas = pipeDatas.set(pipeKeyTwo, new PipeDataRecord({ pipeId: 'two' }));
       });
 
       it('returns ACTIVE', () => {
@@ -53,10 +57,14 @@ describe('widgetUtils', () => {
 
     describe('when all inputs and all outputs exist', () => {
       beforeEach(() => {
-        pipeDatas = pipeDatas.set('one', new PipeDataRecord({ pipeId: 'one' }));
-        pipeDatas = pipeDatas.set('two', new PipeDataRecord({ pipeId: 'two' }));
-        pipeDatas = pipeDatas.set('three', new PipeDataRecord({ pipeId: 'three' }));
-        pipeDatas = pipeDatas.set('four', new PipeDataRecord({ pipeId: 'four' }));
+        const pipeKeyOne = JSON.stringify(inputPipes.get(0).toJS());
+        const pipeKeyTwo = JSON.stringify(inputPipes.get(1).toJS());
+        const pipeKeyThree = JSON.stringify(outputPipes.get(0).toJS());
+        const pipeKeyFour = JSON.stringify(outputPipes.get(1).toJS());
+        pipeDatas = pipeDatas.set(pipeKeyOne, new PipeDataRecord({ pipeId: 'one' }));
+        pipeDatas = pipeDatas.set(pipeKeyTwo, new PipeDataRecord({ pipeId: 'two' }));
+        pipeDatas = pipeDatas.set(pipeKeyThree, new PipeDataRecord({ pipeId: 'three' }));
+        pipeDatas = pipeDatas.set(pipeKeyFour, new PipeDataRecord({ pipeId: 'four' }));
       });
 
       it('returns COMPLETED', () => {
