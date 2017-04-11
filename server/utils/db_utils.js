@@ -13,11 +13,13 @@ const dbUtils = {
     log.debug('Initializing db...');
 
     // Migrate
-    return dbUtils.migrate(redis).then(() =>
-      dbUtils.seedVersion(redis)
-    ).then(() => {
-      log.debug('Initialized db.');
-    });
+    return dbUtils.migrate(redis)
+      .then(() =>
+        dbUtils.seedVersion(redis)
+      )
+      .then(() => {
+        log.debug('Initialized db.');
+      });
   },
 
   /**
