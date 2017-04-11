@@ -22,10 +22,9 @@ function Status(props) {
     if (!props.app.fetching && !props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
-      // TODO use getpipedatas for this?
-      const outputPipeDatas = widget.outputPipes.map(outputPipe =>
-        props.app.run.pipeDatas.get(JSON.stringify({ pipeName: outputPipe.id }))
-      ).filter(el => !!el);
+      const outputPipeDatas = pipeUtils.getPipeDatas(
+        widget.outputPipes, props.app.run.pipeDatas,
+      );
 
       switch (widget.id) {
         case widgetsConstants.ENTER_EMAIL: {

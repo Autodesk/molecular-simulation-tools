@@ -3,7 +3,7 @@ import PipeDataRecord from '../records/pipe_data_record';
 
 const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
-const ioUtils = {
+const pipeUtils = {
   /**
    * Given a list of pipeDatas, find the first pdb pipeData and get the pdb data.
    * If not found, returns null.
@@ -11,7 +11,7 @@ const ioUtils = {
    * @returns {String}
    */
   getPdb(pipeDatas) {
-    const pdbIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
+    const pdbIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
@@ -32,14 +32,14 @@ const ioUtils = {
       return new IList();
     }
 
-    const framesPipeDataIndex = ioUtils.getIndexByValue(
+    const framesPipeDataIndex = pipeUtils.getIndexByValue(
       pipeDatas, IO_ANIMATION_FRAMES,
     );
 
     // If we don't have an pipeData to tell which animation frames to use,
     // just return the first pdb
     if (framesPipeDataIndex === -1) {
-      const pdbPipeDataIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
+      const pdbPipeDataIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
       if (pdbPipeDataIndex === -1) {
         return new IList();
       }
@@ -101,7 +101,7 @@ const ioUtils = {
    * @return {IList}
    */
   getLigandSelectionStrings(pipeDatas, ligandName) {
-    const pipeDataWithLigand = ioUtils.getPipeDataWithLigand(pipeDatas, ligandName);
+    const pipeDataWithLigand = pipeUtils.getPipeDataWithLigand(pipeDatas, ligandName);
 
     if (!pipeDataWithLigand) {
       return new IList();
@@ -213,7 +213,7 @@ const ioUtils = {
    * @returns {IList}
    */
   selectLigand(pipeDatasList, ligand) {
-    const selectedLigandPipeData = ioUtils.getPipeDataWithLigand(pipeDatasList, ligand);
+    const selectedLigandPipeData = pipeUtils.getPipeDataWithLigand(pipeDatasList, ligand);
 
     if (!selectedLigandPipeData) {
       throw new Error('The given pipeDatasList does not contain the given ligand.');
@@ -225,7 +225,7 @@ const ioUtils = {
 
     if (selectionPipeDataIndex === -1) {
       return pipeDatasList.push(
-        ioUtils.createSelectionPipeData(selectedLigandPipeData, ligand),
+        pipeUtils.createSelectionPipeData(selectedLigandPipeData, ligand),
       );
     }
 
@@ -252,7 +252,7 @@ const ioUtils = {
    * @returns {String}
    */
   getOutputPipeDatasError(outputPipeDatas) {
-    const prepIndex = ioUtils.getIndexByValue(outputPipeDatas, 'prep.json');
+    const prepIndex = pipeUtils.getIndexByValue(outputPipeDatas, 'prep.json');
 
     if (prepIndex === -1) {
       throw new Error('OutputPipeDatas did not contain a prep.json file');
@@ -281,7 +281,8 @@ const ioUtils = {
     let foundPipeDatas = new IList();
 
     pipes.forEach((pipe) => {
-      const pipeData = pipeDatas.get(pipe.id);
+      const pipeKey = JSON.stringify(pipe.toJS());
+      const pipeData = pipeDatas.get(pipeKey);
       if (pipeData) {
         foundPipeDatas = foundPipeDatas.push(pipeData);
       }
@@ -291,4 +292,4 @@ const ioUtils = {
   },
 };
 
-export default ioUtils;
+export default pipeUtils;

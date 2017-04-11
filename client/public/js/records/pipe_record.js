@@ -1,7 +1,8 @@
 import { Record } from 'immutable';
 
 const PipeRecord = new Record({
-  id: '',
+  name: '',
+  sourceWidgetId: '',
 });
 
 export default PipeRecord;

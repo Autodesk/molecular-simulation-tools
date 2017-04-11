@@ -42,16 +42,23 @@ const apiUtils = {
           res.data.widgets.map((widgetData) => {
             let inputPipes = widgetData.inputs ?
               new IList(widgetData.inputs.map(
-                inputPipeJson => new PipeRecord(inputPipeJson),
+                inputPipeJson => new PipeRecord({
+                  name: inputPipeJson.id,
+                  sourceWidgetId: inputPipeJson.source,
+                }),
               )) : new IList();
             const outputPipes = widgetData.outputs ?
               new IList(widgetData.outputs.map(
-                outputPipeJson => new PipeRecord(outputPipeJson),
+                outputPipeJson => new PipeRecord({
+                  name: outputPipeJson.id,
+                  sourceWidgetId: widgetData.id,
+                }),
               )) : new IList();
 
             // Hack in email requirement (TODO remove with auth)
             inputPipes = inputPipes.push(new PipeRecord({
-              id: 'email',
+              name: 'email',
+              sourceWidgetId: widgetsConstants.ENTER_EMAIL,
             }));
 
             return new WidgetRecord(
@@ -65,7 +72,10 @@ const apiUtils = {
           id: widgetsConstants.ENTER_EMAIL,
           title: 'Enter Email',
           outputPipes: new IList([
-            new PipeRecord({ id: 'email' }),
+            new PipeRecord({
+              name: 'email',
+              sourceWidgetId: widgetsConstants.ENTER_EMAIL,
+            }),
           ]),
         }));
 
@@ -103,7 +113,7 @@ const apiUtils = {
         Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
           Object.entries(widgetData.in).forEach(([pipeName, pipeDataServer]) => {
             const pipeId = JSON.stringify({
-              pipeName,
+              name: pipeName,
               sourceWidgetId: widgetId,
             });
             pipeDatas = pipeDatas.set(
@@ -117,7 +127,8 @@ const apiUtils = {
           });
           Object.entries(widgetData.out).forEach(([pipeName, pipeDataServer]) => {
             const pipeId = JSON.stringify({
-              pipeName,
+              name: pipeName,
+              sourceWidgetId: widgetId,
             });
             pipeDatas = pipeDatas.set(
               pipeId,
@@ -239,13 +250,13 @@ const apiUtils = {
     // For now, massage frontend pipeDatas to backend nested data format
     const pipeDatasServer = {};
     pipeDatas.valueSeq().forEach((pipeData) => {
-      const { pipeName, sourceWidgetId } = JSON.parse(pipeData.pipeId);
+      const { name, sourceWidgetId } = JSON.parse(pipeData.pipeId);
 
       if (!pipeDatasServer[sourceWidgetId]) {
         pipeDatasServer[sourceWidgetId] = {};
       }
 
-      pipeDatasServer[sourceWidgetId][pipeName] = {
+      pipeDatasServer[sourceWidgetId][name] = {
         type: pipeData.type,
         value: pipeData.value,
       };

@@ -13,14 +13,14 @@ const widgetUtils = {
   getStatus(inputPipes = new IList(), outputPipes = new IList(), pipeDatas) {
     // If it doesn't have all its inputs, it is disabled
     for (const inputPipe of inputPipes) {
-      if (!pipeDatas.get(inputPipe.id)) {
+      if (!pipeDatas.get(JSON.stringify(inputPipe.toJS()))) {
         return widgetStatusConstants.DISABLED;
       }
     }
 
     // If it doesn't have all of its outputs, it is active
     for (const outputPipe of outputPipes) {
-      if (!pipeDatas.get(outputPipe.id)) {
+      if (!pipeDatas.get(JSON.stringify(outputPipe.toJS()))) {
         return widgetStatusConstants.ACTIVE;
       }
     }

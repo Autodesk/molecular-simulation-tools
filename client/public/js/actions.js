@@ -262,7 +262,7 @@ export function submitEmail(email, appId, runId, pipeDatas) {
       createdRunId = await apiUtils.startSession(email, appId);
 
       const pipeId = JSON.stringify({
-        pipeName: 'email',
+        name: 'email',
         sourceWidgetId: widgetsConstants.ENTER_EMAIL,
       });
       updatedPipeDatas = pipeDatas.set(
