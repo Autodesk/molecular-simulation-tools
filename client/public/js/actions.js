@@ -135,9 +135,6 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
           type: actionConstants.RUN_SUBMITTED,
           runId,
         });
-
-        browserHistory.push(`/app/${appId}/${runId}`);
-        dispatch(initializeRun(appId, runId));
       }).catch((err) => {
         console.error(err);
 

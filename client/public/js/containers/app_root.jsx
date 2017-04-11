@@ -39,9 +39,9 @@ function mapDispatchToProps(dispatch) {
       dispatch(clickAbout());
     },
     clickRun(appId, email, pipeDatas, inputString) {
-      return (inputs) => {
-        const inputPipeDatas = inputs.map(input =>
-          pipeDatas.get(input.id),
+      return (inputPipes) => {
+        const inputPipeDatas = inputPipes.map(inputPipe =>
+          pipeDatas.get(JSON.stringify(inputPipe.toJS())),
         );
         dispatch(clickRun(appId, email, inputPipeDatas, inputString));
       };
