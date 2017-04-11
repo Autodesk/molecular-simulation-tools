@@ -42,7 +42,7 @@ $DC stop
 $DC rm -fv
 $DC build
 echo "Running tests"
-PWD=$PWD VERSION=$GIT_TAG $DC up --abort-on-container-exit
+PWD=$PWD VERSION=$GIT_TAG $DC run server
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_REPO_SLUG" == "Autodesk/molecular-simulation-tools" ];
 	then
