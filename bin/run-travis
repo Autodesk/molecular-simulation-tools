@@ -25,7 +25,7 @@ fi
 GIT_TAG=${GIT_TAG:0:8}
 
 echo "VERSION=$GIT_TAG"
-REPO_NAME="quay.io/bionano/mdtapps_server:$GIT_TAG"
+REPO_NAME="mdtapps_server:$GIT_TAG"
 
 #First build locally the docker images for the minimal CCC server
 echo "Building and tagging images"
@@ -42,7 +42,7 @@ $DC stop
 $DC rm -fv
 $DC build
 echo "Running tests"
-PWD=$PWD VERSION=$GIT_TAG $DC up --abort-on-container-exit
+PWD=$PWD IMAGE=$REPO_NAME $DC up --abort-on-container-exit
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_REPO_SLUG" == "Autodesk/molecular-simulation-tools" ];
 	then
@@ -50,9 +50,11 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && 
 		if [ ! -z "$QUAY_USERNAME" ] && [ ! -z "$QUAY_PASSWORD" ]; then
 			echo "Pushing images to quay.io"
 			#Make sure we are logged into quay.io
+			QUAY_PREFIX="quay.io/bionano"
 			docker login --username $QUAY_USERNAME --password $QUAY_PASSWORD quay.io
-			docker push $REPO_NAME
-			echo "Successfully pushed $REPO_NAME to quay.io"
+			docker tag $REPO_NAME $QUAY_PREFIX/$REPO_NAME
+			docker push $QUAY_PREFIX/$REPO_NAME
+			echo "Successfully pushed $QUAY_PREFIX/$REPO_NAME"
 		else
 			echo "QUAY_USERNAME and QUAY_PASSWORD are not set, skipping docker image push to quay.io";
 		fi

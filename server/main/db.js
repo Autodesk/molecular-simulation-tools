@@ -34,12 +34,11 @@ if (process.env.PGDATABASE != null) {
   config.database = process.env.PGDATABASE;
 }
 
-// const db = new Sequelize(process.env.DB_CONNECTION_URI);
 const db = new Sequelize(config.database, config.user, config.password, {
   host: config.host,
   dialect: 'postgres',
 
-  pool: { 
+  pool: {
     max: 5,
     min: 0,
     idle: 10000
