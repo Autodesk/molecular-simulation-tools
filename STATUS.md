@@ -25,6 +25,7 @@ Dev/QA/Prod will fail until the RDS database entry is defined in the docker-comp
  - The API for 'quick' jobs is ready.
  - The API for single CCC jobs is ready (although see above).
  - There is no CWL API yet.
+ - Runs need to be removed from Redis (along with db vesion and anything else)
  
 ## Interactive Molecular Simulation
 
