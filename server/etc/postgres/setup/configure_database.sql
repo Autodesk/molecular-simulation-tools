@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS "mstdbv1" ;
 ALTER USER mstdbuser WITH ENCRYPTED PASSWORD 'dataStoreMST' ;
-CREATE DATABASE "mstdbv1" TEMPLATE=template1 ;
+
+/* ASSUME already exists */
 GRANT ALL PRIVILEGES ON DATABASE "mstdbv1" to mstdbuser ;
 \connect "mstdbv1" ;
-GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC to mstdbv1 ;
+GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC to mstdbuser ;
