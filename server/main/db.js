@@ -11,9 +11,9 @@ const log = require('../utils/log');
 var config = {
   host: 'db',
   port: '5432',
-  user: 'mstDBUser',
+  user: 'mstdbuser',
   password: 'dataStoreMST',
-  database: 'mstDBv1'
+  database: 'mstdbv1'
 };
 // Connection string format:
 // dbuser:mysecretpassword@db:5432/mst'
