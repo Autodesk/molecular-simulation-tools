@@ -13,6 +13,12 @@ Dev/QA/Prod will fail until the RDS database entry is defined in the docker-comp
 
 ## Client
 
+  - An [in-progress PR](https://github.com/Autodesk/molecular-simulation-tools/pull/280) is still open that hoped to get the frontend working with the session API, but is far from complete.
+  - The "thank you page => results page" flow needs to be refactored to handle arbitrary numbers of run widgets inline.
+  - At this point a production release might be able to be deployed.
+  - Then, the actual app json format should probably be checked and cleaned up.
+  - Widgets are not very generic yet, so it might be a priority to clean them up and make them make more understandable.
+
 ## Server
 
  - The server APIs for creating/updating sessions is ready.
