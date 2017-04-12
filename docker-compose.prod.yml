@@ -8,6 +8,8 @@ services:
       REDIS_HOST: "redis.${BNR_ENVIRONMENT}.bionano.bio"
       #share sql postgress cluster with gctor
       PGHOST: "gctor-db${BNR_ENV_URL_SUFFIX}.bionano.bio"
+      PGPASSWORD:
+      PGDATABASE:
       NODE_ENV: "production"
       FRONTEND_URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"
       URL: "http://molsim${BNR_ENV_URL_SUFFIX}.bionano.autodesk.com"

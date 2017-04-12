@@ -40,10 +40,6 @@ services:
   db:
     build:
       context: ./server/etc/postgres
-    environment:
-      POSTGRES_PASSWORD: 'dataStoreMST'
-      POSTGRES_USER: 'mstDBUser'
-      POSTGRES_DB: 'mstDBv1'
     ports:
       - "5432:5432"
 
