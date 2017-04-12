@@ -14,10 +14,13 @@ services:
       - "4000:4000"
     environment:
       PORT: "4000"
-    build:
-      context: .
+    image: "${IMAGE}"
     environment:
+<<<<<<< HEAD
       DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
+=======
+      PGHOST: 'db'
+>>>>>>> b32bcfa... Travis fixes
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -33,11 +36,12 @@ services:
       - db
 
   db:
-    image: postgres:9.6.2-alpine
+    build:
+      context: ./server/etc/postgres
     environment:
-      POSTGRES_PASSWORD: 'mysecretpassword'
-      POSTGRES_USER: 'dbuser'
-      POSTGRES_DB: 'mst'
+      POSTGRES_PASSWORD: 'dataStoreMST'
+      POSTGRES_USER: 'mstDBUser'
+      POSTGRES_DB: 'mstDBv1'
     ports:
       - "5432"
 

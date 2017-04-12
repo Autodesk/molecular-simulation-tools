@@ -25,7 +25,6 @@ services:
       # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
     environment:
-      # DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
       PGHOST: 'db'
       CCC: "ccc:9000"
       NODE_ENV: "development"
@@ -40,9 +39,8 @@ services:
       - db
 
   db:
-    # image: postgres:9.6.2-alpine
     build:
-      context: ./server/etc/postgress
+      context: ./server/etc/postgres
     environment:
       POSTGRES_PASSWORD: 'dataStoreMST'
       POSTGRES_USER: 'mstDBUser'
@@ -63,7 +61,7 @@ services:
       - redis-data:/data
 
   ccc:
-    image: "quay.io/bionano/cloud-compute-cannon:b02f129c"
+   image: "quay.io/bionano/cloud-compute-cannon:665d82fc"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
