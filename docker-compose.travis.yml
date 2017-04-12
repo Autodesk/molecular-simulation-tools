@@ -39,7 +39,7 @@ services:
       POSTGRES_USER: 'dbuser'
       POSTGRES_DB: 'mst'
     ports:
-      - "5432:5432"
+      - "5432"
 
   redis:
     restart: always
