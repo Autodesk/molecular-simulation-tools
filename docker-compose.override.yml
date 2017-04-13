@@ -39,12 +39,13 @@ services:
       - db
 
   db:
+    # image: postgres:9.6.2-alpine
     build:
-      context: ./server/etc/postgres
+      context: ./server/etc/postgress
     environment:
-      # https://hub.docker.com/_/postgres/
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "MSTPGMASTER"
+      POSTGRES_PASSWORD: 'dataStoreMST'
+      POSTGRES_USER: 'mstDBUser'
+      POSTGRES_DB: 'mstDBv1'
     ports:
       - "5432:5432"
 
@@ -61,7 +62,7 @@ services:
       - redis-data:/data
 
   ccc:
-   image: "quay.io/bionano/cloud-compute-cannon:665d82fc"
+    image: "quay.io/bionano/cloud-compute-cannon:665d82fc"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./ccc_local_storage:/app/ccc_local_storage
