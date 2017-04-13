@@ -14,10 +14,9 @@ services:
       - "4000:4000"
     environment:
       PORT: "4000"
-    build:
-      context: .
+    image: "${IMAGE}"
     environment:
-      DB_CONNECTION_URI: 'postgres://dbuser:mysecretpassword@db:5432/mst'
+      PGHOST: db
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -33,11 +32,12 @@ services:
       - db
 
   db:
-    image: postgres:9.6.2-alpine
+    build:
+      context: ./server/etc/postgres
     environment:
-      POSTGRES_PASSWORD: 'mysecretpassword'
-      POSTGRES_USER: 'dbuser'
-      POSTGRES_DB: 'mst'
+      # https://hub.docker.com/_/postgres/
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "MSTPGMASTER"      
     ports:
       - "5432"
 
