@@ -22,7 +22,7 @@ services:
       # - ./client/dist:/app/client/dist
     command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www.js", "bin/www.js"]
     environment:
-      PGHOST: 'db'
+      PGHOST: db
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -40,6 +40,10 @@ services:
   db:
     build:
       context: ./server/etc/postgres
+    environment:
+      # https://hub.docker.com/_/postgres/
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "MSTPGMASTER"
     ports:
       - "5432:5432"
 

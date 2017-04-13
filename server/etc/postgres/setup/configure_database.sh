@@ -2,7 +2,7 @@
 
 # Create user
 dropuser -U postgres -w --if-exists mstdbuser
-createuser -U postgres -w --no-password -d -E -i -l -r -s mstdbuser
+createuser -U postgres -w --no-password -e -E -i -l -r mstdbuser
 
 # see if db exists
 set +e
@@ -14,7 +14,7 @@ psql -lqt | cut -d \| -f 1 | grep -qw mstdbv1
 dbExists=$?
 # for some reason this command below did not work like above
 # dbExists=$(psql -lqt | cut -d \| -f 1 | grep -qw mstdbv1)
-echo "dbExists=$dbExists (0=exists, 1=not exist)"
+echo "Creating database 'mstdbv1' if it does not exist. Check=$dbExists (0=exists, 1=not exist)"
 # returns 0 if db  exists, and 1 if it DOES NOT exists
 
 set -e

@@ -16,7 +16,7 @@ services:
       PORT: "4000"
     image: "${IMAGE}"
     environment:
-      PGHOST: 'db'
+      PGHOST: db
       CCC: "ccc:9000"
       NODE_ENV: "development"
       FRONTEND_URL: "http://localhost:4000"
@@ -35,9 +35,9 @@ services:
     build:
       context: ./server/etc/postgres
     environment:
-      POSTGRES_PASSWORD: 'dataStoreMST'
-      POSTGRES_USER: 'mstDBUser'
-      POSTGRES_DB: 'mstDBv1'
+      # https://hub.docker.com/_/postgres/
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "MSTPGMASTER"      
     ports:
       - "5432"
 
