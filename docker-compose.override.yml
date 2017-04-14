@@ -1,9 +1,5 @@
 version: '2'
 
-volumes:
-  redis-data:
-    driver: local
-
 services:
   server:
     build:
@@ -19,11 +15,12 @@ services:
       - ./server/views:/app/server/views
       - ./server/test:/app/server/test
       - ./server/utils:/app/server/utils
+      - ./server/services:/app/server/services
       - ./shared:/app/shared
       - ./tmp:/tmp
       # Uncomment this if you want to do client development
       # - ./client/dist:/app/client/dist
-    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www", "bin/www"]
+    command: ["nodemon", "-e", "js,json,www", "-w", "./", "-w", "./bin/www.js", "bin/www.js"]
     environment:
       PGHOST: db
       CCC: "ccc:9000"
@@ -31,7 +28,9 @@ services:
       FRONTEND_URL: "http://localhost:4000"
       URL: "http://localhost:4000"
       REDIS_HOST: "redis"
-      FLUENT_PORT: '24225'
+      FLUENT_PORT: '24224'
+      BLUEBIRD_DEBUG: '1'
+      FLUENT: '1'
     links:
       - redis
       - ccc
@@ -39,13 +38,12 @@ services:
       - db
 
   db:
-    # image: postgres:9.6.2-alpine
     build:
-      context: ./server/etc/postgress
+      context: ./server/etc/postgres
     environment:
-      POSTGRES_PASSWORD: 'dataStoreMST'
-      POSTGRES_USER: 'mstDBUser'
-      POSTGRES_DB: 'mstDBv1'
+      # https://hub.docker.com/_/postgres/
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "MSTPGMASTER"
     ports:
       - "5432:5432"
 
@@ -56,10 +54,12 @@ services:
     ports:
       #Don't expose this port to the host, only linked containers.
       - "6379"
+    logging:
+      driver: "none"
     volumes:
       - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
-      # This is the where the db will be writting. It is defined in ./server/etc/redis/redis.conf
-      - redis-data:/data
+    logging:
+      driver: none
 
   ccc:
     image: "quay.io/bionano/cloud-compute-cannon:665d82fc"
@@ -74,47 +74,23 @@ services:
       #worker containers to map the local file system to /inputs+/outputs within
       #the container. Only used for local docker providers (not cloud)
       HOST_PWD: "$PWD"
+      LOCAL: "true"
       #Sets the max log level (bunyan where 10=trace 40=warn)
-      LOG_LEVEL: "40"
+      LOG_LEVEL: "20"
       STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      SCALE_UP_CONTROL: "external"
+      SCALE_DOWN_CONTROL: "external"
       REMOVE_JOBS_ON_STARTUP: 'true'
-      DISABLE_STARTUP_TEST: 'true'
+      DISABLE_STARTUP_TEST: 'false'
+      ENABLE_FLUENT: 'true'
+      FLUENT_PORT: '24224'
     links:
       - redis
       - fluentd
 
   fluentd:
-    build: ./server/etc/log/
-    volumes:
-      - ./server/etc/log/fluent.dev.conf:/fluentd/etc/fluent.conf
-    links:
-      - elasticsearch
-    logging:
-      driver: none
-    restart: always
-    command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-p", "/fluentd/plugins"]
+    image: "fluent/fluentd"
     ports:
-      - "24225:24225"
-      - "9881:9881"
-
-  elasticsearch:
-    restart: always
-    image: elasticsearch:2.3
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "24224"
     logging:
-      driver: none
-
-  kibana:
-    restart: always
-    image: kibana:4.4.2
-    ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_URL: "http://elasticsearch:9200"
-    #Pretty sure I don't care about listening to you ever
-    logging:
-      driver: none
-    links:
-      - elasticsearch
+      driver: "none"
