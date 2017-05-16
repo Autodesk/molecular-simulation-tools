@@ -1,4 +1,3 @@
-import { Map as IMap } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
@@ -71,7 +70,7 @@ export function initializeRun(appId, runId) {
     });
 
     try {
-      let pipeDatasList = app.run.pipeDatas.toList();
+      let pipeDatasList = pipeUtils.flatten(app.run.pipeDatasByWidget);
 
       pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
       pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
@@ -82,16 +81,12 @@ export function initializeRun(appId, runId) {
         pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
       }
 
-      let pipeDatas = new IMap();
-      pipeDatasList.forEach((pipeData) => {
-        pipeDatas = pipeDatas.set(pipeData.pipeId, pipeData);
-      });
-
-      const updatedRun = app.run.merge({ pipeDatas });
+      const pipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
+      const updatedRun = app.run.merge({ pipeDatasByWidget });
 
       // Find the widget that should be active for this run
       const activeWidgetIndex = widgetUtils.getActiveIndex(
-        app.widgets, updatedRun.pipeDatas,
+        app.widgets, updatedRun.pipeDatasByWidget,
       );
 
       dispatch({
@@ -146,7 +141,7 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
   };
 }
 
-export function selectInputFile(file, appId, runId, pipeDatas) {
+export function selectInputFile(file, appId, runId, pipeDatasByWidget) {
   return async function selectInputFileDispatch(dispatch) {
     dispatch({
       type: actionConstants.INPUT_FILE,
@@ -174,14 +169,15 @@ export function selectInputFile(file, appId, runId, pipeDatas) {
         inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
-      let updatedPipeDatas = pipeDatas;
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
       inputPipeDatas.forEach((inputPipeData) => {
-        updatedPipeDatas = updatedPipeDatas.set(
-          inputPipeData.pipeId, inputPipeData,
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          inputPipeData,
         );
       });
 
-      await apiUtils.updateSession(runId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
 
       dispatch({
         type: actionConstants.INPUT_FILE_COMPLETE,
@@ -198,7 +194,7 @@ export function selectInputFile(file, appId, runId, pipeDatas) {
   };
 }
 
-export function submitInputString(inputString, appId, runId, pipeDatas) {
+export function submitInputString(inputString, appId, runId, pipeDatasByWidget) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
@@ -228,18 +224,19 @@ export function submitInputString(inputString, appId, runId, pipeDatas) {
         inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
       }
 
-      let updatedPipeDatas = pipeDatas;
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
       inputPipeDatas.forEach((inputPipeData) => {
-        updatedPipeDatas = updatedPipeDatas.set(
-          inputPipeData.pipeId, inputPipeData,
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          inputPipeData,
         );
       });
 
-      await apiUtils.updateSession(runId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
-        updatedPipeDatas,
+        updatedPipeDatasByWidget,
       });
     } catch (err) {
       console.error(err);
@@ -252,7 +249,7 @@ export function submitInputString(inputString, appId, runId, pipeDatas) {
   };
 }
 
-export function submitEmail(email, appId, runId, pipeDatas) {
+export function submitEmail(email, appId, runId, pipeDatasByWidget) {
   return async function submitEmailDispatch(dispatch) {
     if (!isEmail(email)) {
       dispatch({
@@ -261,22 +258,19 @@ export function submitEmail(email, appId, runId, pipeDatas) {
       });
     }
 
-    const pipeId = JSON.stringify({
-      name: 'email',
-      sourceWidgetId: widgetsConstants.ENTER_EMAIL,
-    });
-    const updatedPipeDatas = pipeDatas.set(
-      pipeId,
+    const updatedPipeDatasByWidget = pipeUtils.set(
+      pipeDatasByWidget,
       new PipeDataRecord({
-        pipeId,
+        pipeName: 'email',
         type: 'inline',
         value: email,
+        widgetId: widgetsConstants.ENTER_EMAIL,
       }),
     );
 
     dispatch({
       type: actionConstants.SUBMIT_EMAIL,
-      updatedPipeDatas,
+      updatedPipeDatasByWidget,
     });
 
     if (runId) {
@@ -288,13 +282,13 @@ export function submitEmail(email, appId, runId, pipeDatas) {
     try {
       createdRunId = await apiUtils.startSession(email, appId);
 
-      await apiUtils.updateSession(createdRunId, updatedPipeDatas); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+      await apiUtils.updateSession(createdRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
     } catch (error) {
       console.error(error);
       dispatch({
         type: actionConstants.START_SESSION,
         error,
-        clearedPipeDatas: pipeDatas,
+        clearedPipeDatas: pipeDatasByWidget,
       });
     }
 
@@ -345,13 +339,11 @@ export function clickColorize() {
 }
 
 export function changeLigandSelection(pipeDatas, ligand) {
-  const pipeDatasList = pipeUtils.selectLigand(pipeDatas.toList(), ligand);
-  const updatedPipeDatas = new IMap(pipeDatasList.map(pipeData =>
-    [pipeData.pipeId, pipeData],
-  ));
+  const updatedPipeDatas = pipeUtils.selectLigand(pipeDatas, ligand);
+  const updatedPipeDatasByWidget = pipeUtils.unflatten(updatedPipeDatas);
   return {
     type: actionConstants.CHANGE_LIGAND_SELECTION,
-    pipeDatas: updatedPipeDatas,
+    pipeDatasByWidget: updatedPipeDatasByWidget,
   };
 }
 

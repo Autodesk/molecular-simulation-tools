@@ -12,22 +12,14 @@ const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
   /**
-   * Start a run
-   * @param {String} appId
-   * @param {String} email
-   * @param {IList} inputs
-   * @param {String} selectedLigand
-   * @param {String} [inputString]
+   * Fetch all apps
    * @returns {Promise}
    */
-  run(appId, email, inputPipeDatas, inputString) {
-    return axios.post(`${API_URL}/v1/run`, {
-      appId,
-      email,
-      inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
-      inputString,
-    })
-      .then(res => res.data.runId);
+  getApps() {
+    return axios.get(`${API_URL}/v1/app`)
+      .then(res =>
+        res.data.map(appData => new AppRecord(appData)),
+      );
   },
 
   /**
@@ -62,7 +54,7 @@ const apiUtils = {
             }));
 
             return new WidgetRecord(
-              Object.assign({}, widgetData, { inputPipes, outputPipes })
+              Object.assign({}, widgetData, { inputPipes, outputPipes }),
             );
           }),
         );
@@ -87,17 +79,6 @@ const apiUtils = {
   },
 
   /**
-   * Fetch all apps
-   * @returns {Promise}
-   */
-  getApps() {
-    return axios.get(`${API_URL}/v1/app`)
-      .then(res =>
-        res.data.map(appData => new AppRecord(appData)),
-      );
-  },
-
-  /**
    * Get the indicated run data from the server
    * @param {String} runId
    * @returns {Promise resolves with RunRecord}
@@ -108,44 +89,49 @@ const apiUtils = {
         res.data,
       )
       .then((runData) => {
-        let pipeDatas = new IMap();
+        let pipeDatasByWidget = new IMap();
 
         Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
-          Object.entries(widgetData.in).forEach(([pipeName, pipeDataServer]) => {
-            const pipeId = JSON.stringify({
-              name: pipeName,
-              sourceWidgetId: widgetId,
-            });
-            pipeDatas = pipeDatas.set(
-              pipeId,
+          let pipeDatas = new IList();
+          const widgetPipeDatas = Object.entries(widgetData.in)
+            .concat(Object.entries(widgetData.out));
+
+          widgetPipeDatas.forEach(([pipeName, pipeDataServer]) => {
+            pipeDatas = pipeDatas.push(
               new PipeDataRecord(Object.assign({}, pipeDataServer, {
-                pipeId,
-                type: pipeDataServer.type,
-                value: pipeDataServer.value,
+                pipeName,
+                widgetId,
               })),
             );
           });
-          Object.entries(widgetData.out).forEach(([pipeName, pipeDataServer]) => {
-            const pipeId = JSON.stringify({
-              name: pipeName,
-              sourceWidgetId: widgetId,
-            });
-            pipeDatas = pipeDatas.set(
-              pipeId,
-              new PipeDataRecord(Object.assign({}, pipeDataServer, {
-                pipeId,
-                type: pipeDataServer.type,
-                value: pipeDataServer.value,
-              })),
-            );
-          });
+
+          pipeDatasByWidget = pipeDatasByWidget.set(widgetId, pipeDatas);
         });
 
         return new RunRecord(Object.assign({}, runData, {
           id: runId,
-          pipeDatas,
+          pipeDatasByWidget,
         }));
       });
+  },
+
+  /**
+   * Start a run
+   * @param {String} appId
+   * @param {String} email
+   * @param {IList} inputs
+   * @param {String} selectedLigand
+   * @param {String} [inputString]
+   * @returns {Promise}
+   */
+  run(appId, email, inputPipeDatas, inputString) {
+    return axios.post(`${API_URL}/v1/run`, {
+      appId,
+      email,
+      inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
+      inputString,
+    })
+      .then(res => res.data.runId);
   },
 
   cancelRun(runId) {
@@ -205,10 +191,8 @@ const apiUtils = {
 
         return new IList(res.data.outputs.map(output =>
           new PipeDataRecord(Object.assign({}, output, {
-            pipeId: JSON.stringify({
-              name: output.name,
-              sourceWidgetId: widgetsConstants.LOAD,
-            }),
+            pipeName: output.name,
+            widgetId: widgetsConstants.LOAD,
           })),
         ));
       });
@@ -251,23 +235,22 @@ const apiUtils = {
    * @param {IList of PipeDataRecords}
    * @returns {Promise}
    */
-  updateSession(runId, pipeDatas) {
-    // For now, massage frontend pipeDatas to backend nested data format
-    const pipeDatasServer = {};
-    pipeDatas.valueSeq().forEach((pipeData) => {
-      const { name, sourceWidgetId } = JSON.parse(pipeData.pipeId);
-
-      if (!pipeDatasServer[sourceWidgetId]) {
-        pipeDatasServer[sourceWidgetId] = {};
-      }
-
-      pipeDatasServer[sourceWidgetId][name] = {
-        type: pipeData.type,
-        value: pipeData.value,
-      };
+  updateSession(runId, pipeDatasByWidget) {
+    let pipeDatasByWidgetServer = new IMap();
+    pipeDatasByWidget.entrySeq().forEach(([widgetId, pipeDatas]) => {
+      let pipeDatasByName = new IMap();
+      pipeDatas.forEach((pipeData) => {
+        pipeDatasByName = pipeDatasByName.set(pipeData.pipeName, pipeData);
+      });
+      pipeDatasByWidgetServer = pipeDatasByWidgetServer.set(
+        widgetId,
+        pipeDatasByName,
+      );
     });
-
-    return axios.post(`${API_URL}/v1/session/outputs/${runId}`, pipeDatasServer);
+    return axios.post(
+      `${API_URL}/v1/session/outputs/${runId}`,
+      pipeDatasByWidgetServer.toJS(),
+    );
   },
 };
 

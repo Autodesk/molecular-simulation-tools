@@ -11,76 +11,84 @@ import widgetUtils from '../../public/js/utils/widget_utils';
 
 describe('widgetUtils', () => {
   describe('getStatus', () => {
-    const source = 'widgetId';
+    const sourceWidgetId = 'widgetId';
     let inputPipes;
     let outputPipes;
-    let pipeDatas;
+    let pipeDatasByWidget;
 
     beforeEach(() => {
       inputPipes = new IList([
-        new PipeRecord({ name: 'one', source }),
-        new PipeRecord({ name: 'two', source }),
+        new PipeRecord({ name: 'one', sourceWidgetId }),
+        new PipeRecord({ name: 'two', sourceWidgetId }),
       ]);
       outputPipes = new IList([
-        new PipeRecord({ name: 'three', source }),
-        new PipeRecord({ name: 'four', source }),
+        new PipeRecord({ name: 'three', sourceWidgetId }),
+        new PipeRecord({ name: 'four', sourceWidgetId }),
       ]);
 
-      pipeDatas = new IMap({});
+      pipeDatasByWidget = new IMap({
+        [sourceWidgetId]: new IList(),
+      });
     });
 
     describe('when not all inputs exist yet', () => {
       beforeEach(() => {
-        const pipeKey = JSON.stringify(inputPipes.get(0).toJS());
-        pipeDatas = pipeDatas.set(pipeKey, new PipeDataRecord({ pipeId: 'one' }));
+        pipeDatasByWidget = pipeDatasByWidget.set(
+          sourceWidgetId,
+          new IList([new PipeDataRecord({ pipeName: 'one', sourceWidgetId })]),
+        );
       });
 
       it('returns DISABLED', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatasByWidget);
         expect(status).to.equal(widgetStatusConstants.DISABLED);
       });
     });
 
     describe('when all inputs exist but not all outputs', () => {
       beforeEach(() => {
-        const pipeKeyOne = JSON.stringify(inputPipes.get(0).toJS());
-        const pipeKeyTwo = JSON.stringify(inputPipes.get(1).toJS());
-        pipeDatas = pipeDatas.set(pipeKeyOne, new PipeDataRecord({ pipeId: 'one' }));
-        pipeDatas = pipeDatas.set(pipeKeyTwo, new PipeDataRecord({ pipeId: 'two' }));
+        pipeDatasByWidget = pipeDatasByWidget.set(
+          sourceWidgetId,
+          new IList([
+            new PipeDataRecord({ pipeName: 'one', sourceWidgetId }),
+            new PipeDataRecord({ pipeName: 'two', sourceWidgetId }),
+          ]),
+        );
       });
 
       it('returns ACTIVE', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatasByWidget);
         expect(status).to.equal(widgetStatusConstants.ACTIVE);
       });
     });
 
     describe('when all inputs and all outputs exist', () => {
       beforeEach(() => {
-        const pipeKeyOne = JSON.stringify(inputPipes.get(0).toJS());
-        const pipeKeyTwo = JSON.stringify(inputPipes.get(1).toJS());
-        const pipeKeyThree = JSON.stringify(outputPipes.get(0).toJS());
-        const pipeKeyFour = JSON.stringify(outputPipes.get(1).toJS());
-        pipeDatas = pipeDatas.set(pipeKeyOne, new PipeDataRecord({ pipeId: 'one' }));
-        pipeDatas = pipeDatas.set(pipeKeyTwo, new PipeDataRecord({ pipeId: 'two' }));
-        pipeDatas = pipeDatas.set(pipeKeyThree, new PipeDataRecord({ pipeId: 'three' }));
-        pipeDatas = pipeDatas.set(pipeKeyFour, new PipeDataRecord({ pipeId: 'four' }));
+        pipeDatasByWidget = pipeDatasByWidget.set(
+          sourceWidgetId,
+          new IList([
+            new PipeDataRecord({ pipeName: 'one', sourceWidgetId }),
+            new PipeDataRecord({ pipeName: 'two', sourceWidgetId }),
+            new PipeDataRecord({ pipeName: 'three', sourceWidgetId }),
+            new PipeDataRecord({ pipeName: 'four', sourceWidgetId }),
+          ]),
+        );
       });
 
       it('returns COMPLETED', () => {
-        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatas);
+        const status = widgetUtils.getStatus(inputPipes, outputPipes, pipeDatasByWidget);
         expect(status).to.equal(widgetStatusConstants.COMPLETED);
       });
     });
   });
 
   describe('getStatuses', () => {
-    const pipeDatas = new IList();
+    const pipeDatasByWidget = new IMap();
     const widgets = IList([
-        new WidgetRecord({}),
-        new WidgetRecord({}),
-        new WidgetRecord({}),
-      ]);
+      new WidgetRecord({}),
+      new WidgetRecord({}),
+      new WidgetRecord({}),
+    ]);
 
     beforeEach(() => {
       // Stub getStatus to just always return completed
@@ -94,7 +102,7 @@ describe('widgetUtils', () => {
     });
 
     it('retuns list of results from getStatus', () => {
-      const statuses = widgetUtils.getStatuses(widgets, pipeDatas);
+      const statuses = widgetUtils.getStatuses(widgets, pipeDatasByWidget);
       expect(statuses.size).to.equal(3);
       expect(statuses.get(0)).to.equal(widgetStatusConstants.COMPLETED);
       expect(statuses.get(1)).to.equal(widgetStatusConstants.COMPLETED);

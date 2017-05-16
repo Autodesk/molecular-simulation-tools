@@ -11,7 +11,7 @@ require('../../css/widget_list.scss');
 function WidgetList(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
   const widgetStatuses = widgetUtils.getStatuses(
-    props.app.widgets, props.app.run.pipeDatas,
+    props.app.widgets, props.app.run.pipeDatasByWidget,
   );
 
   return (

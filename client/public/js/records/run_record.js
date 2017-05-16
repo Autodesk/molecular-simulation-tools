@@ -10,7 +10,7 @@ const RunRecord = new Record({
   inputFileError: null,
   inputString: '',
   inputStringError: null,
-  pipeDatas: new IMap(),
+  pipeDatasByWidget: new IMap(), // of form { <widgetId>: [pipeData, ...] }
   status: statusConstants.IDLE,
 });
 

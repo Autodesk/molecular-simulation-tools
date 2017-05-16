@@ -61,7 +61,7 @@ const appUtils = {
         .then((results) => {
           // Set newPipeDatas to a new list that contains the fetched results data
           const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
-            pipeDataI === pipeData
+            pipeDataI === pipeData,
           );
           newPipeDatas = newPipeDatas.set(
             pipeDataIndex, pipeData.set('fetchedValue', results),
@@ -89,7 +89,7 @@ const appUtils = {
         .then((results) => {
           // Set newPipeDatas to a new list that contains the fetched pdb
           const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
-            pipeDataI === pipeData
+            pipeDataI === pipeData,
           );
           newPipeDatas = newPipeDatas.set(
             pipeDataIndex, pipeData.set('fetchedValue', results),

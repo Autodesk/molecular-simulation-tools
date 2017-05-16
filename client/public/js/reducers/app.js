@@ -2,6 +2,7 @@ import { statusConstants, widgetsConstants } from 'molecular-design-applications
 import AppRecord from '../records/app_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
+import pipeUtils from '../utils/pipe_utils';
 
 const initialState = new AppRecord();
 
@@ -86,52 +87,40 @@ function app(state = initialState, action) {
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget
       const widgetId = widgetsConstants.LOAD;
-      const widget = state.widgets.find(
-        widgetI => widgetI.id === widgetId
-      );
-      let newPipeDatas = state.run.pipeDatas;
-      widget.outputPipes.forEach((outputPipe) => {
-        newPipeDatas = newPipeDatas.delete(JSON.stringify(outputPipe.toJS()));
-      });
+      const newPipeDatasByWidget = state.run.pipeDatasByWidget.delete(widgetId);
 
       return state.set('run', state.run.merge({
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
         inputString: '',
-        pipeDatas: newPipeDatas,
+        pipeDatasByWidget: newPipeDatasByWidget,
       }));
     }
 
     case actionConstants.INPUT_FILE_COMPLETE: {
-      let newPipeDatas = state.run.pipeDatas;
+      let newPipeDatasByWidget = state.run.pipeDatasByWidget;
       action.inputPipeDatas.forEach((inputPipeData) => {
-        newPipeDatas = newPipeDatas.set(inputPipeData.pipeId, inputPipeData);
+        newPipeDatasByWidget = pipeUtils.set(newPipeDatasByWidget, inputPipeData);
       });
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputFileError: action.error,
-        pipeDatas: newPipeDatas,
+        pipeDatasByWidget: newPipeDatasByWidget,
       }));
     }
 
     case actionConstants.SUBMIT_INPUT_STRING: {
       // Clear pipeDatas for this widget
       const widgetId = widgetsConstants.LOAD;
-      const widget = state.widgets.find(
-        widgetI => widgetI.id === widgetId
-      );
-      let newPipeDatas = state.run.pipeDatas;
-      widget.outputPipes.forEach((outputPipe) => {
-        newPipeDatas = newPipeDatas.delete(JSON.stringify(outputPipe.toJS()));
-      });
+      const newPipeDatasByWidget = state.run.pipeDatasByWidget.delete(widgetId);
 
       return state.set('run', state.run.merge({
         fetchingData: true,
         inputFileError: null,
         inputStringError: null,
         inputString: action.inputString,
-        pipeDatas: newPipeDatas,
+        pipeDatasByWidget: newPipeDatasByWidget,
       }));
     }
 
@@ -139,7 +128,8 @@ function app(state = initialState, action) {
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,
-        pipeDatas: action.updatedPipeDatas || state.run.pipeDatas,
+        pipeDatasByWidget: action.updatedPipeDatasByWidget ||
+          state.run.pipeDatasByWidget,
       }));
 
     case actionConstants.SUBMIT_EMAIL:
@@ -152,7 +142,7 @@ function app(state = initialState, action) {
       return state.set('run', state.run.merge({
         emailError: '',
         fetchingData: true,
-        pipeDatas: action.updatedPipeDatas,
+        pipeDatasByWidget: action.updatedPipeDatasByWidget,
       }));
 
     case actionConstants.START_SESSION:
@@ -160,7 +150,7 @@ function app(state = initialState, action) {
         return state.set('run', state.run.merge({
           emailError: action.error,
           fetchingData: false,
-          pipeDatas: action.clearedPipeDatas,
+          pipeDatasByWidget: action.clearedPipeDatasByWidget,
         }));
       }
       return state.set('run', state.run.merge({
@@ -184,7 +174,7 @@ function app(state = initialState, action) {
     case actionConstants.CHANGE_LIGAND_SELECTION:
       return state.set(
         'run',
-        state.run.set('pipeDatas', action.pipeDatas),
+        state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
       );
 
     default:

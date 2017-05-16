@@ -23,11 +23,12 @@ function Status(props) {
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
       const inputPipeDatas = pipeUtils.getPipeDatas(
-        widget.inputPipes, props.app.run.pipeDatas,
+        widget.inputPipes, props.app.run.pipeDatasByWidget,
       );
       const outputPipeDatas = pipeUtils.getPipeDatas(
-        widget.outputPipes, props.app.run.pipeDatas,
+        widget.outputPipes, props.app.run.pipeDatasByWidget,
       );
+      const pipeDatas = pipeUtils.flatten(props.app.run.pipeDatasByWidget);
 
       switch (widget.id) {
         case widgetsConstants.ENTER_EMAIL: {
@@ -73,11 +74,11 @@ function Status(props) {
         }
 
         case widgetsConstants.SELECTION: {
-          const selectedLigand = pipeUtils.getSelectedLigand(props.app.run.pipeDatas);
+          const selectedLigand = pipeUtils.getSelectedLigand(pipeDatas);
           selection = (
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
-              ligandNames={pipeUtils.getLigandNames(props.app.run.pipeDatas)}
+              ligandNames={pipeUtils.getLigandNames(pipeDatas)}
               runCompleted={runCompleted}
               selectedLigand={selectedLigand}
             />
@@ -86,7 +87,9 @@ function Status(props) {
         }
 
         case widgetsConstants.RESULTS: {
-          const resultsJsonResult = props.app.run.pipeDatas.get('results.json');
+          const resultsJsonResult = pipeDatas.find(pipeData =>
+            pipeData.pipeName === 'results.json',
+          );
           let resultValues;
 
           if (resultsJsonResult) {
@@ -97,11 +100,11 @@ function Status(props) {
             }
           }
 
-          const finalStructureResult =
-            props.app.run.pipeDatas.get('final_structure.pdb');
+          const finalStructureResult = pipeDatas.find(pipeData =>
+            pipeData.pipeName === 'final_structure.pdb',
+          );
           const outputPdbUrl = finalStructureResult.value;
-          const pipeDatasList = props.app.run.pipeDatas.toList();
-          const numberOfPdbs = pipeUtils.getAnimationPdbs(pipeDatasList).size;
+          const numberOfPdbs = pipeUtils.getAnimationPdbs(pipeDatas).size;
 
           selection = (
             <StatusResults

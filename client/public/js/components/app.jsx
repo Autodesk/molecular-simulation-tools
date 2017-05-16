@@ -30,10 +30,10 @@ function App(props) {
   let outputPipeDatas = new IList();
   if (activeWidget) {
     inputPipeDatas = pipeUtils.getPipeDatas(
-      activeWidget.inputPipes, props.app.run.pipeDatas,
+      activeWidget.inputPipes, props.app.run.pipeDatasByWidget,
     );
     outputPipeDatas = pipeUtils.getPipeDatas(
-      activeWidget.outputPipes, props.app.run.pipeDatas,
+      activeWidget.outputPipes, props.app.run.pipeDatasByWidget,
     );
   }
 
