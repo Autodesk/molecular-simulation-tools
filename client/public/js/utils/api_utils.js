@@ -93,8 +93,8 @@ const apiUtils = {
 
         Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
           let pipeDatas = new IList();
-          const widgetPipeDatas = Object.entries(widgetData.in)
-            .concat(Object.entries(widgetData.out));
+          const widgetPipeDatas = Object.entries(widgetData.in || {})
+            .concat(Object.entries(widgetData.out || {}));
 
           widgetPipeDatas.forEach(([pipeName, pipeDataServer]) => {
             pipeDatas = pipeDatas.push(
