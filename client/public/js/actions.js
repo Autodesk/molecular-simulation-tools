@@ -142,8 +142,18 @@ export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inp
         },
         'results.json': {
           pipeName: 'results.json',
-          type: 'inline',
-          value: '{}',
+          type: 'url',
+          value: 'fakeurl',
+          fetchedValue: {
+            output_values: [
+              { units: 'kcal/mol', name: 'Final energy', value: -6906.7908368173685 },
+              { units: 'kcal/mol', name: 'Energy stabilization', value: -2256.7355290834971 },
+              { units: 'ang', name: 'RMSD', value: 0.63453892906560627 },
+            ],
+            final_energy: { units: 'eV', value: -299.5067907721118 },
+            initial_energy: { units: 'eV', value: -97.861312425186824 },
+            rmsd: { units: 'ang', value: 0.63453892906560627 },
+          },
           widgetId: widgetsConstants.RUN,
         },
         'minstep.0.pdb': {
@@ -166,9 +176,10 @@ export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inp
         },
         'minstep_frames.json': {
           pipeName: 'minstep_frames.json',
-          type: 'inline',
+          type: 'url',
           widgetId: widgetsConstants.RUN,
-          value: '{}',
+          value: 'fakeurl/minstep_frames.json',
+          fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
         },
       };
 
@@ -177,7 +188,8 @@ export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inp
       ));
 
       pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
-      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+      // TODO should also fetch json, but I'm hardcoding it for now
+      // pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
 
       let updatedPipeDatasByWidget = pipeDatasByWidget;
       pipeDatasList.forEach((pipeData) => {
