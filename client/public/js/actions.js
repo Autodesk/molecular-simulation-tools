@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { List as IList } from 'immutable';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
 import PipeDataRecord from './records/pipe_data_record';
@@ -119,64 +120,73 @@ export function clickWidget(widgetIndex) {
  * @param {String} [inputString]
  */
 export function clickRun(appId, email, inputPipeDatas, inputString) {
-  return (dispatch) => {
+  return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(appId, email, inputPipeDatas, inputString)
-      .then(() => {
-        // TODO this is fake data for now
-        const data = {
-          'final_structure.pdb': {
-            pipeName: 'final_structure.pdb',
-            type: 'url',
-            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-            widgetId: widgetsConstants.RUN,
-          },
-          'results.json': {
-            pipeName: 'results.json',
-            type: 'inline',
-            value: '{}',
-            widgetId: widgetsConstants.RUN,
-          },
-          'minstep.0.pdb': {
-            pipeName: 'minstep.0.pdb',
-            type: 'url',
-            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-            widgetId: widgetsConstants.RUN,
-          },
-          'minstep.1.pdb': {
-            pipeName: 'minstep.1.pdb',
-            type: 'url',
-            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-            widgetId: widgetsConstants.RUN,
-          },
-          'minsteps.tar.gz': {
-            pipeName: 'minsteps.tar.gz',
-            type: 'url',
-            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-            widgetId: widgetsConstants.RUN,
-          },
-          'minstep_frames.json': {
-            pipeName: 'minstep_frames.json',
-            type: 'inline',
-            widgetId: widgetsConstants.RUN,
-            value: '{}',
-          },
-        };
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          data,
-        });
-      }).catch((err) => {
-        console.error(err);
+    try {
+      await apiUtils.run(appId, email, inputPipeDatas, inputString); /* eslint no-unused-expressions: 'off', max-len: 'off' */
 
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          err,
-        });
+      // TODO this is fake data for now
+      const data = {
+        'final_structure.pdb': {
+          pipeName: 'final_structure.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'results.json': {
+          pipeName: 'results.json',
+          type: 'inline',
+          value: '{}',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep.0.pdb': {
+          pipeName: 'minstep.0.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep.1.pdb': {
+          pipeName: 'minstep.1.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minsteps.tar.gz': {
+          pipeName: 'minsteps.tar.gz',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep_frames.json': {
+          pipeName: 'minstep_frames.json',
+          type: 'inline',
+          widgetId: widgetsConstants.RUN,
+          value: '{}',
+        },
+      };
+
+      let pipeDatasList = new IList(Object.values(data).map(pipeDataData =>
+        new PipeDataRecord(pipeDataData),
+      ));
+
+      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        pipeDatas: pipeDatasList,
       });
+    } catch (err) {
+      console.error(err);
+
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        err,
+      });
+    }
   };
 }
 

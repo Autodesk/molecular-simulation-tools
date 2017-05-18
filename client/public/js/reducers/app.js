@@ -1,6 +1,5 @@
 import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
-import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
 import pipeUtils from '../utils/pipe_utils';
@@ -82,10 +81,10 @@ function app(state = initialState, action) {
       }
 
       let updatedPipeDatasByWidget = state.run.pipeDatasByWidget;
-      Object.values(action.data).forEach((pipeDataData) => {
+      action.pipeDatas.forEach((pipeData) => {
         updatedPipeDatasByWidget = pipeUtils.set(
           updatedPipeDatasByWidget,
-          new PipeDataRecord(pipeDataData),
+          pipeData,
         );
       });
       return state.merge({
