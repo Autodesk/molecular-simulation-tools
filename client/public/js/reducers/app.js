@@ -80,16 +80,9 @@ function app(state = initialState, action) {
         });
       }
 
-      let updatedPipeDatasByWidget = state.run.pipeDatasByWidget;
-      action.pipeDatas.forEach((pipeData) => {
-        updatedPipeDatasByWidget = pipeUtils.set(
-          updatedPipeDatasByWidget,
-          pipeData,
-        );
-      });
       return state.merge({
         fetching: false,
-        run: state.run.set('pipeDatasByWidget', updatedPipeDatasByWidget),
+        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
       });
     }
 

@@ -119,11 +119,15 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(appId, email, inputPipeDatas, inputString) {
+export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inputString) {
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
+
+    const inputPipeDatas = inputPipes.map(inputPipe =>
+      pipeUtils.get(pipeDatasByWidget, inputPipe),
+    );
 
     try {
       await apiUtils.run(appId, email, inputPipeDatas, inputString); /* eslint no-unused-expressions: 'off', max-len: 'off' */
@@ -175,9 +179,19 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
       pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
       pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
 
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
+      pipeDatasList.forEach((pipeData) => {
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          pipeData,
+        );
+      });
+
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
       dispatch({
         type: actionConstants.RUN_SUBMITTED,
-        pipeDatas: pipeDatasList,
+        pipeDatasByWidget: updatedPipeDatasByWidget,
       });
     } catch (err) {
       console.error(err);
