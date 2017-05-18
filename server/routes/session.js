@@ -34,7 +34,7 @@ router.post('/outputs/:sessionId', (req, res, next) => {
 });
 
 /**
- * Update widget outputs
+ * Delete widget outputs
  */
 router.delete('/outputs/:appId', (req, res, next) => {
   assert(req.params.appId, 'Missing appId in DELETE /outputs/:appId');
@@ -44,7 +44,7 @@ router.delete('/outputs/:appId', (req, res, next) => {
 });
 
 /**
- * Update widget outputs
+ * Get widget outputs
  */
 router.get('/:sessionId', (req, res, next) => {
   assert(req.params.sessionId, 'Missing sessionId in GET /:sessionId');

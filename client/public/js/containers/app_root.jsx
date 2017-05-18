@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import AppRouter from '../components/app_router';
+import pipeUtils from '../utils/pipe_utils';
 import {
   changeLigandSelection,
   changeMorph,
@@ -30,18 +31,18 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLigandSelection(pipeDatas) {
+    changeLigandSelection(pipeDatasByWidget) {
       return (ligand) => {
-        dispatch(changeLigandSelection(pipeDatas, ligand));
+        dispatch(changeLigandSelection(pipeDatasByWidget, ligand));
       };
     },
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(appId, email, pipeDatas, inputString) {
-      return (inputs) => {
-        const inputPipeDatas = inputs.map(input =>
-          pipeDatas.get(input.id),
+    clickRun(appId, email, pipeDatasByWidget, inputString) {
+      return (inputPipes) => {
+        const inputPipeDatas = inputPipes.map(inputPipe =>
+          pipeUtils.get(pipeDatasByWidget, inputPipe),
         );
         dispatch(clickRun(appId, email, inputPipeDatas, inputString));
       };
@@ -64,18 +65,20 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onSelectInputFile(appId) {
+    onSelectInputFile(appId, runId, pipeDatasByWidget) {
       return (file) => {
-        dispatch(selectInputFile(file, appId));
+        dispatch(selectInputFile(file, appId, runId, pipeDatasByWidget));
       };
     },
-    submitInputString(appId) {
+    submitInputString(appId, runId, pipeDatasByWidget) {
       return (input) => {
-        dispatch(submitInputString(input, appId));
+        dispatch(submitInputString(input, appId, runId, pipeDatasByWidget));
       };
     },
-    submitEmail(email) {
-      dispatch(submitEmail(email));
+    submitEmail(appId, runId, pipeDatasByWidget) {
+      return (email) => {
+        dispatch(submitEmail(email, appId, runId, pipeDatasByWidget));
+      };
     },
     clickCancel(runId) {
       return () => {
@@ -90,14 +93,27 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.app.id,
       stateProps.app.run.email,
-      stateProps.app.run.pipeDatas,
+      stateProps.app.run.pipeDatasByWidget,
       stateProps.app.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
-    onSelectInputFile: dispatchProps.onSelectInputFile(stateProps.app.id),
-    submitInputString: dispatchProps.submitInputString(stateProps.app.id),
+    onSelectInputFile: dispatchProps.onSelectInputFile(
+      stateProps.app.id,
+      stateProps.app.run.id,
+      stateProps.app.run.pipeDatasByWidget,
+    ),
+    submitInputString: dispatchProps.submitInputString(
+      stateProps.app.id,
+      stateProps.app.run.id,
+      stateProps.app.run.pipeDatasByWidget,
+    ),
     changeLigandSelection: dispatchProps.changeLigandSelection(
-      stateProps.app.run.pipeDatas,
+      stateProps.app.run.pipeDatasByWidget,
+    ),
+    submitEmail: dispatchProps.submitEmail(
+      stateProps.app.id,
+      stateProps.app.run.id,
+      stateProps.app.run.pipeDatasByWidget,
     ),
   });
 }

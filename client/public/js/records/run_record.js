@@ -3,7 +3,6 @@ import { statusConstants } from 'molecular-design-applications-shared';
 
 const RunRecord = new Record({
   canceling: false,
-  email: '',
   emailError: '',
   fetchingData: false, // for loading anything directly related on the run
   fetchingDataError: null,
@@ -11,7 +10,7 @@ const RunRecord = new Record({
   inputFileError: null,
   inputString: '',
   inputStringError: null,
-  pipeDatas: new IMap(),
+  pipeDatasByWidget: new IMap(), // of form { <widgetId>: [pipeData, ...] }
   status: statusConstants.IDLE,
 });
 

@@ -1,9 +1,10 @@
-import { List as IList } from 'immutable';
+import { List as IList, Map as IMap } from 'immutable';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import PipeDataRecord from '../records/pipe_data_record';
 
 const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
-const ioUtils = {
+const pipeUtils = {
   /**
    * Given a list of pipeDatas, find the first pdb pipeData and get the pdb data.
    * If not found, returns null.
@@ -11,7 +12,7 @@ const ioUtils = {
    * @returns {String}
    */
   getPdb(pipeDatas) {
-    const pdbIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
+    const pdbIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
 
     if (pdbIndex === -1) {
       return null;
@@ -32,14 +33,14 @@ const ioUtils = {
       return new IList();
     }
 
-    const framesPipeDataIndex = ioUtils.getIndexByValue(
+    const framesPipeDataIndex = pipeUtils.getIndexByValue(
       pipeDatas, IO_ANIMATION_FRAMES,
     );
 
     // If we don't have an pipeData to tell which animation frames to use,
     // just return the first pdb
     if (framesPipeDataIndex === -1) {
-      const pdbPipeDataIndex = ioUtils.getIndexByValue(pipeDatas, '.pdb');
+      const pdbPipeDataIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
       if (pdbPipeDataIndex === -1) {
         return new IList();
       }
@@ -56,7 +57,7 @@ const ioUtils = {
     // Find pipeDatas corresponding to each frame in framesPipeData
     let pdbPipeDatas = new IList();
     framesPipeData.fetchedValue.forEach((filename) => {
-      const matchedPipeData = pipeDatas.find(pipeData => pipeData.pipeId === filename);
+      const matchedPipeData = pipeDatas.find(pipeData => pipeData.pipeName === filename);
       if (!matchedPipeData) {
         throw new Error('Invalid pipeDatas data; minsteps_frames mismatch');
       }
@@ -101,7 +102,7 @@ const ioUtils = {
    * @return {IList}
    */
   getLigandSelectionStrings(pipeDatas, ligandName) {
-    const pipeDataWithLigand = ioUtils.getPipeDataWithLigand(pipeDatas, ligandName);
+    const pipeDataWithLigand = pipeUtils.getPipeDataWithLigand(pipeDatas, ligandName);
 
     if (!pipeDataWithLigand) {
       return new IList();
@@ -116,7 +117,7 @@ const ioUtils = {
    * @returns {String}
    */
   getSelectedLigand(pipeDatas) {
-    const selectionPipeData = pipeDatas.find(pipeData => pipeData.pipeId === 'selection.json');
+    const selectionPipeData = pipeDatas.find(pipeData => pipeData.pipeName === 'selection.json');
 
     if (!selectionPipeData) {
       return '';
@@ -164,11 +165,11 @@ const ioUtils = {
       inputPipeData.set('fetchedValue', null),
     );
 
-    // Move pipeId to name
+    // Move pipeName to name
     serverInputPipeDatas = serverInputPipeDatas.toJS().map(inputPipeDataData =>
       Object.assign({}, inputPipeDataData, {
-        pipeId: null,
-        name: inputPipeDataData.pipeId,
+        pipeName: null,
+        name: inputPipeDataData.pipeName,
       }),
     );
 
@@ -198,10 +199,11 @@ const ioUtils = {
     };
 
     return new PipeDataRecord({
-      pipeId: 'selection.json',
+      pipeName: 'selection.json',
       type: 'inline',
       fetchedValue,
       value: JSON.stringify(fetchedValue),
+      widgetId: widgetsConstants.SELECTION,
     });
   },
 
@@ -213,19 +215,19 @@ const ioUtils = {
    * @returns {IList}
    */
   selectLigand(pipeDatasList, ligand) {
-    const selectedLigandPipeData = ioUtils.getPipeDataWithLigand(pipeDatasList, ligand);
+    const selectedLigandPipeData = pipeUtils.getPipeDataWithLigand(pipeDatasList, ligand);
 
     if (!selectedLigandPipeData) {
       throw new Error('The given pipeDatasList does not contain the given ligand.');
     }
 
     const selectionPipeDataIndex = pipeDatasList.findIndex(pipeData =>
-      pipeData.pipeId === 'selection.json',
+      pipeData.pipeName === 'selection.json',
     );
 
     if (selectionPipeDataIndex === -1) {
       return pipeDatasList.push(
-        ioUtils.createSelectionPipeData(selectedLigandPipeData, ligand),
+        pipeUtils.createSelectionPipeData(selectedLigandPipeData, ligand),
       );
     }
 
@@ -235,8 +237,8 @@ const ioUtils = {
     };
     const updatedSelectionPipeData =
       pipeDatasList.get(selectionPipeDataIndex).merge({
-        // TODO don't hardcode this pipeId
-        pipeId: 'selection.json',
+        // TODO don't hardcode this pipeName
+        pipeName: 'selection.json',
         fetchedValue,
         value: JSON.stringify(fetchedValue),
       });
@@ -252,7 +254,7 @@ const ioUtils = {
    * @returns {String}
    */
   getOutputPipeDatasError(outputPipeDatas) {
-    const prepIndex = ioUtils.getIndexByValue(outputPipeDatas, 'prep.json');
+    const prepIndex = pipeUtils.getIndexByValue(outputPipeDatas, 'prep.json');
 
     if (prepIndex === -1) {
       throw new Error('OutputPipeDatas did not contain a prep.json file');
@@ -274,14 +276,14 @@ const ioUtils = {
   /**
    * Return a list of the pipeDatas represented in the pipes
    * @param {IList of PipeRecords} pipes
-   * @param {IList of PipeDataRecords} pipeDatas
+   * @param {IMap} pipeDatasByWidget
    * @returns {IList of PipeDataRecords}
    */
-  getPipeDatas(pipes, pipeDatas) {
+  getPipeDatas(pipes, pipeDatasByWidget) {
     let foundPipeDatas = new IList();
 
     pipes.forEach((pipe) => {
-      const pipeData = pipeDatas.get(pipe.id);
+      const pipeData = pipeUtils.get(pipeDatasByWidget, pipe);
       if (pipeData) {
         foundPipeDatas = foundPipeDatas.push(pipeData);
       }
@@ -289,6 +291,73 @@ const ioUtils = {
 
     return foundPipeDatas;
   },
+
+  /**
+   * Gets the pipeData for the given pipe in pipeDatasByWidget.
+   * Returns undefined if not found.
+   * @param {IMap} pipeDatasByWidget
+   * @param {PipeRecord} pipe
+   * @returns {PipeDataRecord}
+   */
+  get(pipeDatasByWidget, pipe) {
+    const pipeDatas = pipeDatasByWidget.get(pipe.sourceWidgetId);
+    if (!pipeDatas) {
+      return undefined;
+    }
+
+    return pipeDatas.find(pipeData => pipeData.pipeName === pipe.name);
+  },
+
+  /**
+   * Add the given pipeData to the pipeDatasByWidget structure, or replace
+   * it if it exists
+   * @param {IMap} pipeDatasByWidget
+   * @param {PipeDataRecord} pipeData
+   * @returns {IMap}
+   */
+  set(pipeDatasByWidget, pipeData) {
+    let pipeDatas = pipeDatasByWidget.get(pipeData.widgetId) || new IList();
+    const existingIndex = pipeDatas.findIndex(pipeDataI =>
+      pipeDataI.pipeName === pipeData.pipeName,
+    );
+
+    if (existingIndex === -1) {
+      pipeDatas = pipeDatas.push(pipeData);
+    } else {
+      pipeDatas = pipeDatas.set(existingIndex, pipeData);
+    }
+
+    return pipeDatasByWidget.set(pipeData.widgetId, pipeDatas);
+  },
+
+  /**
+   * Given the normal pipeDatasByWidget structure keyed on widgetId, flatten
+   * into an IList
+   * @param {IMap} pipeDatasByWidget
+   * @returns {IList}
+   */
+  flatten(pipeDatasByWidget) {
+    return pipeDatasByWidget.reduce((reduction, pipeDatas) =>
+      reduction.concat(pipeDatas),
+      new IList(),
+    );
+  },
+
+  /**
+   * Takes a flat list of pipeDatas and returns pipeDatasByWidget keyed on widgetId
+   * @param {IList} pipeDatas
+   * @returns {IMap} of form pipeDatasByWidget
+  */
+  unflatten(pipeDatas) {
+    return pipeDatas.reduce((reduction, pipeData) => {
+      const pipeDatasForThisWidgetId = reduction.get(pipeData.widgetId) ||
+        new IList();
+      return reduction.set(
+        pipeData.widgetId,
+        pipeDatasForThisWidgetId.push(pipeData),
+      );
+    }, new IMap());
+  },
 };
 
-export default ioUtils;
+export default pipeUtils;

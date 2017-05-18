@@ -19,6 +19,7 @@ const actionConstants = keyMirror({
   MESSAGE_TIMEOUT: null,
   PROCESSED_INPUT_STRING: null,
   RUN_SUBMITTED: null,
+  START_SESSION: null,
   SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,

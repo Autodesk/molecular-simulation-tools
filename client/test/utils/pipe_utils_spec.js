@@ -1,6 +1,7 @@
 import { expect } from 'chai';
-import { List as IList } from 'immutable';
+import { List as IList, Map as IMap } from 'immutable';
 import PipeDataRecord from '../../public/js/records/pipe_data_record';
+import PipeRecord from '../../public/js/records/pipe_record';
 import pipeUtils from '../../public/js/utils/pipe_utils';
 
 describe('pipeUtils', () => {
@@ -14,19 +15,19 @@ describe('pipeUtils', () => {
       outputPipeDatas = new IList([
         new PipeDataRecord({
           fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
-          pipeId: 'minstep_frames.json',
+          pipeName: 'minstep_frames.json',
           type: 'url',
           value: 'http://example.com/minstep_frames.json',
         }),
         new PipeDataRecord({
           fetchedValue: 'imapdbstring',
-          pipeId: 'minstep.0.pdb',
+          pipeName: 'minstep.0.pdb',
           type: 'url',
           value: 'http://example.com/minstep.0.pdb',
         }),
         new PipeDataRecord({
           fetchedValue: 'imapdbstringtoo',
-          pipeId: 'minstep.1.pdb',
+          pipeName: 'minstep.1.pdb',
           type: 'url',
           value: 'http://example.com/minstep.1.pdb',
         }),
@@ -49,7 +50,7 @@ describe('pipeUtils', () => {
           outputPipeDatas = new IList([
             new PipeDataRecord({
               fetchedValue: 'whatami',
-              pipeId: 'somethingweird.exe',
+              pipeName: 'somethingweird.exe',
               type: 'crazy',
               value: 'http://example.com',
             }),
@@ -137,7 +138,7 @@ describe('pipeUtils', () => {
     describe('when prep.json with no fetchedValue', () => {
       beforeEach(() => {
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
-          pipeId: 'prep.json',
+          pipeName: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
         }));
@@ -151,7 +152,7 @@ describe('pipeUtils', () => {
     describe('when prep.json with success false', () => {
       beforeEach(() => {
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
-          pipeId: 'prep.json',
+          pipeName: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -168,7 +169,7 @@ describe('pipeUtils', () => {
     describe('when prep.json with success true', () => {
       beforeEach(() => {
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
-          pipeId: 'prep.json',
+          pipeName: 'prep.json',
           type: 'url',
           value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
           fetchedValue: {
@@ -197,7 +198,7 @@ describe('pipeUtils', () => {
 
     describe('when selection.json has no value property', () => {
       beforeEach(() => {
-        ios = ios.push(new PipeDataRecord({ pipeId: 'selection.json' }));
+        ios = ios.push(new PipeDataRecord({ pipeName: 'selection.json' }));
       });
 
       it('returns empty string', () => {
@@ -207,7 +208,7 @@ describe('pipeUtils', () => {
 
     describe('when selection.json value contains invalid json', () => {
       beforeEach(() => {
-        ios = ios.push(new PipeDataRecord({ pipeId: 'selection.json', value: 'asdf' }));
+        ios = ios.push(new PipeDataRecord({ pipeName: 'selection.json', value: 'asdf' }));
       });
 
       it('returns empty string', () => {
@@ -219,7 +220,7 @@ describe('pipeUtils', () => {
       const ligandName = 'MPD513';
       beforeEach(() => {
         ios = ios.push(new PipeDataRecord({
-          pipeId: 'selection.json',
+          pipeName: 'selection.json',
           value: `{"ligandname":"${ligandName}"}`,
         }));
       });
@@ -236,7 +237,7 @@ describe('pipeUtils', () => {
     beforeEach(() => {
       selectedLigand = 'ARQ401';
       selectedLigandPipeData= new PipeDataRecord({
-        pipeId: 'prep.json',
+        pipeName: 'prep.json',
         fetchedValue: {
           ligands: {
             ARQ401: [1, 2, 3],
@@ -286,7 +287,7 @@ describe('pipeUtils', () => {
       ligand = 'ARQ401';
       inputPipeDatas = new IList([
         new PipeDataRecord({
-          pipeId: 'prep.json',
+          pipeName: 'prep.json',
           value: 'http://example.com/prep.json',
           type: 'url',
           fetchedValue: {
@@ -307,7 +308,7 @@ describe('pipeUtils', () => {
         expect(updatedInputPipeDatas.size).to.equal(2);
 
         const selectionInput = updatedInputPipeDatas.find(input =>
-          input.pipeId === 'selection.json',
+          input.pipeName === 'selection.json',
         );
         expect(selectionInput.fetchedValue.ligandname).to.equal(ligand);
       });
@@ -317,7 +318,7 @@ describe('pipeUtils', () => {
       beforeEach(() => {
         const fetchedValue = { ligandname: 'BBQ401', atom_ids: [1] };
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
-          pipeId: 'selection.json',
+          pipeName: 'selection.json',
           type: 'inline',
           fetchedValue,
           value: JSON.stringify(fetchedValue),
@@ -329,9 +330,172 @@ describe('pipeUtils', () => {
         expect(updatedInputPipeDatas.size).to.equal(2);
 
         const selectionInput = updatedInputPipeDatas.find(inputPipeData =>
-          inputPipeData.pipeId === 'selection.json',
+          inputPipeData.pipeName === 'selection.json',
         );
         expect(selectionInput.toJS().fetchedValue.ligandname).to.equal(ligand);
+      });
+    });
+  });
+
+  describe('get', () => {
+    const sourceWidgetId = 'widgetid';
+    const pipe = new PipeRecord({ name: 'imapipe', sourceWidgetId });
+    let pipeDatasByWidget;
+
+    beforeEach(() => {
+      pipeDatasByWidget = new IMap();
+    });
+
+    describe('when the widgetId doesnt exist in pipeDatasByWidget', () => {
+      it('returns undefined', () => {
+        const pipeData = pipeUtils.get(pipeDatasByWidget, pipe);
+        expect(pipeData).to.equal(undefined);
+      });
+    });
+
+    describe('when the widgetId exists in pipeDatasByWidget but not the pipe', () => {
+      beforeEach(() => {
+        pipeDatasByWidget = new IMap({
+          [sourceWidgetId]: new IList(),
+        });
+      });
+
+      it('returns undefined', () => {
+        const pipeData = pipeUtils.get(pipeDatasByWidget, pipe);
+        expect(pipeData).to.equal(undefined);
+      });
+    });
+
+    describe('when the widgetId exists in pipeDatasByWidget and so does the pipe', () => {
+      let pipeData;
+
+      beforeEach(() => {
+        pipeData = new PipeDataRecord({ pipeName: pipe.name });
+
+        pipeDatasByWidget = new IMap({
+          [sourceWidgetId]: new IList([pipeData]),
+        });
+      });
+
+      it('returns the pipeData', () => {
+        const foundPipeData = pipeUtils.get(pipeDatasByWidget, pipe);
+        expect(foundPipeData).to.equal(pipeData);
+      });
+    });
+  });
+
+  describe('flatten', () => {
+    const widgetIdOne = 'imawidgetid1';
+    const widgetIdTwo = 'imawidgetid2';
+    let pipeDatasByWidget;
+
+    describe('when given multiple pipeDatas nested under different widgetIds', () => {
+      let pipeDataOne;
+      let pipeDataTwo;
+      let pipeDataThree;
+
+      beforeEach(() => {
+        pipeDataOne = new PipeDataRecord({
+          pipeName: 'imapipe',
+          widgetId: widgetIdOne,
+        });
+        pipeDataTwo = new PipeDataRecord({
+          pipeName: 'imapipetoo',
+          widgetId: widgetIdOne,
+        });
+        pipeDataThree = new PipeDataRecord({
+          pipeName: 'imapipealways',
+          widgetId: widgetIdTwo,
+        });
+        pipeDatasByWidget = new IMap({
+          [widgetIdOne]: new IList([pipeDataOne, pipeDataTwo]),
+          [widgetIdTwo]: new IList([pipeDataThree]),
+        });
+      });
+
+      it('returns a flat array containing all pipeDatas', () => {
+        const pipeDatas = pipeUtils.flatten(pipeDatasByWidget);
+        expect(pipeDatas.get(0)).to.equal(pipeDataOne);
+        expect(pipeDatas.get(1)).to.equal(pipeDataTwo);
+        expect(pipeDatas.get(2)).to.equal(pipeDataThree);
+      });
+    });
+  });
+
+  describe('unflatten', () => {
+    const widgetIdOne = 'imawidgetid1';
+    const widgetIdTwo = 'imawidgetid2';
+    let pipeDatas;
+
+    describe('when given multiple pipeDatas with different widgetIds', () => {
+      let pipeDataOne;
+      let pipeDataTwo;
+      let pipeDataThree;
+
+      beforeEach(() => {
+        pipeDataOne = new PipeDataRecord({
+          pipeName: 'imapipe',
+          widgetId: widgetIdOne,
+        });
+        pipeDataTwo = new PipeDataRecord({
+          pipeName: 'imapipetoo',
+          widgetId: widgetIdOne,
+        });
+        pipeDataThree = new PipeDataRecord({
+          pipeName: 'imapipealways',
+          widgetId: widgetIdTwo,
+        });
+        pipeDatas = new IList([pipeDataOne, pipeDataTwo, pipeDataThree]);
+      });
+
+      it('returns a map with pipes nested under corresponding widgetIds', () => {
+        const pipeDatasByWidget = pipeUtils.unflatten(pipeDatas);
+        expect(pipeDatasByWidget.get(widgetIdOne) instanceof IList).to.be.true;
+        expect(pipeDatasByWidget.get(widgetIdTwo) instanceof IList).to.be.true;
+        expect(pipeDatasByWidget.get(widgetIdOne).get(0)).to.equal(pipeDataOne);
+        expect(pipeDatasByWidget.get(widgetIdOne).get(1)).to.equal(pipeDataTwo);
+        expect(pipeDatasByWidget.get(widgetIdTwo).get(0)).to.equal(pipeDataThree);
+      });
+    });
+  });
+
+  describe('set', () => {
+    const widgetIdOne = 'imawidgetid1';
+    const widgetIdTwo = 'imawidgetid2';
+    let pipeDatasByWidget;
+
+    describe('when given stuff', () => {
+      let pipeDataOne;
+      let pipeDataTwo;
+      let pipeDataThree;
+      let newPipeData;
+
+      beforeEach(() => {
+        pipeDataOne = new PipeDataRecord({
+          pipeName: 'imapipe',
+          widgetId: widgetIdOne,
+        });
+        pipeDataTwo = new PipeDataRecord({
+          pipeName: 'imapipetoo',
+          widgetId: widgetIdOne,
+        });
+        pipeDataThree = new PipeDataRecord({
+          pipeName: 'imapipealways',
+          widgetId: widgetIdTwo,
+        });
+        newPipeData = new PipeDataRecord({
+          pipeName: 'imanewpipe',
+          widgetId: widgetIdTwo,
+        });
+        pipeDatasByWidget = new IMap({
+          [widgetIdOne]: new IList([pipeDataOne, pipeDataTwo]),
+          [widgetIdTwo]: new IList([pipeDataThree]),
+        });
+      });
+
+      it('returns a new pipeDatasByWidget with the given pipeData under its widgetId', () => {
+        const newPipeDatasByWidget = pipeUtils.set(pipeDatasByWidget, newPipeData);
+        expect(newPipeDatasByWidget.get(widgetIdTwo).get(1)).to.equal(newPipeData);
       });
     });
   });
