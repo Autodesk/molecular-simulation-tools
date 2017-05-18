@@ -125,10 +125,49 @@ export function clickRun(appId, email, inputPipeDatas, inputString) {
     });
 
     apiUtils.run(appId, email, inputPipeDatas, inputString)
-      .then((runId) => {
+      .then(() => {
+        // TODO this is fake data for now
+        const data = {
+          'final_structure.pdb': {
+            pipeName: 'final_structure.pdb',
+            type: 'url',
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+            widgetId: widgetsConstants.RUN,
+          },
+          'results.json': {
+            pipeName: 'results.json',
+            type: 'inline',
+            value: '{}',
+            widgetId: widgetsConstants.RUN,
+          },
+          'minstep.0.pdb': {
+            pipeName: 'minstep.0.pdb',
+            type: 'url',
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+            widgetId: widgetsConstants.RUN,
+          },
+          'minstep.1.pdb': {
+            pipeName: 'minstep.1.pdb',
+            type: 'url',
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+            widgetId: widgetsConstants.RUN,
+          },
+          'minsteps.tar.gz': {
+            pipeName: 'minsteps.tar.gz',
+            type: 'url',
+            value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+            widgetId: widgetsConstants.RUN,
+          },
+          'minstep_frames.json': {
+            pipeName: 'minstep_frames.json',
+            type: 'inline',
+            widgetId: widgetsConstants.RUN,
+            value: '{}',
+          },
+        };
         dispatch({
           type: actionConstants.RUN_SUBMITTED,
-          runId,
+          data,
         });
       }).catch((err) => {
         console.error(err);

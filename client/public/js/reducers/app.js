@@ -1,5 +1,6 @@
 import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
+import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
 import pipeUtils from '../utils/pipe_utils';
@@ -73,16 +74,25 @@ function app(state = initialState, action) {
         fetchingError: null,
       });
 
-    case actionConstants.RUN_SUBMITTED:
+    case actionConstants.RUN_SUBMITTED: {
       if (action.err) {
         return state.merge({
           fetching: false,
         });
       }
 
+      let updatedPipeDatasByWidget = state.run.pipeDatasByWidget;
+      Object.values(action.data).forEach((pipeDataData) => {
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          new PipeDataRecord(pipeDataData),
+        );
+      });
       return state.merge({
         fetching: false,
+        run: state.run.set('pipeDatasByWidget', updatedPipeDatasByWidget),
       });
+    }
 
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget
