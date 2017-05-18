@@ -5,47 +5,35 @@ import WidgetRecord from '../records/widget_record';
 
 require('../../css/status_run.scss');
 
-class StatusRun extends React.Component {
-  constructor(props) {
-    super(props);
+function StatusRun(props) {
+  const emailPipeData = props.inputPipeDatas.get(
+    props.inputPipeDatas.size - 1,
+  );
+  const email = emailPipeData ? emailPipeData.value : '';
 
-    this.onClickRun = this.onClickRun.bind(this);
-  }
-
-  onClickRun() {
-    this.props.clickRun(this.props.widget.inputPipes);
-  }
-
-  render() {
-    const emailPipeData = this.props.inputPipeDatas.get(
-      this.props.inputPipeDatas.size - 1
-    );
-    const email = emailPipeData ? emailPipeData.value : '';
-
-    return (
-      <div className="status-info status-run">
-        <p>
-          This simulation might take about <span className="time">6 hours</span>.
-        </p>
-        <p>
-          We'll send you an email at {email} when you run this
-          workflow, and another when it's done.
-        </p>
-        <Button
-          type="form"
-          onClick={this.onClickRun}
-          disabled={this.props.runCompleted}
-        >
-          Run Workflow
-        </Button>
-      </div>
-    );
-  }
+  return (
+    <div className="status-info status-run">
+      <p>
+        This simulation might take about <span className="time">6 hours</span>.
+      </p>
+      <p>
+        We&#39;ll send you an email at {email} when you run this
+        workflow, and another when it&#39;s done.
+      </p>
+      <Button
+        type="form"
+        onClick={() => props.clickRun(props.widget.inputPipes)}
+        disabled={props.runCompleted}
+      >
+        Run Workflow
+      </Button>
+    </div>
+  );
 }
 
 StatusRun.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
-  inputPipeDatas: React.PropTypes.instanceOf(IList),
+  inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
   widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
