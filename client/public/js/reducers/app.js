@@ -73,7 +73,7 @@ function app(state = initialState, action) {
         fetchingError: null,
       });
 
-    case actionConstants.RUN_SUBMITTED:
+    case actionConstants.RUN_SUBMITTED: {
       if (action.err) {
         return state.merge({
           fetching: false,
@@ -82,7 +82,9 @@ function app(state = initialState, action) {
 
       return state.merge({
         fetching: false,
+        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
       });
+    }
 
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget

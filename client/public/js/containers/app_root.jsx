@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import AppRouter from '../components/app_router';
-import pipeUtils from '../utils/pipe_utils';
 import {
   changeLigandSelection,
   changeMorph,
@@ -39,12 +38,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(appId, email, pipeDatasByWidget, inputString) {
+    clickRun(appId, runId, email, pipeDatasByWidget, inputString) {
       return (inputPipes) => {
-        const inputPipeDatas = inputPipes.map(inputPipe =>
-          pipeUtils.get(pipeDatasByWidget, inputPipe),
-        );
-        dispatch(clickRun(appId, email, inputPipeDatas, inputString));
+        dispatch(clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inputString));
       };
     },
     clickWidget(widgetIndex) {
@@ -92,6 +88,7 @@ function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
       stateProps.app.id,
+      stateProps.app.run.id,
       stateProps.app.run.email,
       stateProps.app.run.pipeDatasByWidget,
       stateProps.app.run.inputString,

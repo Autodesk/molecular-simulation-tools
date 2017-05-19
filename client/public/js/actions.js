@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router';
+import { List as IList } from 'immutable';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
 import PipeDataRecord from './records/pipe_data_record';
@@ -118,26 +119,100 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(appId, email, inputPipeDatas, inputString) {
-  return (dispatch) => {
+export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inputString) {
+  return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
     });
 
-    apiUtils.run(appId, email, inputPipeDatas, inputString)
-      .then((runId) => {
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          runId,
-        });
-      }).catch((err) => {
-        console.error(err);
+    const inputPipeDatas = inputPipes.map(inputPipe =>
+      pipeUtils.get(pipeDatasByWidget, inputPipe),
+    );
 
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          err,
-        });
+    try {
+      await apiUtils.run(appId, email, inputPipeDatas, inputString); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
+      // TODO this is fake data for now
+      const data = {
+        'final_structure.pdb': {
+          pipeName: 'final_structure.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'results.json': {
+          pipeName: 'results.json',
+          type: 'url',
+          value: 'fakeurl',
+          fetchedValue: {
+            output_values: [
+              { units: 'kcal/mol', name: 'Final energy', value: -6906.7908368173685 },
+              { units: 'kcal/mol', name: 'Energy stabilization', value: -2256.7355290834971 },
+              { units: 'ang', name: 'RMSD', value: 0.63453892906560627 },
+            ],
+            final_energy: { units: 'eV', value: -299.5067907721118 },
+            initial_energy: { units: 'eV', value: -97.861312425186824 },
+            rmsd: { units: 'ang', value: 0.63453892906560627 },
+          },
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep.0.pdb': {
+          pipeName: 'minstep.0.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep.1.pdb': {
+          pipeName: 'minstep.1.pdb',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minsteps.tar.gz': {
+          pipeName: 'minsteps.tar.gz',
+          type: 'url',
+          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
+          widgetId: widgetsConstants.RUN,
+        },
+        'minstep_frames.json': {
+          pipeName: 'minstep_frames.json',
+          type: 'url',
+          widgetId: widgetsConstants.RUN,
+          value: 'fakeurl/minstep_frames.json',
+          fetchedValue: ['minstep.0.pdb', 'minstep.1.pdb'],
+        },
+      };
+
+      let pipeDatasList = new IList(Object.values(data).map(pipeDataData =>
+        new PipeDataRecord(pipeDataData),
+      ));
+
+      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+      // TODO should also fetch json, but I'm hardcoding it for now
+      // pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
+      pipeDatasList.forEach((pipeData) => {
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          pipeData,
+        );
       });
+
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        pipeDatasByWidget: updatedPipeDatasByWidget,
+      });
+    } catch (err) {
+      console.error(err);
+
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        err,
+      });
+    }
   };
 }
 
