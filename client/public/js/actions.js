@@ -413,7 +413,8 @@ export function clickColorize() {
   };
 }
 
-export function changeLigandSelection(pipeDatas, ligand) {
+export function changeLigandSelection(pipeDatasByWidget, ligand) {
+  const pipeDatas = pipeUtils.flatten(pipeDatasByWidget);
   const updatedPipeDatas = pipeUtils.selectLigand(pipeDatas, ligand);
   const updatedPipeDatasByWidget = pipeUtils.unflatten(updatedPipeDatas);
   return {
