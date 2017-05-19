@@ -413,9 +413,11 @@ export function clickColorize() {
   };
 }
 
-export function changeLigandSelection(pipeDatas, ligand) {
+export function changeLigandSelection(runId, pipeDatasByWidget, ligand) {
+  const pipeDatas = pipeUtils.flatten(pipeDatasByWidget);
   const updatedPipeDatas = pipeUtils.selectLigand(pipeDatas, ligand);
   const updatedPipeDatasByWidget = pipeUtils.unflatten(updatedPipeDatas);
+  apiUtils.updateSession(runId, updatedPipeDatasByWidget);
   return {
     type: actionConstants.CHANGE_LIGAND_SELECTION,
     pipeDatasByWidget: updatedPipeDatasByWidget,

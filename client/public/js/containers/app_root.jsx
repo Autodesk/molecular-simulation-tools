@@ -30,9 +30,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLigandSelection(pipeDatasByWidget) {
+    changeLigandSelection(runId, pipeDatasByWidget) {
       return (ligand) => {
-        dispatch(changeLigandSelection(pipeDatasByWidget, ligand));
+        dispatch(changeLigandSelection(runId, pipeDatasByWidget, ligand));
       };
     },
     clickAbout() {
@@ -105,6 +105,7 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.run.pipeDatasByWidget,
     ),
     changeLigandSelection: dispatchProps.changeLigandSelection(
+      stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
     ),
     submitEmail: dispatchProps.submitEmail(
