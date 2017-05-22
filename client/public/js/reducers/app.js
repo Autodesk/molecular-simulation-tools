@@ -1,4 +1,4 @@
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
@@ -170,7 +170,6 @@ function app(state = initialState, action) {
       }
       return state.set('run', state.run.merge({
         canceling: false,
-        status: statusConstants.CANCELED,
       }));
 
     case actionConstants.CHANGE_LIGAND_SELECTION:

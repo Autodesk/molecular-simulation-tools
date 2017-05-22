@@ -20,7 +20,7 @@ function mapStateToProps(state, ownProps) {
   return {
     colorized: state.resultsSettings.colorized,
     morph: state.resultsSettings.morph,
-    runId: ownProps.params.runId,
+    runPage: !!ownProps.params.runId,
     selection: state.selection,
     userMessage: state.userMessage,
     app: state.app,

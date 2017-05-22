@@ -5,7 +5,6 @@ const statusConstants = keyMirror({
   RUNNING: null,
   COMPLETED: null,
   ERROR: null,
-  CANCELED: null,
 });
 
 module.exports = statusConstants;

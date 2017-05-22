@@ -1,9 +1,5 @@
 import React from 'react';
-import { statusConstants } from 'molecular-design-applications-shared';
-import Canceled from './canceled';
-import Errored from './errored';
 import Snackbar from './snackbar';
-import ThankYou from './thank_you';
 import SelectionRecord from '../records/selection_record';
 import UserMessageRecord from '../records/user_message_record';
 import AppRecord from '../records/app_record';
@@ -60,27 +56,11 @@ class AppRouter extends React.Component {
       document.title = `App - "${this.props.app.title}" - Molecular Simulation Tools`;
     }
 
-    let routeEl;
-    if (this.props.app.run.status === statusConstants.RUNNING) {
-      routeEl = (
-        <ThankYou
-          canceling={this.props.app.run.canceling}
-          email={this.props.app.run.email}
-          onClickCancel={this.props.clickCancel}
-        />
-      );
-    } else if (this.props.app.run.status === statusConstants.CANCELED) {
-      routeEl = (
-        <Canceled
-          email={this.props.app.run.email}
-        />
-      );
-    } else if (this.props.app.run.status === statusConstants.ERROR) {
-      routeEl = (
-        <Errored />
-      );
-    } else {
-      routeEl = (
+    return (
+      <div
+        className="app-router"
+        style={{ flex: 1, overflow: 'auto', display: 'flex' }}
+      >
         <App
           changeLigandSelection={this.props.changeLigandSelection}
           clickAbout={this.props.clickAbout}
@@ -97,15 +77,6 @@ class AppRouter extends React.Component {
           app={this.props.app}
           runPage={!!this.props.runId}
         />
-      );
-    }
-
-    return (
-      <div
-        className="app-router"
-        style={{ flex: 1, overflow: 'auto', display: 'flex' }}
-      >
-        {routeEl}
         <Snackbar
           onMessageTimeout={this.props.onMessageTimeout}
           userMessage={this.props.userMessage}
@@ -116,15 +87,12 @@ class AppRouter extends React.Component {
 }
 
 AppRouter.defaultProps = {
-  canceling: false,
   runId: null,
 };
 
 AppRouter.propTypes = {
-  canceling: React.PropTypes.bool,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickAbout: React.PropTypes.func.isRequired,
-  clickCancel: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
   clickWidget: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
