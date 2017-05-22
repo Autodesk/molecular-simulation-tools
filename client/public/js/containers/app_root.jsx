@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import AppRouter from '../components/app_router';
+import App from '../components/app';
 import {
   changeLigandSelection,
   changeMorph,
@@ -18,13 +18,13 @@ import {
 
 function mapStateToProps(state, ownProps) {
   return {
-    colorized: state.resultsSettings.colorized,
-    morph: state.resultsSettings.morph,
-    runPage: !!ownProps.params.runId,
-    selection: state.selection,
-    userMessage: state.userMessage,
     app: state.app,
     appId: ownProps.params.appId,
+    colorized: state.resultsSettings.colorized,
+    morph: state.resultsSettings.morph,
+    runId: ownProps.params.runId,
+    selection: state.selection,
+    userMessage: state.userMessage,
   };
 }
 
@@ -120,6 +120,6 @@ const AppRoot = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(AppRouter);
+)(App);
 
 export default AppRoot;
