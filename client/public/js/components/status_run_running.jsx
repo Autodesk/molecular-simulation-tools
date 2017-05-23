@@ -4,7 +4,9 @@ function StatusRunRunning(props) {
   return (
     <div className="status-run-running">
       <div>
-        <h1>Thanks {props.email}!</h1>
+        <p>
+          Thanks {props.email}!
+        </p>
         <div className="line" />
       </div>
       <p>

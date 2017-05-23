@@ -3,7 +3,7 @@ import React from 'react';
 function StatusRunError() {
   return (
     <div className="status-run-error">
-      <h1>An error occurred</h1>
+      <p>An error occurred</p>
       <p>
         We are sorry, but we are unable to process your simulation.
       </p>
