@@ -39,8 +39,10 @@ function mapDispatchToProps(dispatch) {
       dispatch(clickAbout());
     },
     clickRun(appId, runId, email, pipeDatasByWidget, inputString) {
-      return (inputPipes) => {
-        dispatch(clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inputString));
+      return (widget) => {
+        dispatch(clickRun(
+          appId, widget, runId, email, pipeDatasByWidget, inputString,
+        ));
       };
     },
     clickWidget(widgetIndex) {

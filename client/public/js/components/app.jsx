@@ -1,4 +1,5 @@
 import { List as IList } from 'immutable';
+import { statusConstants } from 'molecular-design-applications-shared';
 import React from 'react';
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
@@ -8,6 +9,7 @@ import UserMessageRecord from '../records/user_message_record';
 import View from '../components/view';
 import WidgetList from '../components/widget_list';
 import pipeUtils from '../utils/pipe_utils';
+import widgetUtils from '../utils/widget_utils';
 
 require('../../css/app.scss');
 
@@ -93,6 +95,13 @@ class App extends React.Component {
       );
     }
 
+    const widgetStatuses = widgetUtils.getStatuses(
+      this.props.app.widgets, this.props.app.run.pipeDatasByWidget,
+    );
+    const runCompleted = widgetStatuses.every(
+      widgetStatus => widgetStatus === statusConstants.COMPLETED,
+    );
+
     return (
       <div className="app">
         {
@@ -102,6 +111,7 @@ class App extends React.Component {
               clickWidget={this.props.clickWidget}
               selection={this.props.selection}
               app={this.props.app}
+              widgetStatuses={widgetStatuses}
             />
           )
         }
@@ -119,6 +129,7 @@ class App extends React.Component {
           submitInputString={this.props.submitInputString}
           submitEmail={this.props.submitEmail}
           app={this.props.app}
+          runCompleted={runCompleted}
         />
         <View
           colorized={this.props.colorized}

@@ -119,13 +119,14 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(appId, runId, email, pipeDatasByWidget, inputPipes, inputString) {
+export function clickRun(appId, widget, runId, email, pipeDatasByWidget, inputString) {
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
+      widgetId: widget.id,
     });
 
-    const inputPipeDatas = inputPipes.map(inputPipe =>
+    const inputPipeDatas = widget.inputPipes.map(inputPipe =>
       pipeUtils.get(pipeDatasByWidget, inputPipe),
     );
 
