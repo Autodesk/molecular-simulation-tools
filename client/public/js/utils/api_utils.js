@@ -1,4 +1,4 @@
-import { List as IList, Map as IMap } from 'immutable';
+import { fromJS, List as IList, Map as IMap } from 'immutable';
 import { widgetsConstants } from 'molecular-design-applications-shared';
 import axios from 'axios';
 import AppRecord from '../records/app_record';
@@ -53,7 +53,11 @@ const apiUtils = {
             }));
 
             return new WidgetRecord(
-              Object.assign({}, widgetData, { inputPipes, outputPipes }),
+              Object.assign({}, widgetData, {
+                inputPipes,
+                outputPipes,
+                config: fromJS(widgetData.config),
+              }),
             );
           }),
         );
