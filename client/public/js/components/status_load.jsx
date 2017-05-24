@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './button';
 import Input from './input';
+import WidgetRecord from '../records/widget_record';
 
 require('../../css/status_load.scss');
 
@@ -45,7 +46,7 @@ class StatusLoad extends React.Component {
     e.preventDefault();
 
     if (this.state.inputString) {
-      this.props.submitInputString(this.state.inputString);
+      this.props.submitInputString(this.props.widget, this.state.inputString);
     }
   }
 
@@ -139,6 +140,7 @@ StatusLoad.defaultProps = {
 };
 
 StatusLoad.propTypes = {
+  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
   pdb: React.PropTypes.string,

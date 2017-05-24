@@ -39,7 +39,8 @@ WebsocketHandler.prototype.onWebsocketMessage = function onWebsocketMessage(ws, 
     if (jsonRpc.jsonrpc) {
       this.onJsonRpcMessage(ws, jsonRpc.method, jsonRpc.params)
         .then((result) => {
-          if (jsonRpc.id) { // Only send responses for non-notifications
+          console.log('ws result to send back', result);
+          if (jsonRpc.id && result) { // Only send responses for non-notifications
             ws.send(JSON.stringify({ jsonrpc: '2.0', id: jsonRpc.id, response: result }));
           }
         })
@@ -97,10 +98,11 @@ WebsocketHandler.prototype.onWebsocketConnection = function onWebsocketConnectio
   }
   ws.on('message', messageHandler);
   ws.on('close', () => {
+    console.log('WS close');
     if (ws.meta.sessionId) {
       delete self.sessionSockets[ws.meta.sessionId];
     }
-    ws.removeEventHandler('message', messageHandler);
+    ws.removeListener('message', messageHandler);
   });
 };
 
@@ -114,7 +116,8 @@ WebsocketHandler.prototype.onJsonRpcMessage = function onJsonRpcMessage(ws, meth
       log.debug(`Registering websocket for session=${sessionId}`);
       ws.meta.sessionId = sessionId;
       this.sessionSockets[sessionId] = ws;
-      return this.session.getState(sessionId);
+      this.sendSessionState(ws);
+      return Promise.resolve(null);
     }
     default:
       return Promise.resolve(`Unknown jsonrpc method=${method}`);
@@ -126,8 +129,10 @@ WebsocketHandler.prototype.sendSessionState = function sendSessionState(ws) {
   if (sessionId) {
     return this.session.getState(sessionId)
       .then((sessionState) => {
+        console.log('ws.readyState === WebSocket.OPEN', ws.readyState === WebSocket.OPEN);
+        console.log('sessionState', sessionState);
         if (ws.readyState === WebSocket.OPEN) {
-          this.sessionSockets[sessionId].send(JSON.stringify(
+          ws.send(JSON.stringify(
             {
               jsonrpc: '2.0',
               method: jsonrpcConstants.SESSION_UPDATE,

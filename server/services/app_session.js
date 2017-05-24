@@ -36,7 +36,7 @@ function initializeModels(db) {
       widget: { type: Sequelize.STRING, allowNull: false },
       pipe: { type: Sequelize.STRING, allowNull: false },
       type: { type: Sequelize.STRING, allowNull: true },
-      value: { type: Sequelize.TEXT, allowNull: false },
+      value: { type: Sequelize.BLOB, allowNull: true },
       output: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
     });
   // Adds the foreign key sessionId to WidgetValues
@@ -90,7 +90,7 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
               widget: widgetId,
               pipe: outputId,
               type: fileBlob.type,
-              value: fileBlob.value
+              value: fileBlob.value,
             };
             const widgetPromise = WidgetValue.create(widgetBlob)
               .then(widgetValue => session.addWidgetvalue(widgetValue));
@@ -136,7 +136,11 @@ AppSession.prototype.getState = function getState(sessionId) {
         if (!widgetStates[widget.widget]) {
           widgetStates[widget.widget] = {};
         }
-        const value = { type: widget.type, value: widget.value };
+        let rawValue = widget.value;
+        if (rawValue.toString) {
+          rawValue = rawValue.toString();
+        }
+        const value = { type: widget.type, value: rawValue };
         const inOut = widget.output ? 'out' : 'in';
         if (!widgetStates[widget.widget][inOut]) {
           widgetStates[widget.widget][inOut] = {};

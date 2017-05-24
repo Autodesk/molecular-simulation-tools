@@ -91,6 +91,17 @@ function app(state = initialState, action) {
       });
     }
 
+    case actionConstants.PIPE_DATA_UPDATE: {
+      // TODO: something like this, update the server, then this client
+      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);
+      // TODO: also handle errors here?
+      // This should deprecate actionConstants.RUN_SUBMITTED when complete
+      return state.merge({
+        fetching: false,
+        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
+      });
+    }
+
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget
       const widgetId = widgetsConstants.LOAD;

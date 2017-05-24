@@ -1,5 +1,4 @@
 import { browserHistory } from 'react-router';
-import { List as IList } from 'immutable';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
 import PipeDataRecord from './records/pipe_data_record';
@@ -51,6 +50,7 @@ export function initializeRun(appId, runId) {
 
     let app;
     let run;
+    console.log(`initializeRunDispatch appId=${appId} runId=${runId}`);
     try {
       app = await apiUtils.getApp(appId);
       run = await apiUtils.getRun(runId);
@@ -119,7 +119,7 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(appId, widget, runId, email, pipeDatasByWidget, inputString) {
+export function clickRun(widget, runId, email, pipeDatasByWidget) {
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
@@ -130,79 +130,24 @@ export function clickRun(appId, widget, runId, email, pipeDatasByWidget, inputSt
       pipeUtils.get(pipeDatasByWidget, inputPipe),
     );
 
-    try {
-      await apiUtils.run(appId, email, inputPipeDatas, inputString); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+    console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
 
-      // TODO this is fake data for now
-      const data = {
-        'final_structure.pdb': {
-          pipeName: 'final_structure.pdb',
-          type: 'url',
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-          widgetId: widgetsConstants.RUN,
-        },
-        'results.json': {
-          pipeName: 'results.json',
-          type: 'url',
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/results.json',
-          widgetId: widgetsConstants.RUN,
-        },
-        'minstep.0.pdb': {
-          pipeName: 'minstep.0.pdb',
-          type: 'url',
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-          widgetId: widgetsConstants.RUN,
-        },
-        'minstep.1.pdb': {
-          pipeName: 'minstep.1.pdb',
-          type: 'url',
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-          widgetId: widgetsConstants.RUN,
-        },
-        'minsteps.tar.gz': {
-          pipeName: 'minsteps.tar.gz',
-          type: 'url',
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/3AID.pdb',
-          widgetId: widgetsConstants.RUN,
-        },
-        'minstep_frames.json': {
-          pipeName: 'minstep_frames.json',
-          type: 'url',
-          widgetId: widgetsConstants.RUN,
-          value: 'https://s3-us-west-1.amazonaws.com/adsk-dev/minstep_frames.json',
-        },
-      };
-
-      let pipeDatasList = new IList(Object.values(data).map(pipeDataData =>
-        new PipeDataRecord(pipeDataData),
-      ));
-
-      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
-      // TODO should also fetch json, but I'm hardcoding it for now
-      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
-
-      let updatedPipeDatasByWidget = pipeDatasByWidget;
-      pipeDatasList.forEach((pipeData) => {
-        updatedPipeDatasByWidget = pipeUtils.set(
-          updatedPipeDatasByWidget,
-          pipeData,
-        );
+    apiUtils.runCCC(runId, widget.id, widget.config, inputPipeDatas)
+      .then((cccResult) => {
+        console.log('cccResult', cccResult);
+        // dispatch({
+        //   type: actionConstants.RUN_SUBMITTED,
+        //   runId,
+        //   widgetId: widget.id,
+        // });
+      })
+      .catch((err) => {
+        console.error('ERROR cccResult', err);
+        dispatch({
+          type: actionConstants.RUN_SUBMITTED,
+          err,
+        });
       });
-
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
-
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        pipeDatasByWidget: updatedPipeDatasByWidget,
-      });
-    } catch (err) {
-      console.error(err);
-
-      dispatch({
-        type: actionConstants.RUN_SUBMITTED,
-        err,
-      });
-    }
   };
 }
 
@@ -259,7 +204,7 @@ export function selectInputFile(file, appId, runId, pipeDatasByWidget) {
   };
 }
 
-export function submitInputString(inputString, appId, runId, pipeDatasByWidget) {
+export function submitInputString(inputString, widget, runId, pipeDatasByWidget) {
   return async function submitInputStringDispatch(dispatch) {
     dispatch({
       type: actionConstants.SUBMIT_INPUT_STRING,
@@ -280,7 +225,7 @@ export function submitInputString(inputString, appId, runId, pipeDatasByWidget) 
       const newInput = pdbDownload ? pdbDownload.pdb : inputString;
       const extension = pdbDownload ? '.pdb' : '';
       let inputPipeDatas = await appUtils.processInput(
-        appId, newInput, extension,
+        widget, newInput, extension,
       );
 
       // If only one ligand, select it
@@ -418,5 +363,63 @@ export function changeMorph(morph) {
   return {
     type: actionConstants.CHANGE_MORPH,
     morph,
+  };
+}
+
+export function runCCC(runId, widget, inputMap) {
+  return (dispatch) => {
+    dispatch({
+      type: actionConstants.CCC_RUN_SUBMITTED,
+      runId,
+      widget,
+    });
+
+    apiUtils.runCCC(runId, widget.id, widget.config, inputMap)
+      .then((result) => {
+        console.log(result);
+        // if (result.exitCode !== 1) {
+        //   dispatch({
+        //     type: actionConstants.CCC_RUN_ERROR,
+        //     runId,
+        //     widgetId,
+        //     error: new Error('Non-zero exit code on ccc run'),
+        //     result,
+        //   });
+        // } else if (result.error) {
+        //   dispatch({
+        //     type: actionConstants.CCC_RUN_ERROR,
+        //     runId,
+        //     widgetId,
+        //     error: new Error('Error object returned on ccc run'),
+        //     result,
+        //   });
+        // } else {
+        //   dispatch({
+        //     type: actionConstants.CCC_RUN_RESPONSE,
+        //     runId,
+        //     widgetId,
+        //     result,
+        //   });
+        // }
+        // TODO: pipe data back into the state
+        // don't forget to check errors
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch({
+          type: actionConstants.CCC_RUN_ERROR,
+          runId,
+          widget,
+          error: err,
+        });
+      });
+  };
+}
+
+export function updatePipeData(runId, pipeDatasByWidget) {
+  return {
+    type: actionConstants.PIPE_DATA_UPDATE,
+    runId,
+    pipeDatasByWidget,
   };
 }

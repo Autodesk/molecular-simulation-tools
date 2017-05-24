@@ -15,6 +15,10 @@ module.exports = {
       id: widgetsConstants.LOAD,
       type: widgetsConstants.LOAD,
       title: 'Load Molecule',
+      config: {
+        image: 'avirshup/mst:workflows-0.0.1b6',
+        command: ['vde', '--preprocess', '/inputs/input.pdb', '--outputdir', '/outputs/'],
+      },
       outputs: [
         { id: 'prep.pdb' },
         { id: 'prep.json' },
@@ -25,6 +29,10 @@ module.exports = {
       id: widgetsConstants.RUN,
       type: widgetsConstants.RUN,
       title: 'Run',
+      config: {
+        image: 'avirshup/mst:workflows-0.0.1b6',
+        command: ['vde', '--restart', '/inputs/workflow_state.dill', '--outputdir', '/outputs/'],
+      },
       inputs: [
         { id: 'prep.pdb', source: widgetsConstants.LOAD },
         { id: 'prep.json', source: widgetsConstants.LOAD },
@@ -44,11 +52,36 @@ module.exports = {
       type: widgetsConstants.RESULTS,
       title: 'Results',
       inputs: [
-        { id: 'final_structure.pdb', source: widgetsConstants.RUN },
-        { id: 'results.json', source: widgetsConstants.RUN },
-        { id: 'minstep.0.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep.1.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep_frames.json', source: widgetsConstants.RUN },
+        {
+          name: "final_structure.pdb",
+          source: {
+            id: "clean_pdb", pipe: "final_structure.pdb"
+          }
+        },
+        {
+          name: "results.json",
+          source: {
+            id: "clean_pdb", pipe: "results.json"
+          }
+        },
+        {
+          name: "minstep.0.pdb",
+          source: {
+            id: "clean_pdb", pipe: "minstep.0.pdb"
+          }
+        },
+        {
+          name: "minstep.1.pdb",
+          source: {
+            id: "clean_pdb", pipe: "minstep.1.pdb"
+          }
+        },
+        {
+          name: "minstep_frames.json",
+          source: {
+            id: "clean_pdb", pipe: "minstep_frames.json"
+          }
+        }
       ],
     },
   ],

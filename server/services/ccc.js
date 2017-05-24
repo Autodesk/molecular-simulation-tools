@@ -121,7 +121,7 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
   // Map jobId to session
   const cccjobv1 = {
     image: jobBlob.image,
-    inputs: jobBlob.inputs,
+    inputs: [],
     cmd: jobBlob.command,
     workingDir: jobBlob.workingDir,
     parameters: jobBlob.parameters,
@@ -131,11 +131,33 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     appendStdOut: true,
     appendStdErr: true
   };
+  const multipartInputs = {};
+  jobBlob.inputs.forEach((inputBlob) => {
+    if (inputBlob.type === 'url') {
+      cccjobv1.inputs.push(inputBlob);
+    } else {
+      multipartInputs[inputBlob.name] = inputBlob.value;
+    }
+  });
+
   cccjobv1.meta = cccjobv1.meta ? cccjobv1.meta : {};
   cccjobv1.meta.widgetId = widgetId;
   cccjobv1.meta.sessionId = sessionId;
   return this.ccc
-    .then(ccc => ccc.submitJobJson(cccjobv1))
+    .then(ccc => ccc.run(cccjobv1, multipartInputs))
+    .then((jobResult) => {
+      log.info({ sessionId, widgetId, jobId: jobResult.jobId, message: 'link' });
+      this.jobSessionQueue.add({ sessionId, widgetId, jobId: jobResult.jobId });
+      return jobResult;
+    });
+};
+
+/**
+ * Cloud-compute-cannon CWL execution (see README)
+ */
+CCC.prototype.cwl = function run(sessionId, widgetId, cwl) {
+  return this.ccc
+    .then(ccc => ccc.cwl(cwl.git, cwl.sha, cwl.cwl, cwl.input, cwl.inputs))
     .then((jobResult) => {
       log.info({ sessionId, widgetId, jobId: jobResult.jobId, message: 'link' });
       this.jobSessionQueue.add({ sessionId, widgetId, jobId: jobResult.jobId });

@@ -1,15 +1,16 @@
-import { List as IList } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
 import React from 'react';
+import { List as IList, Map as IMap } from 'immutable';
+import { statusConstants, jsonrpcConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
-import Snackbar from './snackbar';
 import Status from '../components/status';
 import UserMessageRecord from '../records/user_message_record';
 import View from '../components/view';
 import WidgetList from '../components/widget_list';
 import pipeUtils from '../utils/pipe_utils';
 import widgetUtils from '../utils/widget_utils';
+import PipeDataRecord from '../records/pipe_data_record';
+import Snackbar from './snackbar';
 
 require('../../css/app.scss');
 
@@ -46,6 +47,13 @@ class App extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+
   onRequestCloseSnackbar() {
     this.setState({
       snackbarClosed: true,
@@ -55,10 +63,106 @@ class App extends React.Component {
   // Set up page for app/run distinction
   initialize(appId, runId) {
     if (runId) {
+      this.initializeWebsocket(runId);
       return this.props.initializeRun(appId, runId);
     }
 
     return this.props.initializeApp(appId);
+  }
+
+  initializeWebsocket(runId) {
+    if (this.ws) {
+      this.ws.close();
+    }
+
+    if (runId) {
+      /* Websocket for getting session info */
+      const protocol = window.location.protocol === 'http:' ? 'ws:' : 'wss:';
+      const hostname = window.location.hostname;
+      const port = window.location.port !== '' ? `:${window.location.port}` : '';
+      const wsUrl = `${protocol}//${hostname}${port}`;
+      this.ws = new WebSocket(wsUrl);
+      this.ws.addEventListener('open', () => {
+        console.log(`Websocket for run=${runId} opened`);
+        // See README.md
+        this.ws.send(JSON.stringify({
+          jsonrpc: '2.0',
+          method: jsonrpcConstants.SESSION,
+          params: { sessionId: runId },
+        }));
+      });
+
+      this.ws.addEventListener('error', (err) => {
+        console.error('Websocket error', err);
+      });
+
+      this.ws.addEventListener('message', (event) => {
+        console.log('Websocket messsage', (`${event.data}`).substr(0, 100));
+        const jsonrpc = JSON.parse(event.data);
+        // See README.md
+        let sessionUpdate = null;
+        let updatedPipeDatasByWidget = null;
+        let widgetPipeDataList = null;
+        switch (jsonrpc.method) {
+          case jsonrpcConstants.SESSION_UPDATE:
+            sessionUpdate = jsonrpc.params;
+            // TODO: update the widget pipe data here
+            // The params object looks like:
+            // {
+            //   "session": "7d85142d997d4c88adb5683176493a46",
+            //   "widgets": {
+            //     "ENTER_EMAIL": {
+            //       "out": {
+            //         "email": {
+            //           "type": "inline",
+            //           "value":"a@b.com"
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            // But we need it in the pipe data form that looks like this:
+            // (pseudocode)
+            // new IList [
+            //  new PipeDataRecord() {
+            //    fetchedValue: '',
+            //    pipeName: '',
+            //    type: '',
+            //    value: '',
+            //    widgetId: '',
+            //  }
+            // ]
+            if (this.props.runId !== sessionUpdate.session) {
+              throw new Error(`runId (${this.props.runId}) !== session (${sessionUpdate.session})`);
+            }
+            updatedPipeDatasByWidget = new IMap();
+            Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
+              const widgetBlob = sessionUpdate.widgets[widgetId];
+              widgetPipeDataList = new IList();
+              updatedPipeDatasByWidget = updatedPipeDatasByWidget.set(widgetId, widgetPipeDataList);
+              Object.keys(widgetBlob.out).forEach((outPipeName) => {
+                const pipeBlob = widgetBlob.out[outPipeName];
+                const pipeDataRecord = new PipeDataRecord({
+                  pipeName: outPipeName,
+                  type: pipeBlob.type,
+                  value: pipeBlob.value,
+                  widgetId,
+                });
+                widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
+              });
+            });
+
+            // console.log('updatedPipeDatasByWidget', updatedPipeDatasByWidget);
+
+            // this.props.updatePipeData(updatedPipeDatasByWidget);
+
+            break;
+          default:
+            console.warn({ message: 'Unhandled websocket message', data: event.data });
+            break;
+        }
+      });
+    }
   }
 
   render() {
@@ -138,6 +242,7 @@ class App extends React.Component {
           inputPipeDatas={inputPipeDatas}
           morph={this.props.morph}
           outputPipeDatas={outputPipeDatas}
+          updatePipeData={this.props.updatePipeData}
         />
         <Snackbar
           onMessageTimeout={this.props.onMessageTimeout}
@@ -172,6 +277,7 @@ App.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
+  updatePipeData: React.PropTypes.func.isRequired,
 };
 
 export default App;

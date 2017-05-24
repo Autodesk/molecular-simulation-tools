@@ -79,6 +79,17 @@ const pipeUtils = {
   },
 
   /**
+   * Given a list of pipeDatas, return the index of the first element
+   * that has the given string in its "pipeName", or -1 if none
+   * @param pipeDatas {IList}
+   * @param string {String}
+   * @returns {String}
+   */
+  getIndexByName(pipeDatas, string) {
+    return pipeDatas.findIndex(pipeData => pipeData.pipeName.endsWith(string));
+  },
+
+  /**
    * Given a list of pipeDatas, find and return a list of all ligands
    * @param pipeDatas {IList of PipeDataRecords}
    * @returns {IList}
@@ -254,14 +265,14 @@ const pipeUtils = {
    * @returns {String}
    */
   getOutputPipeDatasError(outputPipeDatas) {
-    const prepIndex = pipeUtils.getIndexByValue(outputPipeDatas, 'prep.json');
+    const prepIndex = pipeUtils.getIndexByName(outputPipeDatas, 'prep.json');
 
     if (prepIndex === -1) {
       throw new Error('OutputPipeDatas did not contain a prep.json file');
     }
 
-    const prepFetchedValue = outputPipeDatas.get(prepIndex).fetchedValue;
-
+    let prepFetchedValue = outputPipeDatas.get(prepIndex).value;
+    prepFetchedValue = JSON.parse(prepFetchedValue);
     if (typeof prepFetchedValue !== 'object') {
       throw new Error('prep.json was not fetched properly.');
     }
