@@ -154,7 +154,7 @@ class App extends React.Component {
 
             // console.log('updatedPipeDatasByWidget', updatedPipeDatasByWidget);
 
-            this.props.updatePipeData(updatedPipeDatasByWidget);
+            // this.props.updatePipeData(updatedPipeDatasByWidget);
 
             break;
           default:
