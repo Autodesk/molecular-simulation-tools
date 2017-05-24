@@ -52,36 +52,11 @@ module.exports = {
       type: widgetsConstants.RESULTS,
       title: 'Results',
       inputs: [
-        {
-          name: "final_structure.pdb",
-          source: {
-            id: "clean_pdb", pipe: "final_structure.pdb"
-          }
-        },
-        {
-          name: "results.json",
-          source: {
-            id: "clean_pdb", pipe: "results.json"
-          }
-        },
-        {
-          name: "minstep.0.pdb",
-          source: {
-            id: "clean_pdb", pipe: "minstep.0.pdb"
-          }
-        },
-        {
-          name: "minstep.1.pdb",
-          source: {
-            id: "clean_pdb", pipe: "minstep.1.pdb"
-          }
-        },
-        {
-          name: "minstep_frames.json",
-          source: {
-            id: "clean_pdb", pipe: "minstep_frames.json"
-          }
-        }
+        { id: 'final_structure.pdb', source: widgetsConstants.RUN },
+        { id: 'results.json', source: widgetsConstants.RUN },
+        { id: 'minstep.0.pdb', source: widgetsConstants.RUN },
+        { id: 'minstep.1.pdb', source: widgetsConstants.RUN },
+        { id: 'minstep_frames.json', source: widgetsConstants.RUN },
       ],
     },
   ],
