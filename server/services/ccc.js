@@ -133,7 +133,7 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
   };
   const multipartInputs = {};
   jobBlob.inputs.forEach((inputBlob) => {
-    if (inputBlob.type == 'url') {
+    if (inputBlob.type === 'url') {
       cccjobv1.inputs.push(inputBlob);
     } else {
       multipartInputs[inputBlob.name] = inputBlob.value;
