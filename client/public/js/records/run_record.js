@@ -1,5 +1,4 @@
 import { Record, Map as IMap } from 'immutable';
-import { statusConstants } from 'molecular-design-applications-shared';
 
 const RunRecord = new Record({
   canceling: false,
@@ -11,7 +10,6 @@ const RunRecord = new Record({
   inputString: '',
   inputStringError: null,
   pipeDatasByWidget: new IMap(), // of form { <widgetId>: [pipeData, ...] }
-  status: statusConstants.IDLE,
 });
 
 export default RunRecord;

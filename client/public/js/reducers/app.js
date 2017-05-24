@@ -67,11 +67,16 @@ function app(state = initialState, action) {
       }
       return state.set('run', action.run);
 
-    case actionConstants.CLICK_RUN:
-      return state.merge({
-        fetching: true,
-        fetchingError: null,
+    case actionConstants.CLICK_RUN: {
+      const widgetIndex = state.widgets.findIndex(
+        widget => widget.id === action.widgetId,
+      );
+      const updatedWidget = state.widgets.get(widgetIndex).merge({
+        status: statusConstants.RUNNING,
+        error: '',
       });
+      return state.set('widgets', state.widgets.set(widgetIndex, updatedWidget));
+    }
 
     case actionConstants.RUN_SUBMITTED: {
       if (action.err) {
@@ -170,7 +175,6 @@ function app(state = initialState, action) {
       }
       return state.set('run', state.run.merge({
         canceling: false,
-        status: statusConstants.CANCELED,
       }));
 
     case actionConstants.CHANGE_LIGAND_SELECTION:

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList } from 'immutable';
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import StatusAbout from './status_about';
@@ -15,8 +15,6 @@ import selectionConstants from '../constants/selection_constants';
 require('../../css/status.scss');
 
 function Status(props) {
-  const runCompleted = props.app.run.status === statusConstants.COMPLETED;
-
   let selection;
   if (!props.hideContent) {
     if (!props.app.fetching && !props.app.fetchingError &&
@@ -36,7 +34,7 @@ function Status(props) {
             <StatusEnterEmail
               email={outputPipeDatas.size ? outputPipeDatas.get(0).value : ''}
               emailError={props.app.run.emailError}
-              runCompleted={runCompleted}
+              runCompleted={props.runCompleted}
               submitEmail={props.submitEmail}
             />
           );
@@ -52,7 +50,7 @@ function Status(props) {
               inputString={props.app.run.inputString}
               inputStringError={props.app.run.inputStringError}
               onSelectInputFile={props.onSelectInputFile}
-              runCompleted={runCompleted}
+              runCompleted={props.runCompleted}
               submitInputString={props.submitInputString}
             />
           );
@@ -65,7 +63,6 @@ function Status(props) {
               clickRun={props.clickRun}
               emailError={props.app.run.emailError}
               inputPipeDatas={inputPipeDatas}
-              runCompleted={runCompleted}
               submitEmail={props.submitEmail}
               widget={widget}
             />
@@ -79,7 +76,7 @@ function Status(props) {
             <StatusLigandSelection
               changeLigandSelection={props.changeLigandSelection}
               ligandNames={pipeUtils.getLigandNames(pipeDatas)}
-              runCompleted={runCompleted}
+              runCompleted={props.runCompleted}
               selectedLigand={selectedLigand}
             />
           );
@@ -154,6 +151,7 @@ Status.propTypes = {
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
   app: React.PropTypes.instanceOf(AppRecord).isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
 };
 
 export default Status;

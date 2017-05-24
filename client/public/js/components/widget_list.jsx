@@ -1,18 +1,15 @@
+import { List as IList } from 'immutable';
 import React from 'react';
 import Button from './button';
 import SelectionRecord from '../records/selection_record';
 import AppRecord from '../records/app_record';
 import WidgetListButton from './widget_list_button';
 import selectionConstants from '../constants/selection_constants';
-import widgetUtils from '../utils/widget_utils';
 
 require('../../css/widget_list.scss');
 
 function WidgetList(props) {
   const aboutSelected = props.selection.type === selectionConstants.ABOUT;
-  const widgetStatuses = widgetUtils.getStatuses(
-    props.app.widgets, props.app.run.pipeDatasByWidget,
-  );
 
   return (
     <div className="widget-list">
@@ -26,7 +23,7 @@ function WidgetList(props) {
                 onClick={props.clickWidget}
                 primaryText={widget.title}
                 selected={props.selection.widgetIndex === index}
-                status={widgetStatuses.get(index)}
+                status={props.widgetStatuses.get(index)}
                 index={index}
                 totalNumber={props.app.widgets.size}
               />
@@ -51,6 +48,7 @@ WidgetList.propTypes = {
   clickWidget: React.PropTypes.func.isRequired,
   app: React.PropTypes.instanceOf(AppRecord).isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
+  widgetStatuses: React.PropTypes.instanceOf(IList).isRequired,
 };
 
 export default WidgetList;
