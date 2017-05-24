@@ -1,9 +1,10 @@
-import { List as IList, Record } from 'immutable';
+import { List as IList, Map as IMap, Record } from 'immutable';
 import { statusConstants } from 'molecular-design-applications-shared';
 
 const WidgetRecord = new Record({
   id: '',
   title: '',
+  config: new IMap(),
   inputPipes: new IList(),
   outputPipes: new IList(),
   // TODO this status should be statusConstants.IDLE

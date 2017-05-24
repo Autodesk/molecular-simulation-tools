@@ -1,6 +1,6 @@
 {
   "name": "molecular-design-applications-shared",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Modules shared between front and back ends",
   "main": "dist/bundle.js",
   "scripts": {

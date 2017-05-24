@@ -14,6 +14,7 @@ import {
   submitEmail,
   submitInputString,
   selectInputFile,
+  updatePipeData,
 } from '../actions';
 
 function mapStateToProps(state, ownProps) {
@@ -38,11 +39,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(appId, runId, email, pipeDatasByWidget, inputString) {
-      return (widget) => {
-        dispatch(clickRun(
-          appId, widget, runId, email, pipeDatasByWidget, inputString,
-        ));
+    clickRun(runId, email) {
+      return (widget, pipeDatasByWidget) => {
+        dispatch(clickRun(widget, runId, email, pipeDatasByWidget));
       };
     },
     clickWidget(widgetIndex) {
@@ -68,9 +67,9 @@ function mapDispatchToProps(dispatch) {
         dispatch(selectInputFile(file, appId, runId, pipeDatasByWidget));
       };
     },
-    submitInputString(appId, runId, pipeDatasByWidget) {
-      return (input) => {
-        dispatch(submitInputString(input, appId, runId, pipeDatasByWidget));
+    submitInputString(runId, pipeDatasByWidget) {
+      return (widget, input) => {
+        dispatch(submitInputString(input, widget, runId, pipeDatasByWidget));
       };
     },
     submitEmail(appId, runId, pipeDatasByWidget) {
@@ -83,17 +82,19 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickCancel(runId));
       };
     },
+    updatePipeData(runId) {
+      return (pipeDatasByWidget) => {
+        dispatch(updatePipeData(runId, pipeDatasByWidget));
+      };
+    },
   };
 }
 
 function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
-      stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.email,
-      stateProps.app.run.pipeDatasByWidget,
-      stateProps.app.run.inputString,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(
@@ -102,7 +103,6 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.run.pipeDatasByWidget,
     ),
     submitInputString: dispatchProps.submitInputString(
-      stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
     ),
@@ -114,6 +114,9 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
+    ),
+    updatePipeData: dispatchProps.updatePipeData(
+      stateProps.app.run.id,
     ),
   });
 }

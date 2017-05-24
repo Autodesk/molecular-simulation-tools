@@ -1,3 +1,4 @@
+import { List as IList } from 'immutable';
 import apiUtils from './api_utils';
 import pipeUtils from './pipe_utils';
 
@@ -24,8 +25,8 @@ const appUtils = {
    * @param {String} [extension]
    * @returns {Array}
    */
-  processInput: async function processInput(appId, inputString, extension) {
-    let inputPipeDatas = await apiUtils.processInput(appId, inputString, extension);
+  processInput: async function processInput(widget, inputString, extension) {
+    let inputPipeDatas = await apiUtils.processInput(widget, inputString, extension);
 
     // Fetch any json files
     inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
@@ -45,31 +46,30 @@ const appUtils = {
   },
 
   /**
-   * Fetch the json for any of the given pipeDatas with a json url.
-   * Return new pipeDatas with fetchedValue set for the json.
+   * Convert any datapipe objects of type 'url'
+   * to 'inline'. In other words, download any
+   * data references.
    * @param pipeDatas {IList of PipeDataRecords}
    * @returns {Promise that resolves with IList}
    */
   fetchPipeDataJson(pipeDatas) {
-    let newPipeDatas = pipeDatas;
-
     return Promise.all(pipeDatas.map((pipeData) => {
-      if (!pipeData.value.endsWith('.json')) {
-        return Promise.resolve();
+      if (!pipeData.pipeName.endsWith('.json')) {
+        return Promise.resolve(pipeData);
+      } else if (pipeData.type !== 'url') {
+        // The value already exists, don't need to fetch
+        return Promise.resolve(pipeData);
       }
       return apiUtils.getPipeDataJson(pipeData.value)
         .then((results) => {
-          // Set newPipeDatas to a new list that contains the fetched results data
-          const pipeDataIndex = newPipeDatas.findIndex(pipeDataI =>
-            pipeDataI === pipeData,
-          );
-          newPipeDatas = newPipeDatas.set(
-            pipeDataIndex, pipeData.set('fetchedValue', results),
-          );
+          // Create a new pipeData record
+          let pipeDataNew = pipeData.set('value', results);
+          pipeDataNew = pipeDataNew.set('fetchedValue', results);
+          pipeDataNew = pipeDataNew.set('type', 'inline');
+          return pipeDataNew;
         });
     }))
-      // Resolve with the new list of pipeDatas
-      .then(() => newPipeDatas);
+    .then(pipeDataArray => new IList(pipeDataArray));
   },
 
   /**

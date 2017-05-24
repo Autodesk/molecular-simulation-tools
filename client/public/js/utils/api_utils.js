@@ -6,7 +6,6 @@ import PipeRecord from '../records/pipe_record';
 import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
 import WidgetRecord from '../records/widget_record';
-import pipeUtils from './pipe_utils';
 
 const API_URL = process.env.API_URL || '';
 
@@ -115,25 +114,6 @@ const apiUtils = {
       });
   },
 
-  /**
-   * Start a run
-   * @param {String} appId
-   * @param {String} email
-   * @param {IList} inputs
-   * @param {String} selectedLigand
-   * @param {String} [inputString]
-   * @returns {Promise}
-   */
-  run(appId, email, inputPipeDatas, inputString) {
-    return axios.post(`${API_URL}/v1/run`, {
-      appId,
-      email,
-      inputs: pipeUtils.formatInputPipeDatasForServer(inputPipeDatas),
-      inputString,
-    })
-      .then(res => res.data.runId);
-  },
-
   cancelRun(runId) {
     return axios.post(`${API_URL}/v1/run/cancel`, {
       runId,
@@ -142,12 +122,14 @@ const apiUtils = {
 
   /**
    * Process the input given by the user and return processed input
-   * @param appId {String}
+   * @param widget {Object} Widget object
    * @param input {String} PDB, IUPAC, InChi, SMILES
    * @param extension {String} Optional
    * @returns {Promise}
    */
-  processInput(appId, input, extension) {
+  processInput(widget, input, extension) {
+    console.log(` processInput widget=${widget} extension=${extension}`);
+
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -172,27 +154,43 @@ const apiUtils = {
       nameExtension = 'json';
     }
 
-    const data = {
-      inputs: [
-        {
-          name: `input.${nameExtension}`,
-          type: 'inline',
-          value,
-        },
-      ],
+    const jobData = JSON.parse(JSON.stringify(widget.config));
+    jobData.inputs = {};
+    jobData.inputs[`input.${nameExtension}`] = { value };
+    jobData.parameters = {
+      maxDuration: 600,
+      cpus: 1,
     };
-    return axios.post(`${API_URL}/v1/structure/executeApp${appId}Step0`, data)
+    jobData.inputsPath = '/inputs';
+
+    for (let i = 0; i < jobData.command.length; i += 1) {
+      if (jobData.command[i].indexOf('input.pdb')) {
+        jobData.command[i] = jobData.command[i].replace('input.pdb', `input.${nameExtension}`);
+      }
+    }
+
+    return axios.post(`${API_URL}/v1/ccc/run/turbo`, jobData)
       .then((res) => {
-        if (!res.data.success) {
+        console.log(res);
+        if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
           throw error;
         }
 
-        return new IList(res.data.outputs.map(output =>
-          new PipeDataRecord(Object.assign({}, output, {
-            pipeName: output.name,
-            widgetId: widgetsConstants.LOAD,
+        if (res.data.exitCode !== 0) {
+          const error = new Error('Failed to process this input, please try again.');
+          error.result = res.data;
+          throw error;
+        }
+
+        console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
+        return new IList(Object.keys(res.data.outputs).map(outputKey =>
+          new PipeDataRecord(Object.assign({}, {
+            pipeName: outputKey,
+            widgetId: widget.id,
+            type: 'inline',
+            value: res.data.outputs[outputKey],
           })),
         ));
       });
@@ -251,6 +249,48 @@ const apiUtils = {
       `${API_URL}/v1/session/outputs/${runId}`,
       pipeDatasByWidgetServer.toJS(),
     );
+  },
+
+  /**
+   * Executes a ccc turbo job on the server
+   * See README.md ##### POST /ccc/runturbo
+   * @param  {[type]} cccTurboJobConfig [See README.md]
+   * @param  {[type]} inputMap          [See README.md]
+   * @return {[type]}                   [See README.md]
+   */
+  runCCCTurbo(cccTurboJobConfig, inputMap) {
+    const blob = cccTurboJobConfig;
+    blob.inputs = inputMap;
+    axios.post(`${API_URL}/v1/ccc/run/turbo`, blob);
+  },
+
+  /**
+   * Executes a ccc job on the server.
+   * The result are meant to come back via the websocket.
+   * See README.md ##### POST /ccc/runturbo
+   * @param  {[type]} cccTurboJobConfig [See README.md]
+   * @param  {[type]} inputMap          [See README.md]
+   * @return {[type]}                   [See README.md]
+   */
+  runCCC(runId, widgetId, cccJobConfig, inputMap) {
+    const blob = cccJobConfig;
+    blob.inputs = {};
+    inputMap.forEach((inputBlob) => {
+      if (inputBlob) {
+        blob.inputs[inputBlob.pipeName] = {
+          type: inputBlob.type,
+          value: inputBlob.value,
+        };
+      }
+    });
+
+    return axios.request({
+      method: 'post',
+      url: `${API_URL}/v1/ccc/run/${runId}/${widgetId}`,
+      data: blob,
+      timeout: 50000,
+      maxContentLength: 200000,
+    });
   },
 };
 

@@ -38,6 +38,7 @@ let db = new Sequelize(config.database, config.username, config.password, {
   host: config.host,
   port: config.port,
   dialect: 'postgres',
+  // logging: false,
 
   pool: {
     max: 5,
