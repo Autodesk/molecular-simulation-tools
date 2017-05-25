@@ -91,14 +91,20 @@ function app(state = initialState, action) {
       });
     }
 
-    case actionConstants.PIPE_DATA_UPDATE: {
-      // TODO: something like this, update the server, then this client
-      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);
+    case actionConstants.WIDGET_PIPE_DATA_UPDATE: {
       // TODO: also handle errors here?
       // This should deprecate actionConstants.RUN_SUBMITTED when complete
       return state.merge({
         fetching: false,
-        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
+        run: state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData),
+      });
+    }
+
+    case actionConstants.PIPE_DATA_UPDATE: {
+      console.log('PIPE_DATA_UPDATE', action);
+      return state.merge({
+        fetching: false,
+        run: state.run.set('pipeDatasByWidget', action.pipeData),
       });
     }
 
@@ -143,6 +149,7 @@ function app(state = initialState, action) {
     }
 
     case actionConstants.PROCESSED_INPUT_STRING:
+      console.log(`PROCESSED_INPUT_STRING ${action.updatedPipeDatasByWidget}`);
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,

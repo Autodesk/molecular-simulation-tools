@@ -34,6 +34,19 @@ router.post('/outputs/:sessionId', (req, res, next) => {
 });
 
 /**
+ * Update a single widget outputs
+ */
+router.post('/outputs/:sessionId/:widgetId', (req, res, next) => {
+  const sessionId = req.params.sessionId;
+  const widgetId = req.params.widgetId;
+  assert(sessionId, 'Missing sessionId in POST /outputs/:sessionId/:widgetId');
+  assert(widgetId, 'Missing widgetId in POST /outputs/:sessionId/:widgetId');
+  config.session.setWidgetOutputs(sessionId, widgetId, req.body)
+    .then(result => res.json(result))
+    .catch(next);
+});
+
+/**
  * Delete widget outputs
  */
 router.delete('/outputs/:appId', (req, res, next) => {

@@ -242,12 +242,19 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         );
       });
 
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
-
+      console.log('inputPipeDatas', inputPipeDatas);
       dispatch({
-        type: actionConstants.PROCESSED_INPUT_STRING,
-        updatedPipeDatasByWidget,
+        type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
+        widgetId: widget.id,
+        widgetPipeData: inputPipeDatas,
       });
+
+      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);  eslint no-unused-expressions: 'off', max-len: 'off'
+
+      // dispatch({
+      //   type: actionConstants.PROCESSED_INPUT_STRING,
+      //   updatedPipeDatasByWidget,
+      // });
     } catch (err) {
       console.error(err);
       dispatch({
@@ -416,10 +423,21 @@ export function runCCC(runId, widget, inputMap) {
   };
 }
 
-export function updatePipeData(runId, pipeDatasByWidget) {
+export function updateWidgetPipeData(runId, widgetId, widgetPipeData) {
+  // TODO: something like this, update the server, then this client
+  apiUtils.updateSessionWidget(runId, widgetId, widgetPipeData);
+  return {
+    type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
+    runId,
+    widgetId,
+    widgetPipeData,
+  };
+}
+
+export function updatePipeData(runId, pipeData) {
   return {
     type: actionConstants.PIPE_DATA_UPDATE,
     runId,
-    pipeDatasByWidget,
+    pipeData,
   };
 }

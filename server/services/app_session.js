@@ -105,6 +105,34 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
 };
 
 // See README.md
+AppSession.prototype.setWidgetOutputs = function setOutputs(sessionId, widgetId, widgetHash) {
+  assert(sessionId, 'Missing sessionId in AppSession setWidgetOutputs');
+  assert(widgetId, 'Missing widgetId in AppSession setWidgetOutputs');
+  return Session.findById(sessionId)
+    .then((session) => {
+      assert(session, `Cannot find Session with id=${sessionId}`);
+      const promises = [];
+      if (widgetHash) {
+        Object.keys(widgetHash).forEach((outputId) => {
+          const fileBlob = widgetHash[outputId];
+          const widgetBlob = {
+            widget: widgetId,
+            pipe: outputId,
+            type: fileBlob.type,
+            value: fileBlob.value,
+          };
+          const widgetPromise = WidgetValue.create(widgetBlob)
+            .then(widgetValue => session.addWidgetvalue(widgetValue));
+          promises.push(widgetPromise);
+        });
+      }
+      return Promise.all(promises)
+        .then(() => this.notifySessionUpdated(sessionId))
+        .then(() => this.getState(sessionId));
+    });
+};
+
+// See README.md
 AppSession.prototype.deleteOutputs = function deleteOutputs(sessionId, widgetIds) {
   log.debug(`AppSession.deleteOutputs sessionId=${sessionId} widgetIds=${JSON.stringify(widgetIds)}`);
   return this.ready

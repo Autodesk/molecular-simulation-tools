@@ -26,6 +26,7 @@ const appUtils = {
    * @returns {Array}
    */
   processInput: async function processInput(widget, inputString, extension) {
+    console.log('processInput');
     let inputPipeDatas = await apiUtils.processInput(widget, inputString, extension);
 
     // Fetch any json files

@@ -14,10 +14,12 @@ import {
   submitEmail,
   submitInputString,
   selectInputFile,
+  updateWidgetPipeData,
   updatePipeData,
 } from '../actions';
 
 function mapStateToProps(state, ownProps) {
+  console.log('mapStateToProps', state);
   return {
     app: state.app,
     appId: ownProps.params.appId,
@@ -82,9 +84,14 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickCancel(runId));
       };
     },
+    updateWidgetPipeData(runId) {
+      return (widgetId, pipeDatasByWidget) => {
+        dispatch(updateWidgetPipeData(runId, widgetId, pipeDatasByWidget));
+      };
+    },
     updatePipeData(runId) {
-      return (pipeDatasByWidget) => {
-        dispatch(updatePipeData(runId, pipeDatasByWidget));
+      return (pipeData) => {
+        dispatch(updatePipeData(runId, pipeData));
       };
     },
   };
@@ -114,6 +121,9 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
+    ),
+    updateWidgetPipeData: dispatchProps.updateWidgetPipeData(
+      stateProps.app.run.id,
     ),
     updatePipeData: dispatchProps.updatePipeData(
       stateProps.app.run.id,

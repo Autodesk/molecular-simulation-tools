@@ -132,7 +132,7 @@ const apiUtils = {
    * @returns {Promise}
    */
   processInput(widget, input, extension) {
-    console.log(` processInput widget=${widget} extension=${extension}`);
+    // console.log(` processInput widget=${widget} extension=${extension}`);
 
     /*
      * For PDB, a sent input looks like:
@@ -175,7 +175,7 @@ const apiUtils = {
 
     return axios.post(`${API_URL}/v1/ccc/run/turbo`, jobData)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
@@ -188,7 +188,7 @@ const apiUtils = {
           throw error;
         }
 
-        console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
+        // console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
         return new IList(Object.keys(res.data.outputs).map(outputKey =>
           new PipeDataRecord(Object.assign({}, {
             pipeName: outputKey,
@@ -252,6 +252,17 @@ const apiUtils = {
     return axios.post(
       `${API_URL}/v1/session/outputs/${runId}`,
       pipeDatasByWidgetServer.toJS(),
+    );
+  },
+
+  updateSessionWidget(runId, widgetId, widgetPipeDatas) {
+    let pipeDatasByName = new IMap();
+    widgetPipeDatas.forEach((pipeData) => {
+      pipeDatasByName = pipeDatasByName.set(pipeData.pipeName, pipeData);
+    });
+    return axios.post(
+      `${API_URL}/v1/session/outputs/${runId}/${widgetId}`,
+      pipeDatasByName.toJS(),
     );
   },
 

@@ -20,6 +20,7 @@ const actionConstants = keyMirror({
   PROCESSED_INPUT_STRING: null,
   RUN_SUBMITTED: null,
   PIPE_DATA_UPDATE: null,
+  WIDGET_PIPE_DATA_UPDATE: null,
   START_SESSION: null,
   SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
