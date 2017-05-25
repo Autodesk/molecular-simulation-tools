@@ -135,12 +135,12 @@ describe('pipeUtils', () => {
       });
     });
 
-    describe('when prep.json with no fetchedValue', () => {
+    describe('when prep.json with no value', () => {
       beforeEach(() => {
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
           pipeName: 'prep.json',
-          type: 'url',
-          value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
+          type: 'inline',
+          value: '',
         }));
       });
 
@@ -151,13 +151,12 @@ describe('pipeUtils', () => {
 
     describe('when prep.json with success false', () => {
       beforeEach(() => {
+        const fetchedValue = { success: false };
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
           pipeName: 'prep.json',
-          type: 'url',
-          value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
-          fetchedValue: {
-            success: false,
-          },
+          type: 'inline',
+          value: JSON.stringify(fetchedValue),
+          fetchedValue,
         }));
       });
 
@@ -168,13 +167,12 @@ describe('pipeUtils', () => {
 
     describe('when prep.json with success true', () => {
       beforeEach(() => {
+        const fetchedValue = { success: true };
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
           pipeName: 'prep.json',
-          type: 'url',
-          value: 'http://localhost:9000/r17IbGbKg/outputs/prep.json',
-          fetchedValue: {
-            success: true,
-          },
+          type: 'inline',
+          value: JSON.stringify(fetchedValue),
+          fetchedValue,
         }));
       });
 
@@ -236,13 +234,15 @@ describe('pipeUtils', () => {
     let selectedLigandPipeData;
     beforeEach(() => {
       selectedLigand = 'ARQ401';
-      selectedLigandPipeData= new PipeDataRecord({
-        pipeName: 'prep.json',
-        fetchedValue: {
-          ligands: {
-            ARQ401: [1, 2, 3],
-          },
+      const fetchedValue = {
+        ligands: {
+          ARQ401: [1, 2, 3],
         },
+      };
+      selectedLigandPipeData = new PipeDataRecord({
+        pipeName: 'prep.json',
+        value: JSON.stringify(fetchedValue),
+        fetchedValue,
       });
     });
 
@@ -285,19 +285,19 @@ describe('pipeUtils', () => {
     let inputPipeDatas;
     beforeEach(() => {
       ligand = 'ARQ401';
+      const fetchedValue = {
+        ligands: {
+          ARQ401: [1, 2, 3],
+        },
+        mv_ligand_strings: {
+          ARQ401: ['1.A.A-401'],
+        },
+      };
       inputPipeDatas = new IList([
         new PipeDataRecord({
           pipeName: 'prep.json',
-          value: 'http://example.com/prep.json',
-          type: 'url',
-          fetchedValue: {
-            ligands: {
-              ARQ401: [1, 2, 3],
-            },
-            mv_ligand_strings: {
-              ARQ401: ['1.A.A-401'],
-            },
-          },
+          fetchedValue,
+          value: JSON.stringify(fetchedValue),
         }),
       ]);
     });
@@ -320,8 +320,8 @@ describe('pipeUtils', () => {
         inputPipeDatas = inputPipeDatas.push(new PipeDataRecord({
           pipeName: 'selection.json',
           type: 'inline',
-          fetchedValue,
           value: JSON.stringify(fetchedValue),
+          fetchedValue,
         }));
       });
 
