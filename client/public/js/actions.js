@@ -283,6 +283,7 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
         type: actionConstants.SUBMIT_EMAIL,
         error: 'Invalid email',
       });
+      return;
     }
 
     const updatedPipeDatasByWidget = pipeUtils.set(
