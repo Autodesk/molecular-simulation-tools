@@ -301,16 +301,15 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
       updatedPipeDatasByWidget,
     });
 
-    if (runId) {
-      // TODO update email in session
-      return;
-    }
-
-    let createdRunId;
+    let newRunId;
     try {
-      createdRunId = await apiUtils.startSession(email, appId);
+      if (runId) {
+        newRunId = runId;
+      } else {
+        newRunId = await apiUtils.startSession(email, appId);
+      }
 
-      await apiUtils.updateSession(createdRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+      await apiUtils.updateSession(newRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
     } catch (error) {
       console.error(error);
       dispatch({
@@ -322,10 +321,12 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
 
     dispatch({
       type: actionConstants.START_SESSION,
-      runId: createdRunId,
+      runId: newRunId,
     });
 
-    browserHistory.push(`/app/${appId}/${createdRunId}`);
+    if (!runId) {
+      browserHistory.push(`/app/${appId}/${newRunId}`);
+    }
   };
 }
 
