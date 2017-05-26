@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList, Map as IMap } from 'immutable';
-import { statusConstants, jsonrpcConstants } from 'molecular-design-applications-shared';
+import { statusConstants, jsonrpcConstants, widgetsConstants } from 'molecular-design-applications-shared';// eslint-disable-line max-len
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
@@ -103,7 +103,7 @@ class App extends React.Component {
         console.log('Websocket messsage', jsonrpc);
         // See README.md
         let sessionUpdate = null;
-        let updatedPipeDatasByWidget = null;
+        let updatedWidgets = null;
         let widgetPipeDataList = null;
         switch (jsonrpc.method) {
           case jsonrpcConstants.SESSION_UPDATE:
@@ -137,27 +137,36 @@ class App extends React.Component {
             if (this.props.runId !== sessionUpdate.session) {
               throw new Error(`runId (${this.props.runId}) !== session (${sessionUpdate.session})`);
             }
-            updatedPipeDatasByWidget = new IMap();
-            Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
-              const widgetBlob = sessionUpdate.widgets[widgetId];
-              widgetPipeDataList = new IList();
-              updatedPipeDatasByWidget = updatedPipeDatasByWidget.set(widgetId, widgetPipeDataList);
-              Object.keys(widgetBlob.out).forEach((outPipeName) => {
-                const pipeBlob = widgetBlob.out[outPipeName];
-                const pipeDataRecord = new PipeDataRecord({
-                  pipeName: outPipeName,
-                  type: pipeBlob.type,
-                  value: pipeBlob.value,
-                  widgetId,
+
+            // Only update the session data if there's an email
+            if (sessionUpdate.session
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL]
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL].out
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL].out.email
+            ) {
+              updatedWidgets = new IMap();
+              Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
+                const widgetBlob = sessionUpdate.widgets[widgetId];
+                widgetPipeDataList = new IList();
+                updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
+                Object.keys(widgetBlob.out).forEach((outPipeName) => {
+                  const pipeBlob = widgetBlob.out[outPipeName];
+                  const pipeDataRecord = new PipeDataRecord({
+                    pipeName: outPipeName,
+                    type: pipeBlob.type,
+                    value: pipeBlob.value,
+                    widgetId,
+                  });
+                  widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
                 });
-                widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
               });
-            });
 
-            // console.log('updatedPipeDatasByWidget', updatedPipeDatasByWidget);
+              console.log('updatedWidgets', updatedWidgets);
 
-            // this.props.updatePipeData(updatedPipeDatasByWidget);
-
+              this.props.updatePipeData(updatedWidgets);
+            } else {
+              console.log('Not updating session because no email in data');
+            }
             break;
           default:
             console.warn({ message: 'Unhandled websocket message', data: event.data });
@@ -193,7 +202,7 @@ class App extends React.Component {
     let inputPipeDatas = new IList();
     let outputPipeDatas = new IList();
     // console.log('activeWidget', activeWidget);
-    console.log('this.props.app.run.pipeDatasByWidget', this.props.app.run.pipeDatasByWidget);
+    // console.log('this.props.app.run.pipeDatasByWidget', this.props.app.run.pipeDatasByWidget);
     if (activeWidget) {
       inputPipeDatas = pipeUtils.getPipeDatas(
         activeWidget.inputPipes, this.props.app.run.pipeDatasByWidget,
@@ -238,6 +247,7 @@ class App extends React.Component {
           submitEmail={this.props.submitEmail}
           app={this.props.app}
           runCompleted={runCompleted}
+          updateWidgetPipeData={this.props.updateWidgetPipeData}
         />
         <View
           colorized={this.props.colorized}
@@ -282,6 +292,7 @@ App.propTypes = {
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   updatePipeData: React.PropTypes.func.isRequired,
+  updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default App;

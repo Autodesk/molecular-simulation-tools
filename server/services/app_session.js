@@ -156,28 +156,36 @@ AppSession.prototype.getState = function getState(sessionId) {
   assert(sessionId, 'AppSession.getState: missing sessionId');
   log.debug(`AppSession.getState sessionId=${sessionId}`);
   return this.ready
-    .then(() => Session.findById(sessionId))
-    .then(session => session.getWidgetvalues())
-    .then((widgetValues) => {
-      const widgetStates = {};
-      widgetValues.forEach((widget) => {
-        if (!widgetStates[widget.widget]) {
-          widgetStates[widget.widget] = {};
-        }
-        let rawValue = widget.value;
-        if (rawValue.toString) {
-          rawValue = rawValue.toString();
-        }
-        const value = { type: widget.type, value: rawValue };
-        const inOut = widget.output ? 'out' : 'in';
-        if (!widgetStates[widget.widget][inOut]) {
-          widgetStates[widget.widget][inOut] = {};
-        }
-        widgetStates[widget.widget][inOut][widget.pipe] = value;
-      });
+    .then(() =>
+      Session.findById(sessionId)
+        .then(session => session.getWidgetvalues())
+        .then((widgetValues) => {
+          const widgetStates = {};
+          widgetValues.forEach((widget) => {
+            if (!widgetStates[widget.widget]) {
+              widgetStates[widget.widget] = {};
+            }
+            let rawValue = widget.value;
+            if (rawValue.toString) {
+              rawValue = rawValue.toString();
+            }
+            const value = { type: widget.type, value: rawValue };
+            const inOut = widget.output ? 'out' : 'in';
+            if (!widgetStates[widget.widget][inOut]) {
+              widgetStates[widget.widget][inOut] = {};
+            }
+            widgetStates[widget.widget][inOut][widget.pipe] = value;
+          });
+          return {
+            session: sessionId,
+            widgets: widgetStates
+          };
+        })
+    )
+    .catch((err) => {
       return {
         session: sessionId,
-        widgets: widgetStates
+        error: err,
       };
     });
 };

@@ -53,6 +53,7 @@ function Status(props) {
               onSelectInputFile={props.onSelectInputFile}
               runCompleted={props.runCompleted}
               submitInputString={props.submitInputString}
+              updateWidgetPipeData={props.updateWidgetPipeData}
             />
           );
           break;
@@ -67,6 +68,7 @@ function Status(props) {
               inputPipeDatas={inputPipeDatas}
               submitEmail={props.submitEmail}
               widget={widget}
+              updateWidgetPipeData={props.updateWidgetPipeData}
             />
           );
           break;
@@ -156,6 +158,7 @@ Status.propTypes = {
   submitEmail: React.PropTypes.func.isRequired,
   app: React.PropTypes.instanceOf(AppRecord).isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
+  updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default Status;

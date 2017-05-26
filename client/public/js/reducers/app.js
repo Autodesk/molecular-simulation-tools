@@ -7,6 +7,7 @@ import pipeUtils from '../utils/pipe_utils';
 const initialState = new AppRecord();
 
 function app(state = initialState, action) {
+  console.log(`ACTION: ${action.type}\n${JSON.stringify(action)}`);
   switch (action.type) {
     case actionConstants.INITIALIZE_APP: {
       const appsDifferent = action.appId !== state.id;
@@ -94,14 +95,18 @@ function app(state = initialState, action) {
     case actionConstants.WIDGET_PIPE_DATA_UPDATE: {
       // TODO: also handle errors here?
       // This should deprecate actionConstants.RUN_SUBMITTED when complete
+      console.assert(action.widgetId, 'Missing action.widgetId');
+      console.assert(action.widgetPipeData, 'Missing action.widgetPipeData');
+      const newPipeData = state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData);
       return state.merge({
         fetching: false,
-        run: state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData),
+        run: state.run.set('pipeDatasByWidget', newPipeData),
       });
     }
 
     case actionConstants.PIPE_DATA_UPDATE: {
       console.log('PIPE_DATA_UPDATE', action);
+      console.assert(action.pipeData, 'Missing action.pipeData');
       return state.merge({
         fetching: false,
         run: state.run.set('pipeDatasByWidget', action.pipeData),

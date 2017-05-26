@@ -175,7 +175,7 @@ const apiUtils = {
 
     return axios.post(`${API_URL}/v1/ccc/run/turbo`, jobData)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;

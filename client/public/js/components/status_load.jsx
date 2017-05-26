@@ -46,7 +46,10 @@ class StatusLoad extends React.Component {
     e.preventDefault();
 
     if (this.state.inputString) {
-      this.props.submitInputString(this.props.widget, this.state.inputString);
+      const widget = this.props.widget;
+      const inputString = this.state.inputString;
+      const updateWidgetPipeData = this.props.updateWidgetPipeData;
+      this.props.submitInputString(widget, inputString, updateWidgetPipeData);
     }
   }
 
@@ -149,6 +152,7 @@ StatusLoad.propTypes = {
   inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitInputString: React.PropTypes.func.isRequired,
+  updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default StatusLoad;

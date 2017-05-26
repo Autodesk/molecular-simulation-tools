@@ -41,7 +41,7 @@ function StatusRun(props) {
       statusContents = (
         <StatusRunIdle
           email={email}
-          clickRun={() => props.clickRun(props.widget)}
+          clickRun={() => props.clickRun(props.widget, props.inputPipeDatas)}
         />
       );
       break;

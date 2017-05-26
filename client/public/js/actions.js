@@ -120,12 +120,17 @@ export function clickWidget(widgetIndex) {
  * @param {String} [inputString]
  */
 export function clickRun(widget, runId, email, pipeDatasByWidget) {
+  console.log('widget', widget);
+  console.log('runId', runId);
+  console.log('email', email);
+  console.log('pipeDatasByWidget', pipeDatasByWidget);
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
       widgetId: widget.id,
     });
 
+    console.log('pipeDatasByWidget', pipeDatasByWidget);
     const inputPipeDatas = widget.inputPipes.map(inputPipe =>
       pipeUtils.get(pipeDatasByWidget, inputPipe),
     );
@@ -242,19 +247,20 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         );
       });
 
-      console.log('inputPipeDatas', inputPipeDatas);
-      dispatch({
-        type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
-        widgetId: widget.id,
-        widgetPipeData: inputPipeDatas,
-      });
+      module.exports.updateWidgetPipeData(runId, widget.id, inputPipeDatas);
+      // console.log('submitInputString dispatching WIDGET_PIPE_DATA_UPDATE, inputPipeDatas', inputPipeDatas);
+      // dispatch({
+      //   type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
+      //   widgetId: widget.id,
+      //   widgetPipeData: inputPipeDatas,
+      // });
 
       // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);  eslint no-unused-expressions: 'off', max-len: 'off'
 
-      // dispatch({
-      //   type: actionConstants.PROCESSED_INPUT_STRING,
-      //   updatedPipeDatasByWidget,
-      // });
+      dispatch({
+        type: actionConstants.PROCESSED_INPUT_STRING,
+        updatedPipeDatasByWidget,
+      });
     } catch (err) {
       console.error(err);
       dispatch({
