@@ -23,6 +23,7 @@ function Status(props) {
       const inputPipeDatas = pipeUtils.getPipeDatas(
         widget.inputPipes, props.app.run.pipeDatasByWidget,
       );
+      console.log('Status inputPipeDatas', inputPipeDatas.toJS());
       const outputPipeDatas = pipeUtils.getPipeDatas(
         widget.outputPipes, props.app.run.pipeDatasByWidget,
       );
