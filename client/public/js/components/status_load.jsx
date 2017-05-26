@@ -48,13 +48,12 @@ class StatusLoad extends React.Component {
     if (this.state.inputString) {
       const widget = this.props.widget;
       const inputString = this.state.inputString;
-      const updateWidgetPipeData = this.props.updateWidgetPipeData;
-      this.props.submitInputString(widget, inputString, updateWidgetPipeData);
+      this.props.submitInputString(widget, inputString);
     }
   }
 
   onSelectInputFile(e) {
-    this.props.onSelectInputFile(e.target.files[0]);
+    this.props.onSelectInputFile(this.props.widget, e.target.files[0]);
 
     this.setState({
       inputString: '',
@@ -152,7 +151,7 @@ StatusLoad.propTypes = {
   inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitInputString: React.PropTypes.func.isRequired,
-  updateWidgetPipeData: React.PropTypes.func.isRequired,
+  // updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default StatusLoad;

@@ -64,14 +64,14 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onSelectInputFile(appId, runId, pipeDatasByWidget) {
-      return (file) => {
-        dispatch(selectInputFile(file, appId, runId, pipeDatasByWidget));
+    onSelectInputFile(runId, pipeDatasByWidget) {
+      return (widget, file) => {
+        dispatch(selectInputFile(file, widget, runId, pipeDatasByWidget));
       };
     },
     submitInputString(runId, pipeDatasByWidget) {
-      return (widget, input) => {
-        dispatch(submitInputString(input, widget, runId, pipeDatasByWidget));
+      return (widget, inputString) => {
+        dispatch(submitInputString(inputString, widget, runId, pipeDatasByWidget));
       };
     },
     submitEmail(appId, runId, pipeDatasByWidget) {
@@ -106,7 +106,6 @@ function mergeProps(stateProps, dispatchProps) {
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(
-      stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
     ),

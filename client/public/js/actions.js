@@ -157,56 +157,14 @@ export function clickRun(widget, runId, email, inputPipeDatas) {
   };
 }
 
-export function selectInputFile(file, appId, runId, pipeDatasByWidget) {
-  return async function selectInputFileDispatch(dispatch) {
-    dispatch({
-      type: actionConstants.INPUT_FILE,
-      file,
-    });
-
-    const extension = file.name.split('.').pop();
-    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
-      dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        error: 'File has invalid extension.',
-      });
-      return;
-    }
-
-    try {
-      const inputString = await appUtils.readFile(file);
-      let inputPipeDatas = await appUtils.processInput(
-        appId, inputString, extension,
-      );
-
-      // If only one ligand, select it
-      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
-      if (ligands.size === 1) {
-        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
-      }
-
-      let updatedPipeDatasByWidget = pipeDatasByWidget;
-      inputPipeDatas.forEach((inputPipeData) => {
-        updatedPipeDatasByWidget = pipeUtils.set(
-          updatedPipeDatasByWidget,
-          inputPipeData,
-        );
-      });
-
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
-
-      dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        inputPipeDatas,
-      });
-    } catch (err) {
-      console.error(err);
-      dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        error: err ? (err.message || err) : null,
-        inputs: err ? err.inputs : null,
-      });
-    }
+export function updateWidgetPipeData(runId, widgetId, widgetPipeData) {
+  // TODO: something like this, update the server, then this client
+  apiUtils.updateSessionWidget(runId, widgetId, widgetPipeData);
+  return {
+    type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
+    runId,
+    widgetId,
+    widgetPipeData,
   };
 }
 
@@ -248,15 +206,7 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         );
       });
 
-      module.exports.updateWidgetPipeData(runId, widget.id, inputPipeDatas);
-      // console.log('submitInputString dispatching WIDGET_PIPE_DATA_UPDATE, inputPipeDatas', inputPipeDatas);
-      // dispatch({
-      //   type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
-      //   widgetId: widget.id,
-      //   widgetPipeData: inputPipeDatas,
-      // });
-
-      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);  eslint no-unused-expressions: 'off', max-len: 'off'
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); // eslint no-unused-expressions: 'off', max-len: 'off'
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
@@ -268,6 +218,59 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         type: actionConstants.PROCESSED_INPUT_STRING,
         error: err.message || err,
         inputPipeDatas: err ? err.inputPipeDatas : null,
+      });
+    }
+  };
+}
+
+export function selectInputFile(file, widget, runId, pipeDatasByWidget) {
+  return async function selectInputFileDispatch(dispatch) {
+    dispatch({
+      type: actionConstants.INPUT_FILE,
+      file,
+    });
+
+    const extension = file.name.split('.').pop();
+    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: 'File has invalid extension.',
+      });
+      return;
+    }
+
+    try {
+      const inputString = await appUtils.readFile(file);
+      let inputPipeDatas = await appUtils.processInput(
+        widget, inputString, extension,
+      );
+
+      // If only one ligand, select it
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
+      if (ligands.size === 1) {
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
+      }
+
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
+      inputPipeDatas.forEach((inputPipeData) => {
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          inputPipeData,
+        );
+      });
+
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        inputPipeDatas,
+      });
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: err ? (err.message || err) : null,
+        inputs: err ? err.inputs : null,
       });
     }
   };
@@ -427,17 +430,6 @@ export function runCCC(runId, widget, inputMap) {
           error: err,
         });
       });
-  };
-}
-
-export function updateWidgetPipeData(runId, widgetId, widgetPipeData) {
-  // TODO: something like this, update the server, then this client
-  apiUtils.updateSessionWidget(runId, widgetId, widgetPipeData);
-  return {
-    type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
-    runId,
-    widgetId,
-    widgetPipeData,
   };
 }
 
