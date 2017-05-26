@@ -37,14 +37,21 @@ const pipeUtils = {
       pipeDatas, IO_ANIMATION_FRAMES,
     );
 
-    // If we don't have an pipeData to tell which animation frames to use,
+    // If we don't have a pipeData to tell which animation frames to use,
     // just return the first pdb
     if (framesPipeDataIndex === -1) {
-      const pdbPipeDataIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
+      const pdbPipeDataIndex = pipeUtils.getIndexByName(pipeDatas, '.pdb');
       if (pdbPipeDataIndex === -1) {
         return new IList();
       }
-      const pdb = pipeDatas.get(pdbPipeDataIndex).fetchedValue;
+
+      let pdb;
+      const pipeData = pipeDatas.get(pdbPipeDataIndex);
+      if (pipeData.type === 'url') {
+        pdb = pipeData.fetchedValue;
+      } else {
+        pdb = pipeData.value;
+      }
       return pdb ? new IList([pdb]) : new IList();
     }
 
