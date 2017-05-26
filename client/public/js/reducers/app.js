@@ -175,13 +175,6 @@ function app(state = initialState, action) {
       }));
 
     case actionConstants.START_SESSION:
-      if (action.error) {
-        return state.set('run', state.run.merge({
-          emailError: action.error,
-          fetchingData: false,
-          pipeDatasByWidget: action.clearedPipeDatasByWidget,
-        }));
-      }
       return state.set('run', state.run.merge({
         emailError: '',
         fetchingData: false,

@@ -298,32 +298,31 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
       }),
     );
 
-    dispatch({
-      type: actionConstants.SUBMIT_EMAIL,
-      updatedPipeDatasByWidget,
-    });
-
     let newRunId;
     try {
       if (runId) {
         newRunId = runId;
       } else {
         newRunId = await apiUtils.startSession(email, appId);
+        dispatch({
+          type: actionConstants.START_SESSION,
+          runId: newRunId,
+        });
       }
 
       await apiUtils.updateSession(newRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
     } catch (error) {
       console.error(error);
       dispatch({
-        type: actionConstants.START_SESSION,
-        error,
-        clearedPipeDatas: pipeDatasByWidget,
+        type: actionConstants.SUBMIT_EMAIL,
+        error: 'Unable to save your session, please try again',
       });
+      return;
     }
 
     dispatch({
-      type: actionConstants.START_SESSION,
-      runId: newRunId,
+      type: actionConstants.SUBMIT_EMAIL,
+      updatedPipeDatasByWidget,
     });
 
     if (!runId) {
