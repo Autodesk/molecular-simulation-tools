@@ -7,7 +7,6 @@ import pipeUtils from '../utils/pipe_utils';
 const initialState = new AppRecord();
 
 function app(state = initialState, action) {
-  // console.log(`ACTION: ${action.type}\n${JSON.stringify(action)}`);
   switch (action.type) {
     case actionConstants.INITIALIZE_APP: {
       const appsDifferent = action.appId !== state.id;
