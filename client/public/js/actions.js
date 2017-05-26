@@ -192,6 +192,8 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         widget, newInput, extension,
       );
 
+      console.log('!!!!!submitInputString inputPipeDatas', inputPipeDatas);
+
       // If only one ligand, select it
       const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {

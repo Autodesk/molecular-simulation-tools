@@ -1,6 +1,7 @@
 import { List as IList } from 'immutable';
 import apiUtils from './api_utils';
 import pipeUtils from './pipe_utils';
+import { Buffer } from 'buffer/';
 
 const appUtils = {
   /**
@@ -29,14 +30,17 @@ const appUtils = {
     console.log('processInput');
     let inputPipeDatas = await apiUtils.processInput(widget, inputString, extension);
 
+    console.log('processInput done apiUtils.processInput');
     // Fetch any json files
     inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
-
+    console.log('processInput done apiUtils.fetchPipeDataJson');
     // Fetch any pdb files
     inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
 
+    console.log('processInput done apiUtils.fetchPipeDataPdbs');
     // Make sure the json pipeDatas are valid and also indicate a success.
     const inputErrorMessage = pipeUtils.getOutputPipeDatasError(inputPipeDatas);
+    console.log('inputErrorMessage', inputErrorMessage);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
       error.inputPipeDatas = inputPipeDatas;
@@ -57,10 +61,18 @@ const appUtils = {
     return Promise.all(pipeDatas.map((pipeData) => {
       if (!pipeData.pipeName.endsWith('.json')) {
         return Promise.resolve(pipeData);
-      } else if (pipeData.type === 'inline') {
-        return Promise.resolve(
-          pipeData.set('fetchedValue', pipeData.value),
-        );
+      } else if (pipeData.type === 'inline'
+        || pipeData.type === undefined
+        || pipeData.type === '') {
+        let verifiedPipeData = pipeData;
+        if (verifiedPipeData.encoding === 'base64') {
+          verifiedPipeData = verifiedPipeData.set('encoding', 'utf8');
+          const utf8Val = new Buffer(verifiedPipeData.value, 'base64').toString('utf8');
+          verifiedPipeData = verifiedPipeData.set('value', utf8Val);
+          const jsonBlob = JSON.parse(verifiedPipeData.value);
+          verifiedPipeData = verifiedPipeData.set('fetchedValue', jsonBlob);
+        }
+        return Promise.resolve(verifiedPipeData);
       } else if (pipeData.type !== 'url') {
         // The value already exists, don't need to fetch
         return Promise.resolve(pipeData);
@@ -99,6 +111,12 @@ const appUtils = {
           );
           newPipeDatas = newPipeDatas.set(
             pipeDataIndex, pipeData.set('fetchedValue', results),
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('encoding', 'utf8'),
+          );
+          newPipeDatas = newPipeDatas.set(
+            pipeDataIndex, pipeData.set('value', results),
           );
         });
     }))

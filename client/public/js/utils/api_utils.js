@@ -193,15 +193,17 @@ const apiUtils = {
         }
 
         // console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
-        return new IList(res.data.outputs.map(outputBlob =>
-          new PipeDataRecord(Object.assign({}, {
+        const x = new IList(res.data.outputs.map(outputBlob =>
+          new PipeDataRecord({
             pipeName: outputBlob.name,
             widgetId: widget.id,
             type: outputBlob.type || 'inline',
             value: outputBlob.value,
             encoding: outputBlob.encoding,
-          })),
+          }),
         ));
+        console.log('x', x);
+        return x;
       });
   },
 
