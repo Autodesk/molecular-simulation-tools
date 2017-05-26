@@ -276,6 +276,7 @@ const apiUtils = {
   runCCCTurbo(cccTurboJobConfig, inputMap) {
     const blob = cccTurboJobConfig;
     blob.inputs = inputMap;
+
     axios.post(`${API_URL}/v1/ccc/run/turbo`, blob);
   },
 
@@ -288,6 +289,9 @@ const apiUtils = {
    * @return {[type]}                   [See README.md]
    */
   runCCC(runId, widgetId, cccJobConfig, inputMap) {
+    console.log('api_utils.runCCC');
+    console.log('cccJobConfig', cccJobConfig);
+    console.log('inputMap', inputMap);
     const blob = cccJobConfig;
     blob.inputs = {};
     inputMap.forEach((inputBlob) => {
@@ -298,6 +302,9 @@ const apiUtils = {
         };
       }
     });
+
+    console.log('runCCC cccJobConfig', cccJobConfig);
+    console.log('runCCC blob', blob);
 
     return axios.request({
       method: 'post',

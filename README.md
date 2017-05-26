@@ -90,6 +90,27 @@ POST data:
 
 Returns `GET /session/:sessionId`
 
+##### POST /session/outputs/:sessionId/:widgetId
+
+Update an app session outputs for a single widget
+
+POST data:
+
+```
+{
+	"outputPipeId1": {
+		"type": "inline",
+		"value": "the data"
+	},
+	"outputPipeId2": {
+		"type": "url",
+		"value": "http://some.data.url"
+	}
+}
+```
+
+Returns `GET /session/:sessionId`
+
 ##### DELETE /session/outputs/:sessionId
 
 Delete widget outputs

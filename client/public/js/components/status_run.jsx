@@ -14,6 +14,7 @@ function StatusRun(props) {
   );
   const email = emailPipeData ? emailPipeData.value : '';
 
+  console.log('StatusRun props.inputPipeDatas', props.inputPipeDatas.toJS());
   let statusContents;
   switch (props.widget.status) {
     case statusConstants.IDLE:

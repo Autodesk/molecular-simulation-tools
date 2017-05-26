@@ -178,8 +178,11 @@ CCC.prototype.processQueue = function processQueue(job, done) {
 
       ccc.getJobResult(jobId)
         .then((jobResult) => {
+          log.debug(`GOT RESULT BACK FROM jobId=${jobId}`);
+          log.debug(jobResult);
           // Create the widget update blob
           const sessionUpdateBlob = {};
+          const widgetUpdateBlob = {};
           sessionUpdateBlob[widgetId] = {};
           if (jobResult.error) {
             const error = jobResult.error;
@@ -193,9 +196,13 @@ CCC.prototype.processQueue = function processQueue(job, done) {
                 type: 'url',
                 value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
               };
+              widgetUpdateBlob[jobResult.outputs[i]] = {
+                type: 'url',
+                value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
+              };
             }
           }
-          return this.session.setOutputs(sessionId, sessionUpdateBlob)
+          return this.session.setWidgetOutputs(sessionId, widgetId, widgetUpdateBlob)
             .then((state) => {
               done(null, state);
             })

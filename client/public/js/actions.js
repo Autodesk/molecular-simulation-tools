@@ -119,25 +119,26 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(widget, runId, email, pipeDatasByWidget) {
+export function clickRun(widget, runId, email, inputPipeDatas) {
+  console.log('clickRun()');
   console.log('widget', widget);
   console.log('runId', runId);
   console.log('email', email);
-  console.log('pipeDatasByWidget', pipeDatasByWidget);
+  // console.log('inputPipeDatas', inputPipeDatas.toJS());
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
       widgetId: widget.id,
     });
 
-    console.log('pipeDatasByWidget', pipeDatasByWidget);
-    const inputPipeDatas = widget.inputPipes.map(inputPipe =>
-      pipeUtils.get(pipeDatasByWidget, inputPipe),
-    );
+    // console.log('pipeDatasByWidget', pipeDatasByWidget);
+    // const inputPipeDatas = widget.inputPipes.map(inputPipe =>
+    //   pipeUtils.get(pipeDatasByWidget, inputPipe),
+    // );
 
-    console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
-
-    apiUtils.runCCC(runId, widget.id, widget.config, inputPipeDatas)
+    // console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
+    console.log('actions apiUtils.runCCC');
+    apiUtils.runCCC(runId, widget.id, widget.config.toJS(), inputPipeDatas.toJS())
       .then((cccResult) => {
         console.log('cccResult', cccResult);
         // dispatch({

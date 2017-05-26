@@ -29,6 +29,11 @@ function Status(props) {
       );
       const pipeDatas = pipeUtils.flatten(props.app.run.pipeDatasByWidget);
 
+      // TODO
+      // Given the list of widgets and connections and all the pipe data
+      // state, pass into each widget only the inputs it cares about, and
+      // provide a function to update its outputs
+      // At the moment, there's a lot hard coded.
       switch (widget.id) {
         case widgetsConstants.ENTER_EMAIL: {
           selection = (
