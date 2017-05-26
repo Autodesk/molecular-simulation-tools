@@ -114,6 +114,37 @@ CCC.prototype.runTurbo = function runTurbo(jobBlob) {
     });
 };
 
+CCC.prototype.runTurbo2 = function runTurbo2(jobBlob) {
+  return this.ccc
+    .then((ccc) => {
+      const promises = [];
+      const inputs = [];
+      if (jobBlob.inputs) {
+        jobBlob.inputs.forEach((inputBlob) => {
+          if (inputBlob.type === 'url') {
+            promises.push(
+              request(inputBlob.value)
+                .then((result) => {
+                  inputs.push({
+                    name: inputBlob.name,
+                    value: result,
+                    type: 'inline',
+                    encoding: 'utf8',
+                  });
+                }));
+          } else {
+            inputs.push(inputBlob);
+          }
+        });
+      }
+      return Promise.all(promises)
+        .then(() => {
+          jobBlob.inputs = inputs;
+          return ccc.submitTurboJobJsonV2(jobBlob);
+        });
+    });
+};
+
 /**
  * Cloud-compute-cannon job (see README)
  */

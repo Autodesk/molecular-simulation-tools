@@ -36,9 +36,9 @@ function initializeModels(db) {
       widget: { type: Sequelize.STRING, allowNull: false },
       pipe: { type: Sequelize.STRING, allowNull: false },
       type: { type: Sequelize.STRING, allowNull: true },
-      value: { type: Sequelize.BLOB, allowNull: true },
+      value: { type: Sequelize.TEXT, allowNull: true },
       output: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
-      // encoding: { type: Sequelize.STRING, allowNull: true },
+      encoding: { type: Sequelize.STRING, allowNull: true },
     });
   // Adds the foreign key sessionId to WidgetValues
   WidgetValue.belongsTo(Session);
@@ -92,6 +92,7 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
               pipe: outputId,
               type: fileBlob.type,
               value: fileBlob.value,
+              encoding: fileBlob.encoding,
             };
             const widgetPromise = WidgetValue.create(widgetBlob)
               .then(widgetValue => session.addWidgetvalue(widgetValue));
@@ -121,6 +122,7 @@ AppSession.prototype.setWidgetOutputs = function setOutputs(sessionId, widgetId,
             pipe: outputId,
             type: fileBlob.type,
             value: fileBlob.value,
+            encoding: fileBlob.encoding,
           };
           const widgetPromise = WidgetValue.create(widgetBlob)
             .then(widgetValue => session.addWidgetvalue(widgetValue));

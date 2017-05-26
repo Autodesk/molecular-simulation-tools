@@ -59,7 +59,7 @@ const appUtils = {
         return Promise.resolve(pipeData);
       } else if (pipeData.type === 'inline') {
         return Promise.resolve(
-          pipeData.set('fetchedValue', JSON.parse(pipeData.value)),
+          pipeData.set('fetchedValue', pipeData.value),
         );
       } else if (pipeData.type !== 'url') {
         // The value already exists, don't need to fetch
@@ -71,6 +71,7 @@ const appUtils = {
           let pipeDataNew = pipeData.set('value', results);
           pipeDataNew = pipeDataNew.set('fetchedValue', results);
           pipeDataNew = pipeDataNew.set('type', 'inline');
+          pipeDataNew = pipeDataNew.set('encoding', 'utf8');
           return pipeDataNew;
         });
     }))

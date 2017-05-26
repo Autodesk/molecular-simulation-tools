@@ -140,6 +140,7 @@ const apiUtils = {
      *     name: 'input.pdb',
      *     type: 'inline',
      *     value: 'imapdbstring',
+     *     encoding: 'utf8', //Default
      *   },
      * For other formats, sent inputs look like:
      *   {
@@ -159,8 +160,11 @@ const apiUtils = {
     }
 
     const jobData = JSON.parse(JSON.stringify(widget.config));
-    jobData.inputs = {};
-    jobData.inputs[`input.${nameExtension}`] = { value };
+    jobData.inputs = [];
+    jobData.inputs.push({
+      name: `input.${nameExtension}`,
+      value,
+    });
     jobData.parameters = {
       maxDuration: 600,
       cpus: 1,
@@ -173,7 +177,7 @@ const apiUtils = {
       }
     }
 
-    return axios.post(`${API_URL}/v1/ccc/run/turbo`, jobData)
+    return axios.post(`${API_URL}/v1/ccc/run/turbo2`, jobData)
       .then((res) => {
         console.log(res);
         if (res.data.error) {
@@ -189,12 +193,13 @@ const apiUtils = {
         }
 
         // console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
-        return new IList(Object.keys(res.data.outputs).map(outputKey =>
+        return new IList(res.data.outputs.map(outputBlob =>
           new PipeDataRecord(Object.assign({}, {
-            pipeName: outputKey,
+            pipeName: outputBlob.name,
             widgetId: widget.id,
-            type: 'inline',
-            value: res.data.outputs[outputKey],
+            type: outputBlob.type || 'inline',
+            value: outputBlob.value,
+            encoding: outputBlob.encoding,
           })),
         ));
       });
@@ -278,6 +283,13 @@ const apiUtils = {
     blob.inputs = inputMap;
 
     axios.post(`${API_URL}/v1/ccc/run/turbo`, blob);
+  },
+
+  runCCCTurbo2(cccTurboJobConfig, inputMap) {
+    const blob = cccTurboJobConfig;
+    blob.inputs = inputMap;
+
+    axios.post(`${API_URL}/v1/ccc/run/turbo2`, blob);
   },
 
   /**

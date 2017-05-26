@@ -100,6 +100,7 @@ POST data:
 {
 	"outputPipeId1": {
 		"type": "inline",
+		"encoding": "base64",
 		"value": "the data"
 	},
 	"outputPipeId2": {
@@ -138,7 +139,8 @@ Returns the session state
 			"out": {
 				"outputPipe1": {
 					"type": "inline",
-					"value": "actual data string"
+					"value": "actual data string",
+					"encoding": "utf8"
 				},
 				"outputPipe2": {
 					"type": "url",
@@ -159,15 +161,19 @@ POST data (all fields are optional):
 ```
 {
 	"id": "optional custom job id",
-	"inputs": {
-		"input1Key": {
-			"value": "input1ValueString"
+	"inputs": [
+		{
+			"name": "input1Key",
+			"type": "inline",
+			"value": "input1ValueString",
+			"encoding": "base64"
 		},
-		"input2Key": {
+		{
+			"name": "input2Key",
 			"type": "url",
 			"value": "http://some.url.value"
 		}
-	}
+	],
 	"image": "docker.io/busybox:latest",
 	"imagePullOptions": {},
 	"command": ["/bin/sh", "/some/script"],
@@ -187,10 +193,18 @@ Returns:
 ```
 {
   "id": "S1DWbFHTx",
-  "outputs": {
-    "val1": "Some string data",
-    "val2": "0.20731535302965964"
-  },
+  "outputs": [
+  	{
+  		"name": "val1",
+  		"value": "Some string data",
+  		"encoding": "utf8"
+  	},
+  	{
+  		"name": "val2",
+  		"value": "20731535302965964",
+  		"encoding": "base64"
+  	}
+  ],
   "error": null,
   "stdout": [],
   "stderr": [],
