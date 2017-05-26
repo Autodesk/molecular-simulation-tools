@@ -2,16 +2,15 @@ import React from 'react';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import AppRouter from '../../public/js/components/app_router';
+import App from '../../public/js/components/app';
 import SelectionRecord from '../../public/js/records/selection_record';
 import AppRecord from '../../public/js/records/app_record';
 
-describe('AppRouter', () => {
+describe('App', () => {
   let clickAbout;
   let clickRun;
   let runId;
   let selection;
-  let submitPdbId;
   let submitEmail;
   let app;
   let appId;
@@ -22,7 +21,6 @@ describe('AppRouter', () => {
     clickRun = () => {};
     runId = '0';
     selection = new SelectionRecord();
-    submitPdbId = () => {};
     submitEmail = () => {};
     appId = 'imanappid';
     app = new AppRecord({ id: appId });
@@ -36,14 +34,13 @@ describe('AppRouter', () => {
       initializeAppSpy = sinon.spy();
       initializeRunSpy = sinon.spy();
       wrapper = shallow(
-        <AppRouter
+        <App
           clickAbout={clickAbout}
           clickRun={clickRun}
           initializeApp={initializeAppSpy}
           initializeRun={initializeRunSpy}
           runId={runId}
           selection={selection}
-          submitPdbId={submitPdbId}
           submitEmail={submitEmail}
           app={app}
           appId={appId}

@@ -56,6 +56,10 @@ const appUtils = {
     return Promise.all(pipeDatas.map((pipeData) => {
       if (!pipeData.pipeName.endsWith('.json')) {
         return Promise.resolve(pipeData);
+      } else if (pipeData.type === 'inline') {
+        return Promise.resolve(
+          pipeData.set('fetchedValue', JSON.parse(pipeData.value)),
+        );
       } else if (pipeData.type !== 'url') {
         // The value already exists, don't need to fetch
         return Promise.resolve(pipeData);

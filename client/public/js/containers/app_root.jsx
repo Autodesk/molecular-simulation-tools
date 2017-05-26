@@ -39,8 +39,8 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(runId, email) {
-      return (widget, pipeDatasByWidget) => {
+    clickRun(runId, email, pipeDatasByWidget) {
+      return (widget) => {
         dispatch(clickRun(widget, runId, email, pipeDatasByWidget));
       };
     },
@@ -95,6 +95,7 @@ function mergeProps(stateProps, dispatchProps) {
     clickRun: dispatchProps.clickRun(
       stateProps.app.run.id,
       stateProps.app.run.email,
+      stateProps.app.run.pipeDatasByWidget,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(

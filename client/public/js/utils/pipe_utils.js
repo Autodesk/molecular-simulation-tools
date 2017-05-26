@@ -153,7 +153,7 @@ const pipeUtils = {
    */
   getPipeDataWithLigand(pipeDatas, ligandName) {
     return pipeDatas.find((pipeData) => {
-      if (!pipeData.value.endsWith('.json')) {
+      if (!pipeData.pipeName.endsWith('.json')) {
         return false;
       }
       if (!pipeData.fetchedValue || !pipeData.fetchedValue.mv_ligand_strings) {
@@ -271,8 +271,7 @@ const pipeUtils = {
       throw new Error('OutputPipeDatas did not contain a prep.json file');
     }
 
-    let prepFetchedValue = outputPipeDatas.get(prepIndex).value;
-    prepFetchedValue = JSON.parse(prepFetchedValue);
+    const prepFetchedValue = outputPipeDatas.get(prepIndex).fetchedValue;
     if (typeof prepFetchedValue !== 'object') {
       throw new Error('prep.json was not fetched properly.');
     }
