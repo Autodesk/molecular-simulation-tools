@@ -20,9 +20,9 @@ module.exports = {
         command: ['vde', '--preprocess', '/inputs/input.pdb', '--outputdir', '/outputs/'],
       },
       outputs: [
-        { id: 'prep.pdb' },
-        { id: 'prep.json' },
-        { id: 'workflow_state.dill' },
+        { id: 'prep.pdb', encoding: 'utf8' },
+        { id: 'prep.json', encoding: 'utf8' },
+        { id: 'workflow_state.dill', encoding: 'base64' },
       ],
     },
     {

@@ -36,7 +36,7 @@ function initializeModels(db) {
       widget: { type: Sequelize.STRING, allowNull: false },
       pipe: { type: Sequelize.STRING, allowNull: false },
       type: { type: Sequelize.STRING, allowNull: true },
-      value: { type: Sequelize.TEXT, allowNull: true },
+      value: { type: Sequelize.BLOB, allowNull: true },
       output: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
       // encoding: { type: Sequelize.STRING, allowNull: true },
     });
