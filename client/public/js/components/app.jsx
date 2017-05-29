@@ -155,6 +155,7 @@ class App extends React.Component {
                     pipeName: outPipeName,
                     type: pipeBlob.type,
                     value: pipeBlob.value,
+                    encoding: pipeBlob.encoding,
                     widgetId,
                   });
                   widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);

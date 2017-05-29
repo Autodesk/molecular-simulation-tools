@@ -313,6 +313,7 @@ const apiUtils = {
         blob.inputs[inputBlob.pipeName] = {
           type: inputBlob.type,
           value: inputBlob.value,
+          encoding: inputBlob.encoding,
         };
       }
     });

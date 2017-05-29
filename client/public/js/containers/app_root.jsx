@@ -41,9 +41,9 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(runId, email, pipeDatasByWidget) {
+    clickRun(runId, widgets, pipeDatasByWidget) {
       return (widget) => {
-        dispatch(clickRun(widget, runId, email, pipeDatasByWidget));
+        dispatch(clickRun(runId, widgets, widget, pipeDatasByWidget));
       };
     },
     clickWidget(widgetIndex) {
@@ -101,7 +101,7 @@ function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
       stateProps.app.run.id,
-      stateProps.app.run.email,
+      stateProps.app.widgets,
       stateProps.app.run.pipeDatasByWidget,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),

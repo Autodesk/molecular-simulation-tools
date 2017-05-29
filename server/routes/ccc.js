@@ -35,11 +35,13 @@ router.post('/run/:sessionId/:widgetId', (req, res, next) => {
   // Massage mst input type to CCC input type
   const body = req.body;
 
+  console.log('/run/:sessionId/:widgetId body', body);
   body.inputs = Object.keys(req.body.inputs).map((inputName) => {
     return {
       name: inputName,
       type: body.inputs[inputName].type,
-      value: body.inputs[inputName].value
+      value: body.inputs[inputName].value,
+      encoding: body.inputs[inputName].encoding,
     };
   });
 

@@ -8,6 +8,7 @@ const PipeDataRecord = new Record({
   value: '',
   widgetId: '',
   encoding: '',
+  error: null,
 });
 
 export default PipeDataRecord;

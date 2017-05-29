@@ -162,12 +162,14 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     appendStdOut: true,
     appendStdErr: true
   };
+
+  console.log('CCC.run jobBlob', jobBlob);
   const multipartInputs = {};
   jobBlob.inputs.forEach((inputBlob) => {
     if (inputBlob.type === 'url') {
       cccjobv1.inputs.push(inputBlob);
     } else {
-      multipartInputs[inputBlob.name] = inputBlob.value;
+      multipartInputs[inputBlob.name] = new Buffer(inputBlob.value, inputBlob.encoding);
     }
   });
 
