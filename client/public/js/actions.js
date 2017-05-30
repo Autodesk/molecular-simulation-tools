@@ -11,7 +11,7 @@ import widgetUtils from './utils/widget_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
-export function initializeApp(appId) {
+export function initializeApp(appId, runId) {
   return async function initializeAppDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_APP,
@@ -21,6 +21,10 @@ export function initializeApp(appId) {
     let app;
     try {
       app = await apiUtils.getApp(appId);
+
+      if (runId) {
+        app = app.set('run', app.run.set('id', runId));
+      }
 
       if (app.comingSoon) {
         throw new Error('This app is not yet available, please try another.');
@@ -40,6 +44,7 @@ export function initializeApp(appId) {
   };
 }
 
+// TODO should be able to remove this now in favor of initializeApp
 export function initializeRun(appId, runId) {
   return async function initializeRunDispatch(dispatch) {
     dispatch({
