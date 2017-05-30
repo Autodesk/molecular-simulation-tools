@@ -217,4 +217,10 @@ AppSession.prototype.deleteSession = function deleteSession(sessionId) {
     );
 };
 
+AppSession.prototype.getSession = function getSession(sessionId) {
+  log.debug(`AppSession.getSession sessionId=${sessionId}`);
+  return this.ready
+    .then(() => Session.findById(sessionId));
+};
+
 module.exports = AppSession;

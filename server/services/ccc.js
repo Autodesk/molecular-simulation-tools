@@ -5,6 +5,7 @@ const retry = require('bluebird-retry');
 const request = require('request-promise');
 const CCCC = require('cloud-compute-cannon-client');
 const log = require('../utils/log');
+const emailUtils = require('../utils/email_utils');
 
 function CCC(options) {
   assert(options, 'Missing options in CCC constructor');
@@ -209,6 +210,31 @@ CCC.prototype.processQueue = function processQueue(job, done) {
       assert(sessionId, `Missing sessionId in bull job blob=${JSON.stringify(job.data)}`);
       assert(widgetId, `Missing widgetId in bull job blob=${JSON.stringify(job.data)}`);
 
+
+      const doneAndEmail = (err, result) => {
+        console.log('doneAndEmail', { err, result });
+        return this.session.getSession(sessionId)
+          .then((session) => {
+            if (!session) {
+              console.error(`Failed to email for job finished session=${sessionId}, no session found`);
+            }
+
+            log.debug({ f: 'doneAndEmail', sessionId, email: session.email, appId: session.app });
+            emailUtils.send(
+              session.email,
+              'Your App Has Ended',
+              './views/email_ended.ms',
+              {
+                runUrl: `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`,
+              }
+            );
+
+          })
+          .catch((err) =>
+            console.error(`Failed to email for job finished session=${sessionId}`, err))
+          .then(() => done(err, result));
+      };
+
       ccc.getJobResult(jobId)
         .then((jobResult) => {
           log.debug(`GOT RESULT BACK FROM jobId=${jobId}`);
@@ -237,16 +263,16 @@ CCC.prototype.processQueue = function processQueue(job, done) {
           }
           return this.session.setWidgetOutputs(sessionId, widgetId, widgetUpdateBlob)
             .then((state) => {
-              done(null, state);
+              return doneAndEmail(null, state);
             })
             .catch((err) => {
               log.error({ error: err });
-              done(err);
+              return doneAndEmail(err);
             });
         })
         .catch((err) => {
           log.error(err);
-          done(err);
+          doneAndEmail(err);
         });
     });
 };
