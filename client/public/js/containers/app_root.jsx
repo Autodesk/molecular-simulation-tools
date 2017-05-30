@@ -53,7 +53,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(initializeRun(appId, runId));
     },
     initializeApp(appId, runId) {
-      dispatch(initializeApp(appId, runId));
+      return dispatch(initializeApp(appId, runId));
     },
     onClickColorize() {
       dispatch(clickColorize());

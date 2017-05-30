@@ -170,7 +170,7 @@ function app(state = initialState, action) {
       }
       return state.set('run', state.run.merge({
         emailError: '',
-        fetchingData: true,
+        fetchingData: false,
         pipeDatasByWidget: action.updatedPipeDatasByWidget,
       }));
 
