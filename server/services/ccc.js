@@ -182,7 +182,26 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     .then((jobResult) => {
       log.info({ sessionId, widgetId, jobId: jobResult.jobId, message: 'link' });
       this.jobSessionQueue.add({ sessionId, widgetId, jobId: jobResult.jobId });
-      return jobResult;
+
+      return this.session.getSession(sessionId)
+        .then((session) => {
+          if (!session) {
+            console.error(`Failed to email for job finished session=${sessionId}, no session found`);
+            return;
+          }
+
+          const runUrl = `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`;
+          return emailUtils.send(
+            session.email,
+            'Your App is Running',
+            'views/email_thanks.ms',
+            { runUrl }
+          )
+          .catch((err) => {
+            console.error({ message: 'Failed to send email', error: JSON.stringify(err).substr(0, 1000) });
+          });
+        })
+        .then(() => jobResult);
     });
 };
 
@@ -217,6 +236,7 @@ CCC.prototype.processQueue = function processQueue(job, done) {
           .then((session) => {
             if (!session) {
               console.error(`Failed to email for job finished session=${sessionId}, no session found`);
+              return;
             }
 
             log.debug({ f: 'doneAndEmail', sessionId, email: session.email, appId: session.app });
