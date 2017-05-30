@@ -70,9 +70,11 @@ class App extends React.Component {
     if (runId) {
       this.initializeWebsocket(runId);
       // return this.props.initializeRun(appId, runId);
+      return;
     }
 
-    return this.props.initializeApp(appId);
+    this.props.initializeApp(appId);
+    return;
   }
 
   initializeWebsocket(runId) {
