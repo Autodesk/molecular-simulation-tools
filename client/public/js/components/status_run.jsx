@@ -9,14 +9,31 @@ import WidgetRecord from '../records/widget_record';
 require('../../css/status_run.scss');
 
 function StatusRun(props) {
+    props.outputPipeDatas.toJS() : null);
   const emailPipeData = props.inputPipeDatas.get(
     props.inputPipeDatas.size - 1,
   );
   const email = emailPipeData ? emailPipeData.value : '';
 
-  console.log('StatusRun props.inputPipeDatas', props.inputPipeDatas.toJS());
+  let status = statusConstants.IDLE;
+  if (props.outputPipeDatas) {
+    const jobIdOutput = props.outputPipeDatas.find((val) => val.pipeName === 'jobId');
+    if (jobIdOutput) {
+      const resultJsonOutput = props.outputPipeDatas.find((val) => val.pipeName === 'results.json');
+      const errorOutput = props.outputPipeDatas.find((val) => val.pipeName === 'error');
+      if (errorOutput) {
+        status = statusConstants.ERROR;
+      } else if (resultJsonOutput) {
+        status = statusConstants.COMPLETED;
+      } else {
+        status = statusConstants.RUNNING;
+      }
+    }
+  }
+
   let statusContents;
-  switch (props.widget.status) {
+
+  switch (status) {
     case statusConstants.IDLE:
       statusContents = (
         <StatusRunIdle
@@ -62,6 +79,8 @@ StatusRun.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
+  jobId: React.PropTypes.string,
+  outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
 };
 
 export default StatusRun;

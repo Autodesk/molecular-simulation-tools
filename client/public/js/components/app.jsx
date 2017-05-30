@@ -30,7 +30,6 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps', nextProps);
     const fetching = nextProps.app.fetching;
     const changingAppId = nextProps.appId &&
       this.props.appId !== nextProps.appId;
@@ -113,7 +112,6 @@ class App extends React.Component {
         const jsonrpc = JSON.parse(event.data);
 
         console.log('Websocket messsage', jsonrpc);
-        console.log('Websocket messsage', JSON.stringify(jsonrpc));
         // See README.md
         let sessionUpdate = null;
         let updatedWidgets = null;
@@ -160,7 +158,6 @@ class App extends React.Component {
               updatedWidgets = new IMap();
               Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
                 const widgetBlob = sessionUpdate.widgets[widgetId];
-                console.log('widgetBlob', widgetBlob);
                 widgetPipeDataList = new IList();
                 // updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
                 Object.keys(widgetBlob.out).forEach((outPipeName) => {

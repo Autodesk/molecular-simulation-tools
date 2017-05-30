@@ -17,17 +17,31 @@ require('../../css/status.scss');
 function Status(props) {
   let selection;
   if (!props.hideContent) {
-    if (!props.app.fetching && !props.app.fetchingError &&
+    if (!props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
       const inputPipeDatas = pipeUtils.getPipeDatas(
         widget.inputPipes, props.app.run.pipeDatasByWidget,
       );
-      console.log('Status inputPipeDatas', inputPipeDatas.toJS());
-      const outputPipeDatas = pipeUtils.getPipeDatas(
-        widget.outputPipes, props.app.run.pipeDatasByWidget,
-      );
+      const outputPipeDatas = props.app.run.pipeDatasByWidget.get(widget.id)
+        ?
+        props.app.run.pipeDatasByWidget.get(widget.id)
+        :
+        new IList();
       const pipeDatas = pipeUtils.flatten(props.app.run.pipeDatasByWidget);
+
+      const jobIdOutput = props.app.run.pipeDatasByWidget.get(widget.id) ?
+        props.app.run.pipeDatasByWidget.get(widget.id).find((val) => val.pipeName === 'jobId')
+        :
+        null;
+      const jobId = jobIdOutput ? jobIdOutput.value : null;
+
+      const email =
+        outputPipeDatas && outputPipeDatas.find((val) => val.pipeName === 'email')
+        ?
+        outputPipeDatas.find((val) => val.pipeName === 'email').value
+        :
+        '';
 
       // TODO
       // Given the list of widgets and connections and all the pipe data
@@ -38,7 +52,7 @@ function Status(props) {
         case widgetsConstants.ENTER_EMAIL: {
           selection = (
             <StatusEnterEmail
-              email={outputPipeDatas.size ? outputPipeDatas.get(0).value : ''}
+              email={email}
               emailError={props.app.run.emailError}
               runCompleted={props.runCompleted}
               submitEmail={props.submitEmail}
@@ -75,6 +89,8 @@ function Status(props) {
               submitEmail={props.submitEmail}
               widget={widget}
               updateWidgetPipeData={props.updateWidgetPipeData}
+              jobId={jobId}
+              outputPipeDatas={outputPipeDatas}
             />
           );
           break;

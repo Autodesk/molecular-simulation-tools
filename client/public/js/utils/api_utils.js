@@ -263,13 +263,18 @@ const apiUtils = {
   },
 
   updateSessionWidget(runId, widgetId, widgetPipeDatas) {
-    let pipeDatasByName = new IMap();
+    console.log('!!!!!!! updateSessionWidget', widgetPipeDatas.toJS());
+    const pipeDatasByName = {};
     widgetPipeDatas.forEach((pipeData) => {
-      pipeDatasByName = pipeDatasByName.set(pipeData.pipeName, pipeData);
+      console.log('updateSessionWidget forEach pipeData=', pipeData);
+      console.assert(pipeData.pipeName && pipeData.pipeName !== 'undefined',
+        `widgetPipeDatas has an undefined pipe name: ${JSON.stringify(widgetPipeDatas.toJS())}`);
+      pipeDatasByName[pipeData.pipeName] = pipeData.toJS();
     });
+    console.log('SENDING TO WIDGET UPDATE', pipeDatasByName);
     return axios.post(
       `${API_URL}/v1/session/outputs/${runId}/${widgetId}`,
-      pipeDatasByName.toJS(),
+      pipeDatasByName,
     );
   },
 

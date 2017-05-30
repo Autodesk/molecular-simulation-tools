@@ -19,7 +19,6 @@ import {
 } from '../actions';
 
 function mapStateToProps(state, ownProps) {
-  console.log('mapStateToProps', state);
   return {
     app: state.app,
     appId: ownProps.params.appId,

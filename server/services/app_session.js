@@ -110,6 +110,7 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
 AppSession.prototype.setWidgetOutputs = function setOutputs(sessionId, widgetId, widgetHash) {
   assert(sessionId, 'Missing sessionId in AppSession setWidgetOutputs');
   assert(widgetId, 'Missing widgetId in AppSession setWidgetOutputs');
+  console.log(`setWidgetOutputs sessionId=${sessionId} widgetId=${widgetId} widgetHash=${JSON.stringify(widgetHash)}`);
   return Session.findById(sessionId)
     .then((session) => {
       assert(session, `Cannot find Session with id=${sessionId}`);

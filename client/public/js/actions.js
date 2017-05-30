@@ -1,3 +1,4 @@
+import { List as IList } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
@@ -145,12 +146,24 @@ export function clickRun(runId, widgets, widget, inputPipeDatas) {
     // );
 
     // console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
-    console.log('actions apiUtils.runCCC');
     // const runInputData = inputPipeDatas.get(widget.id);
     // console.log('runInputData', runInputData);
     apiUtils.runCCC(runId, widget.id, widget.config.toJS(), inputData.toJS())
       .then((cccResult) => {
         console.log('cccResult', cccResult);
+        /*
+          Record that the widget is running by setting the jobId
+         */
+        let updateRunStatePipeData = new IList();
+        updateRunStatePipeData = updateRunStatePipeData.push(new PipeDataRecord({
+          pipeName: 'jobId',
+          type: 'inline',
+          value: cccResult.data.jobId,
+          widgetId: widget.id,
+        }));
+
+        // console.log(`clickRun apiUtils.updateSessionWidget runId=${runId} widget.id=${widget.id} updateRunStatePipeData=${JSON.stringify(updateRunStatePipeData.toJS())}`);
+        apiUtils.updateSessionWidget(runId, widget.id, updateRunStatePipeData);
         // dispatch({
         //   type: actionConstants.RUN_SUBMITTED,
         //   runId,
@@ -218,7 +231,8 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         );
       });
 
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); // eslint no-unused-expressions: 'off', max-len: 'off'
+      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget); // eslint no-unused-expressions: 'off', max-len: 'off'
+      await apiUtils.updateSessionWidget(runId, widget.id, inputPipeDatas); // eslint no-unused-expressions: 'off', max-len: 'off'
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
