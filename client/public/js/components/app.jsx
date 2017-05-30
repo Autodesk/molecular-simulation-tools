@@ -63,9 +63,13 @@ class App extends React.Component {
 
   // Set up page for app/run distinction
   initialize(appId, runId) {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
     if (runId) {
       this.initializeWebsocket(runId);
-      return this.props.initializeRun(appId, runId);
+      // return this.props.initializeRun(appId, runId);
     }
 
     return this.props.initializeApp(appId);
@@ -100,7 +104,9 @@ class App extends React.Component {
       this.ws.addEventListener('message', (event) => {
         // console.log('Websocket messsage', (`${event.data}`).substr(0, 100));
         const jsonrpc = JSON.parse(event.data);
+
         console.log('Websocket messsage', jsonrpc);
+        console.log('Websocket messsage', JSON.stringify(jsonrpc));
         // See README.md
         let sessionUpdate = null;
         let updatedWidgets = null;
@@ -147,8 +153,9 @@ class App extends React.Component {
               updatedWidgets = new IMap();
               Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
                 const widgetBlob = sessionUpdate.widgets[widgetId];
+                console.log('widgetBlob', widgetBlob);
                 widgetPipeDataList = new IList();
-                updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
+                // updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
                 Object.keys(widgetBlob.out).forEach((outPipeName) => {
                   const pipeBlob = widgetBlob.out[outPipeName];
                   const pipeDataRecord = new PipeDataRecord({
@@ -160,9 +167,10 @@ class App extends React.Component {
                   });
                   widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
                 });
+                updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
               });
 
-              console.log('updatedWidgets', updatedWidgets);
+              console.log('updatedWidgets', updatedWidgets.toJS());
 
               this.props.updatePipeData(updatedWidgets);
             } else {

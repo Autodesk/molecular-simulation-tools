@@ -41,10 +41,6 @@ module.exports = {
       outputs: [
         { id: 'final_structure.pdb' },
         { id: 'results.json' },
-        { id: 'minstep.0.pdb' },
-        { id: 'minstep.1.pdb' },
-        { id: 'minsteps.tar.gz' },
-        { id: 'minstep_frames.json' },
       ],
     },
     {
@@ -54,9 +50,6 @@ module.exports = {
       inputs: [
         { id: 'final_structure.pdb', source: widgetsConstants.RUN },
         { id: 'results.json', source: widgetsConstants.RUN },
-        { id: 'minstep.0.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep.1.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep_frames.json', source: widgetsConstants.RUN },
       ],
     },
   ],

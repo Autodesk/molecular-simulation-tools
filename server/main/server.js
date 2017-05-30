@@ -33,6 +33,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(new express.Router().get('../structures/*', routeUtils.notFound));
 app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 
+console.log('sdfsf');
 /**
  * Add server routes
  */
