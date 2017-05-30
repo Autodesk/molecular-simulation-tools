@@ -9,7 +9,6 @@ import WidgetRecord from '../records/widget_record';
 require('../../css/status_run.scss');
 
 function StatusRun(props) {
-    props.outputPipeDatas.toJS() : null);
   const emailPipeData = props.inputPipeDatas.get(
     props.inputPipeDatas.size - 1,
   );
