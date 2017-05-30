@@ -460,10 +460,25 @@ export function runCCC(runId, widget, inputMap) {
   };
 }
 
-export function updatePipeData(runId, pipeData) {
-  return {
-    type: actionConstants.PIPE_DATA_UPDATE,
-    runId,
-    pipeData,
+export function updatePipeData(runId, pipeDatasByWidget) {
+  return async function updatePipeDataAsync(dispatch) {
+    let pipeDatasList = pipeUtils.flatten(pipeDatasByWidget);
+
+    pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+    pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+
+    // If only one ligand, select it
+    const ligands = pipeUtils.getLigandNames(pipeDatasList);
+    if (ligands.size === 1) {
+      pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
+    }
+
+    const updatedPipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
+
+    dispatch({
+      type: actionConstants.PIPE_DATA_UPDATE,
+      runId,
+      pipeData: updatedPipeDatasByWidget,
+    });
   };
 }

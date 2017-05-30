@@ -87,8 +87,7 @@ const appUtils = {
       return apiUtils.getPipeDataJson(pipeData.value)
         .then((results) => {
           // Create a new pipeData record
-          let pipeDataNew = pipeData.set('value', results);
-          pipeDataNew = pipeDataNew.set('fetchedValue', results);
+          let pipeDataNew = pipeData.set('fetchedValue', results);
           pipeDataNew = pipeDataNew.set('type', 'inline');
           pipeDataNew = pipeDataNew.set('encoding', 'utf8');
           return pipeDataNew;
