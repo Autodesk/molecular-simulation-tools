@@ -460,7 +460,7 @@ export function runCCC(runId, widget, inputMap) {
   };
 }
 
-export function updatePipeData(runId, pipeDatasByWidget) {
+export function updatePipeData(runId, pipeDatasByWidget, widgets) {
   return async function updatePipeDataAsync(dispatch) {
     let pipeDatasList = pipeUtils.flatten(pipeDatasByWidget);
 
@@ -475,10 +475,16 @@ export function updatePipeData(runId, pipeDatasByWidget) {
 
     const updatedPipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
 
+    // Find the widget that should be active by default for this pipeData
+    const activeWidgetIndex = widgetUtils.getActiveIndex(
+      widgets, updatedPipeDatasByWidget,
+    );
+
     dispatch({
       type: actionConstants.PIPE_DATA_UPDATE,
       runId,
       pipeData: updatedPipeDatasByWidget,
+      activeWidgetIndex,
     });
   };
 }

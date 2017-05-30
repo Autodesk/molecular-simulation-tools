@@ -88,9 +88,9 @@ function mapDispatchToProps(dispatch) {
         dispatch(updateWidgetPipeData(runId, widgetId, pipeDatasByWidget));
       };
     },
-    updatePipeData(runId) {
+    updatePipeData(runId, widgets) {
       return (pipeData) => {
-        dispatch(updatePipeData(runId, pipeData));
+        dispatch(updatePipeData(runId, pipeData, widgets));
       };
     },
   };
@@ -126,6 +126,7 @@ function mergeProps(stateProps, dispatchProps) {
     ),
     updatePipeData: dispatchProps.updatePipeData(
       stateProps.app.run.id,
+      stateProps.app.widgets,
     ),
   });
 }
