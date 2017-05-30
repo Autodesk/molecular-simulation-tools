@@ -119,8 +119,10 @@ function Status(props) {
           if (resultsJsonResult) {
             const resultsJsonFetchedValue = resultsJsonResult.fetchedValue;
 
-            if (resultsJsonFetchedValue.output_values) {
-              resultValues = new IList(resultsJsonFetchedValue.output_values);
+            if (resultsJsonFetchedValue.get('output_values')) {
+              resultValues = new IList(
+                resultsJsonFetchedValue.get('output_values').toJS(),
+              );
             }
           }
 

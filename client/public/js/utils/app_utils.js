@@ -85,13 +85,14 @@ const appUtils = {
         return Promise.resolve(pipeData);
       }
       return apiUtils.getPipeDataJson(pipeData.value)
-        .then((results) => {
+        .then(results =>
           // Create a new pipeData record
-          let pipeDataNew = pipeData.set('fetchedValue', results);
-          pipeDataNew = pipeDataNew.set('type', 'inline');
-          pipeDataNew = pipeDataNew.set('encoding', 'utf8');
-          return pipeDataNew;
-        });
+          pipeData.merge({
+            fetchedValue: results,
+            type: 'url',
+            encoding: 'utf8',
+          }),
+        );
     }))
     .then(pipeDataArray => new IList(pipeDataArray));
   },
@@ -116,13 +117,11 @@ const appUtils = {
             pipeDataI === pipeData,
           );
           newPipeDatas = newPipeDatas.set(
-            pipeDataIndex, pipeData.set('fetchedValue', results),
-          );
-          newPipeDatas = newPipeDatas.set(
-            pipeDataIndex, pipeData.set('encoding', 'utf8'),
-          );
-          newPipeDatas = newPipeDatas.set(
-            pipeDataIndex, pipeData.set('value', results),
+            pipeDataIndex,
+            pipeData.merge({
+              fetchedValue: results,
+              encoding: 'utf8',
+            }),
           );
         });
     }))
