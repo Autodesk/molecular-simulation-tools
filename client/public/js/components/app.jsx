@@ -82,10 +82,17 @@ class App extends React.Component {
 
     if (runId) {
       /* Websocket for getting session info */
-      const protocol = window.location.protocol === 'http:' ? 'ws:' : 'wss:';
-      const hostname = window.location.hostname;
-      const port = window.location.port !== '' ? `:${window.location.port}` : '';
-      const wsUrl = `${protocol}//${hostname}${port}`;
+      let wsUrl;
+      if (process.env.API_URL) {
+        wsUrl = process.env.API_URL.startsWith('https') ?
+          process.env.API_URL.replace('https', 'wss') :
+          process.env.API_URL.replace('http', 'ws');
+      } else {
+        const protocol = window.location.protocol === 'http:' ? 'ws:' : 'wss:';
+        const hostname = window.location.hostname;
+        const port = window.location.port !== '' ? `:${window.location.port}` : '';
+        wsUrl = `${protocol}//${hostname}${port}`;
+      }
       this.ws = new WebSocket(wsUrl);
       this.ws.addEventListener('open', () => {
         console.log(`Websocket for run=${runId} opened`);
