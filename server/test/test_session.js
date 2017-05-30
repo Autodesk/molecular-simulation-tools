@@ -9,10 +9,10 @@ const jsonrpcConstants = require('molecular-design-applications-shared').jsonrpc
 const utils = {
 
   runAppSession() {
-    function setWidgetValue(sessionId, widgetId, outputPipeId, type, value) {
+    function setWidgetValue(sessionId, widgetId, outputPipeId, type, value, encoding) {
       const body = {};
       body[widgetId] = {};
-      body[widgetId][outputPipeId] = { type, value };
+      body[widgetId][outputPipeId] = { type, value, encoding };
       const options = {
         method: 'post',
         body,
@@ -111,12 +111,12 @@ const utils = {
       widgets: {
         widget1: {
           out: {
-            widget1pipe1: { type: 'inline', value: widgetId1Pipe1Value }
+            widget1pipe1: { type: 'inline', value: widgetId1Pipe1Value, encoding: 'utf8' }
           }
         },
         widget2: {
           out: {
-            widget2pipe1: { type: 'inline', value: widgetId2Pipe1Value }
+            widget2pipe1: { type: 'inline', value: widgetId2Pipe1Value, encoding: 'utf8' }
           }
         }
       }
@@ -133,19 +133,20 @@ const utils = {
       .then(() => {
         expectedState.session = sessionId;
         const promises = [];
-        promises.push(setWidgetValue(sessionId, widgetId1, widgetId1Pipe1, 'inline', widgetId1Pipe1Value));
-        promises.push(setWidgetValue(sessionId, widgetId2, widgetId2Pipe1, 'inline', widgetId2Pipe1Value));
+        promises.push(setWidgetValue(sessionId, widgetId1, widgetId1Pipe1, 'inline', widgetId1Pipe1Value, 'utf8'));
+        promises.push(setWidgetValue(sessionId, widgetId2, widgetId2Pipe1, 'inline', widgetId2Pipe1Value, 'utf8'));
 
         return Promise.all(promises)
           .then(() =>
             getSessionState(sessionId)
               .then((sessionState) => {
+                console.log('sessionState', JSON.stringify(sessionState));
                 assert(deepEqual(expectedState, sessionState),
                   `\n${JSON.stringify(expectedState)}\n!=\n${JSON.stringify(sessionState)}`);
-                return setWidgetValue(sessionId, widgetId1, widgetId1Pipe2, 'inline', widgetId1Pipe2Value)
+                return setWidgetValue(sessionId, widgetId1, widgetId1Pipe2, 'inline', widgetId1Pipe2Value, 'utf8')
                   .then(() => getSessionState(sessionId))
                   .then((sessionStateUpdated) => {
-                    expectedState.widgets[widgetId1].out[widgetId1Pipe2] = { type: 'inline', value: widgetId1Pipe2Value };
+                    expectedState.widgets[widgetId1].out[widgetId1Pipe2] = { type: 'inline', value: widgetId1Pipe2Value, encoding: 'utf8' };
                     assert(deepEqual(expectedState, sessionStateUpdated));
                   });
               })

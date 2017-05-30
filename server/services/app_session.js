@@ -173,7 +173,7 @@ AppSession.prototype.getState = function getState(sessionId) {
             if (rawValue.toString) {
               rawValue = rawValue.toString();
             }
-            const value = { type: widget.type, value: rawValue };
+            const value = { type: widget.type, value: rawValue, encoding: widget.encoding };
             const inOut = widget.output ? 'out' : 'in';
             if (!widgetStates[widget.widget][inOut]) {
               widgetStates[widget.widget][inOut] = {};
