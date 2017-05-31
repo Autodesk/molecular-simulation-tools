@@ -7,6 +7,7 @@ import SelectionRecord from '../../public/js/records/selection_record';
 import AppRecord from '../../public/js/records/app_record';
 
 describe('App', () => {
+  const initializeAppPromise = Promise.resolve();
   let clickAbout;
   let clickRun;
   let runId;
@@ -15,6 +16,7 @@ describe('App', () => {
   let app;
   let appId;
   let wrapper;
+  let initializeAppSpy;
 
   beforeEach(() => {
     clickAbout = () => {};
@@ -23,22 +25,18 @@ describe('App', () => {
     selection = new SelectionRecord();
     submitEmail = () => {};
     appId = 'imanappid';
-    app = new AppRecord({ id: appId });
+    app = new AppRecord({ id: appId, fetching: false });
+    initializeAppSpy = sinon.spy(() => initializeAppPromise);
   });
 
   describe('componentWillReceiveProps', () => {
-    let initializeAppSpy;
-    let initializeRunSpy;
-
     beforeEach(() => {
-      initializeAppSpy = sinon.spy();
-      initializeRunSpy = sinon.spy();
+      sinon.spy(App.prototype, 'initialize');
       wrapper = shallow(
         <App
           clickAbout={clickAbout}
           clickRun={clickRun}
           initializeApp={initializeAppSpy}
-          initializeRun={initializeRunSpy}
           runId={runId}
           selection={selection}
           submitEmail={submitEmail}
@@ -48,50 +46,118 @@ describe('App', () => {
       );
     });
 
-    describe('when the appId changes (and we have a runid)', () => {
-      it('calls initializeRun', () => {
+    afterEach(() => {
+      App.prototype.initialize.restore();
+    });
+
+    describe('when fetching', () => {
+      beforeEach(() => {
+        wrapper.setProps({ app: app.set('fetching', true) });
+      });
+
+      afterEach(() => {
+        wrapper.setProps({ app: app.set('fetching', false) });
+      });
+
+      it('never calls initialize', () => {
         wrapper.setProps({ appId: 'newappid' });
+        expect(App.prototype.initialize.called).to.equal(false);
 
-        expect(initializeRunSpy.called).to.equal(true);
-      });
-    });
-
-    describe('when the runId changes', () => {
-      it('calls initializeRun', () => {
         wrapper.setProps({ runId: 'newrunid' });
+        expect(App.prototype.initialize.called).to.equal(false);
 
-        expect(initializeRunSpy.called).to.equal(true);
+        wrapper.setProps({ appId: 'newerappid', runId: 'newerrunid' });
+        expect(App.prototype.initialize.called).to.equal(false);
       });
     });
 
-    describe('when the appId doesnt change', () => {
-      it('doesnt call initializeApp', () => {
-        wrapper.setProps({ appId });
-
-        expect(initializeAppSpy.called).to.equal(false);
+    describe('when not fetching', () => {
+      afterEach(() => {
+        wrapper.setProps({ appId, runId });
       });
-    });
 
-    describe('when the runId doesnt change', () => {
-      it('doesnt call initializeRun', () => {
-        wrapper.setProps({ runId });
-
-        expect(initializeRunSpy.called).to.equal(false);
-      });
-    });
-
-    describe('when the runId changes but we already have that run', () => {
-      it('doesnt call initializeApp', () => {
-        const newRunId = 'newrunid';
-        wrapper.setProps({
-          runId: newRunId,
-          app: new AppRecord({
-            id: appId,
-            runId: newRunId,
-          }),
+      describe('when neither changing appId nor runId', () => {
+        it('does not call initialize', () => {
+          wrapper.setProps({ appId, runId });
+          expect(App.prototype.initialize.called).to.equal(false);
         });
+      });
 
+      describe('when changing either appId or runId', () => {
+        it('calls initialize', () => {
+          wrapper.setProps({ appId: 'newappid' });
+          expect(App.prototype.initialize.called).to.equal(true);
+          wrapper.setProps({ runId: 'newrunid' });
+          expect(App.prototype.initialize.called).to.equal(true);
+        });
+      });
+    });
+  });
+
+  describe('initialize', () => {
+    beforeEach(() => {
+      wrapper = shallow(
+        <App
+          clickAbout={clickAbout}
+          clickRun={clickRun}
+          initializeApp={initializeAppSpy}
+          runId={runId}
+          selection={selection}
+          submitEmail={submitEmail}
+          app={app}
+          appId={appId}
+        />,
+      );
+      sinon.spy(App.prototype, 'initializeWebsocket');
+    });
+
+    afterEach(() => {
+      App.prototype.initializeWebsocket.restore();
+    });
+
+    describe('when a websocket exists', () => {
+      it('closes the websocket', () => {
+        const wsCloseSpy = sinon.spy();
+        wrapper.instance().ws = { close: wsCloseSpy };
+        wrapper.instance().initialize();
+        expect(wsCloseSpy.called).to.equal(true);
+      });
+    });
+
+    describe('when a websocket doesnt exist', () => {
+      it('doesnt try to close the websocket', () => {
+        wrapper.instance().initialize();
+        expect(wrapper.instance().ws).to.equal(undefined);
+      });
+    });
+
+    describe('when changing runId, not appId', () => {
+      it('calls initializeWebsocket but not initializeApp', () => {
+        wrapper.instance().initialize(appId, 'newrunid', true);
         expect(initializeAppSpy.called).to.equal(false);
+        expect(App.prototype.initializeWebsocket.called).to.equal(true);
+      });
+    });
+
+    describe('when changing runId and appId both', () => {
+      it('calls initializeApp then initializeWebsocket', (done) => {
+        wrapper.instance().initialize('newappid', 'newrunid', false);
+        expect(initializeAppSpy.called).to.equal(true);
+        initializeAppPromise.then(() => {
+          expect(App.prototype.initializeWebsocket.called).to.equal(true);
+          done();
+        });
+      });
+    });
+
+    describe('when changing only appId', () => {
+      it('calls initializeApp then initializeWebsocket', (done) => {
+        wrapper.instance().initialize('newappid', runId, false);
+        expect(initializeAppSpy.called).to.equal(true);
+        initializeAppPromise.then(() => {
+          expect(App.prototype.initializeWebsocket.called).to.equal(true);
+          done();
+        });
       });
     });
   });

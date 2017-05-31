@@ -36,7 +36,9 @@ class App extends React.Component {
     const changingRunId = nextProps.runId !== this.props.runId;
 
     if (!fetching && (changingAppId || changingRunId)) {
-      this.initialize(nextProps.appId, nextProps.runId);
+      this.initialize(
+        nextProps.appId, nextProps.runId, changingRunId && !changingAppId,
+      );
     }
 
     if (!this.props.app.fetchingError &&
@@ -61,17 +63,22 @@ class App extends React.Component {
   }
 
   // Set up page for app/run distinction
-  initialize(appId, runId) {
+  initialize(appId, runId, onlyChangingRunId) {
     if (this.ws) {
       this.ws.close();
       this.ws = null;
     }
 
-    this.props.initializeApp(appId, runId).then(() => {
-      if (runId) {
-        this.initializeWebsocket(runId);
-      }
-    });
+    // If only changing runId, don't initializeApp
+    if (runId && onlyChangingRunId) {
+      this.initializeWebsocket(runId);
+    } else {
+      this.props.initializeApp(appId, runId).then(() => {
+        if (runId) {
+          this.initializeWebsocket(runId);
+        }
+      });
+    }
   }
 
   initializeWebsocket(runId) {
@@ -293,7 +300,6 @@ App.propTypes = {
   clickWidget: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   initializeApp: React.PropTypes.func.isRequired,
-  initializeRun: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
