@@ -1,7 +1,7 @@
+import { Buffer } from 'buffer/';
 import { List as IList } from 'immutable';
 import apiUtils from './api_utils';
 import pipeUtils from './pipe_utils';
-import { Buffer } from 'buffer/';
 
 const appUtils = {
   /**

@@ -1,8 +1,8 @@
+import { Buffer } from 'buffer';
 import { List as IList, Map as IMap } from 'immutable';
 import { widgetsConstants } from 'molecular-design-applications-shared';
-import PipeDataRecord from '../records/pipe_data_record';
-import { Buffer } from 'buffer/';
 import axios from 'axios';
+import PipeDataRecord from '../records/pipe_data_record';
 
 const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
