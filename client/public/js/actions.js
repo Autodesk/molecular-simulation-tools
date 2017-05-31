@@ -60,57 +60,36 @@ export function clickWidget(widgetIndex) {
  * @param {String} [inputString]
  */
 export function clickRun(runId, widgets, widget, inputPipeDatas) {
-  console.log('clickRun()');
-  console.log('widget', widget);
-  console.log('runId', runId);
-  console.log('inputPipeDatas', inputPipeDatas.toJS());
-  console.log('widgets', widgets.toJS());
-
-  const inputData = widgetUtils.getWidgetInputs(widget.id, widgets, inputPipeDatas);
-  console.log('inputData', inputData);
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
-      widgetId: widget.id,
     });
 
-    // console.log('pipeDatasByWidget', pipeDatasByWidget);
-    // const inputPipeDatas = widget.inputPipes.map(inputPipe =>
-    //   pipeUtils.get(pipeDatasByWidget, inputPipe),
-    // );
+    let updatedRunStatePipeData = new IList();
 
-    // console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
-    // const runInputData = inputPipeDatas.get(widget.id);
-    // console.log('runInputData', runInputData);
-    apiUtils.runCCC(runId, widget.id, widget.config.toJS(), inputData.toJS())
-      .then((cccResult) => {
-        console.log('cccResult', cccResult);
-        /*
-          Record that the widget is running by setting the jobId
-         */
-        let updateRunStatePipeData = new IList();
-        updateRunStatePipeData = updateRunStatePipeData.push(new PipeDataRecord({
-          pipeName: 'jobId',
-          type: 'inline',
-          value: cccResult.data.jobId,
-          widgetId: widget.id,
-        }));
+    try {
+      const inputData = widgetUtils.getWidgetInputs(widget.id, widgets, inputPipeDatas);
+      const cccResult = await apiUtils.runCCC(runId, widget.id, widget.config.toJS(), inputData.toJS());
+      // Record that the widget is running by setting the jobId
+      updatedRunStatePipeData = updatedRunStatePipeData.push(new PipeDataRecord({
+        pipeName: 'jobId',
+        type: 'inline',
+        value: cccResult.data.jobId,
+        widgetId: widget.id,
+      }));
 
-        // console.log(`clickRun apiUtils.updateSessionWidget runId=${runId} widget.id=${widget.id} updateRunStatePipeData=${JSON.stringify(updateRunStatePipeData.toJS())}`);
-        apiUtils.updateSessionWidget(runId, widget.id, updateRunStatePipeData);
-        // dispatch({
-        //   type: actionConstants.RUN_SUBMITTED,
-        //   runId,
-        //   widgetId: widget.id,
-        // });
-      })
-      .catch((err) => {
-        console.error('ERROR cccResult', err);
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          err,
-        });
+      await apiUtils.updateSessionWidget(runId, widget.id, updatedRunStatePipeData); // eslint no-unused-expressions: 'off', max-len: 'off'
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: actionConstants.RUN_SUBMITTED,
+        err,
       });
+    }
+
+    dispatch({
+      type: actionConstants.RUN_SUBMITTED,
+    });
   };
 }
 

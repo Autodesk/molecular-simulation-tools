@@ -38,6 +38,7 @@ function StatusRun(props) {
         <StatusRunIdle
           email={email}
           clickRun={() => props.clickRun(props.widget)}
+          fetchingData={props.fetchingData}
         />
       );
       break;
@@ -76,10 +77,10 @@ function StatusRun(props) {
 
 StatusRun.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
+  fetchingData: React.PropTypes.bool.isRequired,
   inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
-  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
-  jobId: React.PropTypes.string,
   outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
+  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
 
 export default StatusRun;

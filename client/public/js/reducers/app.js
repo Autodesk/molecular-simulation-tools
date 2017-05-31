@@ -1,4 +1,4 @@
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
@@ -49,33 +49,18 @@ function app(state = initialState, action) {
       }
       return action.app;
 
-    case actionConstants.CLICK_RUN: {
-      const widgetIndex = state.widgets.findIndex(
-        widget => widget.id === action.widgetId,
-      );
-      const updatedWidget = state.widgets.get(widgetIndex).merge({
-        status: statusConstants.RUNNING,
-        error: '',
-      });
-      return state.set('widgets', state.widgets.set(widgetIndex, updatedWidget));
-    }
+    case actionConstants.CLICK_RUN:
+      return state.set('run', state.run.merge({
+        fetchingData: true,
+      }));
 
-    case actionConstants.RUN_SUBMITTED: {
-      if (action.err) {
-        return state.merge({
-          fetching: false,
-        });
-      }
-
-      return state.merge({
-        fetching: false,
-        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
-      });
-    }
+    case actionConstants.RUN_SUBMITTED:
+      return state.set('run', state.run.merge({
+        fetchingData: false,
+      }));
 
     case actionConstants.WIDGET_PIPE_DATA_UPDATE: {
       // TODO: also handle errors here?
-      // This should deprecate actionConstants.RUN_SUBMITTED when complete
       console.assert(action.widgetId, 'Missing action.widgetId');
       console.assert(action.widgetPipeData, 'Missing action.widgetPipeData');
       const newPipeData = state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData);

@@ -31,15 +31,15 @@ function Status(props) {
       const pipeDatas = pipeUtils.flatten(props.app.run.pipeDatasByWidget);
 
       const jobIdOutput = props.app.run.pipeDatasByWidget.get(widget.id) ?
-        props.app.run.pipeDatasByWidget.get(widget.id).find((val) => val.pipeName === 'jobId')
+        props.app.run.pipeDatasByWidget.get(widget.id).find(val => val.pipeName === 'jobId')
         :
         null;
       const jobId = jobIdOutput ? jobIdOutput.value : null;
 
       const email =
-        outputPipeDatas && outputPipeDatas.find((val) => val.pipeName === 'email')
+        outputPipeDatas && outputPipeDatas.find(val => val.pipeName === 'email')
         ?
-        outputPipeDatas.find((val) => val.pipeName === 'email').value
+        outputPipeDatas.find(val => val.pipeName === 'email').value
         :
         '';
 
@@ -82,15 +82,15 @@ function Status(props) {
         case widgetsConstants.RUN: {
           selection = (
             <StatusRun
-              widget={widget}
               clickRun={props.clickRun}
               emailError={props.app.run.emailError}
+              fetchingData={props.app.run.fetchingData}
               inputPipeDatas={inputPipeDatas}
-              submitEmail={props.submitEmail}
-              widget={widget}
-              updateWidgetPipeData={props.updateWidgetPipeData}
               jobId={jobId}
               outputPipeDatas={outputPipeDatas}
+              submitEmail={props.submitEmail}
+              updateWidgetPipeData={props.updateWidgetPipeData}
+              widget={widget}
             />
           );
           break;
@@ -168,20 +168,18 @@ Status.defaultProps = {
 };
 
 Status.propTypes = {
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  fetching: React.PropTypes.bool.isRequired,
-  fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onSelectInputFile: React.PropTypes.func.isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  app: React.PropTypes.instanceOf(AppRecord).isRequired,
-  runCompleted: React.PropTypes.bool.isRequired,
   updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
