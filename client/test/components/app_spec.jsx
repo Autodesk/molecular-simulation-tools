@@ -3,8 +3,9 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import App from '../../public/js/components/app';
-import SelectionRecord from '../../public/js/records/selection_record';
 import AppRecord from '../../public/js/records/app_record';
+import SelectionRecord from '../../public/js/records/selection_record';
+import UserMessageRecord from '../../public/js/records/user_message_record';
 
 describe('App', () => {
   const initializeAppPromise = Promise.resolve();
@@ -17,6 +18,19 @@ describe('App', () => {
   let appId;
   let wrapper;
   let initializeAppSpy;
+  const changeLigandSelection = () => {};
+  const clickWidget = () => {};
+  const colorized = false;
+  const morph = 0;
+  const onClickColorize = () => {};
+  const onChangeMorph = () => {};
+  const onMessageTimeout = () => {};
+  const onSelectInputFile = () => {};
+  const submitInputString = () => {};
+  const userMessage = new UserMessageRecord();
+  const updatePipeData = () => {};
+  const updateWidgetPipeData = () => {};
+
 
   beforeEach(() => {
     clickAbout = () => {};
@@ -27,6 +41,12 @@ describe('App', () => {
     appId = 'imanappid';
     app = new AppRecord({ id: appId, fetching: false });
     initializeAppSpy = sinon.spy(() => initializeAppPromise);
+
+    sinon.stub(App.prototype, 'initializeWebsocket', () => {});
+  });
+
+  afterEach(() => {
+    App.prototype.initializeWebsocket.restore();
   });
 
   describe('componentWillReceiveProps', () => {
@@ -42,6 +62,18 @@ describe('App', () => {
           submitEmail={submitEmail}
           app={app}
           appId={appId}
+          changeLigandSelection={changeLigandSelection}
+          clickWidget={clickWidget}
+          colorized={colorized}
+          morph={morph}
+          onClickColorize={onClickColorize}
+          onChangeMorph={onChangeMorph}
+          onMessageTimeout={onMessageTimeout}
+          onSelectInputFile={onSelectInputFile}
+          submitInputString={submitInputString}
+          userMessage={userMessage}
+          updatePipeData={updatePipeData}
+          updateWidgetPipeData={updateWidgetPipeData}
         />,
       );
     });
@@ -106,13 +138,20 @@ describe('App', () => {
           submitEmail={submitEmail}
           app={app}
           appId={appId}
+          changeLigandSelection={changeLigandSelection}
+          clickWidget={clickWidget}
+          colorized={colorized}
+          morph={morph}
+          onClickColorize={onClickColorize}
+          onChangeMorph={onChangeMorph}
+          onMessageTimeout={onMessageTimeout}
+          onSelectInputFile={onSelectInputFile}
+          submitInputString={submitInputString}
+          userMessage={userMessage}
+          updatePipeData={updatePipeData}
+          updateWidgetPipeData={updateWidgetPipeData}
         />,
       );
-      sinon.spy(App.prototype, 'initializeWebsocket');
-    });
-
-    afterEach(() => {
-      App.prototype.initializeWebsocket.restore();
     });
 
     describe('when a websocket exists', () => {

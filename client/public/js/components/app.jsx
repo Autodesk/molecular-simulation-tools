@@ -99,7 +99,7 @@ class App extends React.Component {
         const port = window.location.port !== '' ? `:${window.location.port}` : '';
         wsUrl = `${protocol}//${hostname}${port}`;
       }
-      this.ws = new WebSocket(wsUrl);
+      this.ws = new window.WebSocket(wsUrl);
       this.ws.addEventListener('open', () => {
         console.log(`Websocket for run=${runId} opened`);
         // See README.md
