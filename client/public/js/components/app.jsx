@@ -1,6 +1,6 @@
 import React from 'react';
 import { List as IList, Map as IMap } from 'immutable';
-import { statusConstants, jsonrpcConstants } from 'molecular-design-applications-shared';
+import { statusConstants, jsonrpcConstants, widgetsConstants } from 'molecular-design-applications-shared';// eslint-disable-line max-len
 import AppRecord from '../records/app_record';
 import SelectionRecord from '../records/selection_record';
 import Status from '../components/status';
@@ -36,7 +36,9 @@ class App extends React.Component {
     const changingRunId = nextProps.runId !== this.props.runId;
 
     if (!fetching && (changingAppId || changingRunId)) {
-      this.initialize(nextProps.appId, nextProps.runId);
+      this.initialize(
+        nextProps.appId, nextProps.runId, changingRunId && !changingAppId,
+      );
     }
 
     if (!this.props.app.fetchingError &&
@@ -61,13 +63,22 @@ class App extends React.Component {
   }
 
   // Set up page for app/run distinction
-  initialize(appId, runId) {
-    if (runId) {
-      this.initializeWebsocket(runId);
-      return this.props.initializeRun(appId, runId);
+  initialize(appId, runId, onlyChangingRunId) {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
     }
 
-    return this.props.initializeApp(appId);
+    // If only changing runId, don't initializeApp
+    if (runId && onlyChangingRunId) {
+      this.initializeWebsocket(runId);
+    } else {
+      this.props.initializeApp(appId, runId).then(() => {
+        if (runId) {
+          this.initializeWebsocket(runId);
+        }
+      });
+    }
   }
 
   initializeWebsocket(runId) {
@@ -77,13 +88,19 @@ class App extends React.Component {
 
     if (runId) {
       /* Websocket for getting session info */
-      const protocol = window.location.protocol === 'http:' ? 'ws:' : 'wss:';
-      const hostname = window.location.hostname;
-      const port = window.location.port !== '' ? `:${window.location.port}` : '';
-      const wsUrl = `${protocol}//${hostname}${port}`;
+      let wsUrl;
+      if (process.env.API_URL) {
+        wsUrl = process.env.API_URL.startsWith('https') ?
+          process.env.API_URL.replace('https', 'wss') :
+          process.env.API_URL.replace('http', 'ws');
+      } else {
+        const protocol = window.location.protocol === 'http:' ? 'ws:' : 'wss:';
+        const hostname = window.location.hostname;
+        const port = window.location.port !== '' ? `:${window.location.port}` : '';
+        wsUrl = `${protocol}//${hostname}${port}`;
+      }
       this.ws = new WebSocket(wsUrl);
       this.ws.addEventListener('open', () => {
-        console.log(`Websocket for run=${runId} opened`);
         // See README.md
         this.ws.send(JSON.stringify({
           jsonrpc: '2.0',
@@ -97,11 +114,11 @@ class App extends React.Component {
       });
 
       this.ws.addEventListener('message', (event) => {
-        console.log('Websocket messsage', (`${event.data}`).substr(0, 100));
         const jsonrpc = JSON.parse(event.data);
+
         // See README.md
         let sessionUpdate = null;
-        let updatedPipeDatasByWidget = null;
+        let updatedWidgets = null;
         let widgetPipeDataList = null;
         switch (jsonrpc.method) {
           case jsonrpcConstants.SESSION_UPDATE:
@@ -135,27 +152,34 @@ class App extends React.Component {
             if (this.props.runId !== sessionUpdate.session) {
               throw new Error(`runId (${this.props.runId}) !== session (${sessionUpdate.session})`);
             }
-            updatedPipeDatasByWidget = new IMap();
-            Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
-              const widgetBlob = sessionUpdate.widgets[widgetId];
-              widgetPipeDataList = new IList();
-              updatedPipeDatasByWidget = updatedPipeDatasByWidget.set(widgetId, widgetPipeDataList);
-              Object.keys(widgetBlob.out).forEach((outPipeName) => {
-                const pipeBlob = widgetBlob.out[outPipeName];
-                const pipeDataRecord = new PipeDataRecord({
-                  pipeName: outPipeName,
-                  type: pipeBlob.type,
-                  value: pipeBlob.value,
-                  widgetId,
+
+            // Only update the session data if there's an email
+            if (sessionUpdate.session
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL]
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL].out
+              && sessionUpdate.widgets[widgetsConstants.ENTER_EMAIL].out.email
+            ) {
+              updatedWidgets = new IMap();
+              Object.keys(sessionUpdate.widgets).forEach((widgetId) => {
+                const widgetBlob = sessionUpdate.widgets[widgetId];
+                widgetPipeDataList = new IList();
+                // updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
+                Object.keys(widgetBlob.out).forEach((outPipeName) => {
+                  const pipeBlob = widgetBlob.out[outPipeName];
+                  const pipeDataRecord = new PipeDataRecord({
+                    pipeName: outPipeName,
+                    type: pipeBlob.type,
+                    value: pipeBlob.value,
+                    encoding: pipeBlob.encoding,
+                    widgetId,
+                  });
+                  widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
                 });
-                widgetPipeDataList = widgetPipeDataList.push(pipeDataRecord);
+                updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
               });
-            });
 
-            // console.log('updatedPipeDatasByWidget', updatedPipeDatasByWidget);
-
-            // this.props.updatePipeData(updatedPipeDatasByWidget);
-
+              this.props.updatePipeData(updatedWidgets);
+            }
             break;
           default:
             console.warn({ message: 'Unhandled websocket message', data: event.data });
@@ -234,6 +258,7 @@ class App extends React.Component {
           submitEmail={this.props.submitEmail}
           app={this.props.app}
           runCompleted={runCompleted}
+          updateWidgetPipeData={this.props.updateWidgetPipeData}
         />
         <View
           colorized={this.props.colorized}
@@ -266,7 +291,6 @@ App.propTypes = {
   clickWidget: React.PropTypes.func.isRequired,
   colorized: React.PropTypes.bool.isRequired,
   initializeApp: React.PropTypes.func.isRequired,
-  initializeRun: React.PropTypes.func.isRequired,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
@@ -278,6 +302,7 @@ App.propTypes = {
   submitEmail: React.PropTypes.func.isRequired,
   userMessage: React.PropTypes.instanceOf(UserMessageRecord).isRequired,
   updatePipeData: React.PropTypes.func.isRequired,
+  updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default App;

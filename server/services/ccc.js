@@ -5,6 +5,7 @@ const retry = require('bluebird-retry');
 const request = require('request-promise');
 const CCCC = require('cloud-compute-cannon-client');
 const log = require('../utils/log');
+const emailUtils = require('../utils/email_utils');
 
 function CCC(options) {
   assert(options, 'Missing options in CCC constructor');
@@ -114,6 +115,37 @@ CCC.prototype.runTurbo = function runTurbo(jobBlob) {
     });
 };
 
+CCC.prototype.runTurbo2 = function runTurbo2(jobBlob) {
+  return this.ccc
+    .then((ccc) => {
+      const promises = [];
+      const inputs = [];
+      if (jobBlob.inputs) {
+        jobBlob.inputs.forEach((inputBlob) => {
+          if (inputBlob.type === 'url') {
+            promises.push(
+              request(inputBlob.value)
+                .then((result) => {
+                  inputs.push({
+                    name: inputBlob.name,
+                    value: result,
+                    type: 'inline',
+                    encoding: 'utf8',
+                  });
+                }));
+          } else {
+            inputs.push(inputBlob);
+          }
+        });
+      }
+      return Promise.all(promises)
+        .then(() => {
+          jobBlob.inputs = inputs;
+          return ccc.submitTurboJobJsonV2(jobBlob);
+        });
+    });
+};
+
 /**
  * Cloud-compute-cannon job (see README)
  */
@@ -131,12 +163,13 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     appendStdOut: true,
     appendStdErr: true
   };
+
   const multipartInputs = {};
   jobBlob.inputs.forEach((inputBlob) => {
     if (inputBlob.type === 'url') {
       cccjobv1.inputs.push(inputBlob);
     } else {
-      multipartInputs[inputBlob.name] = inputBlob.value;
+      multipartInputs[inputBlob.name] = new Buffer(inputBlob.value, inputBlob.encoding);
     }
   });
 
@@ -148,7 +181,27 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     .then((jobResult) => {
       log.info({ sessionId, widgetId, jobId: jobResult.jobId, message: 'link' });
       this.jobSessionQueue.add({ sessionId, widgetId, jobId: jobResult.jobId });
-      return jobResult;
+
+      return this.session.getSession(sessionId)
+        .then((session) => {
+          if (!session) {
+            const error = new Error(`Failed to email for job finished session=${sessionId}, no session found`);
+            console.error(error.message);
+            return Promise.reject(error);
+          }
+
+          const runUrl = `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`;
+          return emailUtils.send(
+            session.email,
+            'Your App is Running',
+            'views/email_thanks.ms',
+            { runUrl }
+          )
+          .catch((err) => {
+            console.error({ message: 'Failed to send email', error: JSON.stringify(err).substr(0, 1000) });
+          });
+        })
+        .then(() => jobResult);
     });
 };
 
@@ -176,10 +229,35 @@ CCC.prototype.processQueue = function processQueue(job, done) {
       assert(sessionId, `Missing sessionId in bull job blob=${JSON.stringify(job.data)}`);
       assert(widgetId, `Missing widgetId in bull job blob=${JSON.stringify(job.data)}`);
 
+      const doneAndEmail = (err, result) =>
+        this.session.getSession(sessionId)
+          .then((session) => {
+            if (!session) {
+              console.error(`Failed to email for job finished session=${sessionId}, no session found`);
+              return;
+            }
+
+            log.debug({ f: 'doneAndEmail', sessionId, email: session.email, appId: session.app });
+            emailUtils.send(
+              session.email,
+              'Your App Has Ended',
+              './views/email_ended.ms',
+              {
+                runUrl: `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`,
+              }
+            );
+          })
+          .catch(errGetSession =>
+            console.error(`Failed to email for job finished session=${sessionId}`, errGetSession))
+          .then(() => done(err, result));
+
       ccc.getJobResult(jobId)
         .then((jobResult) => {
+          log.debug(`GOT RESULT BACK FROM jobId=${jobId}`);
+          log.debug(jobResult);
           // Create the widget update blob
           const sessionUpdateBlob = {};
+          const widgetUpdateBlob = {};
           sessionUpdateBlob[widgetId] = {};
           if (jobResult.error) {
             const error = jobResult.error;
@@ -193,20 +271,24 @@ CCC.prototype.processQueue = function processQueue(job, done) {
                 type: 'url',
                 value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
               };
+              widgetUpdateBlob[jobResult.outputs[i]] = {
+                type: 'url',
+                value: `${jobResult.outputsBaseUrl}${jobResult.outputs[i]}`,
+              };
             }
           }
-          return this.session.setOutputs(sessionId, sessionUpdateBlob)
-            .then((state) => {
-              done(null, state);
-            })
+          return this.session.setWidgetOutputs(sessionId, widgetId, widgetUpdateBlob)
+            .then(state =>
+              doneAndEmail(null, state)
+            )
             .catch((err) => {
               log.error({ error: err });
-              done(err);
+              return doneAndEmail(err);
             });
         })
         .catch((err) => {
           log.error(err);
-          done(err);
+          doneAndEmail(err);
         });
     });
 };

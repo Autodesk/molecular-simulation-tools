@@ -1,3 +1,4 @@
+import { List as IList } from 'immutable';
 import { browserHistory } from 'react-router';
 import isEmail from 'validator/lib/isEmail';
 import { widgetsConstants } from 'molecular-design-applications-shared';
@@ -11,7 +12,7 @@ import widgetUtils from './utils/widget_utils';
 
 const FILE_INPUT_EXTENSIONS = ['pdb', 'xyz', 'sdf', 'mol2'];
 
-export function initializeApp(appId) {
+export function initializeApp(appId, runId) {
   return async function initializeAppDispatch(dispatch) {
     dispatch({
       type: actionConstants.INITIALIZE_APP,
@@ -21,6 +22,10 @@ export function initializeApp(appId) {
     let app;
     try {
       app = await apiUtils.getApp(appId);
+
+      if (runId) {
+        app = app.set('run', app.run.set('id', runId));
+      }
 
       if (app.comingSoon) {
         throw new Error('This app is not yet available, please try another.');
@@ -40,71 +45,6 @@ export function initializeApp(appId) {
   };
 }
 
-export function initializeRun(appId, runId) {
-  return async function initializeRunDispatch(dispatch) {
-    dispatch({
-      type: actionConstants.INITIALIZE_APP,
-      runId,
-      appId,
-    });
-
-    let app;
-    let run;
-    console.log(`initializeRunDispatch appId=${appId} runId=${runId}`);
-    try {
-      app = await apiUtils.getApp(appId);
-      run = await apiUtils.getRun(runId);
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: actionConstants.FETCHED_RUN,
-        error,
-      });
-      return;
-    }
-
-    app = app.set('run', run);
-
-    dispatch({
-      type: actionConstants.FETCHED_RUN,
-      app,
-    });
-
-    try {
-      let pipeDatasList = pipeUtils.flatten(app.run.pipeDatasByWidget);
-
-      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
-      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
-
-      // If only one ligand, select it
-      const ligands = pipeUtils.getLigandNames(pipeDatasList);
-      if (ligands.size === 1) {
-        pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
-      }
-
-      const pipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
-      const updatedRun = app.run.merge({ pipeDatasByWidget });
-
-      // Find the widget that should be active for this run
-      const activeWidgetIndex = widgetUtils.getActiveIndex(
-        app.widgets, updatedRun.pipeDatasByWidget,
-      );
-
-      dispatch({
-        type: actionConstants.FETCHED_RUN_IO,
-        run: updatedRun,
-        activeWidgetIndex,
-      });
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: actionConstants.FETCHED_RUN_IO,
-        error: error ? (error.message || error) : null,
-      });
-    }
-  };
-}
-
 export function clickWidget(widgetIndex) {
   return {
     type: actionConstants.CLICK_WIDGET,
@@ -119,88 +59,48 @@ export function clickWidget(widgetIndex) {
  * @param {IList of PipeDataRecords} inputPipeDatas
  * @param {String} [inputString]
  */
-export function clickRun(widget, runId, email, pipeDatasByWidget) {
+export function clickRun(runId, widgets, widget, inputPipeDatas) {
   return async function clickRunAsync(dispatch) {
     dispatch({
       type: actionConstants.CLICK_RUN,
-      widgetId: widget.id,
     });
 
-    const inputPipeDatas = widget.inputPipes.map(inputPipe =>
-      pipeUtils.get(pipeDatasByWidget, inputPipe),
-    );
-
-    console.log(`clickRun inputPipeDatas=${inputPipeDatas}`);
-
-    apiUtils.runCCC(runId, widget.id, widget.config, inputPipeDatas)
-      .then((cccResult) => {
-        console.log('cccResult', cccResult);
-        // dispatch({
-        //   type: actionConstants.RUN_SUBMITTED,
-        //   runId,
-        //   widgetId: widget.id,
-        // });
-      })
-      .catch((err) => {
-        console.error('ERROR cccResult', err);
-        dispatch({
-          type: actionConstants.RUN_SUBMITTED,
-          err,
-        });
-      });
-  };
-}
-
-export function selectInputFile(file, appId, runId, pipeDatasByWidget) {
-  return async function selectInputFileDispatch(dispatch) {
-    dispatch({
-      type: actionConstants.INPUT_FILE,
-      file,
-    });
-
-    const extension = file.name.split('.').pop();
-    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
-      dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        error: 'File has invalid extension.',
-      });
-      return;
-    }
+    let updatedRunStatePipeData = new IList();
 
     try {
-      const inputString = await appUtils.readFile(file);
-      let inputPipeDatas = await appUtils.processInput(
-        appId, inputString, extension,
-      );
+      const inputData = widgetUtils.getWidgetInputs(widget.id, widgets, inputPipeDatas);
+      const cccResult = await apiUtils.runCCC(runId, widget.id, widget.config.toJS(), inputData.toJS());
+      // Record that the widget is running by setting the jobId
+      updatedRunStatePipeData = updatedRunStatePipeData.push(new PipeDataRecord({
+        pipeName: 'jobId',
+        type: 'inline',
+        value: cccResult.data.jobId,
+        widgetId: widget.id,
+      }));
 
-      // If only one ligand, select it
-      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
-      if (ligands.size === 1) {
-        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
-      }
-
-      let updatedPipeDatasByWidget = pipeDatasByWidget;
-      inputPipeDatas.forEach((inputPipeData) => {
-        updatedPipeDatasByWidget = pipeUtils.set(
-          updatedPipeDatasByWidget,
-          inputPipeData,
-        );
-      });
-
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
-
-      dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        inputPipeDatas,
-      });
+      await apiUtils.updateSessionWidget(runId, widget.id, updatedRunStatePipeData); // eslint no-unused-expressions: 'off', max-len: 'off'
     } catch (err) {
       console.error(err);
       dispatch({
-        type: actionConstants.INPUT_FILE_COMPLETE,
-        error: err ? (err.message || err) : null,
-        inputs: err ? err.inputs : null,
+        type: actionConstants.RUN_SUBMITTED,
+        err,
       });
     }
+
+    dispatch({
+      type: actionConstants.RUN_SUBMITTED,
+    });
+  };
+}
+
+export function updateWidgetPipeData(runId, widgetId, widgetPipeData) {
+  // TODO: something like this, update the server, then this client
+  apiUtils.updateSessionWidget(runId, widgetId, widgetPipeData);
+  return {
+    type: actionConstants.WIDGET_PIPE_DATA_UPDATE,
+    runId,
+    widgetId,
+    widgetPipeData,
   };
 }
 
@@ -242,7 +142,8 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         );
       });
 
-      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget); // eslint no-unused-expressions: 'off', max-len: 'off'
+      await apiUtils.updateSessionWidget(runId, widget.id, inputPipeDatas); // eslint no-unused-expressions: 'off', max-len: 'off'
 
       dispatch({
         type: actionConstants.PROCESSED_INPUT_STRING,
@@ -259,6 +160,59 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
   };
 }
 
+export function selectInputFile(file, widget, runId, pipeDatasByWidget) {
+  return async function selectInputFileDispatch(dispatch) {
+    dispatch({
+      type: actionConstants.INPUT_FILE,
+      file,
+    });
+
+    const extension = file.name.split('.').pop();
+    if (!FILE_INPUT_EXTENSIONS.includes(extension.toLowerCase())) {
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: 'File has invalid extension.',
+      });
+      return;
+    }
+
+    try {
+      const inputString = await appUtils.readFile(file);
+      let inputPipeDatas = await appUtils.processInput(
+        widget, inputString, extension,
+      );
+
+      // If only one ligand, select it
+      const ligands = pipeUtils.getLigandNames(inputPipeDatas);
+      if (ligands.size === 1) {
+        inputPipeDatas = pipeUtils.selectLigand(inputPipeDatas, ligands.get(0));
+      }
+
+      let updatedPipeDatasByWidget = pipeDatasByWidget;
+      inputPipeDatas.forEach((inputPipeData) => {
+        updatedPipeDatasByWidget = pipeUtils.set(
+          updatedPipeDatasByWidget,
+          inputPipeData,
+        );
+      });
+
+      await apiUtils.updateSession(runId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        inputPipeDatas,
+      });
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: actionConstants.INPUT_FILE_COMPLETE,
+        error: err ? (err.message || err) : null,
+        inputs: err ? err.inputs : null,
+      });
+    }
+  };
+}
+
 export function submitEmail(email, appId, runId, pipeDatasByWidget) {
   return async function submitEmailDispatch(dispatch) {
     if (!isEmail(email)) {
@@ -266,6 +220,7 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
         type: actionConstants.SUBMIT_EMAIL,
         error: 'Invalid email',
       });
+      return;
     }
 
     const updatedPipeDatasByWidget = pipeUtils.set(
@@ -278,36 +233,36 @@ export function submitEmail(email, appId, runId, pipeDatasByWidget) {
       }),
     );
 
+    let newRunId;
+    try {
+      if (runId) {
+        newRunId = runId;
+      } else {
+        newRunId = await apiUtils.startSession(email, appId);
+        dispatch({
+          type: actionConstants.START_SESSION,
+          runId: newRunId,
+        });
+      }
+
+      await apiUtils.updateSession(newRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: actionConstants.SUBMIT_EMAIL,
+        error: 'Unable to save your session, please try again',
+      });
+      return;
+    }
+
     dispatch({
       type: actionConstants.SUBMIT_EMAIL,
       updatedPipeDatasByWidget,
     });
 
-    if (runId) {
-      // TODO update email in session
-      return;
+    if (!runId) {
+      browserHistory.push(`/app/${appId}/${newRunId}`);
     }
-
-    let createdRunId;
-    try {
-      createdRunId = await apiUtils.startSession(email, appId);
-
-      await apiUtils.updateSession(createdRunId, updatedPipeDatasByWidget); /* eslint no-unused-expressions: 'off', max-len: 'off' */
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: actionConstants.START_SESSION,
-        error,
-        clearedPipeDatas: pipeDatasByWidget,
-      });
-    }
-
-    dispatch({
-      type: actionConstants.START_SESSION,
-      runId: createdRunId,
-    });
-
-    browserHistory.push(`/app/${appId}/${createdRunId}`);
   };
 }
 
@@ -366,60 +321,40 @@ export function changeMorph(morph) {
   };
 }
 
-export function runCCC(runId, widget, inputMap) {
-  return (dispatch) => {
-    dispatch({
-      type: actionConstants.CCC_RUN_SUBMITTED,
-      runId,
-      widget,
-    });
+export function updatePipeData(runId, pipeDatasByWidget, widgets) {
+  return async function updatePipeDataAsync(dispatch) {
+    let pipeDatasList = pipeUtils.flatten(pipeDatasByWidget);
 
-    apiUtils.runCCC(runId, widget.id, widget.config, inputMap)
-      .then((result) => {
-        console.log(result);
-        // if (result.exitCode !== 1) {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_ERROR,
-        //     runId,
-        //     widgetId,
-        //     error: new Error('Non-zero exit code on ccc run'),
-        //     result,
-        //   });
-        // } else if (result.error) {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_ERROR,
-        //     runId,
-        //     widgetId,
-        //     error: new Error('Error object returned on ccc run'),
-        //     result,
-        //   });
-        // } else {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_RESPONSE,
-        //     runId,
-        //     widgetId,
-        //     result,
-        //   });
-        // }
-        // TODO: pipe data back into the state
-        // don't forget to check errors
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch({
-          type: actionConstants.CCC_RUN_ERROR,
-          runId,
-          widget,
-          error: err,
-        });
+    try {
+      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: actionConstants.PIPE_DATA_UPDATE,
+        error: error ? (error.message || error) : null,
       });
-  };
-}
+      return;
+    }
 
-export function updatePipeData(runId, pipeDatasByWidget) {
-  return {
-    type: actionConstants.PIPE_DATA_UPDATE,
-    runId,
-    pipeDatasByWidget,
+    // If only one ligand, select it
+    const ligands = pipeUtils.getLigandNames(pipeDatasList);
+    if (ligands.size === 1) {
+      pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
+    }
+
+    const updatedPipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
+
+    // Find the widget that should be active by default for this pipeData
+    const activeWidgetIndex = widgetUtils.getActiveIndex(
+      widgets, updatedPipeDatasByWidget,
+    );
+
+    dispatch({
+      type: actionConstants.PIPE_DATA_UPDATE,
+      runId,
+      pipeData: updatedPipeDatasByWidget,
+      activeWidgetIndex,
+    });
   };
 }

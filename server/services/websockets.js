@@ -141,6 +141,9 @@ WebsocketHandler.prototype.sendSessionState = function sendSessionState(ws) {
         } else {
           log.warn('Websocket closed before we could send the session data');
         }
+      })
+      .catch((err) => {
+        console.error(`Failed to get session for sessionId=${sessionId} err=${err}`);
       });
   } else {
     return Promise.resolve();

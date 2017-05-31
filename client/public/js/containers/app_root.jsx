@@ -8,12 +8,12 @@ import {
   clickColorize,
   clickRun,
   clickWidget,
-  initializeRun,
   initializeApp,
   messageTimeout,
   submitEmail,
   submitInputString,
   selectInputFile,
+  updateWidgetPipeData,
   updatePipeData,
 } from '../actions';
 
@@ -39,19 +39,16 @@ function mapDispatchToProps(dispatch) {
     clickAbout() {
       dispatch(clickAbout());
     },
-    clickRun(runId, email, pipeDatasByWidget) {
+    clickRun(runId, widgets, pipeDatasByWidget) {
       return (widget) => {
-        dispatch(clickRun(widget, runId, email, pipeDatasByWidget));
+        dispatch(clickRun(runId, widgets, widget, pipeDatasByWidget));
       };
     },
     clickWidget(widgetIndex) {
       dispatch(clickWidget(widgetIndex));
     },
-    initializeRun(appId, runId) {
-      dispatch(initializeRun(appId, runId));
-    },
     initializeApp(appId, runId) {
-      dispatch(initializeApp(appId, runId));
+      return dispatch(initializeApp(appId, runId));
     },
     onClickColorize() {
       dispatch(clickColorize());
@@ -62,14 +59,14 @@ function mapDispatchToProps(dispatch) {
     onMessageTimeout() {
       dispatch(messageTimeout());
     },
-    onSelectInputFile(appId, runId, pipeDatasByWidget) {
-      return (file) => {
-        dispatch(selectInputFile(file, appId, runId, pipeDatasByWidget));
+    onSelectInputFile(runId, pipeDatasByWidget) {
+      return (widget, file) => {
+        dispatch(selectInputFile(file, widget, runId, pipeDatasByWidget));
       };
     },
     submitInputString(runId, pipeDatasByWidget) {
-      return (widget, input) => {
-        dispatch(submitInputString(input, widget, runId, pipeDatasByWidget));
+      return (widget, inputString) => {
+        dispatch(submitInputString(inputString, widget, runId, pipeDatasByWidget));
       };
     },
     submitEmail(appId, runId, pipeDatasByWidget) {
@@ -82,9 +79,14 @@ function mapDispatchToProps(dispatch) {
         dispatch(clickCancel(runId));
       };
     },
-    updatePipeData(runId) {
-      return (pipeDatasByWidget) => {
-        dispatch(updatePipeData(runId, pipeDatasByWidget));
+    updateWidgetPipeData(runId) {
+      return (widgetId, pipeDatasByWidget) => {
+        dispatch(updateWidgetPipeData(runId, widgetId, pipeDatasByWidget));
+      };
+    },
+    updatePipeData(runId, widgets) {
+      return (pipeData) => {
+        dispatch(updatePipeData(runId, pipeData, widgets));
       };
     },
   };
@@ -94,12 +96,11 @@ function mergeProps(stateProps, dispatchProps) {
   return Object.assign({}, dispatchProps, stateProps, {
     clickRun: dispatchProps.clickRun(
       stateProps.app.run.id,
-      stateProps.app.run.email,
+      stateProps.app.widgets,
       stateProps.app.run.pipeDatasByWidget,
     ),
     clickCancel: dispatchProps.clickCancel(stateProps.app.run.id),
     onSelectInputFile: dispatchProps.onSelectInputFile(
-      stateProps.app.id,
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
     ),
@@ -116,8 +117,12 @@ function mergeProps(stateProps, dispatchProps) {
       stateProps.app.run.id,
       stateProps.app.run.pipeDatasByWidget,
     ),
+    updateWidgetPipeData: dispatchProps.updateWidgetPipeData(
+      stateProps.app.run.id,
+    ),
     updatePipeData: dispatchProps.updatePipeData(
       stateProps.app.run.id,
+      stateProps.app.widgets,
     ),
   });
 }

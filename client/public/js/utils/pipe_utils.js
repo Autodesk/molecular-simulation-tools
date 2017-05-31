@@ -1,10 +1,91 @@
+import { Buffer } from 'buffer';
 import { List as IList, Map as IMap } from 'immutable';
 import { widgetsConstants } from 'molecular-design-applications-shared';
+import axios from 'axios';
 import PipeDataRecord from '../records/pipe_data_record';
 
 const IO_ANIMATION_FRAMES = 'minstep_frames.json';
 
 const pipeUtils = {
+
+  /**
+   * Given a list of pipeDatas, and pipe names that need to be encoded in utf8,
+   * converts any pipe data values from base64 -> utf8.
+   * @param pipeDatas {IList}
+   * @returns pipeDatas {IList}
+   */
+  convertBase64ToUtf8(pipeDatas, pipeNames) {
+    return new Promise((resolve, reject) => {
+      try {
+        const result = new IList(pipeDatas.map((pipeData) => {
+          const isPipe = pipeNames.indexOf(pipeData.pipeName) > -1;
+          if (isPipe && pipeData.encoding === 'base64') {
+            const val = (new Buffer(pipeData.value, 'base64')).toString('utf8');
+            return pipeData.set('encoding', 'utf8').set('value', val);
+          }
+          return pipeData;
+        }));
+        resolve(result);
+      } catch (err) {
+        console.error('Error in convertBase64ToUtf8', err);
+        reject(err);
+      }
+    });
+  },
+
+  /**
+   * Given a list of pipeDatas, and pipe names that need to be converted to ,
+   * JSON, converts any pipe data values from utf8 strings to JSON objects
+   * @param pipeDatas {IList}
+   * @returns pipeDatas {IList}
+   */
+  convertToJson(pipeDatas, pipeNames) {
+    return new Promise((resolve, reject) => {
+      try {
+        const result = new IList(pipeDatas.map((pipeData) => {
+          const isPipe = pipeNames.indexOf(pipeData.pipeName) > -1;
+          const isUtf8 = pipeData.encoding === 'utf8'
+            || pipeData.encoding === ''
+            || pipeData.encoding === undefined;
+          if (isPipe && isUtf8) {
+            const val = JSON.parse(pipeData.value);
+            return pipeData.set('fetchedValue', val);
+          }
+          return pipeData;
+        }));
+        resolve(result);
+      } catch (err) {
+        console.error('Error in convertToJson', err);
+        reject(err);
+      }
+    });
+  },
+
+  /**
+   * Given a list of pipeDatas, if any are of type === 'url', fetches the
+   * data and changes the pipe data type to 'inline'.
+   * @param pipeDatas {IList}
+   * @returns Promise<pipeDatas {IList}>
+   */
+  fetchPipeDataUrls(pipeDatas) {
+    const promises = pipeDatas.map((pipeData) => {
+      if (pipeData.type !== 'url') {
+        return Promise.resolve(pipeData);
+      }
+      return axios.get(pipeData.url)
+        .then(res => res.data)
+        .then(data => pipeData
+          .set('value', data)
+          .set('type', 'inline')
+          .set('encoding', 'utf8'))
+        .catch((err) => {
+          console.error('Failure in fetchPipeDataUrls', err);
+          return pipeData.set('error', { error: err, message: 'Failure in fetchPipeDataUrls' });
+        });
+    });
+    return Promise.all(promises)
+      .then(pipeDataArray => new IList(pipeDataArray));
+  },
   /**
    * Given a list of pipeDatas, find the first pdb pipeData and get the pdb data.
    * If not found, returns null.
@@ -37,14 +118,21 @@ const pipeUtils = {
       pipeDatas, IO_ANIMATION_FRAMES,
     );
 
-    // If we don't have an pipeData to tell which animation frames to use,
+    // If we don't have a pipeData to tell which animation frames to use,
     // just return the first pdb
     if (framesPipeDataIndex === -1) {
-      const pdbPipeDataIndex = pipeUtils.getIndexByValue(pipeDatas, '.pdb');
+      const pdbPipeDataIndex = pipeUtils.getIndexByName(pipeDatas, '.pdb');
       if (pdbPipeDataIndex === -1) {
         return new IList();
       }
-      const pdb = pipeDatas.get(pdbPipeDataIndex).fetchedValue;
+
+      let pdb;
+      const pipeData = pipeDatas.get(pdbPipeDataIndex);
+      if (pipeData.type === 'url') {
+        pdb = pipeData.fetchedValue;
+      } else {
+        pdb = pipeData.value;
+      }
       return pdb ? new IList([pdb]) : new IList();
     }
 

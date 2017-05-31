@@ -9,8 +9,6 @@ const actionConstants = keyMirror({
   CLICK_RUN: null,
   CLICK_WIDGET: null,
   FETCHED_APP: null,
-  FETCHED_RUN: null,
-  FETCHED_RUN_IO: null,
   GET_PDB: null,
   INPUT_FILE: null,
   INPUT_FILE_COMPLETE: null,
@@ -20,15 +18,11 @@ const actionConstants = keyMirror({
   PROCESSED_INPUT_STRING: null,
   RUN_SUBMITTED: null,
   PIPE_DATA_UPDATE: null,
+  WIDGET_PIPE_DATA_UPDATE: null,
   START_SESSION: null,
   SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,
-
-  /* CCC Widget specific*/
-  CCC_RUN_SUBMITTED: null,
-  CCC_RUN_RESPONSE: null,
-  CCC_RUN_ERROR: null,
 });
 
 export default actionConstants;

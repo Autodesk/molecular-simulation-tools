@@ -14,6 +14,7 @@ function StatusRunIdle(props) {
       <Button
         type="form"
         onClick={props.clickRun}
+        disabled={props.disabled}
       >
         Run Workflow
       </Button>
@@ -24,6 +25,7 @@ function StatusRunIdle(props) {
 StatusRunIdle.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   email: React.PropTypes.string.isRequired,
+  disabled: React.PropTypes.bool.isRequired,
 };
 
 export default StatusRunIdle;

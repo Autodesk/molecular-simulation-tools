@@ -20,9 +20,9 @@ module.exports = {
         command: ['vde', '--preprocess', '/inputs/input.pdb', '--outputdir', '/outputs/'],
       },
       outputs: [
-        { id: 'prep.pdb' },
-        { id: 'prep.json' },
-        { id: 'workflow_state.dill' },
+        { id: 'prep.pdb', encoding: 'utf8' },
+        { id: 'prep.json', encoding: 'utf8' },
+        { id: 'workflow_state.dill', encoding: 'base64' },
       ],
     },
     {
@@ -41,10 +41,6 @@ module.exports = {
       outputs: [
         { id: 'final_structure.pdb' },
         { id: 'results.json' },
-        { id: 'minstep.0.pdb' },
-        { id: 'minstep.1.pdb' },
-        { id: 'minsteps.tar.gz' },
-        { id: 'minstep_frames.json' },
       ],
     },
     {
@@ -54,9 +50,6 @@ module.exports = {
       inputs: [
         { id: 'final_structure.pdb', source: widgetsConstants.RUN },
         { id: 'results.json', source: widgetsConstants.RUN },
-        { id: 'minstep.0.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep.1.pdb', source: widgetsConstants.RUN },
-        { id: 'minstep_frames.json', source: widgetsConstants.RUN },
       ],
     },
   ],

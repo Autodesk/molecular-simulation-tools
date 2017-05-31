@@ -1,4 +1,4 @@
-import { statusConstants, widgetsConstants } from 'molecular-design-applications-shared';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import AppRecord from '../records/app_record';
 import RunRecord from '../records/run_record';
 import actionConstants from '../constants/action_constants';
@@ -49,58 +49,37 @@ function app(state = initialState, action) {
       }
       return action.app;
 
-    case actionConstants.FETCHED_RUN:
-      if (action.error) {
-        return state.merge({
-          fetching: false,
-          fetchingError: action.error,
-        });
-      }
-      return action.app;
+    case actionConstants.CLICK_RUN:
+      return state.set('run', state.run.merge({
+        fetchingData: true,
+      }));
 
-    case actionConstants.FETCHED_RUN_IO:
+    case actionConstants.RUN_SUBMITTED:
+      return state.set('run', state.run.merge({
+        fetchingData: false,
+      }));
+
+    case actionConstants.WIDGET_PIPE_DATA_UPDATE: {
+      // TODO: also handle errors here?
+      const newPipeData = state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData);
+      return state.merge({
+        fetching: false,
+        run: state.run.set('pipeDatasByWidget', newPipeData),
+      });
+    }
+
+    case actionConstants.PIPE_DATA_UPDATE:
       if (action.error) {
         return state.set('run', state.run.merge({
           fetchingDataError: action.error,
-          fetchingData: false,
         }));
       }
-      return state.set('run', action.run);
-
-    case actionConstants.CLICK_RUN: {
-      const widgetIndex = state.widgets.findIndex(
-        widget => widget.id === action.widgetId,
-      );
-      const updatedWidget = state.widgets.get(widgetIndex).merge({
-        status: statusConstants.RUNNING,
-        error: '',
-      });
-      return state.set('widgets', state.widgets.set(widgetIndex, updatedWidget));
-    }
-
-    case actionConstants.RUN_SUBMITTED: {
-      if (action.err) {
-        return state.merge({
-          fetching: false,
-        });
-      }
-
       return state.merge({
-        fetching: false,
-        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
+        run: state.run.merge({
+          pipeDatasByWidget: action.pipeData,
+          fetchingDataError: null,
+        }),
       });
-    }
-
-    case actionConstants.PIPE_DATA_UPDATE: {
-      // TODO: something like this, update the server, then this client
-      // await apiUtils.updateSession(runId, updatedPipeDatasByWidget);
-      // TODO: also handle errors here?
-      // This should deprecate actionConstants.RUN_SUBMITTED when complete
-      return state.merge({
-        fetching: false,
-        run: state.run.set('pipeDatasByWidget', action.pipeDatasByWidget),
-      });
-    }
 
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget
@@ -159,18 +138,11 @@ function app(state = initialState, action) {
       }
       return state.set('run', state.run.merge({
         emailError: '',
-        fetchingData: true,
+        fetchingData: false,
         pipeDatasByWidget: action.updatedPipeDatasByWidget,
       }));
 
     case actionConstants.START_SESSION:
-      if (action.error) {
-        return state.set('run', state.run.merge({
-          emailError: action.error,
-          fetchingData: false,
-          pipeDatasByWidget: action.clearedPipeDatasByWidget,
-        }));
-      }
       return state.set('run', state.run.merge({
         emailError: '',
         fetchingData: false,

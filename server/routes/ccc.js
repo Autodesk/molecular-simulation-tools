@@ -18,16 +18,29 @@ router.post('/run/turbo', (req, res, next) => {
     .catch(next);
 });
 
+/**
+ * Runs a turbo CCC job (no saving)
+ * See CCC.prototype.runTurbo2 for more complete descriptions of
+ * parameters and results.
+ */
+router.post('/run/turbo2', (req, res, next) => {
+  config.ccc.runTurbo2(req.body)
+    .then(result => res.json(result))
+    .catch(next);
+});
+
 router.post('/run/:sessionId/:widgetId', (req, res, next) => {
   const sessionId = req.params.sessionId;
   const widgetId = req.params.widgetId;
   // Massage mst input type to CCC input type
   const body = req.body;
+
   body.inputs = Object.keys(req.body.inputs).map((inputName) => {
     return {
       name: inputName,
       type: body.inputs[inputName].type,
-      value: body.inputs[inputName].value
+      value: body.inputs[inputName].value,
+      encoding: body.inputs[inputName].encoding,
     };
   });
 

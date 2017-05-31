@@ -36,8 +36,9 @@ function initializeModels(db) {
       widget: { type: Sequelize.STRING, allowNull: false },
       pipe: { type: Sequelize.STRING, allowNull: false },
       type: { type: Sequelize.STRING, allowNull: true },
-      value: { type: Sequelize.BLOB, allowNull: true },
+      value: { type: Sequelize.TEXT, allowNull: true },
       output: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
+      encoding: { type: Sequelize.STRING, allowNull: true },
     });
   // Adds the foreign key sessionId to WidgetValues
   WidgetValue.belongsTo(Session);
@@ -91,11 +92,41 @@ AppSession.prototype.setOutputs = function setOutputs(sessionId, outputHash) {
               pipe: outputId,
               type: fileBlob.type,
               value: fileBlob.value,
+              encoding: fileBlob.encoding,
             };
             const widgetPromise = WidgetValue.create(widgetBlob)
               .then(widgetValue => session.addWidgetvalue(widgetValue));
             promises.push(widgetPromise);
           });
+        });
+      }
+      return Promise.all(promises)
+        .then(() => this.notifySessionUpdated(sessionId))
+        .then(() => this.getState(sessionId));
+    });
+};
+
+// See README.md
+AppSession.prototype.setWidgetOutputs = function setOutputs(sessionId, widgetId, widgetHash) {
+  assert(sessionId, 'Missing sessionId in AppSession setWidgetOutputs');
+  assert(widgetId, 'Missing widgetId in AppSession setWidgetOutputs');
+  return Session.findById(sessionId)
+    .then((session) => {
+      assert(session, `Cannot find Session with id=${sessionId}`);
+      const promises = [];
+      if (widgetHash) {
+        Object.keys(widgetHash).forEach((outputId) => {
+          const fileBlob = widgetHash[outputId];
+          const widgetBlob = {
+            widget: widgetId,
+            pipe: outputId,
+            type: fileBlob.type,
+            value: fileBlob.value,
+            encoding: fileBlob.encoding,
+          };
+          const widgetPromise = WidgetValue.create(widgetBlob)
+            .then(widgetValue => session.addWidgetvalue(widgetValue));
+          promises.push(widgetPromise);
         });
       }
       return Promise.all(promises)
@@ -128,28 +159,36 @@ AppSession.prototype.getState = function getState(sessionId) {
   assert(sessionId, 'AppSession.getState: missing sessionId');
   log.debug(`AppSession.getState sessionId=${sessionId}`);
   return this.ready
-    .then(() => Session.findById(sessionId))
-    .then(session => session.getWidgetvalues())
-    .then((widgetValues) => {
-      const widgetStates = {};
-      widgetValues.forEach((widget) => {
-        if (!widgetStates[widget.widget]) {
-          widgetStates[widget.widget] = {};
-        }
-        let rawValue = widget.value;
-        if (rawValue.toString) {
-          rawValue = rawValue.toString();
-        }
-        const value = { type: widget.type, value: rawValue };
-        const inOut = widget.output ? 'out' : 'in';
-        if (!widgetStates[widget.widget][inOut]) {
-          widgetStates[widget.widget][inOut] = {};
-        }
-        widgetStates[widget.widget][inOut][widget.pipe] = value;
-      });
+    .then(() =>
+      Session.findById(sessionId)
+        .then(session => session.getWidgetvalues())
+        .then((widgetValues) => {
+          const widgetStates = {};
+          widgetValues.forEach((widget) => {
+            if (!widgetStates[widget.widget]) {
+              widgetStates[widget.widget] = {};
+            }
+            let rawValue = widget.value;
+            if (rawValue.toString) {
+              rawValue = rawValue.toString();
+            }
+            const value = { type: widget.type, value: rawValue, encoding: widget.encoding };
+            const inOut = widget.output ? 'out' : 'in';
+            if (!widgetStates[widget.widget][inOut]) {
+              widgetStates[widget.widget][inOut] = {};
+            }
+            widgetStates[widget.widget][inOut][widget.pipe] = value;
+          });
+          return {
+            session: sessionId,
+            widgets: widgetStates
+          };
+        })
+    )
+    .catch((err) => {
       return {
         session: sessionId,
-        widgets: widgetStates
+        error: err,
       };
     });
 };
@@ -175,6 +214,12 @@ AppSession.prototype.deleteSession = function deleteSession(sessionId) {
         })
         .then(() => session.destroy())
     );
+};
+
+AppSession.prototype.getSession = function getSession(sessionId) {
+  log.debug(`AppSession.getSession sessionId=${sessionId}`);
+  return this.ready
+    .then(() => Session.findById(sessionId));
 };
 
 module.exports = AppSession;

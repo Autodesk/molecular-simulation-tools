@@ -81,43 +81,6 @@ const apiUtils = {
       });
   },
 
-  /**
-   * Get the indicated run data from the server
-   * @param {String} runId
-   * @returns {Promise resolves with RunRecord}
-   */
-  getRun(runId) {
-    return axios.get(`${API_URL}/v1/session/${runId}`)
-      .then(res =>
-        res.data,
-      )
-      .then((runData) => {
-        let pipeDatasByWidget = new IMap();
-
-        Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
-          let pipeDatas = new IList();
-          const widgetPipeDatas = Object.entries(widgetData.in || {})
-            .concat(Object.entries(widgetData.out || {}));
-
-          widgetPipeDatas.forEach(([pipeName, pipeDataServer]) => {
-            pipeDatas = pipeDatas.push(
-              new PipeDataRecord(Object.assign({}, pipeDataServer, {
-                pipeName,
-                widgetId,
-              })),
-            );
-          });
-
-          pipeDatasByWidget = pipeDatasByWidget.set(widgetId, pipeDatas);
-        });
-
-        return new RunRecord(Object.assign({}, runData, {
-          id: runId,
-          pipeDatasByWidget,
-        }));
-      });
-  },
-
   cancelRun(runId) {
     return axios.post(`${API_URL}/v1/run/cancel`, {
       runId,
@@ -132,14 +95,13 @@ const apiUtils = {
    * @returns {Promise}
    */
   processInput(widget, input, extension) {
-    console.log(` processInput widget=${widget} extension=${extension}`);
-
     /*
      * For PDB, a sent input looks like:
      *   {
      *     name: 'input.pdb',
      *     type: 'inline',
      *     value: 'imapdbstring',
+     *     encoding: 'utf8', //Default
      *   },
      * For other formats, sent inputs look like:
      *   {
@@ -159,8 +121,11 @@ const apiUtils = {
     }
 
     const jobData = JSON.parse(JSON.stringify(widget.config));
-    jobData.inputs = {};
-    jobData.inputs[`input.${nameExtension}`] = { value };
+    jobData.inputs = [];
+    jobData.inputs.push({
+      name: `input.${nameExtension}`,
+      value,
+    });
     jobData.parameters = {
       maxDuration: 600,
       cpus: 1,
@@ -173,9 +138,8 @@ const apiUtils = {
       }
     }
 
-    return axios.post(`${API_URL}/v1/ccc/run/turbo`, jobData)
+    return axios.post(`${API_URL}/v1/ccc/run/turbo2`, jobData)
       .then((res) => {
-        console.log(res);
         if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
@@ -188,15 +152,16 @@ const apiUtils = {
           throw error;
         }
 
-        console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
-        return new IList(Object.keys(res.data.outputs).map(outputKey =>
-          new PipeDataRecord(Object.assign({}, {
-            pipeName: outputKey,
+        const x = new IList(res.data.outputs.map(outputBlob =>
+          new PipeDataRecord({
+            pipeName: outputBlob.name,
             widgetId: widget.id,
-            type: 'inline',
-            value: res.data.outputs[outputKey],
-          })),
+            type: outputBlob.type || 'inline',
+            value: outputBlob.value,
+            encoding: outputBlob.encoding,
+          }),
         ));
+        return x;
       });
   },
 
@@ -255,6 +220,17 @@ const apiUtils = {
     );
   },
 
+  updateSessionWidget(runId, widgetId, widgetPipeDatas) {
+    const pipeDatasByName = {};
+    widgetPipeDatas.forEach((pipeData) => {
+      pipeDatasByName[pipeData.pipeName] = pipeData.toJS();
+    });
+    return axios.post(
+      `${API_URL}/v1/session/outputs/${runId}/${widgetId}`,
+      pipeDatasByName,
+    );
+  },
+
   /**
    * Executes a ccc turbo job on the server
    * See README.md ##### POST /ccc/runturbo
@@ -265,7 +241,15 @@ const apiUtils = {
   runCCCTurbo(cccTurboJobConfig, inputMap) {
     const blob = cccTurboJobConfig;
     blob.inputs = inputMap;
+
     axios.post(`${API_URL}/v1/ccc/run/turbo`, blob);
+  },
+
+  runCCCTurbo2(cccTurboJobConfig, inputMap) {
+    const blob = cccTurboJobConfig;
+    blob.inputs = inputMap;
+
+    axios.post(`${API_URL}/v1/ccc/run/turbo2`, blob);
   },
 
   /**
@@ -284,6 +268,7 @@ const apiUtils = {
         blob.inputs[inputBlob.pipeName] = {
           type: inputBlob.type,
           value: inputBlob.value,
+          encoding: inputBlob.encoding,
         };
       }
     });

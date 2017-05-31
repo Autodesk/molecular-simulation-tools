@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer/';
 import { List as IList } from 'immutable';
 import apiUtils from './api_utils';
 import pipeUtils from './pipe_utils';
@@ -27,14 +28,12 @@ const appUtils = {
    */
   processInput: async function processInput(widget, inputString, extension) {
     let inputPipeDatas = await apiUtils.processInput(widget, inputString, extension);
+    inputPipeDatas = await pipeUtils.fetchPipeDataUrls(inputPipeDatas);
 
-    // Fetch any json files
-    inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
+    inputPipeDatas = await pipeUtils.convertBase64ToUtf8(inputPipeDatas, ['prep.json', 'prep.pdb']);
 
-    // Fetch any pdb files
-    inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
+    inputPipeDatas = await pipeUtils.convertToJson(inputPipeDatas, ['prep.json']);
 
-    // Make sure the json pipeDatas are valid and also indicate a success.
     const inputErrorMessage = pipeUtils.getOutputPipeDatasError(inputPipeDatas);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
@@ -56,22 +55,31 @@ const appUtils = {
     return Promise.all(pipeDatas.map((pipeData) => {
       if (!pipeData.pipeName.endsWith('.json')) {
         return Promise.resolve(pipeData);
-      } else if (pipeData.type === 'inline') {
-        return Promise.resolve(
-          pipeData.set('fetchedValue', JSON.parse(pipeData.value)),
-        );
+      } else if (pipeData.type === 'inline'
+        || pipeData.type === undefined
+        || pipeData.type === '') {
+        let verifiedPipeData = pipeData;
+        if (verifiedPipeData.encoding === 'base64') {
+          verifiedPipeData = verifiedPipeData.set('encoding', 'utf8');
+          const utf8Val = new Buffer(verifiedPipeData.value, 'base64').toString('utf8');
+          verifiedPipeData = verifiedPipeData.set('value', utf8Val);
+          const jsonBlob = JSON.parse(verifiedPipeData.value);
+          verifiedPipeData = verifiedPipeData.set('fetchedValue', jsonBlob);
+        }
+        return Promise.resolve(verifiedPipeData);
       } else if (pipeData.type !== 'url') {
         // The value already exists, don't need to fetch
         return Promise.resolve(pipeData);
       }
       return apiUtils.getPipeDataJson(pipeData.value)
-        .then((results) => {
+        .then(results =>
           // Create a new pipeData record
-          let pipeDataNew = pipeData.set('value', results);
-          pipeDataNew = pipeDataNew.set('fetchedValue', results);
-          pipeDataNew = pipeDataNew.set('type', 'inline');
-          return pipeDataNew;
-        });
+          pipeData.merge({
+            fetchedValue: results,
+            type: 'url',
+            encoding: 'utf8',
+          }),
+        );
     }))
     .then(pipeDataArray => new IList(pipeDataArray));
   },
@@ -96,7 +104,11 @@ const appUtils = {
             pipeDataI === pipeData,
           );
           newPipeDatas = newPipeDatas.set(
-            pipeDataIndex, pipeData.set('fetchedValue', results),
+            pipeDataIndex,
+            pipeData.merge({
+              fetchedValue: results,
+              encoding: 'utf8',
+            }),
           );
         });
     }))

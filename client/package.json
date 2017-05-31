@@ -6,6 +6,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "bootstrap": "^3.3.7",
+    "buffer": "^5.0.6",
     "dotenv": "^2.0.0",
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",

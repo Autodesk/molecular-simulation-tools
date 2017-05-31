@@ -3,6 +3,29 @@ import widgetStatusConstants from '../constants/widget_status_constants';
 import pipeUtils from './pipe_utils';
 
 const widgetUtils = {
+
+  /**
+   * Given a list of pipeDatas, and pipe names that need to be encoded in utf8,
+   * converts any pipe data values from base64 -> utf8.
+   * @param pipeDatas {IList}
+   * @returns pipeDatas {IList}
+   */
+  getWidgetInputs(widgetId, widgets, pipeDatas) {
+    const targetWidget = widgets.find(value => value.id === widgetId);
+    let inputs = new IList();
+    targetWidget.inputPipes.forEach((widgetInput) => {
+      const inputName = widgetInput.get('name');
+      const sourceWidgetId = widgetInput.get('sourceWidgetId');
+      const sourceWidgetOutputs = pipeDatas.get(sourceWidgetId);
+      const matchingSourceOutputPipeData =
+        sourceWidgetOutputs.find(value => value.pipeName === inputName);
+      if (matchingSourceOutputPipeData) {
+        inputs = inputs.push(matchingSourceOutputPipeData);
+      }
+    });
+    return inputs;
+  },
+
   /**
    * Based on the expected inputs/outputs to the existing pipeDatas, return
    * the status of the widget

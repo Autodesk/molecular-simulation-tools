@@ -17,22 +17,42 @@ require('../../css/status.scss');
 function Status(props) {
   let selection;
   if (!props.hideContent) {
-    if (!props.app.fetching && !props.app.fetchingError &&
+    if (!props.app.fetchingError &&
       props.selection.type === selectionConstants.WIDGET) {
       const widget = props.app.widgets.get(props.selection.widgetIndex);
       const inputPipeDatas = pipeUtils.getPipeDatas(
         widget.inputPipes, props.app.run.pipeDatasByWidget,
       );
-      const outputPipeDatas = pipeUtils.getPipeDatas(
-        widget.outputPipes, props.app.run.pipeDatasByWidget,
-      );
+      const outputPipeDatas = props.app.run.pipeDatasByWidget.get(widget.id)
+        ?
+        props.app.run.pipeDatasByWidget.get(widget.id)
+        :
+        new IList();
       const pipeDatas = pipeUtils.flatten(props.app.run.pipeDatasByWidget);
 
+      const jobIdOutput = props.app.run.pipeDatasByWidget.get(widget.id) ?
+        props.app.run.pipeDatasByWidget.get(widget.id).find(val => val.pipeName === 'jobId')
+        :
+        null;
+      const jobId = jobIdOutput ? jobIdOutput.value : null;
+
+      const email =
+        outputPipeDatas && outputPipeDatas.find(val => val.pipeName === 'email')
+        ?
+        outputPipeDatas.find(val => val.pipeName === 'email').value
+        :
+        '';
+
+      // TODO
+      // Given the list of widgets and connections and all the pipe data
+      // state, pass into each widget only the inputs it cares about, and
+      // provide a function to update its outputs
+      // At the moment, there's a lot hard coded.
       switch (widget.id) {
         case widgetsConstants.ENTER_EMAIL: {
           selection = (
             <StatusEnterEmail
-              email={outputPipeDatas.size ? outputPipeDatas.get(0).value : ''}
+              email={email}
               emailError={props.app.run.emailError}
               runCompleted={props.runCompleted}
               submitEmail={props.submitEmail}
@@ -53,6 +73,7 @@ function Status(props) {
               onSelectInputFile={props.onSelectInputFile}
               runCompleted={props.runCompleted}
               submitInputString={props.submitInputString}
+              updateWidgetPipeData={props.updateWidgetPipeData}
             />
           );
           break;
@@ -61,11 +82,15 @@ function Status(props) {
         case widgetsConstants.RUN: {
           selection = (
             <StatusRun
-              widget={widget}
               clickRun={props.clickRun}
               emailError={props.app.run.emailError}
+              fetchingData={props.app.run.fetchingData}
+              runCompleted={props.runCompleted}
               inputPipeDatas={inputPipeDatas}
+              jobId={jobId}
+              outputPipeDatas={outputPipeDatas}
               submitEmail={props.submitEmail}
+              updateWidgetPipeData={props.updateWidgetPipeData}
               widget={widget}
             />
           );
@@ -95,8 +120,10 @@ function Status(props) {
           if (resultsJsonResult) {
             const resultsJsonFetchedValue = resultsJsonResult.fetchedValue;
 
-            if (resultsJsonFetchedValue.output_values) {
-              resultValues = new IList(resultsJsonFetchedValue.output_values);
+            if (resultsJsonFetchedValue.get('output_values')) {
+              resultValues = new IList(
+                resultsJsonFetchedValue.get('output_values').toJS(),
+              );
             }
           }
 
@@ -142,20 +169,19 @@ Status.defaultProps = {
 };
 
 Status.propTypes = {
+  app: React.PropTypes.instanceOf(AppRecord).isRequired,
   changeLigandSelection: React.PropTypes.func.isRequired,
   clickRun: React.PropTypes.func.isRequired,
-  fetching: React.PropTypes.bool.isRequired,
-  fetchingData: React.PropTypes.bool.isRequired,
   hideContent: React.PropTypes.bool,
   morph: React.PropTypes.number.isRequired,
   onClickColorize: React.PropTypes.func.isRequired,
   onChangeMorph: React.PropTypes.func.isRequired,
   onSelectInputFile: React.PropTypes.func.isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
   selection: React.PropTypes.instanceOf(SelectionRecord).isRequired,
   submitInputString: React.PropTypes.func.isRequired,
   submitEmail: React.PropTypes.func.isRequired,
-  app: React.PropTypes.instanceOf(AppRecord).isRequired,
-  runCompleted: React.PropTypes.bool.isRequired,
+  updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default Status;

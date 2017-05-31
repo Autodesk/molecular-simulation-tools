@@ -12,6 +12,7 @@ class StatusEnterEmail extends React.Component {
 
     this.state = {
       email: '',
+      changedSinceSubmit: false,
     };
   }
 
@@ -22,31 +23,43 @@ class StatusEnterEmail extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      email: nextProps.email,
-    });
+    if (!this.state.email) {
+      this.setState({
+        email: nextProps.email,
+      });
+    }
   }
 
   onChange(e) {
     this.setState({
       email: e.target.value,
+      changedSinceSubmit: true,
     });
   }
 
   onSubmit(e) {
     e.preventDefault();
 
+    this.setState({
+      changedSinceSubmit: false,
+    });
+
     this.props.submitEmail(this.state.email);
   }
 
   render() {
+    const emailError = this.props.emailError &&
+      // Clear the error when the user starts typing
+      !this.state.changedSinceSubmit &&
+      // Don't show an error when showing the accepted valid email
+      this.state.email !== this.props.email;
     return (
       <div className="status-info">
         <form
           onSubmit={this.onSubmit}
         >
           <Input
-            className={this.props.emailError ? 'error' : ''}
+            className={emailError ? 'error' : ''}
             disabled={this.props.runCompleted}
             type="email"
             autoComplete="email"

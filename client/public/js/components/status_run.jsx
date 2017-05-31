@@ -14,13 +14,31 @@ function StatusRun(props) {
   );
   const email = emailPipeData ? emailPipeData.value : '';
 
+  let status = statusConstants.IDLE;
+  if (props.outputPipeDatas) {
+    const jobIdOutput = props.outputPipeDatas.find((val) => val.pipeName === 'jobId');
+    if (jobIdOutput) {
+      const resultJsonOutput = props.outputPipeDatas.find((val) => val.pipeName === 'results.json');
+      const errorOutput = props.outputPipeDatas.find((val) => val.pipeName === 'error');
+      if (errorOutput) {
+        status = statusConstants.ERROR;
+      } else if (resultJsonOutput) {
+        status = statusConstants.COMPLETED;
+      } else {
+        status = statusConstants.RUNNING;
+      }
+    }
+  }
+
   let statusContents;
-  switch (props.widget.status) {
+
+  switch (status) {
     case statusConstants.IDLE:
       statusContents = (
         <StatusRunIdle
           email={email}
           clickRun={() => props.clickRun(props.widget)}
+          disabled={props.fetchingData || props.runCompleted}
         />
       );
       break;
@@ -42,6 +60,7 @@ function StatusRun(props) {
         <StatusRunIdle
           email={email}
           clickRun={() => props.clickRun(props.widget)}
+          disabled={props.fetchingData || props.runCompleted}
         />
       );
       break;
@@ -59,7 +78,10 @@ function StatusRun(props) {
 
 StatusRun.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
+  fetchingData: React.PropTypes.bool.isRequired,
   inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
+  outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
   widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
 
