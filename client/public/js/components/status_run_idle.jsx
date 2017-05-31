@@ -22,10 +22,14 @@ function StatusRunIdle(props) {
   );
 }
 
+StatusRunIdle.defaultProps = {
+  fetchingData: false,
+};
+
 StatusRunIdle.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
   email: React.PropTypes.string.isRequired,
-  fetchingData: React.PropTypes.bool.isRequired,
+  fetchingData: React.PropTypes.bool,
 };
 
 export default StatusRunIdle;
