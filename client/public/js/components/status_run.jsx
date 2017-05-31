@@ -38,7 +38,7 @@ function StatusRun(props) {
         <StatusRunIdle
           email={email}
           clickRun={() => props.clickRun(props.widget)}
-          fetchingData={props.fetchingData}
+          disabled={props.fetchingData || props.runCompleted}
         />
       );
       break;
@@ -60,6 +60,7 @@ function StatusRun(props) {
         <StatusRunIdle
           email={email}
           clickRun={() => props.clickRun(props.widget)}
+          disabled={props.fetchingData || props.runCompleted}
         />
       );
       break;
@@ -80,6 +81,7 @@ StatusRun.propTypes = {
   fetchingData: React.PropTypes.bool.isRequired,
   inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
+  runCompleted: React.PropTypes.bool.isRequired,
   widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
 

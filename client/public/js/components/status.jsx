@@ -85,6 +85,7 @@ function Status(props) {
               clickRun={props.clickRun}
               emailError={props.app.run.emailError}
               fetchingData={props.app.run.fetchingData}
+              runCompleted={props.runCompleted}
               inputPipeDatas={inputPipeDatas}
               jobId={jobId}
               outputPipeDatas={outputPipeDatas}
