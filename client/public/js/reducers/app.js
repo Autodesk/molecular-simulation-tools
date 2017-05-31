@@ -49,24 +49,6 @@ function app(state = initialState, action) {
       }
       return action.app;
 
-    case actionConstants.FETCHED_RUN:
-      if (action.error) {
-        return state.merge({
-          fetching: false,
-          fetchingError: action.error,
-        });
-      }
-      return action.app;
-
-    case actionConstants.FETCHED_RUN_IO:
-      if (action.error) {
-        return state.set('run', state.run.merge({
-          fetchingDataError: action.error,
-          fetchingData: false,
-        }));
-      }
-      return state.set('run', action.run);
-
     case actionConstants.CLICK_RUN: {
       const widgetIndex = state.widgets.findIndex(
         widget => widget.id === action.widgetId,
@@ -103,14 +85,18 @@ function app(state = initialState, action) {
       });
     }
 
-    case actionConstants.PIPE_DATA_UPDATE: {
-      console.log('PIPE_DATA_UPDATE', action);
-      console.assert(action.pipeData, 'Missing action.pipeData');
+    case actionConstants.PIPE_DATA_UPDATE:
+      if (action.error) {
+        return state.set('run', state.run.merge({
+          fetchingDataError: action.error,
+        }));
+      }
       return state.merge({
-        fetching: false,
-        run: state.run.set('pipeDatasByWidget', action.pipeData),
+        run: state.run.merge({
+          pipeDatasByWidget: action.pipeData,
+          fetchingDataError: null,
+        }),
       });
-    }
 
     case actionConstants.INPUT_FILE: {
       // Clear pipeDatas for this widget

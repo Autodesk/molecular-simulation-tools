@@ -8,7 +8,6 @@ import {
   clickColorize,
   clickRun,
   clickWidget,
-  initializeRun,
   initializeApp,
   messageTimeout,
   submitEmail,
@@ -47,9 +46,6 @@ function mapDispatchToProps(dispatch) {
     },
     clickWidget(widgetIndex) {
       dispatch(clickWidget(widgetIndex));
-    },
-    initializeRun(appId, runId) {
-      dispatch(initializeRun(appId, runId));
     },
     initializeApp(appId, runId) {
       return dispatch(initializeApp(appId, runId));

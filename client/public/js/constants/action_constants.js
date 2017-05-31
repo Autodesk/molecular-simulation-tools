@@ -9,8 +9,6 @@ const actionConstants = keyMirror({
   CLICK_RUN: null,
   CLICK_WIDGET: null,
   FETCHED_APP: null,
-  FETCHED_RUN: null,
-  FETCHED_RUN_IO: null,
   GET_PDB: null,
   INPUT_FILE: null,
   INPUT_FILE_COMPLETE: null,

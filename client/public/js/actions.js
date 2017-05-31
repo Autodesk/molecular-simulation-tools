@@ -45,72 +45,6 @@ export function initializeApp(appId, runId) {
   };
 }
 
-// TODO should be able to remove this now in favor of initializeApp
-export function initializeRun(appId, runId) {
-  return async function initializeRunDispatch(dispatch) {
-    dispatch({
-      type: actionConstants.INITIALIZE_APP,
-      runId,
-      appId,
-    });
-
-    let app;
-    let run;
-    console.log(`initializeRunDispatch appId=${appId} runId=${runId}`);
-    try {
-      app = await apiUtils.getApp(appId);
-      run = await apiUtils.getRun(runId);
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: actionConstants.FETCHED_RUN,
-        error,
-      });
-      return;
-    }
-
-    app = app.set('run', run);
-
-    dispatch({
-      type: actionConstants.FETCHED_RUN,
-      app,
-    });
-
-    try {
-      let pipeDatasList = pipeUtils.flatten(app.run.pipeDatasByWidget);
-
-      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
-      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
-
-      // If only one ligand, select it
-      const ligands = pipeUtils.getLigandNames(pipeDatasList);
-      if (ligands.size === 1) {
-        pipeDatasList = pipeUtils.selectLigand(pipeDatasList, ligands.get(0));
-      }
-
-      const pipeDatasByWidget = pipeUtils.unflatten(pipeDatasList);
-      const updatedRun = app.run.merge({ pipeDatasByWidget });
-
-      // Find the widget that should be active for this run
-      const activeWidgetIndex = widgetUtils.getActiveIndex(
-        app.widgets, updatedRun.pipeDatasByWidget,
-      );
-
-      dispatch({
-        type: actionConstants.FETCHED_RUN_IO,
-        run: updatedRun,
-        activeWidgetIndex,
-      });
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: actionConstants.FETCHED_RUN_IO,
-        error: error ? (error.message || error) : null,
-      });
-    }
-  };
-}
-
 export function clickWidget(widgetIndex) {
   return {
     type: actionConstants.CLICK_WIDGET,
@@ -464,8 +398,17 @@ export function updatePipeData(runId, pipeDatasByWidget, widgets) {
   return async function updatePipeDataAsync(dispatch) {
     let pipeDatasList = pipeUtils.flatten(pipeDatasByWidget);
 
-    pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
-    pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+    try {
+      pipeDatasList = await appUtils.fetchPipeDataPdbs(pipeDatasList);
+      pipeDatasList = await appUtils.fetchPipeDataJson(pipeDatasList);
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: actionConstants.PIPE_DATA_UPDATE,
+        error: error ? (error.message || error) : null,
+      });
+      return;
+    }
 
     // If only one ligand, select it
     const ligands = pipeUtils.getLigandNames(pipeDatasList);

@@ -28,16 +28,6 @@ function selection(state = initialState, action) {
         type: selectionConstants.WIDGET,
       });
 
-    case actionConstants.FETCHED_RUN_IO:
-      if (action.error) {
-        return state;
-      }
-
-      return state.merge({
-        widgetIndex: action.activeWidgetIndex,
-        type: selectionConstants.WIDGET,
-      });
-
     case actionConstants.PIPE_DATA_UPDATE:
       if (!action.activeWidgetIndex) {
         return state;

@@ -81,43 +81,6 @@ const apiUtils = {
       });
   },
 
-  /**
-   * Get the indicated run data from the server
-   * @param {String} runId
-   * @returns {Promise resolves with RunRecord}
-   */
-  getRun(runId) {
-    return axios.get(`${API_URL}/v1/session/${runId}`)
-      .then(res =>
-        res.data,
-      )
-      .then((runData) => {
-        let pipeDatasByWidget = new IMap();
-
-        Object.entries(runData.widgets).forEach(([widgetId, widgetData]) => {
-          let pipeDatas = new IList();
-          const widgetPipeDatas = Object.entries(widgetData.in || {})
-            .concat(Object.entries(widgetData.out || {}));
-
-          widgetPipeDatas.forEach(([pipeName, pipeDataServer]) => {
-            pipeDatas = pipeDatas.push(
-              new PipeDataRecord(Object.assign({}, pipeDataServer, {
-                pipeName,
-                widgetId,
-              })),
-            );
-          });
-
-          pipeDatasByWidget = pipeDatasByWidget.set(widgetId, pipeDatas);
-        });
-
-        return new RunRecord(Object.assign({}, runData, {
-          id: runId,
-          pipeDatasByWidget,
-        }));
-      });
-  },
-
   cancelRun(runId) {
     return axios.post(`${API_URL}/v1/run/cancel`, {
       runId,
