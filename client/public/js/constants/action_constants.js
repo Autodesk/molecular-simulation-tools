@@ -23,11 +23,6 @@ const actionConstants = keyMirror({
   SUBMIT_INPUT_STRING: null,
   SUBMIT_EMAIL: null,
   SUBMITTED_CANCEL: null,
-
-  /* CCC Widget specific*/
-  CCC_RUN_SUBMITTED: null,
-  CCC_RUN_RESPONSE: null,
-  CCC_RUN_ERROR: null,
 });
 
 export default actionConstants;

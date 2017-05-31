@@ -61,8 +61,6 @@ function app(state = initialState, action) {
 
     case actionConstants.WIDGET_PIPE_DATA_UPDATE: {
       // TODO: also handle errors here?
-      console.assert(action.widgetId, 'Missing action.widgetId');
-      console.assert(action.widgetPipeData, 'Missing action.widgetPipeData');
       const newPipeData = state.run.pipeDatasByWidget.set(action.widgetId, action.widgetPipeData);
       return state.merge({
         fetching: false,
@@ -124,7 +122,6 @@ function app(state = initialState, action) {
     }
 
     case actionConstants.PROCESSED_INPUT_STRING:
-      console.log(`PROCESSED_INPUT_STRING ${action.updatedPipeDatasByWidget}`);
       return state.set('run', state.run.merge({
         fetchingData: false,
         inputStringError: action.error,

@@ -27,27 +27,14 @@ const appUtils = {
    * @returns {Array}
    */
   processInput: async function processInput(widget, inputString, extension) {
-    console.log('processInput');
     let inputPipeDatas = await apiUtils.processInput(widget, inputString, extension);
-    console.log('processInput done apiUtils.processInput', inputPipeDatas.toJS());
     inputPipeDatas = await pipeUtils.fetchPipeDataUrls(inputPipeDatas);
-    console.log('processInput done pipeUtils.fetchPipeDataUrls', inputPipeDatas.toJS());
 
     inputPipeDatas = await pipeUtils.convertBase64ToUtf8(inputPipeDatas, ['prep.json', 'prep.pdb']);
-    console.log('processInput done pipeUtils.convertBase64ToUtf8', inputPipeDatas.toJS());
 
     inputPipeDatas = await pipeUtils.convertToJson(inputPipeDatas, ['prep.json']);
-    console.log('processInput done pipeUtils.convertToJson', inputPipeDatas.toJS());
-    // Fetch any json files
-    // inputPipeDatas = await appUtils.fetchPipeDataJson(inputPipeDatas);
-    // console.log('processInput done apiUtils.fetchPipeDataJson', inputPipeDatas.toJS());
-    // Fetch any pdb files
-    // inputPipeDatas = await appUtils.fetchPipeDataPdbs(inputPipeDatas);
 
-    // console.log('processInput done apiUtils.fetchPipeDataPdbs');
-    // Make sure the json pipeDatas are valid and also indicate a success.
     const inputErrorMessage = pipeUtils.getOutputPipeDatasError(inputPipeDatas);
-    console.log('inputErrorMessage', inputErrorMessage);
     if (inputErrorMessage) {
       const error = new Error(inputErrorMessage);
       error.inputPipeDatas = inputPipeDatas;

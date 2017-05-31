@@ -140,7 +140,6 @@ const utils = {
           .then(() =>
             getSessionState(sessionId)
               .then((sessionState) => {
-                console.log('sessionState', JSON.stringify(sessionState));
                 assert(deepEqual(expectedState, sessionState),
                   `\n${JSON.stringify(expectedState)}\n!=\n${JSON.stringify(sessionState)}`);
                 return setWidgetValue(sessionId, widgetId1, widgetId1Pipe2, 'inline', widgetId1Pipe2Value, 'utf8')

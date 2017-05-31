@@ -95,8 +95,6 @@ const apiUtils = {
    * @returns {Promise}
    */
   processInput(widget, input, extension) {
-    // console.log(` processInput widget=${widget} extension=${extension}`);
-
     /*
      * For PDB, a sent input looks like:
      *   {
@@ -142,7 +140,6 @@ const apiUtils = {
 
     return axios.post(`${API_URL}/v1/ccc/run/turbo2`, jobData)
       .then((res) => {
-        console.log(res);
         if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
@@ -155,7 +152,6 @@ const apiUtils = {
           throw error;
         }
 
-        // console.log('Object.keys(res.data.outputs)=', Object.keys(res.data.outputs));
         const x = new IList(res.data.outputs.map(outputBlob =>
           new PipeDataRecord({
             pipeName: outputBlob.name,
@@ -165,7 +161,6 @@ const apiUtils = {
             encoding: outputBlob.encoding,
           }),
         ));
-        console.log('x', x);
         return x;
       });
   },
@@ -226,15 +221,10 @@ const apiUtils = {
   },
 
   updateSessionWidget(runId, widgetId, widgetPipeDatas) {
-    console.log('!!!!!!! updateSessionWidget', widgetPipeDatas.toJS());
     const pipeDatasByName = {};
     widgetPipeDatas.forEach((pipeData) => {
-      console.log('updateSessionWidget forEach pipeData=', pipeData);
-      console.assert(pipeData.pipeName && pipeData.pipeName !== 'undefined',
-        `widgetPipeDatas has an undefined pipe name: ${JSON.stringify(widgetPipeDatas.toJS())}`);
       pipeDatasByName[pipeData.pipeName] = pipeData.toJS();
     });
-    console.log('SENDING TO WIDGET UPDATE', pipeDatasByName);
     return axios.post(
       `${API_URL}/v1/session/outputs/${runId}/${widgetId}`,
       pipeDatasByName,
@@ -271,9 +261,6 @@ const apiUtils = {
    * @return {[type]}                   [See README.md]
    */
   runCCC(runId, widgetId, cccJobConfig, inputMap) {
-    console.log('api_utils.runCCC');
-    console.log('cccJobConfig', cccJobConfig);
-    console.log('inputMap', inputMap);
     const blob = cccJobConfig;
     blob.inputs = {};
     inputMap.forEach((inputBlob) => {
@@ -285,9 +272,6 @@ const apiUtils = {
         };
       }
     });
-
-    console.log('runCCC cccJobConfig', cccJobConfig);
-    console.log('runCCC blob', blob);
 
     return axios.request({
       method: 'post',

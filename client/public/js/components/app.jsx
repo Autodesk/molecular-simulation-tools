@@ -101,7 +101,6 @@ class App extends React.Component {
       }
       this.ws = new window.WebSocket(wsUrl);
       this.ws.addEventListener('open', () => {
-        console.log(`Websocket for run=${runId} opened`);
         // See README.md
         this.ws.send(JSON.stringify({
           jsonrpc: '2.0',
@@ -115,10 +114,8 @@ class App extends React.Component {
       });
 
       this.ws.addEventListener('message', (event) => {
-        // console.log('Websocket messsage', (`${event.data}`).substr(0, 100));
         const jsonrpc = JSON.parse(event.data);
 
-        console.log('Websocket messsage', jsonrpc);
         // See README.md
         let sessionUpdate = null;
         let updatedWidgets = null;
@@ -181,11 +178,7 @@ class App extends React.Component {
                 updatedWidgets = updatedWidgets.set(widgetId, widgetPipeDataList);
               });
 
-              console.log('updatedWidgets', updatedWidgets.toJS());
-
               this.props.updatePipeData(updatedWidgets);
-            } else {
-              console.log('Not updating session because no email in data');
             }
             break;
           default:
@@ -221,8 +214,6 @@ class App extends React.Component {
     const activeWidget = this.props.app.widgets.get(this.props.selection.widgetIndex);
     let inputPipeDatas = new IList();
     let outputPipeDatas = new IList();
-    // console.log('activeWidget', activeWidget);
-    // console.log('this.props.app.run.pipeDatasByWidget', this.props.app.run.pipeDatasByWidget);
     if (activeWidget) {
       inputPipeDatas = pipeUtils.getPipeDatas(
         activeWidget.inputPipes, this.props.app.run.pipeDatasByWidget,

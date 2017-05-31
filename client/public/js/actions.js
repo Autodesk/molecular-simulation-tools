@@ -128,8 +128,6 @@ export function submitInputString(inputString, widget, runId, pipeDatasByWidget)
         widget, newInput, extension,
       );
 
-      console.log('!!!!!submitInputString inputPipeDatas', inputPipeDatas);
-
       // If only one ligand, select it
       const ligands = pipeUtils.getLigandNames(inputPipeDatas);
       if (ligands.size === 1) {
@@ -320,56 +318,6 @@ export function changeMorph(morph) {
   return {
     type: actionConstants.CHANGE_MORPH,
     morph,
-  };
-}
-
-export function runCCC(runId, widget, inputMap) {
-  return (dispatch) => {
-    dispatch({
-      type: actionConstants.CCC_RUN_SUBMITTED,
-      runId,
-      widget,
-    });
-
-    apiUtils.runCCC(runId, widget.id, widget.config, inputMap)
-      .then((result) => {
-        console.log(result);
-        // if (result.exitCode !== 1) {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_ERROR,
-        //     runId,
-        //     widgetId,
-        //     error: new Error('Non-zero exit code on ccc run'),
-        //     result,
-        //   });
-        // } else if (result.error) {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_ERROR,
-        //     runId,
-        //     widgetId,
-        //     error: new Error('Error object returned on ccc run'),
-        //     result,
-        //   });
-        // } else {
-        //   dispatch({
-        //     type: actionConstants.CCC_RUN_RESPONSE,
-        //     runId,
-        //     widgetId,
-        //     result,
-        //   });
-        // }
-        // TODO: pipe data back into the state
-        // don't forget to check errors
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch({
-          type: actionConstants.CCC_RUN_ERROR,
-          runId,
-          widget,
-          error: err,
-        });
-      });
   };
 }
 

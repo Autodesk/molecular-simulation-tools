@@ -164,7 +164,6 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
     appendStdErr: true
   };
 
-  console.log('CCC.run jobBlob', jobBlob);
   const multipartInputs = {};
   jobBlob.inputs.forEach((inputBlob) => {
     if (inputBlob.type === 'url') {
@@ -231,7 +230,6 @@ CCC.prototype.processQueue = function processQueue(job, done) {
 
 
       const doneAndEmail = (err, result) => {
-        console.log('doneAndEmail', { err, result });
         return this.session.getSession(sessionId)
           .then((session) => {
             if (!session) {

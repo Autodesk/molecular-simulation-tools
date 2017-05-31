@@ -35,7 +35,6 @@ router.post('/run/:sessionId/:widgetId', (req, res, next) => {
   // Massage mst input type to CCC input type
   const body = req.body;
 
-  console.log('/run/:sessionId/:widgetId body', body);
   body.inputs = Object.keys(req.body.inputs).map((inputName) => {
     return {
       name: inputName,
@@ -48,8 +47,6 @@ router.post('/run/:sessionId/:widgetId', (req, res, next) => {
   if (body.command) {
     body.cmd = body.command;
   }
-
-  console.log('run/session/widgetid', body);
 
   config.ccc.run(sessionId, widgetId, body)
     .then((result) => {

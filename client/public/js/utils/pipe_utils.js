@@ -360,7 +360,6 @@ const pipeUtils = {
     }
 
     const prepFetchedValue = outputPipeDatas.get(prepIndex).fetchedValue;
-    console.log('prepFetchedValue', prepFetchedValue);
     if (typeof prepFetchedValue !== 'object') {
       throw new Error('prep.json was not fetched properly.');
     }

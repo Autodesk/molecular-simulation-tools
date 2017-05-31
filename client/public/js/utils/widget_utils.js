@@ -11,21 +11,14 @@ const widgetUtils = {
    * @returns pipeDatas {IList}
    */
   getWidgetInputs(widgetId, widgets, pipeDatas) {
-    console.log('getWidgetInputs widgetId', widgetId);
-    console.log('getWidgetInputs widgets', widgets);
-    console.log('getWidgetInputs pipeDatas', pipeDatas);
-    const targetWidget = widgets.find((value) => value.id === widgetId);
+    const targetWidget = widgets.find(value => value.id === widgetId);
     let inputs = new IList();
-    console.log('targetWidget', targetWidget);
     targetWidget.inputPipes.forEach((widgetInput) => {
-      console.log('targetWidget.inputPipes.forEach widgetInput', widgetInput);
       const inputName = widgetInput.get('name');
       const sourceWidgetId = widgetInput.get('sourceWidgetId');
-      console.log('targetWidget.inputPipes.forEach inputName', inputName);
-      console.log('targetWidget.inputPipes.forEach sourceWidgetId', sourceWidgetId);
       const sourceWidgetOutputs = pipeDatas.get(sourceWidgetId);
       const matchingSourceOutputPipeData =
-        sourceWidgetOutputs.find((value) => value.pipeName === inputName);
+        sourceWidgetOutputs.find(value => value.pipeName === inputName);
       if (matchingSourceOutputPipeData) {
         inputs = inputs.push(matchingSourceOutputPipeData);
       }
