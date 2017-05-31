@@ -185,8 +185,9 @@ CCC.prototype.run = function run(sessionId, widgetId, jobBlob) {
       return this.session.getSession(sessionId)
         .then((session) => {
           if (!session) {
-            console.error(`Failed to email for job finished session=${sessionId}, no session found`);
-            return;
+            const error = new Error(`Failed to email for job finished session=${sessionId}, no session found`);
+            console.error(error.message);
+            return Promise.reject(error);
           }
 
           const runUrl = `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`;
@@ -228,9 +229,8 @@ CCC.prototype.processQueue = function processQueue(job, done) {
       assert(sessionId, `Missing sessionId in bull job blob=${JSON.stringify(job.data)}`);
       assert(widgetId, `Missing widgetId in bull job blob=${JSON.stringify(job.data)}`);
 
-
-      const doneAndEmail = (err, result) => {
-        return this.session.getSession(sessionId)
+      const doneAndEmail = (err, result) =>
+        this.session.getSession(sessionId)
           .then((session) => {
             if (!session) {
               console.error(`Failed to email for job finished session=${sessionId}, no session found`);
@@ -246,12 +246,10 @@ CCC.prototype.processQueue = function processQueue(job, done) {
                 runUrl: `${process.env.FRONTEND_URL}/app/${session.app}/${sessionId}`,
               }
             );
-
           })
-          .catch((err) =>
-            console.error(`Failed to email for job finished session=${sessionId}`, err))
+          .catch(errGetSession =>
+            console.error(`Failed to email for job finished session=${sessionId}`, errGetSession))
           .then(() => done(err, result));
-      };
 
       ccc.getJobResult(jobId)
         .then((jobResult) => {
@@ -280,9 +278,9 @@ CCC.prototype.processQueue = function processQueue(job, done) {
             }
           }
           return this.session.setWidgetOutputs(sessionId, widgetId, widgetUpdateBlob)
-            .then((state) => {
-              return doneAndEmail(null, state);
-            })
+            .then(state =>
+              doneAndEmail(null, state)
+            )
             .catch((err) => {
               log.error({ error: err });
               return doneAndEmail(err);

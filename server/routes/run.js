@@ -14,7 +14,7 @@ const router = new express.Router();
  * TODO Remove this when the CWL/CCC widget run endpoint is implemented
  * Mocking of /:runId
  */
-router.get('/mock/:runId', (req, res, next) => {
+router.get('/mock/:runId', (req, res) => {
   res.send(mockedAppStatus);
 });
 
