@@ -1,60 +1,84 @@
-import { List as IList } from 'immutable';
+import { fromJS, List as IList, Map as IMap } from 'immutable';
+import { widgetsConstants } from 'molecular-design-applications-shared';
 import axios from 'axios';
-import IoRecord from '../records/io_record';
+import AppRecord from '../records/app_record';
+import PipeRecord from '../records/pipe_record';
+import PipeDataRecord from '../records/pipe_data_record';
 import RunRecord from '../records/run_record';
-import WorkflowRecord from '../records/workflow_record';
-import ioUtils from './io_utils';
+import WidgetRecord from '../records/widget_record';
 
 const API_URL = process.env.API_URL || '';
 
 const apiUtils = {
   /**
-   * Start a run
-   * @param {String} workflowId
-   * @param {String} email
-   * @param {IList} inputs
-   * @param {String} selectedLigand
-   * @param {String} [inputString]
+   * Fetch all apps
    * @returns {Promise}
    */
-  run(workflowId, email, inputs, selectedLigand, inputString) {
-    return axios.post(`${API_URL}/v1/run`, {
-      workflowId,
-      email,
-      inputs: ioUtils.formatInputsForServer(inputs, selectedLigand),
-      inputString,
-    }).then(res => res.data.runId);
+  getApps() {
+    return axios.get(`${API_URL}/v1/app`)
+      .then(res =>
+        res.data.map(appData => new AppRecord(appData)),
+      );
   },
 
-  getWorkflow(workflowId) {
-    return axios.get(`${API_URL}/v1/workflow/${workflowId}`).then(res =>
-      new WorkflowRecord(res.data),
-    );
-  },
+  /**
+   * Fetch an app from the server (when there is no run)
+   * @param {String} appId
+   * @returns {Promise resolves with AppRecord}
+   */
+  getApp(appId) {
+    return axios.get(`${API_URL}/v1/app/${appId}`)
+      .then((res) => {
+        let widgets = new IList(
+          res.data.widgets.map((widgetData) => {
+            let inputPipes = widgetData.inputs ?
+              new IList(widgetData.inputs.map(
+                inputPipeJson => new PipeRecord({
+                  name: inputPipeJson.id,
+                  sourceWidgetId: inputPipeJson.source,
+                }),
+              )) : new IList();
+            const outputPipes = widgetData.outputs ?
+              new IList(widgetData.outputs.map(
+                outputPipeJson => new PipeRecord({
+                  name: outputPipeJson.id,
+                  sourceWidgetId: widgetData.id,
+                }),
+              )) : new IList();
 
-  getWorkflows() {
-    return axios.get(`${API_URL}/v1/workflow`).then(res =>
-      res.data.map(workflowData => new WorkflowRecord(workflowData)),
-    );
-  },
+            // Hack in email requirement (TODO remove with auth)
+            inputPipes = inputPipes.push(new PipeRecord({
+              name: 'email',
+              sourceWidgetId: widgetsConstants.ENTER_EMAIL,
+            }));
 
-  getRun(runId) {
-    return axios.get(`${API_URL}/v1/run/${runId}`).then(res =>
-      res.data,
-    ).then((runData) => {
-      const inputs = runData.inputs ?
-        new IList(runData.inputs.map(input => new IoRecord(input))) :
-        new IList();
-      const outputs = runData.outputs ?
-        new IList(runData.outputs.map(output => new IoRecord(output))) :
-        new IList();
-      return new WorkflowRecord(Object.assign({}, runData, runData.workflow, {
-        run: new RunRecord(Object.assign({}, runData, {
-          inputs,
-          outputs,
-        })),
-      }));
-    });
+            return new WidgetRecord(
+              Object.assign({}, widgetData, {
+                inputPipes,
+                outputPipes,
+                config: fromJS(widgetData.config),
+              }),
+            );
+          }),
+        );
+
+        // Hack in email widget (TODO remove with Auth)
+        widgets = widgets.unshift(new WidgetRecord({
+          id: widgetsConstants.ENTER_EMAIL,
+          title: 'Enter Email',
+          outputPipes: new IList([
+            new PipeRecord({
+              name: 'email',
+              sourceWidgetId: widgetsConstants.ENTER_EMAIL,
+            }),
+          ]),
+        }));
+
+        return new AppRecord(Object.assign({}, res.data, {
+          widgets,
+          run: new RunRecord(),
+        }));
+      });
   },
 
   cancelRun(runId) {
@@ -65,18 +89,19 @@ const apiUtils = {
 
   /**
    * Process the input given by the user and return processed input
-   * @param workflowId {String}
+   * @param widget {Object} Widget object
    * @param input {String} PDB, IUPAC, InChi, SMILES
    * @param extension {String} Optional
    * @returns {Promise}
    */
-  processInput(workflowId, input, extension) {
+  processInput(widget, input, extension) {
     /*
      * For PDB, a sent input looks like:
      *   {
      *     name: 'input.pdb',
      *     type: 'inline',
      *     value: 'imapdbstring',
+     *     encoding: 'utf8', //Default
      *   },
      * For other formats, sent inputs look like:
      *   {
@@ -95,36 +120,59 @@ const apiUtils = {
       nameExtension = 'json';
     }
 
-    const data = {
-      inputs: [
-        {
-          name: `input.${nameExtension}`,
-          type: 'inline',
-          value,
-        },
-      ],
+    const jobData = JSON.parse(JSON.stringify(widget.config));
+    jobData.inputs = [];
+    jobData.inputs.push({
+      name: `input.${nameExtension}`,
+      value,
+    });
+    jobData.parameters = {
+      maxDuration: 600,
+      cpus: 1,
     };
-    return axios.post(`${API_URL}/v1/structure/executeWorkflow${workflowId}Step0`, data)
+    jobData.inputsPath = '/inputs';
+
+    for (let i = 0; i < jobData.command.length; i += 1) {
+      if (jobData.command[i].indexOf('input.pdb')) {
+        jobData.command[i] = jobData.command[i].replace('input.pdb', `input.${nameExtension}`);
+      }
+    }
+
+    return axios.post(`${API_URL}/v1/ccc/run/turbo2`, jobData)
       .then((res) => {
-        if (!res.data.success) {
+        if (res.data.error) {
           const error = new Error('Failed to process this input, please try again.');
           error.result = res.data;
           throw error;
         }
 
-        return new IList(res.data.outputs.map(output =>
-          new IoRecord(output),
+        if (res.data.exitCode !== 0) {
+          const error = new Error('Failed to process this input, please try again.');
+          error.result = res.data;
+          throw error;
+        }
+
+        const x = new IList(res.data.outputs.map(outputBlob =>
+          new PipeDataRecord({
+            pipeName: outputBlob.name,
+            widgetId: widget.id,
+            type: outputBlob.type || 'inline',
+            value: outputBlob.value,
+            encoding: outputBlob.encoding,
+          }),
         ));
+        return x;
       });
   },
 
   /**
-   * Fetch and parse the json file that is returned from step0 input processing
+   * Fetch and parse a json file
    * @param jsonUrl {String}
    * @returns {Promise}
    */
-  getIoData(jsonUrl) {
-    return axios.get(jsonUrl).then(res => res.data);
+  getPipeDataJson(jsonUrl) {
+    return axios.get(jsonUrl)
+      .then(res => res.data);
   },
 
   /**
@@ -133,7 +181,105 @@ const apiUtils = {
    * @returns {String}
    */
   getPdb(pdbUrl) {
-    return axios.get(pdbUrl).then(res => res.data);
+    return axios.get(pdbUrl)
+      .then(res => res.data);
+  },
+
+  /**
+   * Start a new app session
+   * @param {String} appId
+   * @param {String} email
+   * @returns {Promise resolves with sessionId}
+   */
+  startSession(email, appId) {
+    return axios.post(`${API_URL}/v1/session/start/${appId}`, { email })
+      .then(response => response.data.sessionId);
+  },
+
+  /**
+   * Set pipeDatas in a session
+   * @param {String} runId
+   * @param {IList of PipeDataRecords}
+   * @returns {Promise}
+   */
+  updateSession(runId, pipeDatasByWidget) {
+    let pipeDatasByWidgetServer = new IMap();
+    pipeDatasByWidget.entrySeq().forEach(([widgetId, pipeDatas]) => {
+      let pipeDatasByName = new IMap();
+      pipeDatas.forEach((pipeData) => {
+        pipeDatasByName = pipeDatasByName.set(pipeData.pipeName, pipeData);
+      });
+      pipeDatasByWidgetServer = pipeDatasByWidgetServer.set(
+        widgetId,
+        pipeDatasByName,
+      );
+    });
+    return axios.post(
+      `${API_URL}/v1/session/outputs/${runId}`,
+      pipeDatasByWidgetServer.toJS(),
+    );
+  },
+
+  updateSessionWidget(runId, widgetId, widgetPipeDatas) {
+    const pipeDatasByName = {};
+    widgetPipeDatas.forEach((pipeData) => {
+      pipeDatasByName[pipeData.pipeName] = pipeData.toJS();
+    });
+    return axios.post(
+      `${API_URL}/v1/session/outputs/${runId}/${widgetId}`,
+      pipeDatasByName,
+    );
+  },
+
+  /**
+   * Executes a ccc turbo job on the server
+   * See README.md ##### POST /ccc/runturbo
+   * @param  {[type]} cccTurboJobConfig [See README.md]
+   * @param  {[type]} inputMap          [See README.md]
+   * @return {[type]}                   [See README.md]
+   */
+  runCCCTurbo(cccTurboJobConfig, inputMap) {
+    const blob = cccTurboJobConfig;
+    blob.inputs = inputMap;
+
+    axios.post(`${API_URL}/v1/ccc/run/turbo`, blob);
+  },
+
+  runCCCTurbo2(cccTurboJobConfig, inputMap) {
+    const blob = cccTurboJobConfig;
+    blob.inputs = inputMap;
+
+    axios.post(`${API_URL}/v1/ccc/run/turbo2`, blob);
+  },
+
+  /**
+   * Executes a ccc job on the server.
+   * The result are meant to come back via the websocket.
+   * See README.md ##### POST /ccc/runturbo
+   * @param  {[type]} cccTurboJobConfig [See README.md]
+   * @param  {[type]} inputMap          [See README.md]
+   * @return {[type]}                   [See README.md]
+   */
+  runCCC(runId, widgetId, cccJobConfig, inputMap) {
+    const blob = cccJobConfig;
+    blob.inputs = {};
+    inputMap.forEach((inputBlob) => {
+      if (inputBlob) {
+        blob.inputs[inputBlob.pipeName] = {
+          type: inputBlob.type,
+          value: inputBlob.value,
+          encoding: inputBlob.encoding,
+        };
+      }
+    });
+
+    return axios.request({
+      method: 'post',
+      url: `${API_URL}/v1/ccc/run/${runId}/${widgetId}`,
+      data: blob,
+      timeout: 50000,
+      maxContentLength: 200000,
+    });
   },
 };
 

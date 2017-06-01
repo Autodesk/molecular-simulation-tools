@@ -47,22 +47,12 @@ class MoleculeViewerWrapper {
   }
 
   /**
-   * Add the given model to the viewer
-   * @param {String} modelData
+   * Set the molecule viewer to display the given state
+   * @param {IList of Strings} pdbs
+   * @param {Number} index
    */
-  addModel(modelData) {
-    // Add subsequent animation frames
-    if (this.hasMolecule) {
-      const pdbId = this.moleculeViewer.getModelIDs()[0];
-      const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
-      const originalState = this.moleculeViewer.getOriginalAnimState(pdbId);
-      // TODO why is this bonds hack needed?
-      state.bonds = originalState.bonds;
-      this.moleculeViewer.addAnimationFrame(pdbId, state, true);
-      this.moleculeViewer.playFrame(this.moleculeViewer.getNumFrames() - 1);
-      this.addModelPromise = Promise.resolve();
-      return;
-    }
+  setModels(pdbs) {
+    const firstPdb = pdbs.get(0);
 
     // Can't do anything after adding a model until an event fires
     const lastAddModelPromise = this.addModelPromise || Promise.resolve();
@@ -76,26 +66,47 @@ class MoleculeViewerWrapper {
             );
           }
 
-          // Models must be stick in order to animate
+          const extraFramePdbs = pdbs.delete(0);
           const pdbId = this.moleculeViewer.getModelIDs()[0];
+
+          // If only one pdb, already done
+          if (!extraFramePdbs.size) {
+            return resolve();
+          }
+
+          // Models must be stick in order to animate
           this.moleculeViewer.setModelRepresentation(pdbId, 'ribbon', false);
           this.moleculeViewer.setModelRepresentation(pdbId, 'stick', true);
 
           // Add initial animation frame
-          const state = this.moleculeViewer.getAnimStateFromFile(modelData, 'pdb');
+          const state = this.moleculeViewer.getAnimStateFromFile(firstPdb, 'pdb');
           this.moleculeViewer.addAnimationFrame(pdbId, state, true);
           this.moleculeViewer.setAnimateOn(true, 'RT');
           this.moleculeViewer.setPausedOn(true);
 
-          resolve();
+          // Add subsequent animation frames
+          const originalState = this.moleculeViewer.getOriginalAnimState(pdbId);
+          extraFramePdbs.forEach((framePdb) => {
+            const frameState = this.moleculeViewer.getAnimStateFromFile(framePdb, 'pdb');
+            frameState.bonds = originalState.bonds; // TODO why is this bonds hack needed?
+            this.moleculeViewer.addAnimationFrame(pdbId, frameState, true);
+          });
+
+          return resolve();
         };
 
         this.moleculeViewer.mv.addEventListener(
           MOL_VIEW_MODEL_LOADED, molViewModelLoaded,
         );
-        this.moleculeViewer.createMoleculeFromData(modelData, 'pdb', true);
+        this.moleculeViewer.createMoleculeFromData(firstPdb, 'pdb', true);
         this.hasMolecule = true;
       });
+    });
+  }
+
+  setPdbIndex(pdbIndex) {
+    Promise.all([this.createPromise, this.addModelPromise]).then(() => {
+      this.moleculeViewer.playFrame(pdbIndex);
     });
   }
 
@@ -103,7 +114,7 @@ class MoleculeViewerWrapper {
    * Select and focus on given selectionStrings
    * @param {Array} selectionStrings
    */
-  select(selectionStrings) {
+  setSelection(selectionStrings) {
     Promise.all([this.createPromise, this.addModelPromise]).then(() => {
       this.moleculeViewer.clearSelection();
       selectionStrings.forEach(selectionString =>

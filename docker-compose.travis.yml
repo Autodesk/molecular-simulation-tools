@@ -1,0 +1,79 @@
+version: '2'
+
+volumes:
+  redis-data:
+    driver: local
+
+services:
+
+  server:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["node", "bin/www"]
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+    image: "${IMAGE}"
+    environment:
+      PGHOST: db
+      CCC: "ccc:9000"
+      NODE_ENV: "development"
+      FRONTEND_URL: "http://localhost:4000"
+      URL: "http://localhost:4000"
+      REDIS_HOST: "redis"
+      FLUENT_PORT: "24224"
+      FLUENT: "1"
+      TRAVIS: "1"
+    links:
+      - redis
+      - ccc
+      - fluentd
+      - db
+
+  db:
+    build:
+      context: ./server/etc/postgres
+    environment:
+      # https://hub.docker.com/_/postgres/
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "MSTPGMASTER"      
+    ports:
+      - "5432"
+
+  redis:
+    restart: always
+    image: redis:3.2.0-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      #Don't expose this port to the host, only linked containers.
+      - "6379"
+    volumes:
+      - ./server/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  ccc:
+    image: "quay.io/bionano/cloud-compute-cannon:665d82fc"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./ccc_local_storage:/app/ccc_local_storage
+    ports:
+      - "9000:9000"
+    environment:
+      PORT: "9000"
+      #This is used to get the correct host working directory to pass into the
+      #worker containers to map the local file system to /inputs+/outputs within
+      #the container. Only used for local docker providers (not cloud)
+      HOST_PWD: "$PWD"
+      #Sets the max log level (bunyan where 10=trace 40=warn)
+      LOG_LEVEL: "40"
+      STORAGE_HTTP_PREFIX: 'http://localhost:9000/'
+      REMOVE_JOBS_ON_STARTUP: 'true'
+      DISABLE_STARTUP_TEST: 'true'
+      ENABLE_FLUENT: '0'
+    links:
+      - redis
+
+  fluentd:
+    image: "fluent/fluentd"
+    ports:
+      - "24224"

@@ -1,89 +1,88 @@
 import React from 'react';
-import Button from './button';
-import Input from './input';
+import { statusConstants } from 'molecular-design-applications-shared';
+import { List as IList } from 'immutable';
+import StatusRunError from './status_run_error';
+import StatusRunIdle from './status_run_idle';
+import StatusRunRunning from './status_run_running';
+import WidgetRecord from '../records/widget_record';
 
 require('../../css/status_run.scss');
 
-class StatusEmail extends React.Component {
-  constructor(props) {
-    super(props);
+function StatusRun(props) {
+  const emailPipeData = props.inputPipeDatas.get(
+    props.inputPipeDatas.size - 1,
+  );
+  const email = emailPipeData ? emailPipeData.value : '';
 
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-
-    this.state = {
-      email: '',
-    };
+  let status = statusConstants.IDLE;
+  if (props.outputPipeDatas) {
+    const jobIdOutput = props.outputPipeDatas.find((val) => val.pipeName === 'jobId');
+    if (jobIdOutput) {
+      const resultJsonOutput = props.outputPipeDatas.find((val) => val.pipeName === 'results.json');
+      const errorOutput = props.outputPipeDatas.find((val) => val.pipeName === 'error');
+      if (errorOutput) {
+        status = statusConstants.ERROR;
+      } else if (resultJsonOutput) {
+        status = statusConstants.COMPLETED;
+      } else {
+        status = statusConstants.RUNNING;
+      }
+    }
   }
 
-  componentWillMount() {
-    this.setState({
-      email: this.props.email,
-    });
+  let statusContents;
+
+  switch (status) {
+    case statusConstants.IDLE:
+      statusContents = (
+        <StatusRunIdle
+          email={email}
+          clickRun={() => props.clickRun(props.widget)}
+          disabled={props.fetchingData || props.runCompleted}
+        />
+      );
+      break;
+
+    case statusConstants.RUNNING:
+      statusContents = (
+        <StatusRunRunning
+          email={email}
+        />
+      );
+      break;
+
+    case statusConstants.ERROR:
+      statusContents = <StatusRunError />;
+      break;
+
+    case statusConstants.COMPLETED:
+      statusContents = (
+        <StatusRunIdle
+          email={email}
+          clickRun={() => props.clickRun(props.widget)}
+          disabled={props.fetchingData || props.runCompleted}
+        />
+      );
+      break;
+
+    default:
+      statusContents = null;
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      email: nextProps.email,
-    });
-  }
-
-  onChange(e) {
-    this.setState({
-      email: e.target.value,
-    });
-  }
-
-  onSubmit(e) {
-    e.preventDefault();
-
-    this.props.submitEmail(this.state.email);
-  }
-
-  render() {
-    const sendText = this.props.email ?
-      `We'll send you an email at ${this.props.email} when you run this workflow, and another when it's done.` : // eslint-disable-line max-len
-      'We\'ll send you an email when you run this workflow, and another when it\'s done.';
-
-    return (
-      <div className="status-info status-run">
-        <p>
-          This simulation might take about <span className="time">6 hours</span>.
-        </p>
-        <p>{sendText}</p>
-        <form
-          onSubmit={this.onSubmit}
-        >
-          <Input
-            className={this.props.emailError ? 'error' : ''}
-            disabled={this.props.runCompleted}
-            type="email"
-            autoComplete="email"
-            placeholder="Enter email"
-            value={this.state.email}
-            onChange={this.onChange}
-            onClick={this.onSubmit}
-          />
-        </form>
-        <Button
-          type="form"
-          onClick={this.props.clickRun}
-          disabled={this.props.runDisabled}
-        >
-          Run Workflow
-        </Button>
-      </div>
-    );
-  }
+  return (
+    <div className="status-info status-run">
+      {statusContents}
+    </div>
+  );
 }
 
-StatusEmail.propTypes = {
+StatusRun.propTypes = {
   clickRun: React.PropTypes.func.isRequired,
-  email: React.PropTypes.string.isRequired,
-  emailError: React.PropTypes.string.isRequired,
+  fetchingData: React.PropTypes.bool.isRequired,
+  inputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
+  outputPipeDatas: React.PropTypes.instanceOf(IList).isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
-  runDisabled: React.PropTypes.bool.isRequired,
-  submitEmail: React.PropTypes.func.isRequired,
+  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
 };
 
-export default StatusEmail;
+export default StatusRun;

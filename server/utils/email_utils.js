@@ -2,6 +2,7 @@ const fs = require('fs');
 const mustache = require('mustache');
 const sendgridFactory = require('sendgrid');
 const sendgridHelper = require('sendgrid').mail;
+const log = require('../utils/log');
 
 const FROM_EMAIL = 'no-reply@autodesk.com';
 
@@ -9,8 +10,8 @@ const sendgrid = sendgridFactory(process.env.SEND_GRID_API_KEY);
 
 const emailUtils = {
   send(emailAddress, subject, templatePath, data) {
-    return new Promise((resolve, reject) => {
-      emailUtils.loadTemplate(templatePath).then((templateString) => {
+    return emailUtils.loadTemplate(templatePath)
+      .then((templateString) => {
         const dataWithUrl = Object.assign({}, data, {
           assetsUrl: `${process.env.URL}/assets`,
         });
@@ -27,15 +28,19 @@ const emailUtils = {
           path: '/v3/mail/send',
           body: email.toJSON(),
         });
-        sendgrid.API(request, (err, response) => {
-          if (err) {
-            return reject(err);
-          }
-
-          return resolve(response.body);
+        return new Promise((resolve, reject) => {
+          sendgrid.API(request, (err, response) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(response.body);
+          });
         });
-      }).catch(reject);
-    });
+      })
+      .catch((err) => {
+        console.error(err);
+        log.error({ email: emailAddress, subject, error: err });
+      });
   },
 
   loadTemplate(templatePath) {

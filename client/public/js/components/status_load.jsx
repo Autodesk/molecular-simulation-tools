@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './button';
 import Input from './input';
+import WidgetRecord from '../records/widget_record';
 
 require('../../css/status_load.scss');
 
@@ -45,12 +46,14 @@ class StatusLoad extends React.Component {
     e.preventDefault();
 
     if (this.state.inputString) {
-      this.props.submitInputString(this.state.inputString);
+      const widget = this.props.widget;
+      const inputString = this.state.inputString;
+      this.props.submitInputString(widget, inputString);
     }
   }
 
   onSelectInputFile(e) {
-    this.props.onSelectInputFile(e.target.files[0]);
+    this.props.onSelectInputFile(this.props.widget, e.target.files[0]);
 
     this.setState({
       inputString: '',
@@ -58,7 +61,7 @@ class StatusLoad extends React.Component {
   }
 
   onClickDownload() {
-    const encodedData = encodeURIComponent(this.props.inputData);
+    const encodedData = encodeURIComponent(this.props.pdb);
     const link = document.createElement('a');
     link.href = `data:text/plain;charset=utf-8,${encodedData}`;
     link.download = 'processed_input_structure.pdb';
@@ -70,7 +73,7 @@ class StatusLoad extends React.Component {
     const inputErrorClass = this.props.inputStringError ? 'error' : '';
 
     let downloadButton;
-    if (this.props.inputData) {
+    if (this.props.pdb) {
       downloadButton = (
         <Button
           type="form"
@@ -89,6 +92,7 @@ class StatusLoad extends React.Component {
             onSubmit={this.onSubmitInputString}
           >
             <Input
+              autoComplete="email"
               className={`enterMolecule ${inputErrorClass}`}
               type="text"
               placeholder="Enter molecule here"
@@ -132,20 +136,22 @@ class StatusLoad extends React.Component {
 }
 
 StatusLoad.defaultProps = {
-  inputData: '',
+  pdb: '',
   inputStringError: null,
   inputFileError: null,
 };
 
 StatusLoad.propTypes = {
+  widget: React.PropTypes.instanceOf(WidgetRecord).isRequired,
   runCompleted: React.PropTypes.bool.isRequired,
   fetchingData: React.PropTypes.bool.isRequired,
-  inputData: React.PropTypes.string,
+  pdb: React.PropTypes.string,
   inputString: React.PropTypes.string.isRequired,
   inputStringError: React.PropTypes.string,
   inputFileError: React.PropTypes.string,
   onSelectInputFile: React.PropTypes.func.isRequired,
   submitInputString: React.PropTypes.func.isRequired,
+  // updateWidgetPipeData: React.PropTypes.func.isRequired,
 };
 
 export default StatusLoad;

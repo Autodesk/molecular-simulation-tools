@@ -1,18 +1,23 @@
 {
   "extends": "airbnb",
   "parserOptions": {
-    "ecmaVersion": 8,
+    "ecmaVersion": 8
   },
   "globals": {
     "describe": true,
     "it": true,
     "beforeEach": true,
     "afterEach": true,
-    "expect": true,
+    "expect": true
   },
   "rules": {
-    "no-param-reassign": 1,
+    "no-param-reassign": [ "error", { "props": false }],
     "comma-dangle": 0,
     "no-unused-vars": 1,
-  },
+    "no-extend-native": ["error", { "exceptions": ["Error"] }],
+    "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-else-return": 0,
+    "func-names": ["error", "as-needed"]
+  }
 }

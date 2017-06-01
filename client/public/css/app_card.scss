@@ -1,0 +1,183 @@
+$transition-time: 0.2s;
+
+.app-card {
+  display: block;
+  position: relative;
+  width: 360px;
+  height: 300px;
+  overflow: hidden;
+  margin-top: 32px;
+  margin-left: 26px;
+  border-radius: 20px;
+  transition: $transition-time;
+  background-repeat: none;
+  background-size: cover;
+  box-shadow: none;
+
+  .bg-image {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: $transition-time;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+  }
+
+  .filter {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  &:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transition: $transition-time;
+
+    .bg-image {
+      opacity: 1;
+      transition: $transition-time;
+    }
+  }
+
+  .soon {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    opacity: 0.9;
+  }
+
+  .cardOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 20px 20px;
+    width: 100%;
+    height: 80px;
+  }
+
+  .cardDeveloper
+  {
+    position: absolute;
+    bottom: 36px;
+    left: 20px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .cardRuns
+  {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .cardViews
+  {
+    position: absolute;
+    bottom: 20px;
+    left: 80px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .cardLogo {
+    position: absolute;
+    width: 40px;
+    top: 20px;
+    left: 20px;
+  }
+
+  .cardBack {
+    position: absolute;
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cardImage {
+    margin-bottom: 20px;
+    border-radius: 20px;
+    width: 100%;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    transition: $transition-time;
+  }
+
+  &:hover .cardImage {
+    opacity: 1;
+    mix-blend-mode: multiply;
+    transition: $transition-time;
+  }
+
+  .cardTitle {
+    position: absolute;
+    width: 86%;
+    top: 65px;
+    left: 20px;
+    opacity: 1;
+    font-size: 2em;
+    font-family: 'art-bold';
+    cursor: pointer;
+    transition: $transition-time;
+  }
+
+  &:hover .cardTitle {
+    top: 60px;
+    opacity: 0;
+    transition: $transition-time;
+  }
+
+  .cardInfo {
+    position: absolute;
+    width: 86%;
+    top: 75px;
+    left: 20px;
+    opacity: 0;
+    font-size: 1em;
+    font-family: 'art-bold';
+    cursor: pointer;
+    transition: $transition-time;
+    color: #ffffff;
+  }
+
+  &:hover .cardInfo {
+    top: 70px;
+    opacity: 1;
+    transition: $transition-time;
+  }
+
+  &.app-card-loading {
+    &:hover {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      transform: none;
+
+      .bg-image {
+        opacity: 0.4;
+      }
+    }
+
+    .bg-image {
+      background-color: #afafaf;
+    }
+
+    .cardTitle {
+      color: #ffffff;
+    }
+
+    .cardLogo {
+      width: 40px;
+      height: 40px;
+      background-color: #5f5f5f;
+      border-radius: 20px
+    }
+  }
+}

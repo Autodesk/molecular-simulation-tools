@@ -1,0 +1,15 @@
+{
+  "name": "molecular-simulation-tools-apps",
+  "version": "1.0.0",
+  "description": "Simply a data structure containing the apps for MST",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"No tests!\""
+  },
+  "author": "Autodesk Life Sciences",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "immutable": "^3.8.1",
+    "molecular-design-applications-shared": "../shared"
+  }
+}

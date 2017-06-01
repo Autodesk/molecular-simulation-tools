@@ -11,13 +11,6 @@ function resultsSettings(state = initialState, action) {
     case actionConstants.CHANGE_MORPH:
       return state.set('morph', action.morph);
 
-    case actionConstants.FETCHED_RUN:
-      if (action.error || !action.workflow.outputPdbUrl) {
-        return state;
-      }
-      // TODO currently, we can only morph between input and output states
-      return state.set('morph', 1);
-
     default:
       return state;
   }

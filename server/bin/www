@@ -1,40 +1,109 @@
 #!/usr/bin/env node
 
 /**
+ * Add this extra property to Errors right away
+ */
+if (!('toJSON' in Error.prototype)) {
+  Object.defineProperty(Error.prototype, 'toJSON', {
+    value: function toJSON() {
+      const alt = {};
+
+      Object.getOwnPropertyNames(this).forEach((key) => {
+        alt[key] = this[key];
+      }, this);
+
+      return alt;
+    },
+    configurable: true,
+    writable: true
+  });
+}
+
+let fluentSender;
+
+function handleUncaughtException(err) {
+  /* Just log it no matter what first */
+  console.error(err);
+  let stack = null;
+  try {
+    stack = err.stack;
+  } catch (e) {}
+
+  // You can't pass the error object directly, fluent doesn't like it.
+  let errorJson = null;
+  try {
+    errorJson = err.toJSON();
+  } catch (e) {
+    console.error(e);
+  }
+
+  let errorString = null;
+  try {
+    errorString = err.toString();
+  } catch (e) {
+    console.error(e);
+  }
+
+  const errObj = {
+    stack,
+    errorJson,
+    errorString,
+    message: 'crash',
+  };
+
+  console.error(JSON.stringify(errObj, null, ''));
+  // Ensure crash is logged to fluent before exiting.
+  try {
+    if (!(process.env.FLUENT === '0' || process.env.FLUENT === 'false')) {
+      if (fluentSender) {
+        try {
+          fluentSender.emit('mst', errObj, null, () => {
+            process.exit(1);
+          });
+        } catch (e) {
+          process.exit(1);
+        }
+      }
+    } else {
+      process.exit(1);
+    }
+  } catch (e) {
+    process.exit(1);
+  }
+}
+
+/**
+ * Crash handler
+ */
+process.on('uncaughtException', handleUncaughtException);
+process.on('unhandledRejection', (err, promise) => {
+  // See Promise.onPossiblyUnhandledRejection for parameter documentation
+  console.error('unhandledRejection', err, promise);
+  handleUncaughtException(err);
+});
+
+/* Load the logger first, since we use it early */
+require('dotenv').config();
+const log = require('../utils/log');
+
+/**
  * Module dependencies.
  */
-require('dotenv').config();
 const http = require('http');
 const httpProxy = require('http-proxy');
 const retry = require('bluebird-retry');
 const app = require('../main/server');
-const dbConstants = require('../constants/db_constants');
 const dbUtils = require('../utils/db_utils');
-const errorUtils = require('../utils/error_utils');
-const log = require('../utils/log');
-const fluentSender = require('../utils/fluent_sender');
-const redis = require('../utils/redis');
-const seedData = require('../utils/seed_data');
+fluentSender = require('../utils/fluent_sender');
 const testUtils = require('../test/test_utils');
 
-/**
- * Normalize a port into a number, string, or false.
- */
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
+const RedisConfig = require('../main/redis_config');
+const AppSession = require('../services/app_session');
+const WebsocketHandler = require('../services/websockets');
+const Notifications = require('../services/notifications');
+const dbPromise = require('../main/db');
+const WebsocketServer = require('../main/websocket_server');
+const CCCService = require('../services/ccc');
 
 /**
  * Get port from environment and store in Express.
@@ -79,45 +148,72 @@ function onError(error) {
  * Event listener for HTTP server 'listening' event.
  */
 function onListening(addr) {
+  log.debug('onListening', addr);
   return () => {
     const bind = typeof addr === 'string'
       ? `pipe ${addr}`
       : `port ${addr.port}`;
-    log.debug(`Listening on ${bind}`);
-    // Wait a bit, sometimes docker takes a while
-    retry(
-      testUtils.runTestCCC,
-      { max_tries: 20, interval: 1000 }
-    ).then((status) => {
-      log.info({ message: 'Test CCC connection', success: status.success });
-    }).catch((err) => {
-      log.error({ status: 'Test failed:', error: JSON.stringify(err) });
-    });
+    log.info(`Listening on ${bind}`);
+    if (process.env.NODE_ENV === 'development') {
+      // Wait a bit, sometimes docker takes a while
+      log.debug('Running tests...');
+      retry(testUtils.runAllTests, { max_tries: 20, interval: 1000 })
+        .then((blob) => {
+          const status = blob.success ? 'OK' : 'Failed';
+          const error = blob.error != null ? JSON.stringify(blob.error) : '';
+          log.info(`Internal functional tests: ${status} ${error}`);
+          if (process.env.TRAVIS === '1') {
+            process.exit(blob.success ? 0 : -1);
+          }
+          return null;
+        })
+        .catch((err) => {
+          log.error({ status: 'Test failed:', error: JSON.stringify(err) });
+          if (process.env.TRAVIS === '1') {
+            process.exit(-1);
+          }
+        });
+    }
   };
 }
 
-/**
-  Before we create the server, we'll populate the database
-  with workflows
-*/
-Promise.all(seedData.map(workflow =>
-  dbUtils.seed(redis, dbConstants.REDIS_WORKFLOWS, workflow)
-)).then(() => {
-  /**
-   * Create HTTP server.
-   */
-  const server = http.createServer(app);
+const config = require('../main/config'); // This is a promise to deliver all db etc config
 
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening(server.address()));
-  server.timeout = 8 * 60 * 1000; // 8 minutes
-}).catch((err) => {
-  log.error({ error: err });
-});
+config.redisConfig = new RedisConfig();
+config.redis = config.redisConfig.connect();
+
+
+/**
+  Before we create the server, initialize the database (seeds, migrations)
+*/
+dbUtils.initialize(config.redis)
+  .then(() => {
+    /**
+     * Create HTTP server.
+     */
+    const server = http.createServer(app);
+    config.server = server;
+  })
+  .then(() => dbPromise)
+  .then((db) => {
+    /* Create all the remaining services */
+    config.db = db;
+    config.notifications = new Notifications({ config });
+    config.session = new AppSession({ config });
+    config.wsHandler = new WebsocketHandler({ config });
+    config.ccc = new CCCService({ config });
+    config.wss = new WebsocketServer({ config }).wss;
+    return null;// http://goo.gl/rRqMUw
+  })
+  .then(() => {
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+    config.server.on('error', onError);
+    config.server.listen(port);
+    config.server.on('listening', onListening(config.server.address()));
+    config.server.timeout = 8 * 60 * 1000; // 8 minutes
+  });
 
 /**
  * Proxy requests to port 9000 to the CCC server
@@ -125,46 +221,3 @@ Promise.all(seedData.map(workflow =>
 if (process.env.CCC === 'ccc:9000') {
   httpProxy.createProxyServer({ target: 'http://ccc:9000' }).listen(9000);
 }
-
-/**
- * Crash handler
- */
-process.on('uncaughtException', (err) => {
-  let stack = null;
-  try {
-    stack = err.stack;
-  } catch (e) {
-    console.error(e);
-  }
-
-  // You can't pass the error object directly, fluent doesn't like it.
-  let errorJson = null;
-  try {
-    errorJson = errorUtils.toJson(err.toJSON());
-  } catch (e) {
-    console.error(e);
-  }
-
-  let errorString = null;
-  try {
-    errorString = err.toString();
-  } catch (e) {
-    console.error(e);
-  }
-
-  const errObj = {
-    stack,
-    errorJson,
-    errorString,
-    message: 'crash',
-  };
-  console.error(JSON.stringify(errObj, null, ''));
-  // Ensure crash is logged to fluent before exiting.
-  try {
-    fluentSender.emit('mst', errObj, null, () => {
-      process.exit(1);
-    });
-  } catch (e) {
-    process.exit(1);
-  }
-});

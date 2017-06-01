@@ -34,6 +34,279 @@ Your Google Analytics key file should be placed at server/google_api_key.json.  
 #### API
 All routes are prefixed with the current version.  See the mock server in client/test/fixtures/mock_server.js for example responses.
 
+##### POST /session/start/:appId
+
+Begins an app session.
+
+POST data:
+```
+{
+	"email": "some-user@gmail.com",
+}
+```
+
+The email is a proxy for authentication.
+
+Returns:
+
+```
+{
+	sessionId: <SessionID>
+}
+```
+
+##### POST /session/outputs/:sessionId
+
+Update an app session outputs
+
+POST data:
+
+```
+{
+	"widgetId1":
+		{
+			"outputPipeId1": {
+				"type": "inline",
+				"value": "the data"
+			},
+			"outputPipeId2": {
+				"type": "url",
+				"value": "http://some.data.url"
+			}
+		},
+	"widgetId2":
+		{
+			"outputPipeId3": {
+				"type": "inline",
+				"value": "the data"
+			},
+			"outputPipeId4": {
+				"type": "url",
+				"value": "http://some.data.url"
+			}
+		}
+}
+```
+
+Returns `GET /session/:sessionId`
+
+##### POST /session/outputs/:sessionId/:widgetId
+
+Update an app session outputs for a single widget
+
+POST data:
+
+```
+{
+	"outputPipeId1": {
+		"type": "inline",
+		"encoding": "base64",
+		"value": "the data"
+	},
+	"outputPipeId2": {
+		"type": "url",
+		"value": "http://some.data.url"
+	}
+}
+```
+
+Returns `GET /session/:sessionId`
+
+##### DELETE /session/outputs/:sessionId
+
+Delete widget outputs
+
+POST data:
+
+```
+[
+	"widgetId1",
+	"widgetId2"
+]
+```
+
+Returns `GET /session/:sessionId`
+
+##### GET /session/:sessionId
+
+Returns the session state
+
+```
+{
+	"session": ":sessionId",
+	"widgets": {
+		"widgetId1": {
+			"out": {
+				"outputPipe1": {
+					"type": "inline",
+					"value": "actual data string",
+					"encoding": "utf8"
+				},
+				"outputPipe2": {
+					"type": "url",
+					"value": "http://url.to.data"
+				}
+			}
+		}
+	}
+}
+```
+
+##### POST /ccc/runturbo
+
+Submits a "fast" docker job to the server. Turbo jobs are not saved, and there is no interaction with sessions or widgets. It is meant for client widgets to call on their own.
+
+POST data (all fields are optional):
+
+```
+{
+	"id": "optional custom job id",
+	"inputs": [
+		{
+			"name": "input1Key",
+			"type": "inline",
+			"value": "input1ValueString",
+			"encoding": "base64"
+		},
+		{
+			"name": "input2Key",
+			"type": "url",
+			"value": "http://some.url.value"
+		}
+	],
+	"image": "docker.io/busybox:latest",
+	"imagePullOptions": {},
+	"command": ["/bin/sh", "/some/script"],
+	"workingDir": "/inputs",
+	"parameters": {
+		"cpus": 1,
+		"maxDuration": 600
+	},
+	"inputsPath": "/inputs",
+	"outputsPath": "/ouputs",
+	"meta": {}
+}
+```
+
+Returns:
+
+```
+{
+  "id": "S1DWbFHTx",
+  "outputs": [
+  	{
+  		"name": "val1",
+  		"value": "Some string data",
+  		"encoding": "utf8"
+  	},
+  	{
+  		"name": "val2",
+  		"value": "20731535302965964",
+  		"encoding": "base64"
+  	}
+  ],
+  "error": null,
+  "stdout": [],
+  "stderr": [],
+  "exitCode": 0,
+  "stats": {
+    "copyInputs": "0.149s",
+    "ensureImage": "0s",
+    "containerCreation": "0.161s",
+    "containerExecution": "1.302s",
+    "copyOutputs": "0.208s",
+    "copyLogs": "0.003s",
+    "total": "1.5110000000000001s"
+  }
+}
+```
+
+##### POST /ccc/run/:sessionId/:widgetId
+
+Submits a CCC job for a session widget. The outputs will be saved in the session and the session will be updated (and notified via websocket)
+
+POST data (all fields optional):
+
+```
+{
+	"inputs": {
+		"inputKey1": {
+			"type": "url",
+			"value": "http://some.url"
+		},
+		"inputKey2": {
+			"type": "inline",
+			"value": "Raw data string"
+		},
+	},
+	"image": "docker.io/busybox:latest",
+	"imagePullOptions": {},
+	"command": ["/bin/sh", "/some/script"],
+	"workingDir": "/inputs",
+	"parameters": {
+		"cpus": 1,
+		"maxDuration": 600
+	},
+	"inputsPath": "/inputs",
+	"outputsPath": "/ouputs",
+	"meta": {},
+	"appendStdOut": true,
+	"appendStdErr": true
+}
+
+```
+Returns:
+
+```
+{
+  "sessionId": "fefd7b397aaf4a7c8ce2a6d8fbd28759",
+  "jobId": "BJaHVYBTl"
+}
+```
+
+The results will be computed out-of-band, and returned via the websocket (the server monitors the job internally).
+
+##### WSS
+
+A websocket request to the app root will initiate a websocket connection
+
+After the connection is established, the server needs to know what the app session is, by the client sending a message (stringified):
+
+
+	{
+        "jsonrpc": "2.0",
+        "method": jsonrpcConstants.SESSION,
+        "params": {
+        	"sessionId": "<session/run id>"
+        }
+    }
+
+The server will then send the latest session data, and will send a new state any time the state is changed on the server:
+
+	{
+		"session": "<session/runId>",
+		"widgets": {
+			"widget1": {
+				"out": {
+					"widget1pipe1": {
+						"type": "inline",
+						"value": "widgetId1Pipe1Value"
+					}
+				}
+			},
+			"widget2": {
+				"out": {
+					"widget2pipe1": {
+						"type": "inline",
+						"value": "widgetId2Pipe1Value"
+					}
+				}
+			}
+		}
+    }
+
+When the app session is changed, the websocket will automatically close.
+
 ##### GET workflow/:workflowId
 Returns the indicated workflow.
 
@@ -57,6 +330,7 @@ Returns the pdb data and a url to the pdb file represented by the given pdbId.  
 
 ##### PUT /structure/upload
 Uploads the given pdb file to the server and returns a public URL to it.  Sends formdata with a `workflowId` and a `file`.
+
 
 #### Test API
 

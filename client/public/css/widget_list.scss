@@ -1,0 +1,60 @@
+.widget-list {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  background-color: #3A3D79;
+  padding-top: 44px;
+
+  .widget-list-buttons {
+    flex: 1;
+
+    .app-title {
+      background-color: #55526B !important;
+      border: 1px transparent solid !important;
+      text-align: center;
+      font-weight: 600 !important;
+      font-size: 1.4em !important;
+      color: #ffffff !important;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+
+      &:hover {
+        border: 1px solid rgb(90, 130, 255) !important;
+
+        .icon-finished {
+          display: none !important;
+        }
+
+        .icon-view {
+          display: inline-block !important;
+        }
+      }
+
+      &.selected {
+        background-color: #5981FF !important;
+      }
+
+      .icon-view {
+        display: none !important;
+      }
+    }
+
+    .input-file-container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      input[type=file] {
+        display: none;
+      }
+
+      .error {
+        color: #ff0000;
+      }
+    }
+  }
+
+  .actions {
+    text-align: center;
+  }
+}

@@ -8,7 +8,9 @@ const appConstants = require('../constants/app_constants');
 const routeUtils = require('../utils/route_utils');
 const runRoutes = require('../routes/run');
 const structureRoutes = require('../routes/structure');
-const workflowRoutes = require('../routes/workflow');
+const appRoutes = require('../routes/app');
+const sessionRoutes = require('../routes/session');
+const cccRoutes = require('../routes/ccc');
 const testRoutes = require('../routes/test');
 const versionRouter = require('./version');
 const log = require('../utils/log');
@@ -35,14 +37,26 @@ app.use(new express.Router().get('../assets/*', routeUtils.notFound));
 /**
  * Add server routes
  */
-app.use(`${appConstants.VERSION_PREFIX}/workflow`, workflowRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/app`, appRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/run`, runRoutes);
 app.use(`${appConstants.VERSION_PREFIX}/structure`, structureRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/session`, sessionRoutes);
+app.use(`${appConstants.VERSION_PREFIX}/ccc`, cccRoutes);
 app.use('/test', testRoutes);
 app.use('/version', versionRouter);
 
+// Redirect for URL changes
+app.get(['/v1/workflow', '/v1/workflow/*'], (req, res) => {
+  const wildcard = req.originalUrl.substr(13, req.originalUrl.length - 13);
+  return res.redirect(`/v1/app/${wildcard}`);
+});
+app.get('/workflow/*', (req, res) => {
+  const wildcard = req.originalUrl.substr(10, req.originalUrl.length - 10);
+  return res.redirect(`/app/${wildcard}`);
+});
+
 // Serve index.html to page routes
-app.get(['/', '/workflow/*'], (req, res) => {
+app.get(['/', '/app/*'], (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
@@ -50,9 +64,9 @@ app.get(['/', '/workflow/*'], (req, res) => {
 app.use(routeUtils.notFound);
 
 // error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err) {
-    log.error({error:err, message:err.message, url:req.originalUrl, stack:err.stack | null});
+    log.error({ error: err, message: err.message, url: req.originalUrl, stack: err.stack });
   }
   // return error json, only providing error in development
   res.status(err.status || 500);

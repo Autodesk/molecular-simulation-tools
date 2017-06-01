@@ -1,49 +1,52 @@
 const fs = require('fs-extended');
+const Promise = require('bluebird');
 const retry = require('bluebird-retry');
 const request = require('request-promise');
-const cccUtils = require('../utils/ccc_utils');
 const log = require('../utils/log');
 
 const statusConstants = require('molecular-design-applications-shared').statusConstants;
 
+const testCCC = require('./test_ccc');
+const testCCCTurbo = require('./test_ccc_turbo');
+const testSession = require('./test_session');
+
 const testUtils = {
   runAllTests() {
-    return Promise.all([testUtils.runTestWorkflowVDE(), testUtils.runTestWorkflowQMMM()])
-      .then((results) => {
-        let successCount = 0;
-        let totalCount = 0;
-        const problems = [];
-        results.forEach((r) => {
-          totalCount += 1;
+    return Promise.all([
+      testSession.runAppSession(),
+      testCCC.runTestCCC(),
+      testCCCTurbo.runTestCCCTurbo()
+    ])
+    .then((results) => {
+      let successCount = 0;
+      let totalCount = 0;
+      const problems = [];
+      results.forEach((r) => {
+        totalCount += 1;
+        if (r) {
           successCount += r.success === true ? 1 : 0;
           if (!r.success) {
             problems.push(r);
           }
-        });
-        if (successCount === totalCount && totalCount > 0) {
-          log.info(`Success: ${successCount} / ${totalCount} tests passed`);
         } else {
-          log.error({ problems });
-          log.error(`Failure: ${successCount} / ${totalCount} tests passed`);
+          problems.push('Null results from the test call');
         }
-        return { success: (successCount === totalCount && totalCount > 0), results };
-      })
-      .catch((err) => {
-        log.error(err);
-        return { success: false, error: JSON.stringify(err) };
       });
+      if (successCount === totalCount && totalCount > 0) {
+        log.info(`Success: ${successCount} / ${totalCount} tests passed`);
+      } else {
+        log.error({ problems });
+        log.error(`Failure: ${successCount} / ${totalCount} tests passed`);
+      }
+      return { success: (successCount === totalCount && totalCount > 0), results };
+    })
+    .catch((err) => {
+      log.error(err);
+      return { success: false, error: JSON.stringify(err) };
+    });
   },
 
-  runTestCCC() {
-    return cccUtils.promise()
-      .then(ccc =>
-        ccc.status()
-          .then(status => (
-            { success: true, ccc_status: status }
-          ))
-      );
-  },
-
+  // Deprecated
   runTestWorkflowVDE() {
     const formData = {
       inputs: [
@@ -59,7 +62,7 @@ const testUtils = {
     return Promise.resolve(true)
       // Step 1
       .then(() => {
-        const url = `http://localhost:${port}/v1/structure/executeWorkflow0Step0`;
+        const url = `http://localhost:${port}/v1/structure/executeApp0Step0`;
         return request.post({ url, body: formData, json: true })
           .then((body) => {
             if (!body.success) {
@@ -74,16 +77,13 @@ const testUtils = {
         const formDataStep2 = {
           email: null,
           inputs,
-          workflowId: 0
+          appId: 0
         };
 
         const url = `http://localhost:${port}/v1/run`;
         return request.post({ url, body: formDataStep2, json: true });
       })
-      .then((jobResult) => {
-        log.warn({ message: 'test post w0s1', jobResult });
-        return jobResult.runId;
-      })
+      .then(jobResult => jobResult.runId)
       .then((runId) => {
         if (!runId || runId === 'undefined') {
           throw new Error(`runId=${runId}`);
@@ -115,7 +115,8 @@ const testUtils = {
       });
   },
 
-  runTestWorkflowQMMM() {
+  // Deprecated
+  runTestAppQMMM() {
     const formData = {
       inputs: [
         {
@@ -126,7 +127,7 @@ const testUtils = {
     };
 
     const port = process.env.PORT;
-    const url = `http://localhost:${port}/v1/structure/executeWorkflow1Step0`;
+    const url = `http://localhost:${port}/v1/structure/executeApp1Step0`;
     // Step 1
     return request.post({ url, body: formData, json: true })
       .then((body) => {
@@ -145,7 +146,7 @@ const testUtils = {
         const formDataStep2 = {
           email: null,
           inputs,
-          workflowId: 1
+          appId: 1
         };
 
         const urlStep2 = `http://localhost:${port}/v1/run`;
