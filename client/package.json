@@ -69,6 +69,6 @@
     "dev": "webpack-dev-server  --host 0.0.0.0 --content-base public/ --config webpack.config.js --progress --colors",
     "mock-server": "node test/fixtures/mock_server.js"
   },
-  "author": "Autodesk Bio/Nano",
+  "author": "Autodesk Life Sciences",
   "license": "Apache 2.0"
 }

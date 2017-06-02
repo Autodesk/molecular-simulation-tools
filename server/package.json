@@ -14,7 +14,7 @@
     "dev-lint": "nodemon ./bin/www --exec 'npm run lint'",
     "start": "node ./bin/www"
   },
-  "author": "",
+  "author": "Autodesk Life Sciences",
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^2.0.1",

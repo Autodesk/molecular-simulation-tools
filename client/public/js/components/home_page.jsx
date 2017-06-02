@@ -152,7 +152,7 @@ class HomePage extends React.Component {
                 </p>
               </div>
               <div className="col-xs-12 col-sm-6">
-                <p> The Autodesk BioNano group is building MST as part of our mission to
+                <p> The Autodesk Life Sciences group is building MST as part of our mission to
                      build modern, open, and accessible software for
                      computer-aided biological and nanoscale design. Reliable,
                      reproducible molecular
@@ -237,8 +237,8 @@ class HomePage extends React.Component {
                 <div className="line" />
                 <p><b className="footerLink">More Info</b></p>
                 <a href="https://www.autodeskresearch.com" className="footerLink">Autodesk Research<br /></a>
-                <a href="https://forum.bionano.autodesk.com" className="footerLink">BioNano Forum<br /></a>
-                <a href="http://autodeskbionano.blogspot.com/" className="footerLink">BioNano Blog<br /></a>
+                <a href="https://forum.lifesciences.autodesk.com" className="footerLink">Life Sciences Forum<br /></a>
+                <a href="http://autodeskbionano.blogspot.com/" className="footerLink">Life Sciences Blog<br /></a>
               </div>
               <div className="col-sm-4" style={{ paddingBottom: '60px' }}>
                 <div className="line" />
