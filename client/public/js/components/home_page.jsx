@@ -7,7 +7,7 @@ import imgM1 from '../../img/m1.png';
 import imgM2 from '../../img/m2.png';
 import imgM3 from '../../img/m3.png';
 import imgM4 from '../../img/m4.png';
-import imgLogoResearch from '../../img/logo_research.png';
+import imgAutodeskLogo from '../../img/autodesk.svg';
 /* import imgTweet from '../../img/tweet.svg';
 import imgFace from '../../img/face.svg'; */
 import '../../css/home_page.scss';
@@ -249,7 +249,7 @@ class HomePage extends React.Component {
             </div>
             <div className="row">
               <div className="col-sm-4" style={{ paddingBottom: '60px' }}>
-                <img src={imgLogoResearch} alt="logo" width="150px" />
+                <img src={imgAutodeskLogo} alt="logo" width="150px" />
               </div>
             </div>
           </div>
