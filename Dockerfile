@@ -72,6 +72,13 @@ ADD ./client/test $APP/client/test
 RUN npm run build
 
 #######################################
+# Interactive-sim static page
+#######################################
+RUN mkdir -p $APP/interactive-sim
+ADD ./interactive-sim $APP/interactive-sim
+
+
+#######################################
 # Server build/install packages
 #######################################
 ADD ./apps-data $APP/apps-data

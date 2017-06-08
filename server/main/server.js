@@ -28,6 +28,7 @@ app.use(cors());
 // Serve static files
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/interactive-sim/', express.static(path.join(__dirname, '../../interactive-sim')));
 
 // Static file 404s
 app.use(new express.Router().get('../structures/*', routeUtils.notFound));
