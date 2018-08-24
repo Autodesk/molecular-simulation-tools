@@ -2,7 +2,7 @@
 
 Predictive molecular modeling applications based on the [Molecular Design Toolkit](https://github.com/Autodesk/molecular-design-toolkit) framework. (Early development, all features are subject to change)
 
-![App animation](https://raw.githubusercontent.com/Autodesk/molecular-simulation-tools/dev/app.gif =270x150)
+<img src="https://raw.githubusercontent.com/Autodesk/molecular-simulation-tools/dev/app.gif" width="270" height="150" alt="App animation screenshot" />
 
 ## Steps to run:
 
